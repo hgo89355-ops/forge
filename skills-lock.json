@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "skills": {
+    "captions": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/captions/SKILL.md",
+      "computedHash": "88073bdca37bd5cedb97c2e61ae805932a90ba4d0ea61e280290fc968c4e411f"
+    },
+    "subtitles": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/subtitles/SKILL.md",
+      "computedHash": "7b2b3397369ccb68d2f4fcbc0600315bac6e91c7db952e05baf61dace56c4a96"
+    },
+    "transcript": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/transcript/SKILL.md",
+      "computedHash": "87aaffa4f2c2d616d5d9fa98ab248e1004873e1fdcf50953aa79825ee9750bff"
+    },
+    "transcriptapi": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/transcriptapi/SKILL.md",
+      "computedHash": "9dee43a5fdba81f052aba55cb8ad5cc2ee81a936844534038822066829bee3c1"
+    },
+    "video-transcript": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/video-transcript/SKILL.md",
+      "computedHash": "0967e25b90e62d4af09f052b275159466fdf9e34e0e02a763c1c82e23fe63da9"
+    },
+    "youtube-api": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/youtube-api/SKILL.md",
+      "computedHash": "1fac1f74a399f7b0f8df82b07948c631884eaba514b8cbda50072184fca90db0"
+    },
+    "youtube-channels": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/youtube-channels/SKILL.md",
+      "computedHash": "a2608ac6049f6f5851bb0771c658f3e6234725d007e2f1af0cc73684185baec9"
+    },
+    "youtube-data": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/youtube-data/SKILL.md",
+      "computedHash": "e86e2cf0bd0e08193808ec6c78e40e6014285f0b1e50ac4bdd1445788ce12966"
+    },
+    "youtube-full": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/youtube-full/SKILL.md",
+      "computedHash": "7ba66337df2bd37fb72987f1c68a47e954658b3e00aa91e8e696d047db3e8095"
+    },
+    "youtube-playlist": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/youtube-playlist/SKILL.md",
+      "computedHash": "662ab20623de8e16554f905a92f26efef514e6bbb2843579d8fb00aee54471d6"
+    },
+    "youtube-search": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/youtube-search/SKILL.md",
+      "computedHash": "bf94c0a356354b93587cabdf1e0ee1bc322643a3c3e31c71d5a40b5f74400a81"
+    },
+    "yt": {
+      "source": "ZeroPointRepo/youtube-skills",
+      "sourceType": "github",
+      "skillPath": "skills/yt/SKILL.md",
+      "computedHash": "2726c618f1eacd289bccda957c68e37f990aebd0917214735f5978fc2e0316fe"
+    }
+  }
+}
