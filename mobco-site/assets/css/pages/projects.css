@@ -725,7 +725,7 @@ html[lang='ar'] .pj-ring2 .circular-carousel__title { letter-spacing: 0; text-tr
   aspect-ratio: 1000 / 440;
   margin: clamp(1rem, .5rem + 2vw, 2.5rem);
 }
-.pj-map__svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+.pj-map__svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: hidden; pointer-events: none; }
 .pj-map__dots circle { fill: rgba(255, 255, 255, .2); }
 .pj-map__dots circle.is-hl { fill: var(--teal-400); }
 .pj-map__dots, .pj-map__land, .pj-map__borders, .pj-map__ksa { transition: opacity .7s var(--ease-soft); }

@@ -499,16 +499,6 @@ function initCaps() {
     const { item, open } = e.detail || {};
     if (open && item) show(item.getAttribute('data-caps'));
   });
-  // hover preview on fine pointers (does not toggle the accordion)
-  items.forEach((it) => {
-    it.querySelector('.accordion__trigger')?.addEventListener('pointerenter', (e) => {
-      if (e.pointerType === 'mouse') show(it.getAttribute('data-caps'));
-    });
-  });
-  acc.addEventListener('pointerleave', () => {
-    const open = items.find((it) => it.classList.contains('is-open'));
-    if (open) show(open.getAttribute('data-caps'));
-  });
 }
 
 /* ------------------------------------------------------------------ 6. finder */

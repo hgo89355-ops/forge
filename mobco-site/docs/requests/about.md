@@ -30,3 +30,8 @@ None of these block `about.html`. Where a workaround was needed, it is local and
 5. **Logical `inset-inline-*` + `direction: ltr` on the same element.** (FYI, no change needed.)
    Logical insets resolve against the element's *own* direction. Giving a positioned numeral both `direction:ltr` and
    `inset-inline-end` pins it to the physical right in RTL. Worth one line in STYLEGUIDE §10.
+
+6. **`partials/header.html` (latest revision) links to `mobco-construction.html`, `mobco-developments.html`,
+   `mobco-real-estate.html`** (mega menu + mobile nav). These files don't exist yet, so `check.mjs` reports 3 "link to missing
+   file" errors on every page built with the new header (desktop EN run). They aren't from About content. Please either add them to
+   `PLANNED` in `tools/check.mjs` (so they become warnings) or make sure those pages land.

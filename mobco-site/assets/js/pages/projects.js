@@ -20,6 +20,7 @@ import { PROJECTS, PROJECT_CATEGORIES, REGIONS, getProject, getCategory, getRegi
 import { WORLD } from '../data/world-map.js';
 import { createCircularCarousel } from '../components/circular-carousel.js';
 import { whenLoaded } from '../core/preloader.js';
+import { closeMega, closeMobileNav } from '../core/header.js';
 
 /* ======================================================================
    Constants & strings
@@ -1404,13 +1405,22 @@ function slugFromHash() {
   return getProject(h) ? h : null;
 }
 function initLinks() {
+  // Capture phase: runs before the core same-page anchor smooth-scroll (motion.js), which would otherwise
+  // swallow "projects.html#<slug>" links (cards, ring fallback, header mega menu) now that cards carry ids.
   document.addEventListener('click', (e) => {
-    const a = e.target.closest('a[data-slug]');
-    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    if (!a.closest('[data-pj-grid], [data-pj-list]')) return;
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest?.('a[href]');
+    if (!a) return;
+    let url;
+    try { url = new URL(a.href, location.href); } catch { return; }
+    if (url.origin !== location.origin || url.pathname !== location.pathname) return;
+    const slug = decodeURIComponent(url.hash.replace(/^#/, ''));
+    if (!getProject(slug)) return;
     e.preventDefault();
-    openProject(a.dataset.slug, { list: results(), context: contextLabel(), trigger: a });
-  });
+    try { closeMega(); closeMobileNav({ restoreFocus: false }); } catch { /* header not present */ }
+    const inExplorer = a.closest('[data-pj-grid], [data-pj-list]');
+    openProject(slug, inExplorer ? { list: results(), context: contextLabel(), trigger: a } : { trigger: a });
+  }, true);
   addEventListener('hashchange', () => {
     const slug = slugFromHash();
     if (slug) openProject(slug);

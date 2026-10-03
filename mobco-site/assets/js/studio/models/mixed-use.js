@@ -40,7 +40,7 @@ export const meta = {
     target: [-2, 9, -8],
     aerial: [-92, 66, 98],
     street: [-36, 1.7, 24],
-    top: [-2, 185, -7.9],
+    top: [-2, 205, -7.9],
     front: [0, 12, 96],
   },
   hotspots: [
@@ -157,12 +157,15 @@ export function build(THREE, ctx = {}) {
     sedum:     std('green-roof', { color: 0x9aa97a, roughness: 1 }),
     hedge:     std('hedge', { color: 0x5f7d55, roughness: 0.95 }),
     foliage:   std('foliage', { color: 0x6f8c5b, roughness: 0.9 }),
+    foliageLight: std('foliage-light', { color: 0x87a06e, roughness: 0.9 }),
     frond:     std('palm-frond', { color: 0x5b7d48, roughness: 0.85, side: THREE.DoubleSide }),
     trunk:     std('palm-trunk', { color: 0x9a8670, roughness: 0.95 }),
     bark:      std('tree-trunk', { color: 0x7d6e5e, roughness: 0.95 }),
     fabric:    std('parasol-fabric', { color: 0xf7f4ee, roughness: 0.9, side: THREE.DoubleSide }),
     figure:    std('scale-figure', { color: 0xf6f6f3, roughness: 0.7 }),
-    carBody:   std('car-body', { color: 0xffffff, roughness: 0.35, metalness: 0.4 }),
+    carWhite:  std('car-white', { color: 0xf2f2ef, roughness: 0.35, metalness: 0.3 }),
+    carSilver: std('car-silver', { color: 0xb9bec3, roughness: 0.32, metalness: 0.5 }),
+    carDark:   std('car-dark', { color: 0x2c3540, roughness: 0.3, metalness: 0.5 }),
     carGlass:  std('car-glass', { color: 0x1e262d, roughness: 0.15, metalness: 0.3 }),
     tyre:      std('tyre', { color: 0x202326, roughness: 0.9 }),
     // ---- night-ramped (emissiveIntensity 0 → 1) ----
@@ -180,11 +183,11 @@ export function build(THREE, ctx = {}) {
   };
   ripple.repeat.set(5, 1.2);
   // HDR emissive peaks (linear, > 1) so lit interiors still read warmly through the tinted glass at night.
-  M.ceiling.emissive.setRGB(1.5, 1.0, 0.58);
+  M.ceiling.emissive.setRGB(1.7, 0.95, 0.42);
   M.floorFin.emissive.setRGB(0.55, 0.36, 0.2);
   M.core.emissive.setRGB(0.7, 0.46, 0.26);
   M.strip.emissive.setRGB(3.2, 2.8, 2.2);
-  M.shop.emissive.setRGB(1.7, 1.05, 0.5);
+  M.shop.emissive.setRGB(1.9, 1.05, 0.42);
   const nightMaterials = [M.ceiling, M.floorFin, M.core, M.strip, M.shop, M.lampHead, M.sign, M.signTeal, M.water, M.jet];
 
   /* ---------- shared geometries ------------------------------------ */
@@ -273,11 +276,10 @@ export function build(THREE, ctx = {}) {
   }
 
   /** Instanced mesh from explicit matrices (trees, palms, figures, cars…). */
-  function instanced(parent, name, geo, mat, matrices, colors, { cast = true, receive = true } = {}) {
+  function instanced(parent, name, geo, mat, matrices, { cast = true, receive = true } = {}) {
     if (!matrices.length) return null;
     const mesh = new THREE.InstancedMesh(geo, mat, matrices.length);
     matrices.forEach((mx, i) => mesh.setMatrixAt(i, mx));
-    if (colors) colors.forEach((c, i) => mesh.setColorAt(i, c));
     mesh.instanceMatrix.needsUpdate = true;
     mesh.computeBoundingSphere();
     mesh.name = name; mesh.castShadow = cast; mesh.receiveShadow = receive;
@@ -631,7 +633,7 @@ export function build(THREE, ctx = {}) {
   const jets = [];
   for (let x = PL.cx - PL.len / 2 + 6; x <= PL.cx + PL.len / 2 - 6; x += 2.25) jets.push({ x, z: PL.cz - 2.6, h: 1.1 }, { x, z: PL.cz + 2.6, h: 1.1 });
   jets.push({ x: PL.cx - PL.len / 2 + 5, z: PL.cz, h: 2.4 }, { x: PL.cx + PL.len / 2 - 5, z: PL.cz, h: 2.4 });
-  const jetMesh = instanced(site, 'fountain-jets', jetGeo, M.jet, jets.map((j) => mtx(j.x, 0.44, j.z, 1, j.h, 1)), null, { cast: false, receive: false });
+  const jetMesh = instanced(site, 'fountain-jets', jetGeo, M.jet, jets.map((j) => mtx(j.x, 0.44, j.z, 1, j.h, 1)), { cast: false, receive: false });
 
   /* ---------- café terraces ---------------------------------------- */
   const umbGeo = G(new THREE.ConeGeometry(1.75, 0.5, 4, 1, true)); umbGeo.rotateY(Math.PI / 4);
@@ -716,22 +718,22 @@ export function build(THREE, ctx = {}) {
   const broadleaf = treeSpots.map(([x, z]) => [x, z, 0.62]);
   for (const [x, z] of [[55, 22], [62, 26], [57, 32], [-24, 30], [-17, 30], [10, 30], [17, 30]]) broadleaf.push([x, z, 0.47]);
   for (let x = -62; x <= 62; x += 10.5) broadleaf.push([x + rr(-1, 1), -48.5, 0.24]);
-  const tTr = [], tCr = [], tCol = [];
-  const leafA = new THREE.Color(0x7d9a66), leafB = new THREE.Color(0x92a979);
+  // two foliage tones as two instanced meshes (no instanceColor, so engine material swaps stay pure)
+  const tTr = [], tCr = [[], []];
   for (const [x, z, gy] of broadleaf) {
     const s = rr(0.85, 1.2), ry = rr(0, 6.28);
     tTr.push(mtx(x, gy, z, s, 4.6 * s, s));
     // irregular crown from 4 overlapping lobes
     const lobes = [[0, 4.5, 0, 1.9, 1.5], [1.0, 5.2, 0.5, 1.4, 1.2], [-0.9, 5.0, -0.4, 1.45, 1.2], [0.1, 5.9, -0.2, 1.2, 1.0]];
-    const c = leafA.clone().lerp(leafB, rnd());
+    const tone = rnd() < 0.5 ? 0 : 1;
     for (const [ox, oy, oz, r, ry2] of lobes) {
       const ca = Math.cos(ry), sa = Math.sin(ry);
-      tCr.push(mtx(x + (ox * ca + oz * sa) * s, gy + oy * s, z + (-ox * sa + oz * ca) * s, r * s, ry2 * s, r * s, 0, ry + rnd()));
-      tCol.push(c.clone().offsetHSL(0, 0, rr(-0.03, 0.03)));
+      tCr[tone].push(mtx(x + (ox * ca + oz * sa) * s, gy + oy * s, z + (-ox * sa + oz * ca) * s, r * s, ry2 * s, r * s, 0, ry + rnd()));
     }
   }
   instanced(site, 'tree-trunks', treeTrunkGeo, M.bark, tTr);
-  instanced(site, 'tree-crowns', crownGeo, M.foliage, tCr, tCol);
+  instanced(site, 'tree-crowns', crownGeo, M.foliage, tCr[0]);
+  instanced(site, 'tree-crowns-light', crownGeo, M.foliageLight, tCr[1]);
   // roadside shrubs on the verge
   const shrubs = [];
   for (let x = -66; x <= 66; x += 2.6) if (Math.abs(x) > 7) shrubs.push(mtx(x + rr(-0.4, 0.4), 0.7, 43.6 + rr(-0.5, 0.5), rr(0.6, 0.9), rr(0.45, 0.65), rr(0.6, 0.9)));
@@ -755,19 +757,18 @@ export function build(THREE, ctx = {}) {
   instanced(site, 'scale-figures', figGeo, M.figure, figs);
 
   /* ---------- cars -------------------------------------------------- */
-  const carCols = [0xf4f4f2, 0xc9ccd0, 0x3a4148, 0x122230, 0xd8d0c2, 0x8b9399].map((c) => new THREE.Color(c));
-  const bodies = [], cabins = [], tyres = [], bodyCol = [];
+  const carMats = [M.carWhite, M.carSilver, M.carDark];
+  const bodies = [[], [], []], cabins = [], tyres = [];
   function car(x, z, ry) {
     const c = Math.cos(ry), s = Math.sin(ry), off = (d) => [x + c * d, z - s * d];
-    bodies.push(mtx(x, 0.62, z, 4.4, 0.62, 1.82, 0, ry));
+    bodies[Math.floor(rnd() * 3)].push(mtx(x, 0.62, z, 4.4, 0.62, 1.82, 0, ry));
     const [cx, cz] = off(-0.25); cabins.push(mtx(cx, 1.18, cz, 2.3, 0.52, 1.6, 0, ry));
     tyres.push(mtx(x, 0.32, z, 3.6, 0.44, 1.7, 0, ry));
-    bodyCol.push(carCols[Math.floor(rnd() * carCols.length)]);
   }
   for (const x of [-58, -41, -22, 18, 37, 55]) car(x + rr(-2, 2), 48.6, 0);
   for (const x of [-49, -30, 9, 28, 47]) car(x + rr(-2, 2), 54.6, Math.PI);
   for (let x = -60; x <= 60; x += 12.5) if (rnd() < 0.6) car(x, -54.5, rnd() < 0.5 ? 0 : Math.PI);
-  instanced(site, 'car-bodies', UNIT_BOX, M.carBody, bodies, bodyCol);
+  bodies.forEach((list, i) => instanced(site, `car-bodies-${i}`, UNIT_BOX, carMats[i], list));
   instanced(site, 'car-cabins', UNIT_BOX, M.carGlass, cabins);
   instanced(site, 'car-tyres', UNIT_BOX, M.tyre, tyres);
 

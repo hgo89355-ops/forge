@@ -257,7 +257,10 @@ export function build(THREE, ctx = {}) {
       const im = new THREE.InstancedMesh(b.geo, b.mat, b.list.length);
       b.list.forEach((m, i) => im.setMatrixAt(i, m));
       im.instanceMatrix.needsUpdate = true;
-      im.name = b.name; im.castShadow = b.shadow; im.receiveShadow = true;
+      // Panes and interior backings sit a few cm proud of the wall: receiving shadows there only
+      // produces acne at typical shadow-map resolutions, so they neither cast nor receive.
+      const pane = /^window-(glass|interior)/.test(b.name);
+      im.name = b.name; im.castShadow = b.shadow && !pane; im.receiveShadow = !pane;
       im.computeBoundingSphere();
       b.group.add(im); instanced.push(im);
     }
@@ -806,8 +809,6 @@ export function build(THREE, ctx = {}) {
   }
 
   flushBatches();
-
-  // every mesh casts/receives as set above; glass & water never write depth so the backings show through
 
   /* ---------- runtime API */
   let tAcc = 0;

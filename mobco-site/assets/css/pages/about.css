@@ -857,6 +857,7 @@ html[lang='ar'] .about-chapter__num { font-family: var(--font-display); letter-s
   background: var(--teal-400);
   color: var(--navy-950);
   box-shadow: var(--shadow-lg);
+  overflow: hidden; /* the rotating ring's square box must never widen the page */
 }
 .about-hse__seal-ring { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; animation: about-spin 28s linear infinite; direction: ltr; }
 .about-hse__seal-ring text { font-family: 'Manrope', var(--font-arabic); font-size: 15px; font-weight: 700; letter-spacing: 2px; fill: var(--navy-950); }

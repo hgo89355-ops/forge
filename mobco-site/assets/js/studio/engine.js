@@ -75,6 +75,8 @@ export function createStudio(container, options = {}) {
 
   const reduced = () => options.reducedMotion ?? (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const mobile = isMobileLike();
+  let lowPowerFlag = false;
+  const still = () => reduced() || lowPowerFlag; // no tweened motion (reduced motion, or a CPU rasteriser)
   const opts = {
     compact: false,
     model: null,
@@ -87,11 +89,14 @@ export function createStudio(container, options = {}) {
   };
   // CPU rasterisers (SwiftShader, llvmpipe — e.g. no GPU, blocklisted drivers, headless CI) get a
   // low-power profile: no MSAA, DPR 1 × 0.75, small shadow map, no ambient animation, no thumbnails.
-  const lowPower = gpu().software || opts.lowPower === true;
+  const lp = new URLSearchParams(location.search).get('lowpower');
+  const lowPower = lp === '1' || (lp !== '0' && (gpu().software || opts.lowPower === true));
   const lowEnd = mobile || lowPower || (navigator.hardwareConcurrency || 8) <= 2 || (navigator.deviceMemory || 8) <= 2;
   const quality = opts.quality === 'auto' ? (opts.compact || lowEnd ? 'low' : 'high') : opts.quality;
+  lowPowerFlag = lowPower;
   const dprCap = lowPower ? 1 : mobile ? 1.5 : 2;
-  let dprScale = lowPower ? 0.75 : 1; // adaptive (lowered when frames are slow)
+  const hq = new URLSearchParams(location.search).get('hq') === '1'; // QA: full-resolution stills even on a CPU rasteriser
+  let dprScale = lowPower && !hq ? 0.6 : 1; // adaptive (lowered when frames are slow)
 
   /* -------------------------------------------------------------- events */
   const listeners = new Map();
@@ -99,7 +104,7 @@ export function createStudio(container, options = {}) {
   const emit = (type, detail) => listeners.get(type)?.forEach((cb) => { try { cb(detail); } catch (e) { console.error('[studio] listener error', e); } });
 
   /* -------------------------------------------------------------- renderer */
-  const renderer = new THREE.WebGLRenderer({ antialias: !lowPower, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: false });
+  const renderer = new THREE.WebGLRenderer({ antialias: !lowPower || hq, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: false });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
@@ -164,7 +169,7 @@ export function createStudio(container, options = {}) {
 
   /* -------------------------------------------------------------- controls */
   const controls = new OrbitControls(camera, canvas);
-  controls.enableDamping = true;
+  controls.enableDamping = !lowPower;
   controls.dampingFactor = 0.075;
   controls.screenSpacePanning = true;
   controls.minDistance = 8;
@@ -255,7 +260,7 @@ export function createStudio(container, options = {}) {
     insets = { left: 0, right: 0, top: 0, bottom: 0, ...next };
     offset.tx = -(insets.left - insets.right) / 2;
     offset.ty = -(insets.top - insets.bottom) / 2;
-    if (reduced() || !model) { offset.x = offset.tx; offset.y = offset.ty; applyViewOffset(); }
+    if (still() || !model) { offset.x = offset.tx; offset.y = offset.ty; applyViewOffset(); }
     invalidate();
   }
 
@@ -288,7 +293,7 @@ export function createStudio(container, options = {}) {
   /* -------------------------------------------------------------- adaptive quality */
   const perf = { frames: 0, acc: 0, checks: 0 };
   function samplePerf(dt) {
-    if (perf.checks >= 3 || dprScale <= 0.5) return;
+    if (perf.checks >= 3 || dprScale <= 0.5 || hq) return;
     perf.frames++; perf.acc += dt;
     if (perf.frames >= 45) {
       const avg = perf.acc / perf.frames;
@@ -316,7 +321,7 @@ export function createStudio(container, options = {}) {
 
     // explode easing
     if (Math.abs(state.explode - state.explodeTarget) > 0.0005) {
-      const k = reduced() ? 1 : 1 - Math.exp(-dt * 7);
+      const k = still() ? 1 : 1 - Math.exp(-dt * 7);
       state.explode += (state.explodeTarget - state.explode) * k;
       if (Math.abs(state.explode - state.explodeTarget) <= 0.0005) state.explode = state.explodeTarget;
       applyExplode();
@@ -385,7 +390,7 @@ export function createStudio(container, options = {}) {
   function tweenCamera(toPos, toTarget, { duration = 1300, instant = false, locked = false } = {}) {
     const p = new THREE.Vector3().fromArray(toPos.toArray ? toPos.toArray() : toPos);
     const tg = new THREE.Vector3().fromArray(toTarget.toArray ? toTarget.toArray() : toTarget);
-    if (instant || reduced()) {
+    if (instant || still()) {
       tween = null;
       camera.position.copy(p);
       controls.target.copy(tg);
@@ -429,7 +434,7 @@ export function createStudio(container, options = {}) {
   function setExplode(v, { instant = false } = {}) {
     if (revealTween) { revealTween = null; applyExplode(); }
     state.explodeTarget = clamp(+v || 0, 0, 1);
-    if (instant || reduced()) { state.explode = state.explodeTarget; applyExplode(); }
+    if (instant || still()) { state.explode = state.explodeTarget; applyExplode(); }
     invalidate();
     emit('change', getState());
   }
@@ -850,7 +855,7 @@ export function createStudio(container, options = {}) {
 
     // reveal: camera glides in, floors settle from a gentle explode
     const cam = model.meta.camera;
-    if (instantCamera || reduced()) {
+    if (instantCamera || still()) {
       tweenCamera(cam.aerial, cam.target, { instant: true });
     } else {
       const from = new THREE.Vector3().fromArray(cam.aerial).sub(new THREE.Vector3().fromArray(cam.target)).multiplyScalar(1.28).add(new THREE.Vector3().fromArray(cam.target));
