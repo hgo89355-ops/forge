@@ -244,7 +244,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
       dirFromAngles(THREE, azimuth, Math.max(elevation, 1.5), lightDir);
       const warm = smoothstep(4, 30, elevation);
       sun.color.copy(tmpA.set('#ffb98a')).lerp(tmpB.set('#fff5e8'), warm);
-      sun.intensity = 2.5 * day;
+      sun.intensity = 2.3 * day;
     }
     placeLight();
     skyUniforms.uSunDir.value.copy(dirFromAngles(THREE, azimuth, elevation, new THREE.Vector3()));
@@ -254,7 +254,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     hemi.groundColor.set(night > 0.5 ? '#1c2630' : '#b7ad9f');
     hemi.intensity = 0.16 + 0.5 * day;
     scene.environmentIntensity = 0.22 + 0.6 * day;
-    if (renderer) renderer.toneMappingExposure = 1.0 + 0.18 * night;
+    if (renderer) renderer.toneMappingExposure = 0.9 + 0.22 * night;
     contactMat.opacity = 0.14 + 0.2 * day;
     current = { night, day, elevation, azimuth };
     return current;

@@ -242,7 +242,7 @@ export function createStudio(container, options = {}) {
     const aspect = width / height;
     camera.aspect = aspect;
     // Keep a calm architectural lens on wide screens; widen on portrait screens so the model still fits.
-    const baseFov = opts.compact ? 32 : 34;
+    const baseFov = opts.compact ? 38 : 40;
     camera.fov = aspect >= 1.25 ? baseFov : Math.min(62, (2 * Math.atan(Math.tan((baseFov * Math.PI) / 360) * (1.25 / aspect)) * 180) / Math.PI);
     applyViewOffset();
     invalidate();
@@ -415,10 +415,20 @@ export function createStudio(container, options = {}) {
     if (k >= 1) { tween = null; emit('viewend', {}); }
   }
 
+  /** Preset position, pulled back when overlay panels leave only part of the canvas free (not for street). */
+  function viewPos(name) {
+    const cam = model.meta.camera;
+    const p = new THREE.Vector3().fromArray(cam[name] || cam.aerial);
+    if (name === 'street') return p;
+    const free = clamp((width - insets.left - insets.right) / Math.max(1, width), 0.3, 1);
+    const k = clamp(1 / (0.45 + 0.55 * free), 1, 1.45);
+    const tg = new THREE.Vector3().fromArray(cam.target);
+    return p.sub(tg).multiplyScalar(k).add(tg);
+  }
   function setView(name, { instant = false } = {}) {
     if (!model) return;
     const cam = model.meta.camera;
-    const pos = cam[name] || cam.aerial;
+    const pos = viewPos(VIEWS.includes(name) ? name : 'aerial');
     tweenCamera(pos, cam.target, { instant });
     state.view = name;
     emit('change', getState());
@@ -856,14 +866,14 @@ export function createStudio(container, options = {}) {
     // reveal: camera glides in, floors settle from a gentle explode
     const cam = model.meta.camera;
     if (instantCamera || still()) {
-      tweenCamera(cam.aerial, cam.target, { instant: true });
+      tweenCamera(viewPos('aerial'), cam.target, { instant: true });
     } else {
-      const from = new THREE.Vector3().fromArray(cam.aerial).sub(new THREE.Vector3().fromArray(cam.target)).multiplyScalar(1.28).add(new THREE.Vector3().fromArray(cam.target));
+      const from = viewPos('aerial').sub(new THREE.Vector3().fromArray(cam.target)).multiplyScalar(1.28).add(new THREE.Vector3().fromArray(cam.target));
       from.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.22);
       camera.position.copy(from);
       controls.target.fromArray(cam.target);
       controls.update(0);
-      tweenCamera(cam.aerial, cam.target, { duration: 1800 });
+      tweenCamera(viewPos('aerial'), cam.target, { duration: 1800 });
       if (model.floors.length) revealTween = { t0: now(), duration: 1500 };
     }
     state.view = 'aerial';

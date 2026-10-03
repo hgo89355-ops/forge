@@ -525,9 +525,9 @@
             <h2 class="pjv-title" id="pjv-title" data-pjv-title>Project</h2>
             <p class="pjv-loc" data-pjv-loc></p>
             <p class="pjv-summary" id="pjv-summary" data-pjv-summary></p>
+            <div class="pjv-actions" data-pjv-actions></div>
             <dl class="pjv-facts" data-pjv-facts></dl>
             <div class="pjv-highlights" data-pjv-highlights></div>
-            <div class="pjv-actions" data-pjv-actions></div>
           </div>
           <nav class="pjv-pager" aria-label="Other projects" data-ar-aria-label="مشاريع أخرى" data-pjv-pager></nav>
           <p class="pjv-keys" aria-hidden="true"><span class="num-ltr"><kbd>←</kbd> <kbd>→</kbd></span> <span data-ar="المشاريع">projects</span> · <span class="num-ltr"><kbd>+</kbd> <kbd>−</kbd></span> <span data-ar="تكبير">zoom</span> · <kbd>Esc</kbd> <span data-ar="إغلاق">close</span></p>
@@ -535,6 +535,21 @@
       </div>
     </div>
   </div>
+
+  <!-- Stylised blueprint filter for the viewer: grayscale → soften → edge detection → blueprint-blue duotone -->
+  <svg class="pj-svgdefs" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="pj-blueprint" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" type="saturate" values="0" result="gray"/>
+      <feGaussianBlur in="gray" stdDeviation="0.55" result="soft"/>
+      <feConvolveMatrix in="soft" order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" preserveAlpha="true" result="edges"/>
+      <feComposite in="edges" in2="gray" operator="arithmetic" k1="0" k2="3.4" k3="0.14" k4="0" result="mix"/>
+      <feComponentTransfer in="mix">
+        <feFuncR type="table" tableValues="0.055 0.86"/>
+        <feFuncG type="table" tableValues="0.2 0.94"/>
+        <feFuncB type="table" tableValues="0.34 1"/>
+      </feComponentTransfer>
+    </filter>
+  </svg>
 
   <!-- @include footer -->
 <!-- partials/footer.html — shared, foundation-owned. Inlined into pages by tools/build.mjs; edit here, never in pages. -->

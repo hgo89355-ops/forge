@@ -60,7 +60,6 @@ const S = {
   search: { en: 'Search', ar: 'البحث' },
   category: { en: 'Category', ar: 'الفئة' },
   country: { en: 'Country', ar: 'الدولة' },
-  location: { en: 'Location', ar: 'الموقع' },
   type: { en: 'Type', ar: 'النوع' },
   highlights: { en: 'Highlights', ar: 'أبرز الملامح' },
   explore3d: { en: 'Explore in 3D', ar: 'استكشف بالأبعاد الثلاثية' },
@@ -822,7 +821,7 @@ function buildMap() {
     <g class="pj-map__dots">${dots}</g>`;
   MAP.vb = WORLD_VB();
   E.mapSvg.setAttribute('viewBox', MAP.vb.join(' '));
-  E.mapBack.addEventListener('click', () => { MAP.region = null; MAP.city = null; zoomMap(null); renderMap(results()); });
+  E.mapBack.addEventListener('click', () => { MAP.region = null; MAP.city = null; zoomMap(null); renderMap(results()); mapFocus('.pj-map__region[data-map-region="ksa"]'); });
   E.mapPins.addEventListener('click', onMapClick);
   E.mapPanel.addEventListener('click', onMapClick);
   if ('ResizeObserver' in window) {
@@ -847,16 +846,21 @@ function onMapClick(e) {
   const reg = e.target.closest('[data-map-region]');
   if (reg) {
     const id = reg.dataset.mapRegion;
+    const wasFocused = reg === document.activeElement;
     MAP.region = id === MAP.region && !MAP.city ? null : id;
     MAP.city = null;
     zoomMap(MAP.region === 'ksa' ? 'ksa' : null);
     renderMap(results());
+    if (wasFocused || e.detail === 0) mapFocus(MAP.region ? null : `.pj-map__region[data-map-region="${id}"]`);
     return;
   }
   const city = e.target.closest('[data-map-city]');
   if (city) {
-    MAP.city = city.dataset.mapCity === MAP.city ? null : city.dataset.mapCity;
+    const inPins = !!city.closest('[data-pj-map-pins]');
+    const id = city.dataset.mapCity;
+    MAP.city = id === MAP.city ? null : id;
     renderMap(results());
+    mapFocus(inPins ? `.pj-pin[data-map-city="${id}"]` : null);
   }
 }
 
@@ -893,11 +897,34 @@ function zoomMap(target) {
 
 function placePins() {
   const [vx, vy, vw, vh] = MAP.vb;
-  $$('.pj-pin', E.mapPins).forEach((pin) => {
-    const x = +pin.dataset.x, y = +pin.dataset.y;
-    // Physical left/top on purpose: the map is never mirrored.
-    pin.style.left = `${((x - vx) / vw) * 100}%`;
-    pin.style.top = `${((y - vy) / vh) * 100}%`;
+  const W = E.mapCanvas.clientWidth || 1, H = E.mapCanvas.clientHeight || 1;
+  const pins = $$('.pj-pin', E.mapPins).map((pin) => ({ pin, x: ((+pin.dataset.x - vx) / vw) * W, y: ((+pin.dataset.y - vy) / vh) * H }));
+  // Relax overlapping pins (positions are approximate anyway) so every count stays legible and clickable.
+  const MIN = 40;
+  for (let it = 0; it < 30; it++) {
+    let moved = false;
+    for (let i = 0; i < pins.length; i++) {
+      for (let j = i + 1; j < pins.length; j++) {
+        const a = pins[i], b = pins[j];
+        let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+        if (d >= MIN) continue;
+        if (d < 0.01) { dx = 0; dy = 1; d = 1; }
+        const push = (MIN - d) / 2, ux = dx / d, uy = dy / d;
+        a.x -= ux * push; a.y -= uy * push; b.x += ux * push; b.y += uy * push;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  // Physical left/top on purpose: the map is never mirrored.
+  pins.forEach(({ pin, x, y }) => { pin.style.left = `${(x / W) * 100}%`; pin.style.top = `${(y / H) * 100}%`; });
+}
+
+/** Keep keyboard focus meaningful after the map re-renders its pins / panel. */
+function mapFocus(selector) {
+  requestAnimationFrame(() => {
+    const el = (selector && $(selector, E.results)) || $('.pj-map__title', E.mapPanel) || $('.pj-map__region', E.mapPanel);
+    el?.focus({ preventScroll: true });
   });
 }
 
@@ -923,7 +950,7 @@ function renderMap(list) {
       const n = ksa.filter((p) => cityOf(p)?.id === c.id).length;
       if (!n) return;
       const [x, y] = project(c.lonlat);
-      const label = c.id === 'thuwal' || c.id === 'neom' ? 'start' : 'end';
+      const label = ['thuwal', 'jeddah', 'neom'].includes(c.id) ? 'start' : 'end';
       pins += pinHtml({ x, y, n, label: t(c.name), side: label, attr: `data-map-city="${c.id}"`, pressed: MAP.city === c.id, city: true });
     });
   } else {
@@ -944,7 +971,7 @@ function renderMap(list) {
     const items = byRegion(MAP.region);
     html += `<div class="pj-map__phead">
       <button class="pj-map__crumb" type="button" data-map-region="${r.id}">${icon('arrow-left', 'icon--sm icon--dir')}<span>${esc(t(S.whereWeBuild))}</span></button>
-      <h3 class="pj-map__title">${esc(t(r.name))}</h3><p class="pj-map__count">${esc(counted(items.length, 'project'))}</p></div>`;
+      <h3 class="pj-map__title" tabindex="-1">${esc(t(r.name))}</h3><p class="pj-map__count">${esc(counted(items.length, 'project'))}</p></div>`;
     if (MAP.region === 'ksa') {
       const groups = [];
       CITIES.filter((c) => c.region === 'ksa').forEach((c) => {
@@ -1129,7 +1156,6 @@ function renderPanel(p) {
   const facts = [];
   facts.push([S.category, catName(p)]);
   if (p.region) facts.push([S.country, regionName(p)]);
-  if (p.location && locText(p) !== regionName(p)) facts.push([S.location, locText(p)]);
   const typ = t(p.typology);
   if (typ && typ !== catName(p) && (!c || typ !== t(c.name))) facts.push([S.type, typ]);
   VE.facts.innerHTML = facts.map(([k, v]) => `<div><dt>${esc(t(k))}</dt><dd>${esc(v)}</dd></div>`).join('');

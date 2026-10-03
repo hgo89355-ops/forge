@@ -382,8 +382,8 @@ export function build(THREE, ctx = {}) {
     const fname = frameMat === M.bronze ? 'window-frame-bronze' : 'window-frame';
     if (!HIGH) {
       // low quality: one surround plate behind the pane + a sill (2 boxes instead of 5–7)
-      [x, z] = along(ox, oz, ry, 0, -0.05);
-      inst(group, fname, U.box, frameMat, x, yc + 0.03, z, w + 0.4, h + 0.34, 0.2, ry);
+      [x, z] = along(ox, oz, ry, 0, -0.06);   // spans d −0.15…0.03, i.e. 2 cm behind the backing's face
+      inst(group, fname, U.box, frameMat, x, yc + 0.03, z, w + 0.4, h + 0.34, 0.18, ry);
       [x, z] = along(ox, oz, ry, 0, 0.06);
       inst(group, fname, U.box, frameMat, x, y0 - 0.1, z, w + 0.52, 0.14, 0.36, ry);
       return;

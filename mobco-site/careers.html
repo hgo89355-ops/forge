@@ -597,7 +597,7 @@
                   </div>
                 </div>
 
-                <div class="form__row form__row--2">
+                <div class="form__row form__row--2 careers-form__contact">
                   <div class="careers-phone">
                     <div class="field field--select careers-phone__code">
                       <select class="field__input" id="ap-code" name="dialCode" autocomplete="tel-country-code" data-dial>
@@ -732,28 +732,12 @@
     <!-- ============================================================ 7. FAQ -->
     <section class="section section--white careers-faq" id="faq" aria-labelledby="faq-title">
       <div class="container">
-        <div class="grid grid--loose">
-          <div class="col-lg-4">
+        <!-- head / questions / "still have a question" — the aside card follows the questions on small screens -->
+        <div class="careers-faq__layout">
             <header class="section-header careers-faq__head">
               <p class="eyebrow"><span class="eyebrow__num">06</span><span data-ar="الأسئلة الشائعة">FAQ</span></p>
               <h2 class="h2" id="faq-title" data-split data-ar="معلومات تهمّك">Good to know</h2>
             </header>
-            <div class="careers-ask" data-reveal="up">
-              <p class="h5" data-ar="لديك سؤال آخر؟">Still have a question?</p>
-              <p class="small muted" data-ar="راسل فريق التوظيف المعني مباشرةً.">Write to the relevant careers team directly.</p>
-              <div class="careers-ask__row">
-                <span class="careers-ask__label label muted" data-ar="السعودية">KSA</span>
-                <a class="careers-ask__mail" href="mailto:careers@mobco-group.com">careers@mobco-group.com</a>
-                <button class="icon-btn icon-btn--sm" type="button" data-copy="careers@mobco-group.com" aria-label="Copy KSA careers email" data-ar-aria-label="نسخ بريد التوظيف في السعودية"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg></button>
-              </div>
-              <div class="careers-ask__row">
-                <span class="careers-ask__label label muted" data-ar="مصر">Egypt</span>
-                <a class="careers-ask__mail" href="mailto:hr.egy@mobco-group.com">hr.egy@mobco-group.com</a>
-                <button class="icon-btn icon-btn--sm" type="button" data-copy="hr.egy@mobco-group.com" aria-label="Copy Egypt careers email" data-ar-aria-label="نسخ بريد التوظيف في مصر"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg></button>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-8">
             <div class="accordion careers-faq__list" data-accordion="single" data-reveal="up">
               <div class="accordion__item is-open">
                 <h3 class="accordion__heading"><button class="accordion__trigger" type="button" aria-expanded="true"><span class="accordion__num">01</span><span class="accordion__label" data-ar="هل تعرضون الوظائف الشاغرة في هذه الصفحة؟">Do you list open vacancies on this page?</span><span class="accordion__icon" aria-hidden="true"></span></button></h3>
@@ -793,7 +777,20 @@
                 </div></div></div>
               </div>
             </div>
-          </div>
+            <div class="careers-ask" data-reveal="up">
+              <p class="h5" data-ar="لديك سؤال آخر؟">Still have a question?</p>
+              <p class="small muted" data-ar="راسل فريق التوظيف المعني مباشرةً.">Write to the relevant careers team directly.</p>
+              <div class="careers-ask__row">
+                <span class="careers-ask__label label muted" data-ar="السعودية">KSA</span>
+                <a class="careers-ask__mail" href="mailto:careers@mobco-group.com">careers@mobco-group.com</a>
+                <button class="icon-btn icon-btn--sm" type="button" data-copy="careers@mobco-group.com" aria-label="Copy KSA careers email" data-ar-aria-label="نسخ بريد التوظيف في السعودية"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg></button>
+              </div>
+              <div class="careers-ask__row">
+                <span class="careers-ask__label label muted" data-ar="مصر">Egypt</span>
+                <a class="careers-ask__mail" href="mailto:hr.egy@mobco-group.com">hr.egy@mobco-group.com</a>
+                <button class="icon-btn icon-btn--sm" type="button" data-copy="hr.egy@mobco-group.com" aria-label="Copy Egypt careers email" data-ar-aria-label="نسخ بريد التوظيف في مصر"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg></button>
+              </div>
+            </div>
         </div>
       </div>
     </section>
@@ -805,17 +802,18 @@
     <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="dd-title">
       <div class="drawer__head">
         <p class="careers-drawer__count label muted" data-dd-count>01 / 08</p>
+        <p class="visually-hidden" data-dd-live aria-live="polite"></p>
         <button class="icon-btn icon-btn--sm" type="button" data-drawer-close aria-label="Close" data-ar-aria-label="إغلاق"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#x"></use></svg></button>
       </div>
       <div class="drawer__body careers-drawer__body" data-dd-body>
-        <h2 class="h3" id="dd-title">Discipline</h2>
+        <h2 class="h3" id="dd-title" data-ar="التخصص">Discipline</h2>
       </div>
       <div class="drawer__foot careers-drawer__foot">
         <div class="careers-drawer__nav">
           <button class="icon-btn icon-btn--sm" type="button" data-dd-prev aria-label="Previous discipline" data-ar-aria-label="التخصص السابق"><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
           <button class="icon-btn icon-btn--sm" type="button" data-dd-next aria-label="Next discipline" data-ar-aria-label="التخصص التالي"><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
         </div>
-        <button class="btn btn--primary" type="button" data-dd-apply><span data-ar="قدّم في هذا التخصص">Apply for this discipline</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
+        <button class="btn btn--primary" type="button" data-dd-apply><span class="careers-drawer__apply-long" data-ar="قدّم في هذا التخصص">Apply for this discipline</span><span class="careers-drawer__apply-short" data-ar="قدّم الآن">Apply now</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
       </div>
     </aside>
   </div>

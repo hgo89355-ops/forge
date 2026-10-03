@@ -183,7 +183,7 @@ export function build(THREE, ctx = {}) {
   };
   ripple.repeat.set(5, 1.2);
   // HDR emissive peaks (linear, > 1) so lit interiors still read warmly through the tinted glass at night.
-  M.ceiling.emissive.setRGB(1.7, 0.95, 0.42);
+  M.ceiling.emissive.setRGB(1.8, 0.9, 0.34);
   M.floorFin.emissive.setRGB(0.55, 0.36, 0.2);
   M.core.emissive.setRGB(0.7, 0.46, 0.26);
   M.strip.emissive.setRGB(3.2, 2.8, 2.2);
@@ -237,22 +237,26 @@ export function build(THREE, ctx = {}) {
   const _m = new THREE.Matrix4(), _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _s = new THREE.Vector3();
   const _e = new THREE.Euler(), Y_AXIS = new THREE.Vector3(0, 1, 0);
 
-  /** Collects box instances by key; finish() emits one InstancedMesh per key into `parent`. */
+  /**
+   * Collects box instances; finish() emits ONE InstancedMesh per material into `parent`
+   * (keeps draw calls low). `key` names the architectural part; the mesh is named
+   * `<prefix>-<material>` and lists its parts in userData.parts.
+   */
   function makeKit(parent, prefix) {
     const buckets = new Map();
     return {
       /** centre (x,y,z), size (sx,sy,sz), optional rotation about Y */
       box(key, mat, x, y, z, sx, sy, sz, ry = 0) {
         if (sx <= 0 || sy <= 0 || sz <= 0) return;
-        let b = buckets.get(key); if (!b) { b = { mat, list: [] }; buckets.set(key, b); }
-        b.list.push(x, y, z, sx, sy, sz, ry);
+        let b = buckets.get(mat); if (!b) { b = { mat, parts: new Set(), list: [] }; buckets.set(mat, b); }
+        b.parts.add(key); b.list.push(x, y, z, sx, sy, sz, ry);
       },
       /** axis-aligned box from min/max corners */
       span(key, mat, x0, y0, z0, x1, y1, z1) {
         this.box(key, mat, (x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2, Math.abs(x1 - x0), Math.abs(y1 - y0), Math.abs(z1 - z0));
       },
       finish(opts = {}) {
-        for (const [key, b] of buckets) {
+        for (const b of buckets.values()) {
           const n = b.list.length / 7;
           const mesh = new THREE.InstancedMesh(UNIT_BOX, b.mat, n);
           for (let i = 0; i < n; i++) {
@@ -264,7 +268,8 @@ export function build(THREE, ctx = {}) {
           }
           mesh.instanceMatrix.needsUpdate = true;
           mesh.computeBoundingSphere();
-          mesh.name = `${prefix}-${key}`;
+          mesh.name = `${prefix}-${b.mat.name}`;
+          mesh.userData.parts = [...b.parts];
           const clear = b.mat.transparent;
           mesh.castShadow = !clear && opts.cast !== false;
           mesh.receiveShadow = !clear;

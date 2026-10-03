@@ -51,7 +51,8 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   let engaged = false;
   let syncing = false;
 
-  const reduced = prefersReducedMotion();
+  const reduced = prefersReducedMotion() || !!engine?.lowPower;
+  if (engine?.lowPower) root.classList.add('is-lowpower'); // CPU rasteriser: skip UI fades as well
   const touchOnly = isTouch() && !hasFinePointer();
 
   /* ============================================================ helpers */

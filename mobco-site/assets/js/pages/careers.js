@@ -235,7 +235,7 @@ function initBenefits() {
   if (!root) return;
   const items = $$('[data-benefit]', root);
   const triggers = items.map((it) => $('.careers-benefit__trigger', it));
-  const mq = matchMedia('(min-width: 1024px)');
+  const mq = matchMedia('(min-width: 1200px)'); // keep in sync with careers.css (expanding panels)
   let active = Math.max(0, items.findIndex((it) => it.classList.contains('is-active')));
   let intent;
   const apply = () => {
@@ -409,6 +409,9 @@ function renderDrawer(swap = false) {
       </div>
       <p class="careers-drawer__note">${icon('info', 'icon--sm')}<span>${esc(t(S.notVacancy))}</span></p>
     </div>`;
+  // prev/next swaps the content in place: announce the new discipline to screen readers
+  const live = $('[data-dd-live]', drawer);
+  if (live) live.textContent = swap ? `${t(d.title)} — ${ddIndex + 1} / ${DISCIPLINES.length}` : '';
   if (swap && !prefersReducedMotion()) {
     body.classList.remove('is-swapping');
     void body.offsetWidth;
@@ -498,7 +501,7 @@ function buildMap(root, onPick) {
   });
 
   function render() {
-    head.innerHTML = `<p class="eyebrow">${esc(t(S.mapHead))}</p><span class="label num-ltr" style="color:rgba(255,255,255,.5)">02</span>`;
+    head.innerHTML = `<p class="eyebrow">${esc(t(S.mapHead))}</p>`;
     markers.forEach((b) => {
       const o = OFFICES.find((x) => x.id === b.dataset.office);
       b.innerHTML = `<span class="careers-map__pin" aria-hidden="true"></span><span class="careers-map__tag"><span class="careers-map__city">${esc(t(LOC[o.id].city))}</span><span class="careers-map__role">${esc(t(o.label))}</span></span>`;
@@ -520,6 +523,18 @@ function buildMap(root, onPick) {
       b.style.setProperty('--x', `${(p.x - rr.left).toFixed(1)}px`);
       b.style.setProperty('--y', `${(p.y - rr.top).toFixed(1)}px`);
     });
+    // keep each office tag inside the frame on narrow maps (the pin stays on the city; only the tag slides)
+    const m = 12;
+    markers.forEach((b) => {
+      const tag = $('.careers-map__tag', b);
+      if (!tag) return;
+      tag.style.setProperty('--nudge', '0px');
+      const tr = tag.getBoundingClientRect();
+      let dx = 0;
+      if (tr.left < rr.left + m) dx = rr.left + m - tr.left;
+      else if (tr.right > rr.right - m) dx = rr.right - m - tr.right;
+      tag.style.setProperty('--nudge', `${dx.toFixed(1)}px`);
+    });
   }
   function setActive(id) {
     active = id;
@@ -536,6 +551,7 @@ function buildMap(root, onPick) {
   setActive(active);
   requestAnimationFrame(place);
   new ResizeObserver(() => place()).observe(root);
+  document.fonts?.ready?.then(() => requestAnimationFrame(place));
   onLang(() => { render(); requestAnimationFrame(place); });
   scan(root);
   return { setActive };

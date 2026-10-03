@@ -939,14 +939,15 @@ html[lang='ar'] .pj-map__gname { font-size: .8125rem; }
 @media (min-width: 1024px) {
   .pjv-body { grid-template-columns: minmax(0, 1fr) clamp(360px, 28vw, 460px); overflow: hidden; }
 }
-.pjv-media { display: grid; grid-template-rows: minmax(0, 1fr) auto auto; min-block-size: 0; padding: var(--space-4) var(--gutter) var(--space-4); gap: var(--space-3); }
+.pjv-media { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto auto; min-block-size: 0; padding: var(--space-4) var(--gutter) var(--space-4); gap: var(--space-3); }
 @media (min-width: 1024px) { .pjv-media { padding-inline-end: var(--space-6); } }
 .pjv-stage {
   --split: 0%;
   position: relative;
   overflow: hidden;
-  min-block-size: 280px;
+  inline-size: 100%;
   aspect-ratio: 4 / 3;
+  max-block-size: 62vh;
   border-radius: var(--radius);
   background:
     linear-gradient(rgba(255, 255, 255, .03) 1px, transparent 1px) 0 0 / 32px 32px,
@@ -957,7 +958,7 @@ html[lang='ar'] .pj-map__gname { font-size: .8125rem; }
   user-select: none;
   -webkit-user-select: none;
 }
-@media (min-width: 1024px) { .pjv-stage { aspect-ratio: auto; min-block-size: 0; } }
+@media (min-width: 1024px) { .pjv-stage { aspect-ratio: auto; min-block-size: 0; max-block-size: none; } }
 .pjv-stage.is-zoomed { cursor: grab; }
 .pjv-stage.is-zoomed.is-grabbing { cursor: grabbing; }
 .pjv-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -983,9 +984,9 @@ html[lang='ar'] .pj-map__gname { font-size: .8125rem; }
 .pjv-stage[data-mode='image'] .pjv-layer--blueprint { visibility: hidden; }
 .pjv-stage:not(.is-splitting) .pjv-layer--blueprint { transition: clip-path .6s var(--ease-out); }
 .pjv-layer--blueprint .pjv-frame { background: #0f3557; }
-.pjv-layer--blueprint img { filter: grayscale(1) invert(1) contrast(1.55) brightness(1.05); mix-blend-mode: screen; opacity: .85; }
-.pjv-layer--blueprint .pjv-frame::before { content: ''; position: absolute; inset: 0; background: #0f3557; }
-.pjv-layer--blueprint picture { position: relative; }
+/* SVG filter #pj-blueprint (in projects.html): grayscale → edge detection → blueprint-blue duotone.
+   The CSS-only chain before it is the fallback for engines without url() filters. */
+.pjv-layer--blueprint img { filter: grayscale(1) invert(1) contrast(1.4) sepia(1) hue-rotate(170deg) saturate(2.2) brightness(.8); filter: url('#pj-blueprint'); }
 .pjv-grid {
   position: absolute;
   inset: 0;
@@ -1198,8 +1199,11 @@ html[lang='ar'] .pjv-pg__dir { font-size: .75rem; }
 @media (min-width: 1024px) and (hover: hover) { .pjv-keys { display: block; padding-inline: clamp(1.5rem, 1rem + 1.2vw, 2.5rem); } }
 @media (max-width: 1023.98px) {
   .pjv-media { grid-template-rows: auto auto auto; }
-  .pjv-panel { overflow: visible; }
+  .pjv-panel { grid-template-rows: auto auto auto; overflow: visible; }
   .pjv-panel__inner { overflow: visible; }
+  .pjv-zoom { inset-block-end: .5rem; inset-inline-end: .5rem; }
+  .pjv-zoom__btn { inline-size: 40px; block-size: 36px; }
+  .pjv-zoom__value { min-inline-size: 2.75rem; font-size: .6875rem; }
 }
 @media (max-width: 639.98px) {
   .pjv-context { display: none; }
@@ -1210,6 +1214,8 @@ html[lang='ar'] .pjv-pg__dir { font-size: .75rem; }
   .pjv-pager { grid-template-columns: 1fr; }
   .pjv-pg + .pjv-pg { border-inline-start: 0; border-block-start: 1px solid var(--line); }
 }
+
+.pj-svgdefs { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; }
 
 /* ---------------------------------------------------------------- 5. CTA + SECTORS */
 .pj-cta__grid {
