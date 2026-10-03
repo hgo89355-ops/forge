@@ -884,6 +884,7 @@ html[lang='ar'] .ha-steps__node { letter-spacing: 0; text-transform: none; font-
 /* One closing CTA: the home page ends with its own "Have a project in mind?" panel (#hb-cta), so the footer's
    generic "Let's build what's next" block is hidden here (local stand-in for a shared body flag — docs/requests/home.md). */
 body[data-page='home'] .site-footer__cta { display: none; }
+body[data-page='home'] .site-footer__cta [data-reveal] { opacity: 1 !important; transform: none !important; } /* never observed while hidden */
 
 /* -------------------------------------------------------------------------
    Reduced motion & QA: no Ken Burns, no wipes, no split motion, steps stacked

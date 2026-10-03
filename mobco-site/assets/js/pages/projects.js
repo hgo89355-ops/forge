@@ -1510,6 +1510,7 @@ function onLanguage() {
    Boot
    ====================================================================== */
 function init() {
+  const arrivedFiltered = hasFilterParams(); // before syncUrl() rewrites the query (e.g. ?sector= → ?category=)
   readUrl();
   renderHeroCounts();
   initHeroRing();
@@ -1528,7 +1529,7 @@ function init() {
   onLang(onLanguage);
   const slug = slugFromHash();
   if (slug) whenLoaded().then(() => openProject(slug));
-  else if (E.explorer && hasFilterParams() && !location.hash) {
+  else if (E.explorer && arrivedFiltered && !location.hash) {
     // Arriving from "projects.html?sector=hotels" etc.: show the filtered results, not the top of the hero.
     whenLoaded().then(() => requestAnimationFrame(() => scrollTo(E.explorer, { immediate: true })));
   }
