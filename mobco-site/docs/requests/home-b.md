@@ -22,3 +22,8 @@ None of these block Part B: each one is already worked around locally in `home-b
 4. **Studio embed contract:** `<div id="studio-embed" data-studio-embed="mixed-use">` currently holds an SVG axonometric drawing.
    - If the 3D Studio ships an embeddable viewer, it can mount into `[data-studio-embed]` and replace the children.
    - `home-b.js` already tolerates the SVG disappearing.
+5. **Carousel drag snaps back (core `ui.js` setupCarousel).** This is reproducible on `styleguide.html` #sg-carousel.
+   - After a mouse drag and glide, core removes `.is-gliding` and calls `snapToNearest()`. That re-enables `scroll-snap-type: x mandatory` while the smooth `scrollBy` is in flight.
+   - Chrome then re-snaps to the *previously* snapped slide, so a 480px drag often ends back on slide 1.
+   - Suggested fix: keep snap disabled until the smooth snap ends. For example, remove `.is-gliding` on `scrollend` (with a timeout fallback) instead of before `scrollBy`. Alternatively, use `scroll-snap-type: none` for fine pointers.
+   - Worked around locally: `.hb-carousel__viewport { scroll-snap-type: none }` under `(hover: hover) and (pointer: fine)`. Touch keeps native snap.

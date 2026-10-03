@@ -207,7 +207,7 @@ export function build(THREE, ctx = {}) {
     teal: std('mobco-teal-accent', { color: '#6fd1c5', roughness: 0.35, metalness: 0.25, emissive: '#6fd1c5', emissiveIntensity: 0 }),
     lawn: std('lawn', { color: '#6b8c45', roughness: 1 }),
     hedge: std('hedge', { color: '#4c6a35', roughness: 0.95 }),
-    frond: std('palm-frond', { color: '#5a7a34', roughness: 0.85, side: THREE.DoubleSide }),
+    frond: std('palm-frond', { color: '#5a7a34', roughness: 0.85 }), // single-sided: the crown geometry carries both faces
     trunk: std('palm-trunk', { color: '#8f7759', roughness: 0.95 }),
     paving: std('forecourt-paving', { color: '#ffffff', map: paveTex, roughness: 0.82 }),
     drive: std('drive-granite', { color: '#a89f8f', roughness: 0.85 }),
@@ -561,7 +561,7 @@ export function build(THREE, ctx = {}) {
     // turret crowns: deep cornice + curved balustrade over the exterior arc
     for (const [tx, tz, sz] of TURRETS) {
       mesh(g, 'turret-cornice', cylGeo(tx, tz, TURRET_R + 0.4, y, 0.45, { seg: SEG / 2 }), M.trim);
-      mesh(g, 'turret-frieze', cylGeo(tx, tz, TURRET_R + 0.12, y - 0.85, 0.5, { seg: SEG / 2, open: true }), M.trim);
+      mesh(g, 'turret-frieze', cylGeo(tx, tz, TURRET_R + 0.12, y - 0.85, 0.5, { seg: SEG / 2 }), M.trim);
       const sx = Math.sign(tx);
       let t0 = -90 * DEG, t1 = 180 * DEG;                    // front-right exterior arc
       if (sz < 0) { [t0, t1] = [Math.PI - t1, Math.PI - t0]; }
@@ -611,7 +611,7 @@ export function build(THREE, ctx = {}) {
     for (let level = 1; level <= 3; level++) {
       const gl = floors[level], L = LEVELS[level], yb = L.y0 + SLAB, bh = 1.05;
       mesh(gl, 'drum-balcony-slab', cylGeo(DX, DZ, R, L.y0, SLAB), M.trim);
-      mesh(gl, 'drum-balcony-soffit-band', cylGeo(DX, DZ, R + 0.12, L.y0 + 0.06, 0.24, { t0: -ARC, tl: 2 * ARC, open: true }), M.trim);
+      mesh(gl, 'drum-balcony-edge-band', arcBandGeo(DX, DZ, R - 0.2, R + 0.12, L.y0 + 0.06, 0.24, -ARC, ARC), M.trim);
       mesh(gl, 'drum-balustrade', arcBandGeo(DX, DZ, R - 0.34, R - 0.06, yb, bh, -ARC, ARC), M.brick);
       mesh(gl, 'drum-balustrade-coping', arcBandGeo(DX, DZ, R - 0.42, R + 0.04, yb + bh, 0.12, -ARC, ARC), M.trim);
       for (let a = -76, i = 0; a <= 76; a += 9.5, i++) {
@@ -637,7 +637,7 @@ export function build(THREE, ctx = {}) {
       mesh(gl, 'drum-attic-wall', cylGeo(DX, DZ, RA, L.y0 + 0.5, L.h - 0.5, { tile: BRICK_TILE }), M.brick);
       mesh(gl, 'drum-attic-cornice', cylGeo(DX, DZ, RA + 0.4, top, 0.45), M.trim);
       mesh(gl, 'drum-attic-roof', cylGeo(DX, DZ, RA - 0.3, top + 0.45, 0.06), M.roof, false, true);
-      mesh(gl, 'drum-attic-frieze', cylGeo(DX, DZ, RA + 0.1, top - 0.75, 0.42, { open: true }), M.trim);
+      mesh(gl, 'drum-attic-frieze', cylGeo(DX, DZ, RA + 0.1, top - 0.75, 0.42), M.trim);
       for (let a = 0, i = 0; a < 360; a += 15, i++) {
         const t = a * DEG; if (a < 12 || a > 348) continue;
         windowAt(gl, DX + RA * Math.sin(t), DZ + RA * Math.cos(t), t, L.y0 + 0.95, 1.05, 1.15, { mullions: 1, transom: false });
@@ -858,7 +858,11 @@ function palmCrownGeometry(THREE, n, seg) {
       idx.push(c0, c1, c1 + 2, c0, c1 + 2, c0 + 2);       // other half
     }
   }
-  // small cluster at the crown base
+  // Duplicate every frond triangle with reversed winding so the material can stay FrontSide
+  // (the engine paints back faces with its section-cap colour).
+  const nv = pos.length / 3, nt = idx.length;
+  pos.push(...pos);
+  for (let i = 0; i < nt; i += 3) idx.push(idx[i] + nv, idx[i + 2] + nv, idx[i + 1] + nv);
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setIndex(idx);

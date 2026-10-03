@@ -793,7 +793,7 @@ html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-
 .careers-phone__code::after { inset-inline-end: 1rem; }
 [dir='rtl'] .careers-phone__num .field__input { text-align: right; }
 [dir='rtl'] #ap-email, [dir='rtl'] #ap-linkedin { text-align: right; }
-@media (max-width: 359.98px) { .careers-phone { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 479.98px) { .careers-phone { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); } }
 
 /* location choice tiles */
 .careers-choice { border: 0; margin: 0; padding: 0; min-inline-size: 0; }
@@ -852,6 +852,7 @@ html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-
 .careers-exp__readout { display: inline-flex; align-items: center; gap: .75rem; }
 .careers-exp__value { font-family: var(--font-display); font-size: var(--fs-h5); white-space: nowrap; min-inline-size: 7.5ch; text-align: end; }
 .careers-exp__ticks { padding-inline: 4px; font-variant-numeric: tabular-nums; }
+.careers-exp__ticks > span { direction: ltr; unicode-bidi: isolate; }
 .careers-exp .badge { transition: background var(--dur), color var(--dur); }
 @media (max-width: 479.98px) {
   .careers-exp .range__head { flex-wrap: wrap; }
@@ -927,6 +928,11 @@ html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-
 .careers-ask .h5 { margin: 0; }
 .careers-ask__row { display: grid; grid-template-columns: 4rem minmax(0, 1fr) auto; align-items: center; gap: .75rem; padding-block-start: var(--space-3); border-block-start: var(--hairline); }
 .careers-ask__row:first-of-type { margin-block-start: var(--space-2); }
+@media (max-width: 479.98px) {
+  .careers-ask__row { grid-template-columns: minmax(0, 1fr) auto; row-gap: .25rem; }
+  .careers-ask__label { grid-column: 1 / -1; }
+  .careers-ask__mail { white-space: nowrap; }
+}
 .careers-ask__mail { font-weight: 600; font-size: var(--fs-sm); color: var(--fg-strong); overflow-wrap: anywhere; direction: ltr; unicode-bidi: isolate; text-align: start; }
 [dir='rtl'] .careers-ask__mail { text-align: end; }
 .careers-ask__mail:hover { color: var(--teal-700); }

@@ -578,7 +578,11 @@ function flip(container, nextEls, animate) {
   $$(':scope > .is-ghost', container).forEach((g) => g.remove());
   const prev = new Map();
   if (doAnim) {
-    for (const el of container.children) prev.set(el, el.getBoundingClientRect());
+    for (const el of container.children) {
+      if (el.hidden) continue;
+      const r = el.getBoundingClientRect();
+      if (r.width || r.height) prev.set(el, r);
+    }
   }
   const keep = new Set(nextEls);
   const cRect = container.getBoundingClientRect();
@@ -606,6 +610,7 @@ function flip(container, nextEls, animate) {
   });
   let entering = 0;
   nextEls.forEach((el) => {
+    if (el.hidden) return;
     const first = prev.get(el);
     const last = el.getBoundingClientRect();
     if (first) {
@@ -629,6 +634,7 @@ function cardEl(p) {
   if (li) return li;
   li = document.createElement('li');
   li.className = 'pj-item';
+  li.id = p.slug;
   li.dataset.slug = p.slug;
   const loc = locText(p) || t(S.tbc);
   li.innerHTML = `
@@ -649,10 +655,14 @@ function cardEl(p) {
 }
 
 function renderGrid(list, animate) {
-  const shown = list.slice(0, state.limit);
-  const els = shown.map(cardEl);
-  els.forEach((el, i) => { el.querySelector('[data-idx]').textContent = pad(i + 1); });
+  // Every result stays in the DOM (so #<slug> anchors always resolve); cards past the "load more" limit are hidden.
+  const els = list.map(cardEl);
+  els.forEach((el, i) => {
+    el.querySelector('[data-idx]').textContent = pad(i + 1);
+    el.hidden = i >= state.limit;
+  });
   flip(E.grid, els, animate);
+  const shown = list.slice(0, state.limit);
   const rest = list.length - shown.length;
   E.more.hidden = rest <= 0;
   if (rest > 0) {

@@ -596,7 +596,7 @@ function formatExp(v, lang = getLang()) {
     if (n === 0) return 'أقل من سنة';
     if (n === 1) return 'سنة واحدة';
     if (n === 2) return 'سنتان';
-    if (max) return '30+ سنة';
+    if (max) return '\u206630+\u2069 سنة';
     if (n <= 10) return `${n} سنوات`;
     return `${n} سنة`;
   }

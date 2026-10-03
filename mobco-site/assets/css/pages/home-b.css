@@ -388,6 +388,9 @@ body[data-page='home'] .hb-projects__intro .h2 { max-inline-size: 16ch; }
 body[data-page='home'] .hb-projects__tools { display: flex; align-items: center; gap: var(--space-6); }
 body[data-page='home'] .hb-carousel { gap: clamp(2rem, 1.5rem + 2vw, 3.5rem); }
 body[data-page='home'] .hb-carousel__viewport { --slide-w: 84%; padding-block: var(--space-2) var(--space-3); cursor: grab; }
+/* Work-around (see docs/requests/home-b.md): with mandatory snap, Chrome re-snaps to the previously snapped slide when
+   core removes .is-gliding, undoing mouse drags. Fine pointers rely on core's JS snapToNearest; touch keeps native snap. */
+@media (hover: hover) and (pointer: fine) { body[data-page='home'] .hb-carousel__viewport { scroll-snap-type: none; } }
 @media (min-width: 640px) { body[data-page='home'] .hb-carousel__viewport { --slide-w: 54%; } }
 @media (min-width: 1024px) { body[data-page='home'] .hb-carousel__viewport { --slide-w: 37%; } }
 @media (min-width: 1800px) { body[data-page='home'] .hb-carousel__viewport { --slide-w: 30%; } }
