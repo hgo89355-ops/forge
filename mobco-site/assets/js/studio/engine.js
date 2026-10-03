@@ -28,16 +28,24 @@ const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 const now = () => performance.now();
 
 /** True when the browser can create a WebGL2 context (three.js r163+ requires WebGL2). */
+let gpuInfo = null;
 export function hasWebGL() {
   try {
     if (new URLSearchParams(location.search).get('nogl') === '1') return false;
     const c = document.createElement('canvas');
     const gl = c.getContext('webgl2');
     const ok = !!gl;
+    if (gl && !gpuInfo) {
+      let name = '';
+      try { const ext = gl.getExtension('WEBGL_debug_renderer_info'); name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : ''; } catch { /* ignore */ }
+      gpuInfo = { renderer: name, software: /swiftshader|llvmpipe|softpipe|software|microsoft basic render/i.test(name) };
+    }
     gl?.getExtension('WEBGL_lose_context')?.loseContext();
     return ok;
   } catch { return false; }
 }
+/** { renderer, software } of the WebGL implementation (software = CPU rasteriser such as SwiftShader). */
+export function gpu() { if (!gpuInfo) hasWebGL(); return gpuInfo || { renderer: '', software: false }; }
 
 /* ---------------------------------------------------------------- model module loading (cached) */
 const moduleCache = new Map();
@@ -77,10 +85,13 @@ export function createStudio(container, options = {}) {
     hotspots: true,
     ...options,
   };
-  const lowEnd = mobile || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+  // CPU rasterisers (SwiftShader, llvmpipe — e.g. no GPU, blocklisted drivers, headless CI) get a
+  // low-power profile: no MSAA, DPR 1 × 0.75, small shadow map, no ambient animation, no thumbnails.
+  const lowPower = gpu().software || opts.lowPower === true;
+  const lowEnd = mobile || lowPower || (navigator.hardwareConcurrency || 8) <= 2 || (navigator.deviceMemory || 8) <= 2;
   const quality = opts.quality === 'auto' ? (opts.compact || lowEnd ? 'low' : 'high') : opts.quality;
-  const dprCap = mobile ? 1.5 : 2;
-  let dprScale = 1; // adaptive (lowered when frames are slow)
+  const dprCap = lowPower ? 1 : mobile ? 1.5 : 2;
+  let dprScale = lowPower ? 0.75 : 1; // adaptive (lowered when frames are slow)
 
   /* -------------------------------------------------------------- events */
   const listeners = new Map();
@@ -88,7 +99,7 @@ export function createStudio(container, options = {}) {
   const emit = (type, detail) => listeners.get(type)?.forEach((cb) => { try { cb(detail); } catch (e) { console.error('[studio] listener error', e); } });
 
   /* -------------------------------------------------------------- renderer */
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: false });
+  const renderer = new THREE.WebGLRenderer({ antialias: !lowPower, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: false });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
@@ -221,7 +232,7 @@ export function createStudio(container, options = {}) {
     width = Math.max(1, Math.round(rect.width));
     height = Math.max(1, Math.round(rect.height));
     const dpr = Math.min(window.devicePixelRatio || 1, dprCap) * dprScale;
-    renderer.setPixelRatio(Math.max(0.6, dpr));
+    renderer.setPixelRatio(Math.max(0.5, dpr));
     renderer.setSize(width, height, false);
     const aspect = width / height;
     camera.aspect = aspect;
@@ -277,12 +288,12 @@ export function createStudio(container, options = {}) {
   /* -------------------------------------------------------------- adaptive quality */
   const perf = { frames: 0, acc: 0, checks: 0 };
   function samplePerf(dt) {
-    if (perf.checks >= 3 || dprScale <= 0.6) return;
+    if (perf.checks >= 3 || dprScale <= 0.5) return;
     perf.frames++; perf.acc += dt;
     if (perf.frames >= 45) {
       const avg = perf.acc / perf.frames;
       perf.frames = 0; perf.acc = 0; perf.checks++;
-      if (avg > 0.045) { dprScale = Math.max(0.6, dprScale * 0.8); resize(); }
+      if (avg > 0.045) { dprScale = Math.max(0.5, dprScale * 0.8); resize(); }
     }
   }
 
@@ -319,7 +330,7 @@ export function createStudio(container, options = {}) {
       applyViewOffset();
       dirty = true;
     }
-    if (model?.update) {
+    if (model?.update && (!lowPower || dirty)) {
       try { model.update(dt, elapsed); } catch (e) { console.warn('[studio] model update failed', e); model.update = null; }
       dirty = true;
     }
@@ -992,7 +1003,7 @@ export function createStudio(container, options = {}) {
   syncLoop();
 
   const api = {
-    THREE, renderer, scene, camera, controls, canvas, quality,
+    THREE, renderer, scene, camera, controls, canvas, quality, lowPower,
     on, load, setView, setExplode, setSection, setMode, setTime, setAutoRotate, setHotspots, setInsets,
     select, selectStep, focusPoint, focusAt, zoom, reset, snapshot, renderThumbnail, getState, invalidate, dispose, setControlsEnabled,
     get model() { return model ? { id: model.id, meta: model.meta, floors: model.floors.map((f, i) => floorInfo(i)) } : null; },

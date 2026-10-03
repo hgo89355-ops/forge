@@ -674,7 +674,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   /* ============================================================ thumbnails (idle, sequential) */
   let thumbsQueued = false;
   function queueThumbnails() {
-    if (!engine || thumbsQueued) return;
+    if (!engine || thumbsQueued || engine.lowPower) return; // keep software renderers responsive (icons stay)
     if (navigator.connection?.saveData) return;
     thumbsQueued = true;
     const ids = entries.map((e) => e.id).filter((id) => !store.get(THUMB_KEY(id), 'session'));

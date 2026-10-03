@@ -13,9 +13,9 @@
 import { t, onLang } from '../core/i18n.js';
 import { scan, onScroll, getLenis } from '../core/motion.js';
 import { scanUI } from '../core/ui.js';
-import { $, $$, esc, icon, clamp, debounce, rafThrottle, prefersReducedMotion, isRTL, wait } from '../core/utils.js';
+import { $, $$, esc, icon, clamp, debounce, rafThrottle, prefersReducedMotion, isRTL, wait, picture } from '../core/utils.js';
 import { whenLoaded } from '../core/preloader.js';
-import { getSubsidiary, getOffice } from '../data/site-data.js';
+import { getSubsidiary, getOffice, getProject, PROJECTS, projectUrl } from '../data/site-data.js';
 
 /* ------------------------------------------------------------------ page config */
 // slug = section id on this page; id = SUBSIDIARIES id (also used as cross-page anchor by the footer/search)
@@ -63,38 +63,44 @@ const S = {
   live: { en: 'Recommended company:', ar: 'الشركة المقترحة:' },
   step2: { en: 'Step 2 of 2: Where is your project?', ar: 'الخطوة 2 من 2: أين يقع مشروعك؟' },
   step1: { en: 'Step 1 of 2: What would you like to do?', ar: 'الخطوة 1 من 2: ماذا تريد أن تفعل؟' },
+  more: { en: 'Read more', ar: 'اقرأ المزيد' },
+  less: { en: 'Show less', ar: 'عرض أقل' },
+  portfolio: { en: 'From the group portfolio:', ar: 'من محفظة المجموعة:' },
+  hospitalityCount: { en: 'hospitality projects in the group portfolio', ar: 'مشروعًا في قطاع الضيافة ضمن محفظة المجموعة' },
+  viewProject: { en: 'View project', ar: 'عرض المشروع' },
+  representative: { en: 'Representative imagery', ar: 'صورة تعبيرية' },
 };
 const NEEDS = {
   build: {
     slug: 'construction',
     label: { en: 'Build', ar: 'البناء' },
     why: {
-      en: 'You’re planning to build — MOBCO Construction carries the group’s contracting heritage, from high-rise and commercial to civic and educational buildings.',
-      ar: 'تخطّط للبناء — وموبكو للإنشاءات تحمل إرث المجموعة في المقاولات، من الأبراج والمنشآت التجارية إلى المباني الحكومية والتعليمية.',
+      en: 'MOBCO Construction is the construction arm of MOBCO Group — founded in 2001, with tier-one status and projects spanning Saudi Arabia, Canada, the UK and Egypt.',
+      ar: 'موبكو للإنشاءات هي الذراع الإنشائية لمجموعة موبكو — تأسّست عام 2001، وتحظى بتصنيف الفئة الأولى، وتمتد مشاريعها عبر المملكة العربية السعودية وكندا والمملكة المتحدة ومصر.',
     },
   },
   develop: {
     slug: 'developments',
     label: { en: 'Develop', ar: 'التطوير' },
     why: {
-      en: 'You’re creating a place — MOBCO Developments focuses on communities and mixed-use destinations.',
-      ar: 'تسعى إلى إنشاء وجهة متكاملة — وموبكو للتطوير تركّز على تطوير المجتمعات والوجهات متعددة الاستخدامات.',
+      en: 'MOBCO Developments is the group’s development arm, focused on transforming prime locations in Canada and Egypt through innovative, high-quality projects.',
+      ar: 'موبكو للتطوير هي ذراع التطوير في المجموعة، وتركّز على تحويل مواقع متميّزة في كندا ومصر من خلال مشاريع مبتكرة عالية الجودة.',
     },
   },
   invest: {
     slug: 'real-estate',
-    label: { en: 'Invest', ar: 'الاستثمار' },
+    label: { en: 'Lease or invest', ar: 'التأجير أو الاستثمار' },
     why: {
-      en: 'You’re looking for real estate value — MOBCO Real Estate Development creates residential and commercial assets for long-term value.',
-      ar: 'تبحث عن قيمة عقارية — وموبكو للتطوير العقاري تُنشئ أصولًا سكنية وتجارية ذات قيمة طويلة الأمد.',
+      en: 'MOBCO Real Estate Development specializes in leasing and property management for multi-functional buildings — its flagship is Mivida Business Park, B1, in Cairo.',
+      ar: 'تتخصّص موبكو للتطوير العقاري في تأجير وإدارة العقارات للمباني متعددة الوظائف — ومشروعها الرئيسي مجمّع ميفيدا للأعمال، المبنى B1، في القاهرة.',
     },
   },
   educate: {
     slug: 'education',
     label: { en: 'Educate', ar: 'التعليم' },
     why: {
-      en: 'You’re focused on learning — Elite Education Group is the group’s education arm, developing and managing learning environments.',
-      ar: 'تهتمّ بالتعليم — ومجموعة النخبة التعليمية هي الذراع التعليمية للمجموعة، وتُعنى بتطوير البيئات التعليمية وإدارتها.',
+      en: 'Elite Education Group is the group’s education arm, developing and managing learning environments as part of a vertically integrated group.',
+      ar: 'مجموعة النخبة التعليمية هي الذراع التعليمية للمجموعة، وتُعنى بتطوير البيئات التعليمية وإدارتها ضمن مجموعةٍ متكاملة رأسيًا.',
     },
   },
 };
@@ -112,19 +118,62 @@ const REGIONS = {
 };
 
 /* ------------------------------------------------------------------ 2. hydration from data */
+// Projects shown under MOBCO Construction ("Selected group projects") — real portfolio entries with photos.
+const WORK = ['as-safiyyah-museum-park', 'raffles-hotel-residence', 'al-moosa-specialist-hospital', 'neom-bay-airport'];
+const openAbout = new Set();
+
+function renderAbout(root, s) {
+  const mount = $('[data-sub-about]', root);
+  if (!mount) return;
+  const paras = s.about && s.about.length ? s.about : [s.long];
+  const open = openAbout.has(s.id);
+  const first = paras.slice(0, 2), rest = paras.slice(2);
+  const pid = `${s.id}-more`;
+  mount.innerHTML = first.map((p, i) => `<p${i === 0 ? ' class="subs-co__lede"' : ''}>${esc(t(p))}</p>`).join('') +
+    (rest.length ? `<div class="subs-co__more" id="${pid}"${open ? '' : ' hidden'}>${rest.map((p) => `<p>${esc(t(p))}</p>`).join('')}</div>
+      <button class="subs-co__toggle" type="button" aria-expanded="${open}" aria-controls="${pid}" data-about-toggle="${esc(s.id)}"><span>${esc(t(open ? S.less : S.more))}</span>${icon(open ? 'minus' : 'plus', 'icon--sm')}</button>` : '');
+}
+
 function hydrate() {
   $$('[data-sub]').forEach((root) => {
     const s = getSubsidiary(root.getAttribute('data-sub'));
     if (!s) return;
     $$('[data-sub-field]', root).forEach((el) => {
-      const v = s[el.getAttribute('data-sub-field')];
+      const key = el.getAttribute('data-sub-field');
+      const v = s[key] || (key === 'tagline' ? s.short : null);
       if (v) el.textContent = t(v);
     });
+    const facts = $('[data-sub-facts]', root);
+    if (facts && s.facts) facts.innerHTML = s.facts.map((f) => `<li>${esc(t(f))}</li>`).join('');
+    renderAbout(root, s);
     const focus = $('[data-sub-focus]', root);
     if (focus) {
       const cfg = COS.find((c) => c.id === s.id);
       focus.innerHTML = s.focus.map((f, i) => `<li><span class="subs-co__focus-icon">${icon(cfg?.icons[i] || 'check')}</span><span>${esc(t(f))}</span></li>`).join('');
     }
+  });
+  const work = $('[data-sub-work]');
+  if (work) {
+    work.innerHTML = WORK.map(getProject).filter(Boolean).map((p) => `
+      <li><a class="subs-work" href="${esc(projectUrl(p))}" data-cursor="view">
+        <span class="subs-work__media">${picture(p.image, { alt: '', thumb: true, position: p.pos || '' })}</span>
+        <span class="subs-work__name">${esc(t(p.name))}</span>
+        ${p.location ? `<span class="subs-work__loc">${esc(t(p.location))}</span>` : ''}
+      </a></li>`).join('');
+  }
+}
+
+function initAboutToggles() {
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest?.('[data-about-toggle]');
+    if (!btn) return;
+    const id = btn.getAttribute('data-about-toggle');
+    if (openAbout.has(id)) openAbout.delete(id); else openAbout.add(id);
+    const root = btn.closest('[data-sub]');
+    renderAbout(root, getSubsidiary(id));
+    const nb = $('[data-about-toggle]', root);
+    nb?.focus({ preventScroll: true });
+    if (openAbout.has(id)) { const more = $('.subs-co__more', root); more?.classList.add('is-entering'); }
   });
 }
 
@@ -415,12 +464,37 @@ function initCaps() {
   const imgs = $$('[data-caps-img]', media);
   const count = $('[data-caps-count]', media);
   const items = $$('[data-caps]', acc);
+  const caption = $('[data-caps-caption] span', media);
+  // caption per image: real portfolio projects are named; the office interior is representative
+  const CAPTION = { hospitality: 'raffles-hotel-residence', facility: null, project: 'hq-tower-masjid-museum', integrated: 'as-safiyyah-museum-park' };
+  let current = 'hospitality';
+  const renderCaption = () => {
+    if (!caption) return;
+    const p = CAPTION[current] ? getProject(CAPTION[current]) : null;
+    caption.removeAttribute('data-ar');
+    caption.textContent = p ? `${t(S.portfolio)} ${t(p.name)}` : t(S.representative);
+  };
   const show = (key) => {
+    current = key;
     imgs.forEach((p) => p.classList.toggle('is-active', p.getAttribute('data-caps-img') === key));
     const i = items.findIndex((it) => it.getAttribute('data-caps') === key);
     if (count && i >= 0) count.textContent = String(i + 1).padStart(2, '0');
     media.setAttribute('data-active', key);
+    renderCaption();
   };
+  // hospitality: list the group's hospitality projects from the portfolio data
+  const port = $('[data-caps-portfolio="hospitality"]');
+  const renderPortfolio = () => {
+    if (!port) return;
+    const list = PROJECTS.filter((p) => p.category === 'hospitality');
+    if (!list.length) return;
+    port.hidden = false;
+    $('[data-caps-portfolio-title]', port).innerHTML = `<span class="num">${list.length}</span> ${esc(t(S.hospitalityCount))}`;
+    $('[data-caps-portfolio-list]', port).innerHTML = list.map((p) => `<li><a class="subs-caps__chip" href="${esc(projectUrl(p))}">${esc(t(p.name))}</a></li>`).join('');
+  };
+  renderPortfolio();
+  renderCaption();
+  onLang(() => { renderPortfolio(); renderCaption(); });
   acc.addEventListener('accordionchange', (e) => {
     const { item, open } = e.detail || {};
     if (open && item) show(item.getAttribute('data-caps'));
@@ -558,6 +632,7 @@ function initFinder() {
         <div class="subs-result__body">
           <p class="eyebrow">${esc(t(S.recommendation))}</p>
           <h3 class="subs-result__name">${esc(t(s.name))}</h3>
+          ${s.tagline ? `<p class="subs-result__tagline">${esc(t(s.tagline))}</p>` : ''}
           <p class="subs-result__why">${esc(t(need.why))}</p>
           <dl class="subs-result__summary">
             <div><dt>${esc(t(S.yourNeed))}</dt><dd>${esc(t(need.label))}</dd></div>
@@ -595,6 +670,7 @@ function initFinder() {
 /* ------------------------------------------------------------------ boot */
 function init() {
   hydrate();
+  initAboutToggles();
   initHero();
   initOrg();
   initSpy();

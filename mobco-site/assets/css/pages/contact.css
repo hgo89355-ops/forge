@@ -50,7 +50,7 @@ body[data-page='contact'] {
 }
 .contact-hero__copy { display: grid; gap: var(--space-5); justify-items: start; min-inline-size: 0; }
 .contact-hero__title { max-inline-size: 11ch; }
-html[lang='ar'] .contact-hero__title { max-inline-size: 14ch; }
+html[lang='ar'] .contact-hero__title { max-inline-size: 20ch; }
 @media (min-width: 1024px) {
   .contact-hero__inner { grid-template-columns: minmax(0, 1fr) minmax(340px, 400px); column-gap: var(--space-10); }
 }
@@ -904,6 +904,7 @@ html[lang='ar'] .contact-review__row dt { font-size: .875rem; font-weight: 600; 
 .contact-route__icon .icon { --icon-size: 20px; }
 .contact-route__text { font-size: var(--fs-sm); color: var(--fg); }
 .contact-route__text strong { color: var(--fg-strong); font-weight: 600; }
+.contact-route__text bdi, .contact-success__text bdi { white-space: nowrap; }
 
 /* wizard navigation */
 .contact-wizard__nav {

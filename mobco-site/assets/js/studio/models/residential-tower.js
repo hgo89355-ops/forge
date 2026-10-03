@@ -373,17 +373,15 @@ export function build(THREE, ctx = {}) {
   function glowBoxGeo(w, h, d, row) {
     const g = G(new THREE.BoxGeometry(w, h, d));
     const uv = g.attributes.uv;
-    const faceW = [d, d, w, w, w, d]; // px, nx, py, ny, pz, nz
     const u0 = Math.floor(rand() * GLOW_COLS) / GLOW_COLS;
     for (let i = 0; i < uv.count; i++) {
       const f = Math.floor(i / 4);
       if (f === 2 || f === 3) { uv.setXY(i, 0.5 / GLOW_COLS, 0.5 / GLOW_ROWS); continue; }
-      const fw = f === 4 || f === 5 ? w : d;
+      const fw = f === 4 || f === 5 ? w : d; // BoxGeometry face order: px, nx, py, ny, pz, nz
       const u = uv.getX(i) * fw / (GLOW_BAY * GLOW_COLS) + u0 + f * 0.27;
       const v = (row + uv.getY(i)) / GLOW_ROWS;
       uv.setXY(i, u, v);
     }
-    void faceW;
     return g;
   }
 
@@ -962,7 +960,7 @@ export function build(THREE, ctx = {}) {
     fillRow(rowA, 0, HIGH ? 0.5 : 0.35); fillRow(rowB, 0, HIGH ? 0.45 : 0.3); fillRow(rowC, 0, HIGH ? 0.45 : 0.3);
     const carMats = [mat.carWhite, mat.carSilver, mat.carDark, mat.carBlue];
     const carGroups = [[], [], [], []];
-    carSlots.forEach((c, i) => carGroups[Math.floor(rand() * 4) % 4].push(c));
+    carSlots.forEach((c) => carGroups[Math.floor(rand() * 4) % 4].push(c));
     carGroups.forEach((grp, i) => addInstances(S, `site-cars-${i}`, UNIT, carMats[i], grp.map(([x, z]) => [x, 0.06 + 0.4 + 0.12, z, 0, 1.8, 0.8, 4.4])));
     addInstances(S, 'site-cars-cabins', UNIT, mat.carGlass, carSlots.map(([x, z]) => [x, 0.06 + 0.92 + 0.22, z + 0.15, 0, 1.6, 0.46, 2.2]), true, false);
     // a couple of cars on the road

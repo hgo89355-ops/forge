@@ -605,11 +605,11 @@ function initWizard() {
       const ltr = ['email', 'phone'].includes(f.k) ? ' dir="ltr"' : '';
       return `<div class="contact-review__row"><dt>${esc(t(f.label))}</dt>` +
         `<dd class="${val ? '' : 'is-empty'}"${ltr}>${esc(val || t(S.notProvided))}</dd>` +
-        `<button class="contact-review__edit" type="button" data-edit="${f.step}" aria-label="${esc(`${t(S.edit)}: ${t(f.label)}`)}">${icon('pencil-ruler')}<span>${esc(t(S.edit))}</span></button></div>`;
+        `<button class="contact-review__edit" type="button" data-edit="${f.step}" aria-label="${esc(`${t(S.edit)}: ${t(f.label)}`)}"><span>${esc(t(S.edit))}</span></button></div>`;
     }).join('');
     const r = routeOf(v.region);
     const tpl = v.region === 'other' ? S.routeOther : S.route;
-    $('[data-wizard-route-text]', form).innerHTML = fmt(t(tpl), { office: esc(t(r === 'egypt' ? S.officeEgypt : S.officeKsa)), email: esc(EMAIL[r]) });
+    $('[data-wizard-route-text]', form).innerHTML = fmt(t(tpl), { office: esc(t(r === 'egypt' ? S.officeEgypt : S.officeKsa)), email: `<bdi dir="ltr">${esc(EMAIL[r])}</bdi>` });
   };
 
   /* step navigation */
@@ -755,7 +755,7 @@ function initWizard() {
   };
   const renderSuccess = (truncated = false) => {
     if (!last) return;
-    $('[data-success-text]', success).innerHTML = fmt(t(S.successText), { email: esc(last.to) }) + (truncated ? ` ${esc(t(S.truncated))}` : '');
+    $('[data-success-text]', success).innerHTML = fmt(t(S.successText), { email: `<bdi dir="ltr">${esc(last.to)}</bdi>` }) + (truncated ? ` ${esc(t(S.truncated))}` : '');
     $('[data-success-ref]', success).textContent = last.ref;
     $('[data-success-alt]', success).textContent = fmt(t(S.successAlt), { email: last.to });
   };

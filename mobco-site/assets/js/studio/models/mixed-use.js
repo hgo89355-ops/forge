@@ -145,7 +145,7 @@ export function build(THREE, ctx = {}) {
     metalLight:std('metal-light', { color: 0xcfd2d2, roughness: 0.4, metalness: 0.5 }),
     spandrel:  std('spandrel-glass', { color: 0x26343e, roughness: 0.18, metalness: 0.35, envMapIntensity: 1.2 }),
     glass: phys('glass', { color: 0x4d6e82, metalness: 0.1, roughness: 0.05, transmission: 0, transparent: true,
-      opacity: 0.5, envMapIntensity: 1.2, depthWrite: false }),  // FrontSide: thin boxes → exactly one layer
+      opacity: 0.46, envMapIntensity: 1.2, depthWrite: false }),  // FrontSide: thin boxes → exactly one layer
     glassShop: phys('glass-shopfront', { color: 0x7d9cab, metalness: 0.1, roughness: 0.05, transparent: true,
       opacity: 0.38, envMapIntensity: 1.2, depthWrite: false }),
     deck:      std('timber-deck', { color: 0xb38d68, roughness: 0.8 }),
@@ -179,6 +179,12 @@ export function build(THREE, ctx = {}) {
       emissive: 0xbfeeff, emissiveIntensity: 0 }),
   };
   ripple.repeat.set(5, 1.2);
+  // HDR emissive peaks (linear, > 1) so lit interiors still read warmly through the tinted glass at night.
+  M.ceiling.emissive.setRGB(1.5, 1.0, 0.58);
+  M.floorFin.emissive.setRGB(0.55, 0.36, 0.2);
+  M.core.emissive.setRGB(0.7, 0.46, 0.26);
+  M.strip.emissive.setRGB(3.2, 2.8, 2.2);
+  M.shop.emissive.setRGB(1.7, 1.05, 0.5);
   const nightMaterials = [M.ceiling, M.floorFin, M.core, M.strip, M.shop, M.lampHead, M.sign, M.signTeal, M.water, M.jet];
 
   /* ---------- shared geometries ------------------------------------ */
@@ -652,7 +658,7 @@ export function build(THREE, ctx = {}) {
   for (const z of [17, 31]) sk.box('benches', M.stoneWarm, -40.5, 0.35, z, 0.8, 0.46, 3.6);
   const bollards = [];
   for (let x = PL.cx - PL.len / 2 + 2; x <= PL.cx + PL.len / 2 - 2; x += 7.3) bollards.push([x, PL.cz - PL.wid / 2 - 1.6], [x, PL.cz + PL.wid / 2 + 1.6]);
-  for (const [x, z] of bollards) { sk.box('bollards', M.metal, x, 0.5, z, 0.18, 0.76, 0.18); sk.box('bollard-heads', M.lampHead, x, 0.92, z, 0.2, 0.08, 0.2); }
+  for (const [x, z] of bollards) { sk.box('bollards', M.metalLight, x, 0.5, z, 0.18, 0.76, 0.18); sk.box('bollard-heads', M.lampHead, x, 0.92, z, 0.2, 0.08, 0.2); }
   const poleSpots = [];
   for (let x = -60; x <= 62; x += 15.25) poleSpots.push([x, 38.6]);
   for (let x = -54; x <= 60; x += 19) poleSpots.push([x, -44]);
@@ -743,7 +749,7 @@ export function build(THREE, ctx = {}) {
   let tries = 0;
   while (figs.length < (HIGH ? 70 : 34) && tries++ < 800) {
     const x = rr(-38, 60), z = rr(-17, 38);
-    if (blocked(x, z)) continue;
+    if (blocked(x, z) || Math.hypot(x - meta.camera.street[0], z - meta.camera.street[2]) < 9) continue;
     figs.push(mtx(x, 0.12, z, 1, rr(0.92, 1.08), 1));
   }
   instanced(site, 'scale-figures', figGeo, M.figure, figs);

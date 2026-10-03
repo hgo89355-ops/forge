@@ -127,7 +127,28 @@
       <ul class="site-nav__list" role="list">
       <li class="site-nav__item"><a class="site-nav__link" href="index.html" data-nav="home" data-ar="الرئيسية">Home</a></li>
       <li class="site-nav__item"><a class="site-nav__link" href="about.html" data-nav="about" data-ar="من نحن">About</a></li>
-      <li class="site-nav__item"><a class="site-nav__link" href="subsidiaries.html" data-nav="subsidiaries" data-ar="الشركات التابعة">Subsidiaries</a></li>
+      <li class="site-nav__item" data-mega>
+        <a class="site-nav__link" href="subsidiaries.html" data-nav="subsidiaries" data-ar="الشركات التابعة">Subsidiaries</a>
+        <button class="site-nav__toggle" type="button" data-mega-toggle aria-expanded="false" aria-controls="mega-subsidiaries" aria-label="Show subsidiaries" data-ar-aria-label="عرض الشركات التابعة"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-down"></use></svg></button>
+        <div class="mega" id="mega-subsidiaries">
+          <div class="container container--wide mega__inner">
+            <div class="mega__intro">
+              <p class="eyebrow" data-ar="الشركات التابعة">Subsidiaries</p>
+              <p class="mega__title" data-ar="مجموعة واحدة، شركات متخصّصة">One group, specialised companies</p>
+              <p class="mega__text" data-ar="الإنشاءات والتطوير والتطوير العقاري والتعليم — تحت مظلّة مجموعة موبكو.">Construction, development, real estate and education — under the MOBCO Group umbrella.</p>
+              <div class="mega__links">
+                <a class="link-arrow" href="subsidiaries.html"><span data-ar="جميع الشركات التابعة">All subsidiaries</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span></a>
+              </div>
+            </div>
+            <ul class="mega__grid" role="list">
+              <li><a class="mega__card" href="mobco-construction.html"><span class="mega__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/sub-construction-hero.webp"><img src="assets/img/thumbs/sub-construction-hero.jpg" alt="" width="480" height="227" loading="lazy" decoding="async" style="--pos:60% 50%"></picture></span><span class="mega__name" data-ar="موبكو للإنشاءات">MOBCO Construction</span><span class="mega__loc" data-ar="نرتقي بمعايير الصناعة">Elevating industry standards</span></a></li>
+              <li><a class="mega__card" href="mobco-developments.html"><span class="mega__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/sub-developments-hero.webp"><img src="assets/img/thumbs/sub-developments-hero.jpg" alt="" width="480" height="229" loading="lazy" decoding="async" style="--pos:50% 40%"></picture></span><span class="mega__name" data-ar="موبكو للتطوير">MOBCO Developments</span><span class="mega__loc" data-ar="نصنع المعالم ونرسم ملامح التميّز">Creating landmarks, defining excellence</span></a></li>
+              <li><a class="mega__card" href="mobco-real-estate.html"><span class="mega__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/sub-real-estate-hero.webp"><img src="assets/img/thumbs/sub-real-estate-hero.jpg" alt="" width="480" height="225" loading="lazy" decoding="async" style="--pos:50% 50%"></picture></span><span class="mega__name" data-ar="موبكو للتطوير العقاري">MOBCO Real Estate</span><span class="mega__loc" data-ar="نُبسّط إدارة العقارات">Simplifying property management</span></a></li>
+              <li><a class="mega__card" href="subsidiaries.html#education"><span class="mega__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp"><img src="assets/img/thumbs/campus.jpg" alt="" width="480" height="415" loading="lazy" decoding="async" style="--pos:50% 45%"></picture></span><span class="mega__name" data-ar="مجموعة النخبة التعليمية">Elite Education Group</span><span class="mega__loc" data-ar="التعليم">Education</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </li>
       <li class="site-nav__item" data-mega>
         <a class="site-nav__link" href="projects.html" data-nav="projects" data-ar="المشاريع">Projects</a>
         <button class="site-nav__toggle" type="button" data-mega-toggle aria-expanded="false" aria-controls="mega-projects" aria-label="Show featured projects" data-ar-aria-label="عرض المشاريع المميّزة"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-down"></use></svg></button>
@@ -171,7 +192,13 @@
     <ul class="mobile-nav__list" role="list">
       <li class="mobile-nav__item"><a class="mobile-nav__link" href="index.html" data-nav="home" style="--i:0"><small>01</small><span data-ar="الرئيسية">Home</span></a></li>
       <li class="mobile-nav__item"><a class="mobile-nav__link" href="about.html" data-nav="about" style="--i:1"><small>02</small><span data-ar="من نحن">About</span></a></li>
-      <li class="mobile-nav__item"><a class="mobile-nav__link" href="subsidiaries.html" data-nav="subsidiaries" style="--i:2"><small>03</small><span data-ar="الشركات التابعة">Subsidiaries</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="subsidiaries.html" data-nav="subsidiaries" style="--i:2"><small>03</small><span data-ar="الشركات التابعة">Subsidiaries</span></a>
+        <ul class="mobile-nav__sub" role="list" style="--i:2">
+          <li><a href="mobco-construction.html" data-ar="موبكو للإنشاءات">MOBCO Construction</a></li>
+          <li><a href="mobco-developments.html" data-ar="موبكو للتطوير">MOBCO Developments</a></li>
+          <li><a href="mobco-real-estate.html" data-ar="موبكو للتطوير العقاري">MOBCO Real Estate</a></li>
+        </ul>
+      </li>
       <li class="mobile-nav__item"><a class="mobile-nav__link" href="projects.html" data-nav="projects" style="--i:3"><small>04</small><span data-ar="المشاريع">Projects</span></a></li>
       <li class="mobile-nav__item"><a class="mobile-nav__link" href="studio.html" data-nav="studio" style="--i:4"><small>05</small><span data-ar="الاستوديو ثلاثي الأبعاد">3D Studio</span></a></li>
       <li class="mobile-nav__item"><a class="mobile-nav__link" href="media.html" data-nav="media" style="--i:5"><small>06</small><span data-ar="المركز الإعلامي">Media</span></a></li>
