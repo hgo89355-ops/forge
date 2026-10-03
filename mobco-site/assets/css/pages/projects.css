@@ -333,7 +333,8 @@ html[lang='ar'] .pj-tab__label { font-size: .875rem; letter-spacing: 0; text-tra
 @media (min-width: 768px) {
   .pj-toolbar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'regions views' 'search sort'; align-items: center; column-gap: var(--space-4); }
 }
-@media (min-width: 768px) and (max-width: 1359.98px) { .pj-vt { padding-inline: .625rem; } }
+@media (min-width: 768px) and (max-width: 1359.98px) { .pj-vt { padding-inline: .5rem; } .pj-region { padding-inline: .6875rem; } }
+@media (min-width: 768px) and (max-width: 1023.98px) { .pj-region > .icon { display: none; } }
 @media (min-width: 1360px) {
   .pj-toolbar { grid-template-columns: auto minmax(220px, 1fr) auto auto; grid-template-areas: 'regions search sort views'; gap: var(--space-4); }
 }

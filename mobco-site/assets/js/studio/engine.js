@@ -26,6 +26,7 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 const now = () => performance.now();
+const DAY_ENV_INTENSITY = 0.82; // scene.environmentIntensity at full daylight (environment.js: 0.07 + 0.75)
 
 /** True when the browser can create a WebGL2 context (three.js r163+ requires WebGL2). */
 let gpuInfo = null;
@@ -415,6 +416,48 @@ export function createStudio(container, options = {}) {
     if (k >= 1) { tween = null; emit('viewend', {}); }
   }
 
+  /* Fit-to-free-area: smallest pull-back factor (≥ 1) along the current view direction that keeps a box
+     (the buildings, optionally exploded) inside the canvas area not covered by the UI panels. */
+  const fitCam = new THREE.PerspectiveCamera();
+  const fitTmp = new THREE.Vector3(), fitV = new THREE.Vector3();
+  function boxFits(pos, target, box, rect) {
+    fitCam.position.copy(pos);
+    fitCam.lookAt(target);
+    fitCam.updateMatrixWorld();
+    for (let i = 0; i < 8; i++) {
+      fitV.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(fitCam);
+      if (fitV.z > 1 || fitV.x < rect.x0 || fitV.x > rect.x1 || fitV.y < rect.y0 || fitV.y > rect.y1) return false;
+    }
+    return true;
+  }
+  function fitFactor(pos, target, box) {
+    if (!box || box.isEmpty()) return 1;
+    fitCam.copy(camera, false);
+    if (Math.abs(offset.tx) >= 0.5 || Math.abs(offset.ty) >= 0.5) fitCam.setViewOffset(width, height, offset.tx, offset.ty, width, height);
+    else fitCam.clearViewOffset();
+    fitCam.updateProjectionMatrix();
+    const m = 0.04;
+    const rect = {
+      x0: -1 + (2 * insets.left) / width + m, x1: 1 - (2 * insets.right) / width - m,
+      y0: -1 + (2 * insets.bottom) / height + m, y1: 1 - (2 * insets.top) / height - m,
+    };
+    if (rect.x1 - rect.x0 < 0.3 || rect.y1 - rect.y0 < 0.3) return 1;
+    const dir = pos.clone().sub(target);
+    const fits = (k) => boxFits(fitTmp.copy(target).addScaledVector(dir, k), target, box, rect);
+    if (fits(1)) return 1;
+    let lo = 1, hi = 1.5;
+    while (!fits(hi) && hi < 4) { lo = hi; hi *= 1.4; }
+    if (hi >= 4) return 4;
+    for (let i = 0; i < 10; i++) { const mid = (lo + hi) / 2; if (fits(mid)) hi = mid; else lo = mid; }
+    return hi;
+  }
+  /** Building bounds at an explode amount (eased 0..1). */
+  function explodedBox(e = easeOutCubic(clamp(state.explode, 0, 1))) {
+    const b = model.buildingBounds.clone();
+    b.max.y += model.maxLevel * model.gap * e;
+    return b;
+  }
+
   /** Preset position, pulled back when overlay panels leave only part of the canvas free (not for street). */
   function viewPos(name) {
     const cam = model.meta.camera;
@@ -423,7 +466,10 @@ export function createStudio(container, options = {}) {
     const free = clamp((width - insets.left - insets.right) / Math.max(1, width), 0.3, 1);
     const k = clamp(1 / (0.45 + 0.55 * free), 1, 1.45);
     const tg = new THREE.Vector3().fromArray(cam.target);
-    return p.sub(tg).multiplyScalar(k).add(tg);
+    p.sub(tg).multiplyScalar(k).add(tg);
+    // never let the buildings disappear under the panels (wide models, exploded stacks)
+    const f = fitFactor(p, tg, explodedBox(easeOutCubic(clamp(state.explodeTarget, 0, 1))));
+    return p.sub(tg).multiplyScalar(f).add(tg);
   }
   function setView(name, { instant = false } = {}) {
     if (!model) return;
@@ -447,6 +493,11 @@ export function createStudio(container, options = {}) {
       camera.position.y += lift;
       const off = camera.position.clone().sub(controls.target).multiplyScalar((1 + 0.3 * e) / (1 + 0.3 * prev));
       camera.position.copy(controls.target).add(off);
+      // tall stacks (e.g. the campus tower rises ~40 m): ease back until the exploded buildings fit
+      if (e > prev) {
+        const f = fitFactor(camera.position, controls.target, explodedBox(e));
+        if (f > 1.001) camera.position.sub(controls.target).multiplyScalar(f).add(controls.target);
+      }
       controls.update(0);
     }
     model.lastEase = e;
@@ -528,6 +579,10 @@ export function createStudio(container, options = {}) {
     if (model) {
       model.night.forEach((m) => { if ('emissiveIntensity' in m) m.emissiveIntensity = n * (m.userData.__nightMax ?? 1); });
       model.lamps.forEach((l) => { l.intensity = n * l.userData.__nightIntensity; });
+      // three r186 ignores scene.environmentIntensity for materials that carry their own envMap (glass,
+      // water…): scale those by the same day/night factor so reflections dim after dusk too.
+      const k = scene.environmentIntensity / DAY_ENV_INTENSITY;
+      model.envMats.forEach((m) => { m.envMapIntensity = m.userData.__baseEnvI * k; });
     }
     invalidate();
   }
@@ -739,7 +794,12 @@ export function createStudio(container, options = {}) {
     const maxLevel = floors.reduce((m, f) => Math.max(m, f.level), 0);
 
     // materials: clipping + caps
+    const envMats = [];
     materials.forEach((m) => {
+      if (m.envMap && Number.isFinite(m.envMapIntensity)) {
+        m.userData.__baseEnvI = Number.isFinite(m.userData.baseEnvMapIntensity) ? m.userData.baseEnvMapIntensity : m.envMapIntensity;
+        envMats.push(m);
+      }
       m.clippingPlanes = clipPlanes;
       m.clipShadows = true;
       if (!isGlassMaterial(m)) patchCap(m, capUniform);
@@ -784,7 +844,7 @@ export function createStudio(container, options = {}) {
     shadowBounds.max.y = Math.max(shadowBounds.max.y, height + maxLevel * gap);
 
     return {
-      id, mod, meta: nMeta, built, root, site, floors, meshes, materials: [...materials],
+      id, mod, meta: nMeta, built, root, site, floors, meshes, materials: [...materials], envMats, buildingBounds,
       night: (Array.isArray(built.nightMaterials) ? built.nightMaterials : []).filter((m) => m && m.isMaterial),
       lamps, update: typeof built.update === 'function' ? built.update.bind(built) : null,
       hotspots, solids, siteSolids, pickables, bounds, shadowBounds, size, center, radius, height,

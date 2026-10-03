@@ -8,7 +8,7 @@ the same data.
 ## Verbatim client content (from the subsidiary pages, BRIEF §2b)
 - **Taglines:** "Elevating industry standards" (Construction), "Creating landmarks, defining excellence"
   (Developments), "Simplifying property management" (Real Estate). Elite Education Group has no tagline yet, so
-  its `short` text is shown instead.
+  its generic `short` text ("The group's education arm") is shown in the tagline style, without the full stop.
 - **About paragraphs:** `SUBSIDIARIES[].about`, shown verbatim. Developments has 3 paragraphs: the third sits
   behind a "Read more" toggle.
 - **Facts strip:** `SUBSIDIARIES[].facts`, verbatim.
@@ -23,9 +23,12 @@ the same data.
   is the client's own fact (BRIEF §2b).
 
 ## Generic / placeholder copy (TODO(content) comments in the markup)
-- **Focus areas** (`SUBSIDIARIES[].focus`, three per company) are generic copy from the data file. For Real
-  Estate they read "Residential development / Commercial assets / Asset management", which does not quite match
-  the verbatim "leasing & property management". The client should confirm (see the request).
+- **Focus areas** (`SUBSIDIARIES[].focus`, three per company) are generic copy from the data file, except for
+  Real Estate. There the data reads "Residential development / Commercial assets / Asset management", which
+  contradicts the verbatim "leasing and property management for multi-functional buildings". The page therefore
+  overrides it locally (`COS[].focus` in `subsidiaries.js`) with three items taken from that verbatim sentence:
+  **Office leasing / Property management / Multi-functional buildings**. The client should confirm, and the data
+  file should be updated (see the request), after which the override can be removed.
 - **Elite Education Group** has no client copy at all. Its description (`long`), its `short` text and its focus
   areas are generic. The client needs to supply a description, schools/campuses, curricula and, if one exists, a
   company page.
@@ -57,6 +60,12 @@ the same data.
   Park, Raffles Hotel & Branded Residence, Al-Moosa Specialist Hospital, NEOM Bay Airport). They are labelled as
   *group* projects and are not attributed to MOBCO Construction specifically. The client can choose others in
   `WORK` in `subsidiaries.js`.
+- **CTA band background:** a decorative mosaic of six real portfolio photos (KAUST Hotel, Mawten Masar Tower,
+  Axis Olaya Business Tower, Sulaiman Fakeeh Hospital, Bank Albilad Head Office, TBC Schools Group 12), from
+  480px thumbnails, `alt=""`. It replaces a single upscaled `victoria-101` photo, which was nearly invisible.
+- **Blueprint compare (Construction):** both sides are the same `sub-construction-hero` photo; the "Blueprint"
+  side is a CSS treatment (blue-tinted, high-contrast + grid), not a real drawing. The caption says
+  "Representative imagery".
 - **Capabilities images:** Raffles Hotel, Headquarter Tower and As Safiyyah are captioned with their project
   names (real portfolio). The office interior is captioned "Representative imagery". The hospitality panel lists
   every project with `category: 'hospitality'` (currently 9).

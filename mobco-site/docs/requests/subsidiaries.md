@@ -19,8 +19,10 @@ Each item has a local workaround already in place in `subsidiaries.js` / `subsid
 
 3. **site-data.js: `SUBSIDIARIES['mobco-real-estate'].focus`** still reads "Residential development / Commercial
    assets / Asset management". The verbatim client copy now says "leasing & property management for
-   multi-functional buildings". Suggest "Office leasing", "Property management" and "Multi-functional buildings",
-   pending client confirmation.
+   multi-functional buildings". Suggest "Office leasing" (تأجير المساحات المكتبية), "Property management"
+   (إدارة العقارات) and "Multi-functional buildings" (المباني متعددة الوظائف), pending client confirmation.
+   *Local workaround:* `COS[].focus` override in subsidiaries.js. Remove it once the data matches. Other
+   consumers of the data (search, the mobco-real-estate page, the mega menu) still show the generic list.
 
 4. **site-data.js: Elite Education Group** has no `tagline`, `about`, `facts` or `page`. The page falls back to
    `short`/`long`. Add these when the client supplies them; the page picks them up automatically.
@@ -36,3 +38,4 @@ Each item has a local workaround already in place in `subsidiaries.js` / `subsid
 
 7. **icons (nice to have):** `concierge-bell` (hospitality) and `key-round` (leasing) would suit the
    capability and finder options. `hotel` and `landmark` are used for now.
+
