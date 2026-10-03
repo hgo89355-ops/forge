@@ -23,11 +23,20 @@ Sources: `media.html`, `assets/js/pages/media.js` and `assets/js/data/site-data.
 - A real showreel video, if one exists, could replace or follow the image reel later.
 
 ## Gallery
-- Every `PROJECTS[].gallery` entry is shown, currently 44 images. The detail views for Eastmain, Victoria 101, Lagoon Villa Community, Innovation Campus and Classical Landmark are art-directed crops of the same render (`pos` / object-position). In the lightbox, the full image is shown with the "(detail)" caption from the data.
-- The filter chips come from `PROJECT_CATEGORIES` that have images (the count is shown), plus the regions in `REGIONS`. "Classical Landmark" has `category: null`, so it appears only under **All** and **KSA portfolio**.
-- **Descriptive names** (`nameIsDescriptive: true`) are marked with a ◇ and a footnote saying the official name is to be confirmed. These are Lagoon Villa Community, Innovation Campus and Classical Landmark.
-- Each tile has a **Download JPG** link to the web-resolution file. The footnote says high-resolution files are available from the media team. **TODO(content):** confirm that this process exists, or remove the sentence.
-- Image rights and credits are not known. **TODO(content):** confirm that the renders and photos may be downloaded by the press, and whether credits or watermarks are needed.
+- The gallery shows **every photo in the library: 49 images**. That is 44 `PROJECTS[].gallery` entries plus 5 photos from the client's subsidiary pages (BRIEF §2b) that are not in any project gallery:
+  - `sub-construction-hero`: "A tower under construction above the city" (MOBCO Construction)
+  - `sub-construction-render`: "Night render of a timber-clad low-rise building" (MOBCO Construction)
+  - `sub-real-estate-hero`: "MOBCO Developments signage on a building façade" (MOBCO Real Estate Development page)
+  - `sub-real-estate-office`: "Office interior" (MOBCO Real Estate Development page)
+  - `sub-developments-hero`: "Victoria 101 — façade close-up", filed under Victoria 101 (Residential, Canada) as BRIEF §2b says
+
+  The four subsidiary photos have their own **Group companies** filter chip. Their captions only describe what each image shows. **TODO(content):** confirm which projects these photos show, and that they may be offered to the press. The office interior may be stock photography.
+- **Detail views.** The detail views for Eastmain, Victoria 101, Lagoon Villa Community, Innovation Campus and Classical Landmark are art-directed crops of the same render: the tile zooms 1.55× into the `pos` focal point. They are spread through the grid. A detail never appears before its full view, and the same project never appears within 8 tiles of itself. The lightbox shows the full image with the "(detail)" caption from the data, because the core lightbox cannot open zoomed (see requests).
+- **Filters.** The filter chips come from the `PROJECT_CATEGORIES` that have images (each chip shows its count), plus Group companies and the regions in `REGIONS`. "Classical Landmark" has `category: null`, so it appears only under **All** and **KSA portfolio**.
+- **Paging.** The grid shows 16 images at a time. A remainder of 4 or fewer is added to the last page, so there is never a "Show 1 more".
+- **Descriptive names.** Projects with `nameIsDescriptive: true` are marked with a ◇ and a footnote saying the official name is to be confirmed. These are Lagoon Villa Community, Innovation Campus and Classical Landmark.
+- **Downloads.** Each tile has a **Download JPG** link to the web-resolution file. The footnote sends requests for higher-resolution files to the media enquiries contacts. No "media team" is claimed. **TODO(content):** confirm that high-resolution originals can be supplied.
+- **Image rights.** Rights and credits are not known. **TODO(content):** confirm that the renders and photos may be downloaded by the press, and whether credits or watermarks are needed.
 
 ## Brand & press kit
 - The logo downloads are the existing files:
@@ -35,7 +44,7 @@ Sources: `media.html`, `assets/js/pages/media.js` and `assets/js/data/site-data.
   - `logo-mark.svg`
   - `favicon.svg`, offered as the "app icon"
   - the subsidiary PNGs in `assets/img/logos/`
-- These were traced from the old site. **TODO(content):** replace them with the official master artwork (EPS/AI/PDF, CMYK/Pantone) when it is supplied.
+- These were traced from the old site, so the copy calls them "logos", not "official logos". **TODO(content):** replace them with the official master artwork (EPS/AI/PDF, CMYK/Pantone) when it is supplied.
 - The group SVGs render "GROUP" as live `<text>` in Manrope. On machines without Manrope installed, the downloaded SVG will fall back to Arial. See `docs/requests/media.md`.
 - There is no white version of the logo mark. On the navy preview, the page shows the navy mark inverted with a CSS filter.
 - The **colour palette** values come from the BRIEF §1 tokens. The roles are site usage, not an official brand book. **TODO(content):** confirm the official brand colours and whether CMYK/Pantone references should be added.
@@ -50,7 +59,7 @@ Sources: `media.html`, `assets/js/pages/media.js` and `assets/js/data/site-data.
   - a privacy-policy link next to the consent box. **TODO(content):** provide the privacy policy URL.
 - **Media enquiries** uses only the BRIEF contacts:
   - KSA (HQ, Riyadh): info.ksa@mobco-group.com, +966 11 293 5966
-  - Egypt (Cairo): info.egy@mobco-group.com, 02-23866591
+  - Egypt (Cairo): info.egy@mobco-group.com, 02-23866591 and 02-23866592
 
   There is no dedicated press office address. **TODO(content):** supply one if a press@ address or a named media contact exists. No people are named.
 - No social links are shown, because none were supplied.

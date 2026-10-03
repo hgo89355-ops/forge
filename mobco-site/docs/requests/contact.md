@@ -52,11 +52,9 @@ reference (`MOB-KSA|EGY-YYMMDD-XXXX`) is generated in the browser and is not sto
   issues the reference on the server and sends a confirmation. The page already collects everything in
   `values()` / `buildText()` inside `assets/js/pages/contact.js`.
 
-## 6. Header partial — links to pages that do not exist yet
-The current `partials/header.html` mega menu links to `mobco-construction.html`, `mobco-developments.html` and
-`mobco-real-estate.html`. These files are not in the repo, so `tools/check.mjs` reports
-"link to missing file" (3 errors per page × desktop-EN). This comes from the shared partial, not from my pages.
-- **Suggested fix:** add these filenames to `PLANNED` in check.mjs, or ship the pages.
+## 6. Header partial — links to pages that did not exist yet (resolved)
+`mobco-construction.html`, `mobco-developments.html` and `mobco-real-estate.html` now exist, and
+`tools/check.mjs` reports 0 errors and 0 warnings for contact.html and 404.html. Nothing further needed.
 
 ## 7. Nice-to-have icons for the sprite
 - `pencil` for the review step's "Edit" buttons (the button is text-only for now).

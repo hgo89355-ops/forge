@@ -27,3 +27,10 @@ All of these are worked around locally in `media.css` / `media.js`. None of them
 6. **`tools/check.mjs` warnings** about `projects.html#<slug>` anchors.
    - Problem: the shared mega menu links to these anchors, so the warnings appear on every page.
    - Note: the projects page should render those ids statically, or the checker should accept JS-rendered ids. This is not a media-page issue.
+
+7. **Accent `<em>` contrast in headings on light sections** (`main.css`).
+   - Problem: `.h2 em` on white or sand uses `--teal-600` (#3fa89c). On white that is 2.88:1, below the 3:1 AA minimum for large text (measured on "Every detail" at 56px).
+   - Workaround: none. The media page keeps the shared style so the headings match every other page.
+   - Request: use `--teal-700` for heading accents on light sections, or darken `--teal-600` slightly.
+
+8. **Note for the foundation: the `--focus` token name.** `:focus-visible` uses `outline: 2px solid var(--focus)`. If a component sets its own custom property called `--focus` (for example a focal point), the shorthand becomes invalid and the focus ring disappears without any error. The media page hit this and has renamed its property to `--focal`. Consider a more specific token name such as `--focus-ring`, or a fallback: `var(--focus, var(--teal-600))`.
