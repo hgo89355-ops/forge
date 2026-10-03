@@ -2,14 +2,16 @@
 // Core modules are singletons initialised by core/main.js; this module only wires page-specific behaviour:
 //   · sectors   — cards ⇄ phrases of the verbatim "delivered iconic projects…" sentence light each other up
 //   · footprint — dot-matrix world map (WORLD) + arcs from Riyadh, markers ⇄ region tabs, coordinate readout
-//   · projects  — image parallax inside the core drag carousel
-//   · studio    — axonometric drawing draws itself on scroll (+ pointer tilt) inside #studio-embed
+//   · projects  — slides rendered from PROJECTS (featured === true) + image parallax inside the core drag carousel
+//   · studio    — axonometric drawing draws itself on scroll (+ pointer tilt) inside #studio-embed, and is
+//                 crossfaded to a live, lazily-imported 3D turntable (studio engine) on capable GPUs
 //   · values    — giant outlined words fill as they scroll into view
 // Everything degrades to static, fully readable content without JS or with reduced motion.
 
-import { t, onLang } from '../core/i18n.js';
+import { t, onLang, localize } from '../core/i18n.js';
 import { onScroll, refresh } from '../core/motion.js';
-import { $, $$, clamp, rafThrottle, prefersReducedMotion, hasFinePointer } from '../core/utils.js';
+import { $, $$, clamp, esc, rafThrottle, prefersReducedMotion, hasFinePointer, isQA, IMAGES } from '../core/utils.js';
+import { PROJECTS, PROJECT_CATEGORIES } from '../data/site-data.js';
 import { WORLD } from '../data/world-map.js';
 
 const reduced = prefersReducedMotion();
@@ -145,7 +147,78 @@ function initFootprint() {
   }, { rootMargin: '0px 0px -10% 0px' }).observe(map);
 }
 
-/* ================================================================ 8. Featured projects (carousel parallax) */
+/* ================================================================ 8. Featured projects (data-driven carousel + parallax) */
+// The slides are rendered from PROJECTS where featured === true (the static markup in partials/home-b.html is
+// generated from this same template for no-JS/SEO: the code between the @tpl markers is pure, so a Node one-off can
+// evaluate it with the same data and paste the output between the viewport tags).
+/* @tpl-start */
+const HB_CROP = { 'victoria-101': '45% 50%', 'sofitel-hotel': '30% 50%', 'neom-bay-airport': '40% 50%', 'al-moosa-specialist-hospital': '62% 50%', 'taif-municipality-building': '58% 50%', 'sulaiman-fakeeh-hospital': '42% 50%' };
+function hbSlideHTML(p, i, total, { esc, IMAGES, CATEGORIES }) {
+  const ico = (name, cls = 'icon') => `<svg class="${cls}" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#${name}"></use></svg>`;
+  const ar = (v) => (v && typeof v === 'object' ? v.ar || v.en || '' : String(v ?? ''));
+  const en = (v) => (v && typeof v === 'object' ? v.en || '' : String(v ?? ''));
+  const txt = (tag, cls, v, extra = '') => `<${tag}${cls ? ` class="${cls}"` : ''}${extra} data-ar="${esc(ar(v))}">${esc(en(v))}</${tag}>`;
+  const cat = CATEGORIES.find((c) => c.id === p.category);
+  const typo = p.typology || cat?.name || { en: 'Project', ar: 'مشروع' };
+  const split = (v, k) => String(v || '').split(' · ')[k] || '';
+  const badge = { en: split(en(typo), 0), ar: split(ar(typo), 0) };
+  const sub = split(en(typo), 1) ? { en: split(en(typo), 1), ar: split(ar(typo), 1) } : { en: 'From our portfolio', ar: 'من محفظة أعمالنا' };
+  const meta = IMAGES[p.image] || { w: 790, h: 710 };
+  // the 4:5 card crops a landscape photo: the rendered image is ~k × the slide width (112% for the parallax overscan)
+  const k = Math.max(1.12, (1.25 * meta.w) / meta.h).toFixed(2);
+  const sizes = `(min-width: 1800px) calc(30vw * ${k}), (min-width: 1024px) calc(37vw * ${k}), (min-width: 640px) calc(54vw * ${k}), calc(84vw * ${k})`;
+  const note = en(p.imageNote);
+  const alt = note ? { en: `${en(p.name)} — ${note.charAt(0).toLowerCase()}${note.slice(1)}`, ar: `${ar(p.name)} — ${ar(p.imageNote)}` } : { en: '', ar: '' };
+  const todo = (p.todo || []).map((x) => String(x).replace(/--/g, '—')).join(' ');
+  const flag = p.nameIsDescriptive || todo
+    ? `
+              <!-- PROJECTS: ${esc(p.slug)} (featured)${p.nameIsDescriptive ? ' · descriptive name' : ''}. TODO(content): ${todo || 'confirm the project name'} -->`
+    : '';
+  const n = String(i + 1).padStart(2, '0');
+  const pos = HB_CROP[p.slug] || p.pos || '50% 50%';
+  const label = { en: `${i + 1} of ${total}`, ar: `${i + 1} من ${total}` };
+  const foot = p.studioModel
+    ? `<a class="hb-slide__3d" href="studio.html?model=${esc(p.studioModel)}" aria-label="${esc(`Explore ${en(p.name)} in the 3D Studio`)}" data-ar-aria-label="${esc(`استكشف ${ar(p.name)} في الاستوديو ثلاثي الأبعاد`)}">${ico('rotate-3d')}<span aria-hidden="true">3D</span></a>`
+    : `<span class="hb-slide__cat" aria-hidden="true">${ico(cat?.icon || 'building-2')}</span>`;
+  return `
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="${label.en}" data-ar-aria-label="${label.ar}">${flag}
+              <a class="project-card hb-card" href="projects.html#${esc(p.slug)}">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/${esc(p.image)}.webp 480w, assets/img/${esc(p.image)}.webp ${meta.w}w" sizes="${sizes}"><img src="assets/img/thumbs/${esc(p.image)}.jpg" srcset="assets/img/thumbs/${esc(p.image)}.jpg 480w, assets/img/${esc(p.image)}.jpg ${meta.w}w" sizes="${sizes}" alt="${esc(alt.en)}"${alt.ar ? ` data-ar-alt="${esc(alt.ar)}"` : ''} width="${meta.w}" height="${meta.h}" loading="lazy" decoding="async" draggable="false" style="--pos:${esc(pos)}"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true">${ico('arrow-up-right', 'icon icon--dir')}</span>
+                <div class="project-card__body">
+                  <div class="project-card__meta">${txt('span', 'badge badge--glass', badge)}</div>
+                  ${txt('h3', 'project-card__title', p.name)}${p.location ? `
+                  <p class="project-card__loc">${ico('map-pin')}${txt('span', '', p.location)}</p>` : ''}
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">${n}</span>
+                ${txt('span', 'hb-slide__type', sub)}
+                ${foot}
+              </div>
+            </div>
+`;
+}
+/* @tpl-end */
+
+function renderProjects() {
+  const vp = $('[data-hb-carousel]');
+  if (!vp) return;
+  const featured = PROJECTS.filter((p) => p.featured === true);
+  if (featured.length) {
+    vp.innerHTML = featured.map((p, i) => hbSlideHTML(p, i, featured.length, { esc, IMAGES, CATEGORIES: PROJECT_CATEGORIES })).join('');
+    localize(vp);
+  }
+  // "View all N projects" — the count comes from the data
+  const total = $('[data-hb-projects-total]');
+  if (total) {
+    const n = PROJECTS.length;
+    const paint = () => { total.textContent = t({ en: `View all ${n} projects`, ar: `عرض جميع المشاريع (${n})` }); };
+    paint();
+    onLang(paint);
+  }
+}
+
 function initProjects() {
   const vp = $('[data-hb-carousel]');
   if (!vp || reduced) return;
@@ -211,6 +284,106 @@ function initStudio() {
   });
 }
 
+/* ================================================================ 9b. Live 3D embed (studio engine) */
+// Mounts a compact, non-interactive, slowly auto-rotating model into #studio-embed only when:
+//   WebGL2 is available · the GPU is not a software rasteriser (SwiftShader / llvmpipe) · no reduced motion ·
+//   not ?qa=1 · the section is within ~300px of the viewport.
+// three.js + the engine are dynamic-imported at that moment (the import map lives in index.html's <head>).
+// Disposed when the section is far off-screen, re-created on return. The SVG drawing stays the fallback in every
+// other case (and until the model has loaded, then it crossfades). QA: ?embed=1 bypasses the software-GPU guard,
+// ?embed=0 disables the live embed.
+function probeGL() {
+  // cheap pre-check so that browsers that would fall back anyway never download three.js
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (!gl) return { ok: false, software: false };
+    let name = '';
+    try { const ext = gl.getExtension('WEBGL_debug_renderer_info'); name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : ''; } catch { /* ignore */ }
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return { ok: true, software: /swiftshader|llvmpipe|softpipe|software|microsoft basic render/i.test(name) };
+  } catch { return { ok: false, software: false }; }
+}
+
+function initStudioEmbed() {
+  const embed = $('[data-studio-embed]');
+  if (!embed) return;
+  const stage = embed.closest('[data-hb-stage]') || embed;
+  const q = new URLSearchParams(location.search);
+  const force = q.get('embed') === '1';
+  if (q.get('embed') === '0' || isQA() || reduced || !('IntersectionObserver' in window)) return;
+  const modelId = embed.dataset.studioEmbed || 'mixed-use';
+
+  let engine = null, studio = null, host = null, probe = null;
+  let near = false, mounting = false, failed = false, token = 0;
+
+  const eligible = () => {
+    if (failed) return false;
+    probe ??= probeGL();
+    return probe.ok && (force || !probe.software);
+  };
+
+  const teardown = () => {
+    token++;
+    embed.classList.remove('is-live');
+    stage.classList.remove('is-live');
+    if (studio) { try { studio.dispose(); } catch { /* already gone */ } }
+    host?.remove();
+    studio = null; host = null;
+  };
+
+  const fail = () => { failed = true; teardown(); };
+
+  async function mount() {
+    if (studio || mounting || !eligible()) return;
+    mounting = true;
+    const my = ++token;
+    try {
+      engine ??= await import('../studio/engine.js');
+      if (my !== token || !near) return; // scrolled away while loading
+      if (!engine.hasWebGL() || (!force && engine.gpu().software)) { failed = true; return; }
+      host = document.createElement('div');
+      host.className = 'hb-studio__live';
+      host.setAttribute('aria-hidden', 'true'); // the SVG keeps the accessible description
+      embed.appendChild(host);
+      const s = engine.createStudio(host, {
+        compact: true, model: modelId, autoRotate: true, controls: false, ui: false, hotspots: false, quality: 'auto',
+      });
+      studio = s;
+      // optional art direction from the markup: data-studio-time (hours 6–22) · data-studio-mode (realistic|clay|blueprint|xray)
+      const hour = parseFloat(embed.dataset.studioTime);
+      if (Number.isFinite(hour)) s.setTime(hour);
+      if (embed.dataset.studioMode) s.setMode(embed.dataset.studioMode);
+      s.canvas.style.touchAction = 'auto'; // OrbitControls sets 'none'; the embed must never block page scrolling
+      s.on('contextlost', () => { if (studio === s) fail(); });
+      const meta = await s.ready;
+      if (studio !== s) return;
+      if (!meta) { fail(); return; }
+      // crossfade once the first frame of the loaded model is on screen
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (studio !== s) return;
+        embed.classList.add('is-live');
+        stage.classList.add('is-live');
+      }));
+    } catch (err) {
+      console.warn('[home-b] live 3D embed unavailable — keeping the drawing', err);
+      fail();
+    } finally {
+      mounting = false;
+      // torn down while importing, then scrolled back: try again with the current token
+      if (!studio && near && !failed && my !== token) queueMicrotask(mount);
+    }
+  }
+
+  // near: mount (with ~300px of look-ahead) · far (≥ one viewport away): dispose to free the GPU
+  new IntersectionObserver((entries) => {
+    near = entries.some((e) => e.isIntersecting);
+    if (near) mount();
+  }, { rootMargin: '300px 0px' }).observe(embed);
+  new IntersectionObserver((entries) => {
+    if (!entries.some((e) => e.isIntersecting) && (studio || mounting)) teardown();
+  }, { rootMargin: '100% 0px' }).observe(embed);
+}
+
 /* ================================================================ 10. Values */
 function initValues() {
   const rows = $$('[data-hb-value]');
@@ -233,7 +406,7 @@ function initValues() {
 }
 
 /* ================================================================ boot */
-for (const [name, fn] of [['sectors', initSectors], ['footprint', initFootprint], ['projects', initProjects], ['studio', initStudio], ['values', initValues]]) {
+for (const [name, fn] of [['sectors', initSectors], ['footprint', initFootprint], ['projects-data', renderProjects], ['projects', initProjects], ['studio', initStudio], ['studio-embed', initStudioEmbed], ['values', initValues]]) {
   try { fn(); } catch (err) { console.error(`[home-b] ${name} failed to initialise`, err); }
 }
 requestAnimationFrame(refresh);

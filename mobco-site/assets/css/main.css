@@ -116,6 +116,7 @@
   --teal-300: #9be3da;
   --teal-400: #6fd1c5;
   --teal-600: #3fa89c;
+  --teal-650: #349487;       /* large accent text on light: headline <em> (3.66:1 on white, 3.41:1 on sand — AA large) */
   --teal-700: #2a7a70;       /* small accent text on light (AA 4.8:1 on white) */
   --gold-500: #b8975a;       /* MOBCO Real Estate Development only */
   --danger: #c2493f;
@@ -293,13 +294,15 @@ input, button, textarea, select { font: inherit; color: inherit; letter-spacing:
 button { background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
 button:disabled { cursor: not-allowed; }
 a { color: inherit; text-decoration: none; }
-ul[role='list'], ol[role='list'], .list-reset { list-style: none; padding: 0; margin: 0; }
+/* :where() keeps the reset at zero specificity so component / page classes (e.g. a list's margin-block-start) win */
+:where(ul[role='list'], ol[role='list'], .list-reset) { list-style: none; padding: 0; margin: 0; }
 p, h1, h2, h3, h4, h5, h6, li, dd, blockquote, figcaption { overflow-wrap: break-word; }
 h1, h2, h3, h4, h5, h6 { font-weight: inherit; font-size: inherit; line-height: inherit; }
 table { border-collapse: collapse; }
 hr { border: 0; border-block-start: var(--hairline); }
 [hidden] { display: none !important; }
-:target { scroll-margin-block-start: calc(var(--header-h) + 24px); }
+/* No :target scroll-margin: html scroll-padding (header + 16px) already clears the fixed header for native
+   fragment jumps; a :target margin on top doubled the offset (and Lenis subtracted both). */
 ::selection { background: var(--teal-400); color: var(--navy-950); }
 address { font-style: normal; }
 kbd {
@@ -370,8 +373,7 @@ h6, .h6 {
 .light { font-weight: 400; }
 .text-accent, .accent { color: var(--accent); }
 .display em, h1 em, h2 em, .h1 em, .h2 em, .display .accent { font-style: normal; color: var(--accent); }
-.section:not(.section--dark):not(.section--deep) h2 em,
-.section:not(.section--dark):not(.section--deep) .h2 em { color: var(--teal-600); }
+.section:not(.section--dark):not(.section--deep) :is(h1, h2, .h1, .h2, .display) em { color: var(--teal-650); }
 .outline-text {
   color: transparent;
   -webkit-text-stroke: 1px currentColor;
@@ -731,6 +733,7 @@ html[lang='ar'] .btn--sm { font-size: .875rem; }
 .icon-btn:disabled { opacity: .35; }
 .icon-btn--square { border-radius: var(--radius); }
 .icon-btn--sm { inline-size: 40px; block-size: 40px; }
+@media (pointer: coarse) { .icon-btn--sm { inline-size: 44px; block-size: 44px; } } /* 44px touch target */
 .icon-btn--solid { background: var(--teal-400); color: var(--navy-950); border-color: var(--teal-400); }
 
 /* Link with animated arrow */
@@ -881,6 +884,7 @@ html[lang='ar'] .badge { font-size: .8125rem; font-weight: 600; }
 .badge--dark { background: var(--navy-900); color: var(--white); }
 .badge--glass { background: rgba(11, 22, 32, .5); color: var(--white); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .section--dark .badge, .section--deep .badge, .on-dark .badge { background: rgba(255, 255, 255, .08); }
+.section--dark .badge--glass, .section--deep .badge--glass, .on-dark .badge--glass { background: rgba(11, 22, 32, .5); } /* glass keeps its dark backing over photos */
 .section--dark .badge--accent, .section--deep .badge--accent, .on-dark .badge--accent { background: rgba(111, 209, 197, .14); color: var(--teal-300); }
 .badge__dot { inline-size: 6px; block-size: 6px; border-radius: 50%; background: currentColor; }
 
@@ -988,6 +992,7 @@ figure figcaption.caption::before { content: ''; inline-size: 20px; block-size: 
 .parallax-frame { overflow: hidden; position: relative; }
 [data-parallax] { will-change: transform; }
 .parallax-frame > [data-parallax] { position: absolute; inset: -12% 0; }
+.parallax-frame > [data-parallax] picture { display: block; block-size: 100%; } /* let a wrapped <img> fill the frame */
 .parallax-frame > [data-parallax] img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: var(--pos, center); }
 
 /* 11. Cards ================================================================ */
@@ -1129,7 +1134,7 @@ html[lang='ar'] .project-card__title { letter-spacing: 0; text-transform: none; 
   display: inline-flex;
   align-items: center;
   gap: .5rem;
-  min-block-size: 40px;
+  min-block-size: 44px; /* touch target (BRIEF §4) */
   padding-inline: 1rem;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
@@ -1266,17 +1271,19 @@ html:not(.js) .accordion__panel { grid-template-rows: 1fr; }
 html:not(.js) .accordion__panel { visibility: visible; }
 
 /* 13. Forms ================================================================ */
-.form { display: grid; gap: var(--space-5); }
-.form__row { display: grid; gap: var(--space-5); }
+.form { display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr); }
+.form__row { display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 768px) { .form__row--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .form__row--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .form__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-6); margin-block-start: var(--space-2); }
 .form__note { font-size: var(--fs-xs); color: var(--fg-muted); }
 fieldset.form__group { border: 0; padding: 0; display: grid; gap: var(--space-3); }
 fieldset.form__group > legend { padding: 0; margin-block-end: var(--space-3); }
 
-.field { position: relative; display: grid; }
+/* minmax(0, 1fr) + min-inline-size: 0: a long <select> option or value never widens the form past its container */
+.field { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); }
 .field__input {
   inline-size: 100%;
+  min-inline-size: 0;
   min-block-size: 60px;
   padding: 1.6rem 1rem .55rem;
   border: 1px solid var(--line-strong);
@@ -1334,6 +1341,7 @@ fieldset.form__group > legend { padding: 0; margin-block-end: var(--space-3); }
   transform: rotate(45deg);
   pointer-events: none;
 }
+[dir='rtl'] .field--select::after { transform: rotate(-45deg); } /* logical borders flip in RTL: keep the chevron pointing down */
 .field select option { color: var(--navy-900); background: var(--white); }
 .field__hint { margin-block-start: .4rem; font-size: var(--fs-xs); color: var(--fg-muted); }
 .field__error {
@@ -2409,6 +2417,8 @@ html.nav-open .mobile-nav__foot { opacity: 1; transform: none; transition: opaci
   border-block-end: var(--hairline);
 }
 @media (min-width: 1024px) { .site-footer__cta { grid-template-columns: 1fr auto; margin-block-start: calc(-1 * clamp(2.5rem, 4vw, 4rem)); } }
+/* pages that end on their own closing CTA can drop the footer's: <body data-footer-cta="off"> */
+body[data-footer-cta='off'] .site-footer__cta { display: none; }
 .site-footer__cta-title {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 1.4rem + 4.6vw, 6.25rem);
@@ -2471,6 +2481,10 @@ html[lang='ar'] .site-footer__heading { font-size: .875rem; letter-spacing: 0; }
 .contact-line .icon { --icon-size: 16px; color: var(--teal-400); }
 a.contact-line:hover { color: var(--teal-400); }
 .contact-line span[dir='ltr'] { unicode-bidi: isolate; }
+/* on light backgrounds / in page content: dark text and a 44px touch target */
+.contact-line--light { color: var(--fg); min-block-size: 44px; }
+.contact-line--light .icon { color: var(--accent-text); }
+a.contact-line--light:hover { color: var(--accent-text); }
 .site-footer__links { list-style: none; padding: 0; display: grid; gap: .25rem; font-size: var(--fs-sm); }
 .site-footer__links a { display: inline-flex; min-block-size: 32px; align-items: center; color: rgba(255, 255, 255, .78); transition: color var(--dur); }
 .site-footer__links a:hover { color: var(--teal-400); }
@@ -2723,6 +2737,8 @@ html.cursor-label.cursor-down .cursor-ring__inner { transform: scale(2.1); }
   animation: toast-in var(--dur-slow) var(--ease-out) both;
 }
 .consent.is-leaving { animation: toast-out var(--dur) var(--ease-in-out) forwards; }
+/* the banner sits above modals (z 480 > 300): step aside while an overlay holds the page, back when it closes */
+html.is-locked .consent { visibility: hidden; }
 .consent__title { display: flex; align-items: center; gap: .625rem; font-family: var(--font-display); font-size: var(--fs-base); font-weight: 700; color: var(--white); }
 .consent__title .icon { --icon-size: 20px; color: var(--teal-400); }
 .consent__actions { display: flex; flex-wrap: wrap; gap: .5rem; }

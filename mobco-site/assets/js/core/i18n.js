@@ -9,6 +9,7 @@
 //   data-ar-alt         → alt attr
 //   data-ar-content     → content attr (<meta name="description">, og:*)
 //   data-ar-value       → value attr (input[type=submit|button])
+//   data-ar-aria-roledescription → aria-roledescription attr
 //
 // API: getLang(), setLang(lang), toggleLang(), t({en, ar}), onLang(cb) → unsubscribe, localize(root), isRTL()
 // Event: document 'langchange' { detail: { lang, dir } }
@@ -24,6 +25,7 @@ const ATTRS = [
   ['data-ar-alt', 'alt'],
   ['data-ar-content', 'content'],
   ['data-ar-value', 'value'],
+  ['data-ar-aria-roledescription', 'aria-roledescription'],
 ];
 const SELECTOR = '[data-ar],[data-ar-html],' + ATTRS.map(([a]) => `[${a}]`).join(',');
 const originals = new WeakMap();

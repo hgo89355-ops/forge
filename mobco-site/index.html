@@ -95,6 +95,8 @@
     ]
   }
   </script>
+  <!-- three.js import map (same as studio.html): the home 3D embed lazy-imports the studio engine; must precede every module script -->
+  <script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.js","three/addons/":"./assets/vendor/three/addons/"}}</script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
   <script src="assets/vendor/lenis/lenis.min.js" defer></script>
@@ -796,7 +798,7 @@
               <h2 class="h2" id="hb-projects-title" data-split data-ar-html="أعمالٌ مختارة عبر &lt;em&gt;ثلاث قارات&lt;/em&gt;">Selected work across <em>three continents</em></h2>
             </div>
             <div class="hb-projects__tools">
-              <a class="link-arrow" href="projects.html"><span data-ar="جميع المشاريع">All projects</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span></a>
+              <a class="link-arrow" href="projects.html"><span data-hb-projects-total>View all 33 projects</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span></a>
               <div class="carousel__nav">
                 <button class="icon-btn" type="button" data-carousel-prev aria-label="Previous project" data-ar-aria-label="المشروع السابق"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
                 <button class="icon-btn" type="button" data-carousel-next aria-label="Next project" data-ar-aria-label="المشروع التالي"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
@@ -805,9 +807,10 @@
           </div>
 
           <div class="carousel__viewport hb-carousel__viewport" data-cursor="drag" data-hb-carousel aria-label="Featured projects — drag, swipe or use the arrow keys" data-ar-aria-label="مشاريع مختارة — اسحب أو مرّر أو استخدم مفاتيح الأسهم">
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="1 of 10" data-ar-aria-label="1 من 10">
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="1 of 14" data-ar-aria-label="1 من 14">
+              <!-- PROJECTS: eastmain (featured). TODO(content): Confirm status, size, completion date and MOBCO’s role (developer / contractor). -->
               <a class="project-card hb-card" href="projects.html#eastmain">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/eastmain.webp"><img src="assets/img/eastmain.jpg" alt="Eastmain — evening render of the glazed office and retail building" data-ar-alt="إيست مين — تصوّر مسائي لمبنى المكاتب والمحلات الزجاجي" width="790" height="710" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/eastmain.webp 480w, assets/img/eastmain.webp 790w" sizes="(min-width: 1800px) calc(30vw * 1.39), (min-width: 1024px) calc(37vw * 1.39), (min-width: 640px) calc(54vw * 1.39), calc(84vw * 1.39)"><img src="assets/img/thumbs/eastmain.jpg" srcset="assets/img/thumbs/eastmain.jpg 480w, assets/img/eastmain.jpg 790w" sizes="(min-width: 1800px) calc(30vw * 1.39), (min-width: 1024px) calc(37vw * 1.39), (min-width: 640px) calc(54vw * 1.39), calc(84vw * 1.39)" alt="Eastmain — night render: glazed office and retail building with a landscaped plaza and pool." data-ar-alt="إيست مين — تصوّر ليلي: مبنى مكاتب ومحلات بواجهات زجاجية مع ساحة منسّقة ومسطّح مائي." width="790" height="710" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
                   <div class="project-card__meta"><span class="badge badge--glass" data-ar="متعدد الاستخدامات">Mixed-use</span></div>
@@ -822,9 +825,10 @@
               </div>
             </div>
 
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="2 of 10" data-ar-aria-label="2 من 10">
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="2 of 14" data-ar-aria-label="2 من 14">
+              <!-- PROJECTS: victoria-101 (featured). TODO(content): Confirm status, unit count, storeys and completion date (do not infer from render). -->
               <a class="project-card hb-card" href="projects.html#victoria-101">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/victoria-101.webp"><img src="assets/img/victoria-101.jpg" alt="Victoria 101 — dusk aerial render of the residential tower" data-ar-alt="فيكتوريا 101 — تصوّر جوي للبرج السكني عند الغسق" width="790" height="710" loading="lazy" decoding="async" draggable="false" style="--pos:45% 50%"></picture></div>
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/victoria-101.webp 480w, assets/img/victoria-101.webp 790w" sizes="(min-width: 1800px) calc(30vw * 1.39), (min-width: 1024px) calc(37vw * 1.39), (min-width: 640px) calc(54vw * 1.39), calc(84vw * 1.39)"><img src="assets/img/thumbs/victoria-101.jpg" srcset="assets/img/thumbs/victoria-101.jpg 480w, assets/img/victoria-101.jpg 790w" sizes="(min-width: 1800px) calc(30vw * 1.39), (min-width: 1024px) calc(37vw * 1.39), (min-width: 640px) calc(54vw * 1.39), calc(84vw * 1.39)" alt="Victoria 101 — dusk aerial render: a residential tower with a mid-rise wing and rooftop pool." data-ar-alt="فيكتوريا 101 — تصوّر جوي عند الغسق: برج سكني مع جناح متوسط الارتفاع ومسبح على السطح." width="790" height="710" loading="lazy" decoding="async" draggable="false" style="--pos:45% 50%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
                   <div class="project-card__meta"><span class="badge badge--glass" data-ar="سكني">Residential</span></div>
@@ -834,15 +838,67 @@
               </a>
               <div class="hb-slide__foot">
                 <span class="hb-slide__num" aria-hidden="true">02</span>
-                <span class="hb-slide__type" data-ar="على ضفاف بحيرة أونتاريو">By the shore of Lake Ontario</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
                 <a class="hb-slide__3d" href="studio.html?model=residential-tower" aria-label="Explore Victoria 101 in the 3D Studio" data-ar-aria-label="استكشف فيكتوريا 101 في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
               </div>
             </div>
 
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="3 of 10" data-ar-aria-label="3 من 10">
-              <!-- Portfolio project (PROJECTS: sofitel-hotel, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="3 of 14" data-ar-aria-label="3 من 14">
+              <!-- PROJECTS: lagoon-villa-community (featured) · descriptive name. TODO(content): Project name is descriptive — client to supply real name, location, status and role. -->
+              <a class="project-card hb-card" href="projects.html#lagoon-villa-community">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/aerial-compound.webp 480w, assets/img/aerial-compound.webp 1560w" sizes="(min-width: 1800px) calc(30vw * 2.30), (min-width: 1024px) calc(37vw * 2.30), (min-width: 640px) calc(54vw * 2.30), calc(84vw * 2.30)"><img src="assets/img/thumbs/aerial-compound.jpg" srcset="assets/img/thumbs/aerial-compound.jpg 480w, assets/img/aerial-compound.jpg 1560w" sizes="(min-width: 1800px) calc(30vw * 2.30), (min-width: 1024px) calc(37vw * 2.30), (min-width: 640px) calc(54vw * 2.30), calc(84vw * 2.30)" alt="Lagoon Villa Community — villas, lagoon pools, a tree-lined boulevard and a commercial strip." data-ar-alt="مجتمع فلل البحيرات — فلل وبحيرات اصطناعية وجادّة مشجّرة وشريط تجاري." width="1560" height="849" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
+                <div class="project-card__body">
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="مجتمع سكني">Residential community</span></div>
+                  <h3 class="project-card__title" data-ar="مجتمع فلل البحيرات">Lagoon Villa Community</h3>
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">03</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
+                <a class="hb-slide__3d" href="studio.html?model=villa-community" aria-label="Explore Lagoon Villa Community in the 3D Studio" data-ar-aria-label="استكشف مجتمع فلل البحيرات في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
+              </div>
+            </div>
+
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="4 of 14" data-ar-aria-label="4 من 14">
+              <!-- PROJECTS: innovation-campus (featured) · descriptive name. TODO(content): Project name is descriptive — client to supply real name, location, use and status (sign in render reads “SIC”). -->
+              <a class="project-card hb-card" href="projects.html#innovation-campus">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp 480w, assets/img/campus.webp 999w" sizes="(min-width: 1800px) calc(30vw * 1.45), (min-width: 1024px) calc(37vw * 1.45), (min-width: 640px) calc(54vw * 1.45), calc(84vw * 1.45)"><img src="assets/img/thumbs/campus.jpg" srcset="assets/img/thumbs/campus.jpg 480w, assets/img/campus.jpg 999w" sizes="(min-width: 1800px) calc(30vw * 1.45), (min-width: 1024px) calc(37vw * 1.45), (min-width: 640px) calc(54vw * 1.45), calc(84vw * 1.45)" alt="Innovation Campus — ring buildings, a central tower and connecting bridges." data-ar-alt="حرم الابتكار — مبانٍ حلقية وبرج مركزي وجسور رابطة." width="999" height="863" loading="lazy" decoding="async" draggable="false" style="--pos:50% 45%"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
+                <div class="project-card__body">
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="حرم تعليمي">Campus</span></div>
+                  <h3 class="project-card__title" data-ar="حرم الابتكار">Innovation Campus</h3>
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">04</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
+                <a class="hb-slide__3d" href="studio.html?model=campus" aria-label="Explore Innovation Campus in the 3D Studio" data-ar-aria-label="استكشف حرم الابتكار في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
+              </div>
+            </div>
+
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="5 of 14" data-ar-aria-label="5 من 14">
+              <!-- PROJECTS: classical-landmark (featured) · descriptive name. TODO(content): Project name is descriptive. Region inferred from the old site’s KSA card; client to confirm name, city, use (sector) and status. -->
+              <a class="project-card hb-card" href="projects.html#classical-landmark">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/ksa-landmark.webp 480w, assets/img/ksa-landmark.webp 790w" sizes="(min-width: 1800px) calc(30vw * 1.39), (min-width: 1024px) calc(37vw * 1.39), (min-width: 640px) calc(54vw * 1.39), calc(84vw * 1.39)"><img src="assets/img/thumbs/ksa-landmark.jpg" srcset="assets/img/thumbs/ksa-landmark.jpg 480w, assets/img/ksa-landmark.jpg 790w" sizes="(min-width: 1800px) calc(30vw * 1.39), (min-width: 1024px) calc(37vw * 1.39), (min-width: 640px) calc(54vw * 1.39), calc(84vw * 1.39)" alt="Classical Landmark — red-and-cream classical façade, curved balconies, porte-cochère." data-ar-alt="المَعلم الكلاسيكي — واجهة كلاسيكية بالأحمر والكريمي وشرفات منحنية ومدخل مظلّل." width="790" height="710" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
+                <div class="project-card__body">
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="مبنى معلمي">Landmark building</span></div>
+                  <h3 class="project-card__title" data-ar="المَعلم الكلاسيكي">Classical Landmark</h3>
+                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">05</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
+                <a class="hb-slide__3d" href="studio.html?model=landmark" aria-label="Explore Classical Landmark in the 3D Studio" data-ar-aria-label="استكشف المَعلم الكلاسيكي في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
+              </div>
+            </div>
+
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="6 of 14" data-ar-aria-label="6 من 14">
+              <!-- PROJECTS: sofitel-hotel (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
               <a class="project-card hb-card" href="projects.html#sofitel-hotel">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/sofitel-hotel.webp"><img src="assets/img/sofitel-hotel.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" draggable="false" style="--pos:30% 50%"></picture></div>
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/sofitel-hotel.webp 480w, assets/img/sofitel-hotel.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.86), (min-width: 1024px) calc(37vw * 1.86), (min-width: 640px) calc(54vw * 1.86), calc(84vw * 1.86)"><img src="assets/img/thumbs/sofitel-hotel.jpg" srcset="assets/img/thumbs/sofitel-hotel.jpg 480w, assets/img/sofitel-hotel.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.86), (min-width: 1024px) calc(37vw * 1.86), (min-width: 640px) calc(54vw * 1.86), calc(84vw * 1.86)" alt="" width="1022" height="688" loading="lazy" decoding="async" draggable="false" style="--pos:30% 50%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
                   <div class="project-card__meta"><span class="badge badge--glass" data-ar="الضيافة">Hospitality</span></div>
@@ -851,16 +907,16 @@
                 </div>
               </a>
               <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">03</span>
+                <span class="hb-slide__num" aria-hidden="true">06</span>
                 <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
                 <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hotel"></use></svg></span>
               </div>
             </div>
 
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="4 of 10" data-ar-aria-label="4 من 10">
-              <!-- Portfolio project (PROJECTS: as-safiyyah-museum-park, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="7 of 14" data-ar-aria-label="7 من 14">
+              <!-- PROJECTS: as-safiyyah-museum-park (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. Commonly located in Madinah — confirm before stating a city. -->
               <a class="project-card hb-card" href="projects.html#as-safiyyah-museum-park">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/as-safiyyah-museum-park.webp"><img src="assets/img/as-safiyyah-museum-park.jpg" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/as-safiyyah-museum-park.webp 480w, assets/img/as-safiyyah-museum-park.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)"><img src="assets/img/thumbs/as-safiyyah-museum-park.jpg" srcset="assets/img/thumbs/as-safiyyah-museum-park.jpg 480w, assets/img/as-safiyyah-museum-park.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
                   <div class="project-card__meta"><span class="badge badge--glass" data-ar="مشاريع خاصة">Special Projects</span></div>
@@ -869,34 +925,16 @@
                 </div>
               </a>
               <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">04</span>
+                <span class="hb-slide__num" aria-hidden="true">07</span>
                 <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
                 <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#sparkles"></use></svg></span>
               </div>
             </div>
 
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="5 of 10" data-ar-aria-label="5 من 10">
-              <!-- Portfolio project (PROJECTS: neom-bay-airport, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page) — confirm status, year, client and MOBCO’s role. -->
-              <a class="project-card hb-card" href="projects.html#neom-bay-airport">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/neom-bay-airport.webp"><img src="assets/img/neom-bay-airport.jpg" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:40% 50%"></picture></div>
-                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="المطارات">Airport</span></div>
-                  <h3 class="project-card__title" data-ar="مطار خليج نيوم — إعادة تهيئة صالة الرحلات الدولية">NEOM Bay Airport — International Flight Reconfiguration</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="نيوم، المملكة العربية السعودية">NEOM, Saudi Arabia</span></p>
-                </div>
-              </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">05</span>
-                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plane"></use></svg></span>
-              </div>
-            </div>
-
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="6 of 10" data-ar-aria-label="6 من 10">
-              <!-- Portfolio project (PROJECTS: red-palace-redevelopment, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="8 of 14" data-ar-aria-label="8 من 14">
+              <!-- PROJECTS: red-palace-redevelopment (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. Commonly located in Riyadh — confirm before stating a city. The “Classical Landmark” render may depict this project — confirm. -->
               <a class="project-card hb-card" href="projects.html#red-palace-redevelopment">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/red-palace-redevelopment.webp"><img src="assets/img/red-palace-redevelopment.jpg" alt="" width="1022" height="576" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/red-palace-redevelopment.webp 480w, assets/img/red-palace-redevelopment.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 2.22), (min-width: 1024px) calc(37vw * 2.22), (min-width: 640px) calc(54vw * 2.22), calc(84vw * 2.22)"><img src="assets/img/thumbs/red-palace-redevelopment.jpg" srcset="assets/img/thumbs/red-palace-redevelopment.jpg 480w, assets/img/red-palace-redevelopment.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 2.22), (min-width: 1024px) calc(37vw * 2.22), (min-width: 640px) calc(54vw * 2.22), calc(84vw * 2.22)" alt="" width="1022" height="576" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
                   <div class="project-card__meta"><span class="badge badge--glass" data-ar="متعدد الاستخدامات / إداري">Mixed Use / Administration</span></div>
@@ -905,57 +943,21 @@
                 </div>
               </a>
               <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">06</span>
+                <span class="hb-slide__num" aria-hidden="true">08</span>
                 <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
                 <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span>
               </div>
             </div>
 
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="7 of 10" data-ar-aria-label="7 من 10">
-              <!-- Portfolio project (PROJECTS: al-moosa-specialist-hospital, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
-              <a class="project-card hb-card" href="projects.html#al-moosa-specialist-hospital">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/al-moosa-specialist-hospital.webp"><img src="assets/img/al-moosa-specialist-hospital.jpg" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:62% 50%"></picture></div>
-                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="الرعاية الصحية">Medical</span></div>
-                  <h3 class="project-card__title" data-ar="مستشفى الموسى التخصصي">Al-Moosa Specialist Hospital</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
-                </div>
-              </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">07</span>
-                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hospital"></use></svg></span>
-              </div>
-            </div>
-
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="8 of 10" data-ar-aria-label="8 من 10">
-              <!-- Portfolio project (PROJECTS: raffles-hotel-residence, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
-              <a class="project-card hb-card" href="projects.html#raffles-hotel-residence">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/raffles-hotel-residence.webp"><img src="assets/img/raffles-hotel-residence.jpg" alt="" width="1022" height="665" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
-                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="الضيافة">Hospitality</span></div>
-                  <h3 class="project-card__title" data-ar="فندق رافلز والمساكن الفاخرة — حزمة الأعمال الرئيسية">Raffles Hotel &amp; Branded Residence — Main Works Package</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
-                </div>
-              </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">08</span>
-                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hotel"></use></svg></span>
-              </div>
-            </div>
-
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="9 of 10" data-ar-aria-label="9 من 10">
-              <!-- Portfolio project (PROJECTS: taif-municipality-building, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page) — confirm status, year, client and MOBCO’s role. -->
-              <a class="project-card hb-card" href="projects.html#taif-municipality-building">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/taif-municipality-building.webp"><img src="assets/img/taif-municipality-building.jpg" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:58% 50%"></picture></div>
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="9 of 14" data-ar-aria-label="9 من 14">
+              <!-- PROJECTS: hq-tower-masjid-museum (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. Client/owner and city not stated on the old site. -->
+              <a class="project-card hb-card" href="projects.html#hq-tower-masjid-museum">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/hq-tower-masjid-museum.webp 480w, assets/img/hq-tower-masjid-museum.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.86), (min-width: 1024px) calc(37vw * 1.86), (min-width: 640px) calc(54vw * 1.86), calc(84vw * 1.86)"><img src="assets/img/thumbs/hq-tower-masjid-museum.jpg" srcset="assets/img/thumbs/hq-tower-masjid-museum.jpg 480w, assets/img/hq-tower-masjid-museum.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.86), (min-width: 1024px) calc(37vw * 1.86), (min-width: 640px) calc(54vw * 1.86), calc(84vw * 1.86)" alt="" width="1022" height="688" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
                   <div class="project-card__meta"><span class="badge badge--glass" data-ar="متعدد الاستخدامات / إداري">Mixed Use / Administration</span></div>
-                  <h3 class="project-card__title" data-ar="مبنى أمانة الطائف">Taif Municipality Building</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="الطائف، المملكة العربية السعودية">Taif, Saudi Arabia</span></p>
+                  <h3 class="project-card__title" data-ar="إنشاء البرج الرئيسي والمسجد والمتحف وتطوير موقع البرج">Construction of the Headquarter Tower, Masjid, Museum and Tower Site Development</h3>
+                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
               <div class="hb-slide__foot">
@@ -965,10 +967,82 @@
               </div>
             </div>
 
-            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="10 of 10" data-ar-aria-label="10 من 10">
-              <!-- Portfolio project (PROJECTS: sulaiman-fakeeh-hospital, featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="10 of 14" data-ar-aria-label="10 من 14">
+              <!-- PROJECTS: neom-bay-airport (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page) — confirm status, year, client and MOBCO’s role. -->
+              <a class="project-card hb-card" href="projects.html#neom-bay-airport">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/neom-bay-airport.webp 480w, assets/img/neom-bay-airport.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)"><img src="assets/img/thumbs/neom-bay-airport.jpg" srcset="assets/img/thumbs/neom-bay-airport.jpg 480w, assets/img/neom-bay-airport.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:40% 50%"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
+                <div class="project-card__body">
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="المطارات">Airport</span></div>
+                  <h3 class="project-card__title" data-ar="مطار خليج نيوم — إعادة تهيئة صالة الرحلات الدولية">NEOM Bay Airport — International Flight Reconfiguration</h3>
+                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="نيوم، المملكة العربية السعودية">NEOM, Saudi Arabia</span></p>
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">10</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
+                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plane"></use></svg></span>
+              </div>
+            </div>
+
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="11 of 14" data-ar-aria-label="11 من 14">
+              <!-- PROJECTS: taif-municipality-building (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page) — confirm status, year, client and MOBCO’s role. -->
+              <a class="project-card hb-card" href="projects.html#taif-municipality-building">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/taif-municipality-building.webp 480w, assets/img/taif-municipality-building.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)"><img src="assets/img/thumbs/taif-municipality-building.jpg" srcset="assets/img/thumbs/taif-municipality-building.jpg 480w, assets/img/taif-municipality-building.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:58% 50%"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
+                <div class="project-card__body">
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="متعدد الاستخدامات / إداري">Mixed Use / Administration</span></div>
+                  <h3 class="project-card__title" data-ar="مبنى أمانة الطائف">Taif Municipality Building</h3>
+                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="الطائف، المملكة العربية السعودية">Taif, Saudi Arabia</span></p>
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">11</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
+                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span>
+              </div>
+            </div>
+
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="12 of 14" data-ar-aria-label="12 من 14">
+              <!-- PROJECTS: al-moosa-specialist-hospital (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
+              <a class="project-card hb-card" href="projects.html#al-moosa-specialist-hospital">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/al-moosa-specialist-hospital.webp 480w, assets/img/al-moosa-specialist-hospital.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)"><img src="assets/img/thumbs/al-moosa-specialist-hospital.jpg" srcset="assets/img/thumbs/al-moosa-specialist-hospital.jpg 480w, assets/img/al-moosa-specialist-hospital.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.85), (min-width: 1024px) calc(37vw * 1.85), (min-width: 640px) calc(54vw * 1.85), calc(84vw * 1.85)" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:62% 50%"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
+                <div class="project-card__body">
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="الرعاية الصحية">Medical</span></div>
+                  <h3 class="project-card__title" data-ar="مستشفى الموسى التخصصي">Al-Moosa Specialist Hospital</h3>
+                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">12</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
+                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hospital"></use></svg></span>
+              </div>
+            </div>
+
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="13 of 14" data-ar-aria-label="13 من 14">
+              <!-- PROJECTS: raffles-hotel-residence (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. Caption partly hidden in the screenshot (“Br… Residence”) — confirm full name. -->
+              <a class="project-card hb-card" href="projects.html#raffles-hotel-residence">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/raffles-hotel-residence.webp 480w, assets/img/raffles-hotel-residence.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.92), (min-width: 1024px) calc(37vw * 1.92), (min-width: 640px) calc(54vw * 1.92), calc(84vw * 1.92)"><img src="assets/img/thumbs/raffles-hotel-residence.jpg" srcset="assets/img/thumbs/raffles-hotel-residence.jpg 480w, assets/img/raffles-hotel-residence.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.92), (min-width: 1024px) calc(37vw * 1.92), (min-width: 640px) calc(54vw * 1.92), calc(84vw * 1.92)" alt="" width="1022" height="665" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></div>
+                <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
+                <div class="project-card__body">
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="الضيافة">Hospitality</span></div>
+                  <h3 class="project-card__title" data-ar="فندق رافلز والمساكن الفاخرة — حزمة الأعمال الرئيسية">Raffles Hotel &amp; Branded Residence — Main Works Package</h3>
+                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
+                </div>
+              </a>
+              <div class="hb-slide__foot">
+                <span class="hb-slide__num" aria-hidden="true">13</span>
+                <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
+                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hotel"></use></svg></span>
+              </div>
+            </div>
+
+            <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="14 of 14" data-ar-aria-label="14 من 14">
+              <!-- PROJECTS: sulaiman-fakeeh-hospital (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated — confirm status, year, client and MOBCO’s role. -->
               <a class="project-card hb-card" href="projects.html#sulaiman-fakeeh-hospital">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/sulaiman-fakeeh-hospital.webp"><img src="assets/img/sulaiman-fakeeh-hospital.jpg" alt="" width="1022" height="641" loading="lazy" decoding="async" draggable="false" style="--pos:42% 50%"></picture></div>
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/sulaiman-fakeeh-hospital.webp 480w, assets/img/sulaiman-fakeeh-hospital.webp 1022w" sizes="(min-width: 1800px) calc(30vw * 1.99), (min-width: 1024px) calc(37vw * 1.99), (min-width: 640px) calc(54vw * 1.99), calc(84vw * 1.99)"><img src="assets/img/thumbs/sulaiman-fakeeh-hospital.jpg" srcset="assets/img/thumbs/sulaiman-fakeeh-hospital.jpg 480w, assets/img/sulaiman-fakeeh-hospital.jpg 1022w" sizes="(min-width: 1800px) calc(30vw * 1.99), (min-width: 1024px) calc(37vw * 1.99), (min-width: 640px) calc(54vw * 1.99), calc(84vw * 1.99)" alt="" width="1022" height="641" loading="lazy" decoding="async" draggable="false" style="--pos:42% 50%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
                   <div class="project-card__meta"><span class="badge badge--glass" data-ar="الرعاية الصحية">Medical</span></div>
@@ -977,7 +1051,7 @@
                 </div>
               </a>
               <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">10</span>
+                <span class="hb-slide__num" aria-hidden="true">14</span>
                 <span class="hb-slide__type" data-ar="من محفظة أعمالنا">From our portfolio</span>
                 <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hospital"></use></svg></span>
               </div>
@@ -985,7 +1059,7 @@
           </div>
 
           <div class="carousel__foot hb-carousel__foot">
-            <span class="carousel__count">01 / 10</span>
+            <span class="carousel__count">01 / 14</span>
             <div class="carousel__progress"><span></span></div>
             <span class="hb-carousel__hint" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hand"></use></svg><span data-ar="اسحب للاستكشاف">Drag to explore</span></span>
           </div>
@@ -1020,10 +1094,11 @@
           <span class="hb-studio__corner hb-studio__corner--be" aria-hidden="true"></span>
           <div class="hb-studio__hud hb-studio__hud--top" aria-hidden="true">
             <span><span class="hb-studio__hud-k" data-ar="النموذج">Model</span> <span data-ar="متعدد الاستخدامات">Mixed-use</span></span>
-            <span class="hb-studio__hud-live"><span class="hb-studio__hud-dot"></span><span data-ar="مخطط محوري">Axonometric</span></span>
+            <span class="hb-studio__hud-live"><span class="hb-studio__hud-dot"></span><span class="hb-studio__hud-axo" data-ar="مخطط محوري">Axonometric</span><span class="hb-studio__hud-3d" data-ar="نموذج ثلاثي الأبعاد مباشر">Live 3D</span></span>
           </div>
-          <!-- Studio embed slot: the 3D Studio may later mount a live viewer here (data-studio-embed = studio model id).
-               Until then it shows an SVG axonometric line drawing (generated, illustrative) that draws itself on scroll. -->
+          <!-- Studio embed slot (data-studio-embed = studio model id). home-b.js mounts a live, non-interactive 3D turntable
+               (studio engine, lazy-imported) here on capable GPUs and crossfades to it; otherwise this SVG axonometric
+               line drawing (generated, illustrative), which draws itself on scroll, is the fallback. -->
           <div id="studio-embed" class="hb-studio__embed" data-studio-embed="mixed-use" data-hb-embed>
             <svg class="hb-axo" viewBox="0 0 626 602" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false" aria-label="Illustrative axonometric line drawing of a mixed-use building: retail podium, office tower and clinic wing" data-ar-aria-label="رسم محوري توضيحي لمبنى متعدد الاستخدامات: منصة تجارية وبرج مكاتب وجناح عيادات">
             <path class="axo-grid" d="M321.5 271.6L92.9 403.6" pathLength="1" style="--s:0.000;--d:0.160"/>
@@ -1169,6 +1244,7 @@
             <text class="axo-axis" x="44" y="520.5" text-anchor="middle">Z</text>
             </svg>
           </div>
+          <a class="hb-studio__open" href="studio.html?model=mixed-use" data-cursor="explore" aria-label="Open the mixed-use model in the 3D Studio" data-ar-aria-label="افتح النموذج متعدد الاستخدامات في الاستوديو ثلاثي الأبعاد"></a>
           <div class="hb-studio__hud hb-studio__hud--bottom" aria-hidden="true">
             <span data-ar="كتلة توضيحية — ليست بمقياس رسم">Illustrative massing — not to scale</span>
             <span class="hb-studio__hud-k num-ltr"><span data-hb-draw-pct>100</span>%</span>

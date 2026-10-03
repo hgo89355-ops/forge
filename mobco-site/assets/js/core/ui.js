@@ -80,7 +80,8 @@ document.addEventListener('keydown', (e) => {
 function transitionOut(el, cls, done) {
   el.classList.remove(cls);
   const ms = prefersReducedMotion() ? 0 : 650;
-  setTimeout(done, ms);
+  clearTimeout(el.__outTimer);
+  el.__outTimer = setTimeout(() => { el.__outTimer = 0; done(); }, ms);
 }
 
 /* ======================================================================
@@ -90,7 +91,8 @@ const resolve = (x) => (typeof x === 'string' ? document.getElementById(x.replac
 
 function openPanel(el, kind, trigger) {
   el = resolve(el);
-  if (!el || el.classList.contains('is-open')) return;
+  if (!el || el.__layer) return;
+  clearTimeout(el.__outTimer); // reopened while the close transition was still running: keep it visible
   const returnTo = trigger || document.activeElement;
   el.hidden = false;
   el.removeAttribute('inert');
@@ -367,10 +369,17 @@ function hideTip() {
   tipTarget?.removeAttribute('aria-describedby');
   tipTarget = null;
 }
+let tipPressed = null; // element pressed with a pointer: its tooltip stays hidden until the pointer leaves it
 function initTooltips() {
-  document.addEventListener('pointerover', (e) => { const el = e.target.closest?.('[data-tooltip]'); if (el && el !== tipTarget) showTip(el); });
-  document.addEventListener('pointerout', (e) => { const el = e.target.closest?.('[data-tooltip]'); if (el && !el.contains(e.relatedTarget)) hideTip(); });
-  document.addEventListener('focusin', (e) => { const el = e.target.closest?.('[data-tooltip]'); if (el) showTip(el); });
+  document.addEventListener('pointerover', (e) => { const el = e.target.closest?.('[data-tooltip]'); if (el && el !== tipTarget && el !== tipPressed) showTip(el); });
+  document.addEventListener('pointerout', (e) => {
+    const el = e.target.closest?.('[data-tooltip]');
+    if (el && !el.contains(e.relatedTarget)) { hideTip(); if (el === tipPressed) tipPressed = null; }
+  });
+  // pressing the trigger (e.g. a toolbar button that opens a modal) hides the tooltip; the focus that follows the
+  // press does not bring it back
+  document.addEventListener('pointerdown', (e) => { tipPressed = e.target.closest?.('[data-tooltip]') || null; hideTip(); }, true);
+  document.addEventListener('focusin', (e) => { const el = e.target.closest?.('[data-tooltip]'); if (el && el !== tipPressed) showTip(el); });
   document.addEventListener('focusout', (e) => { if (e.target.closest?.('[data-tooltip]')) hideTip(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
   window.addEventListener('scroll', hideTip, { passive: true });
@@ -407,17 +416,22 @@ function setupChips(group) {
 /* ======================================================================
    Range inputs (fill + output)
    ====================================================================== */
+// Output text: data-prefix / data-suffix, localised with data-ar-prefix / data-ar-suffix (re-rendered on langchange).
+// data-format="none" leaves the <output> to the page (core only updates the fill).
 function setupRange(input) {
   if (input.__range) return;
   input.__range = true;
   const out = input.closest('.range')?.querySelector('.range__value, output');
+  const manual = input.getAttribute('data-format') === 'none';
+  const affix = (name) => (getLang() === 'ar' && input.hasAttribute(`data-ar-${name}`) ? input.getAttribute(`data-ar-${name}`) : input.getAttribute(`data-${name}`)) || '';
   const update = () => {
     const min = parseFloat(input.min || 0), max = parseFloat(input.max || 100);
     const pct = ((parseFloat(input.value) - min) / (max - min)) * 100;
     input.style.setProperty('--val', `${pct}%`);
-    if (out) out.textContent = `${input.getAttribute('data-prefix') || ''}${input.value}${input.getAttribute('data-suffix') || ''}`;
+    if (out && !manual) out.textContent = `${affix('prefix')}${input.value}${affix('suffix')}`;
   };
   input.addEventListener('input', update);
+  if (!manual && (input.hasAttribute('data-ar-prefix') || input.hasAttribute('data-ar-suffix'))) onLang(update);
   update();
 }
 
@@ -520,7 +534,7 @@ function setupCarousel(root) {
   new ResizeObserver(update).observe(vp);
 
   // mouse drag with inertia (touch uses native scrolling)
-  let down = false, moved = false, startX = 0, startScroll = 0, lastX = 0, lastT = 0, vel = 0, raf = 0;
+  let down = false, moved = false, startX = 0, startScroll = 0, lastX = 0, lastT = 0, vel = 0, raf = 0, glideEnd = 0;
   const snapToNearest = () => {
     const vr = vp.getBoundingClientRect();
     let best = null, bestD = Infinity;
@@ -529,12 +543,19 @@ function setupCarousel(root) {
       const d = isRTL() ? vr.right - r.right : r.left - vr.left;
       if (Math.abs(d) < Math.abs(bestD)) { bestD = d; best = s; }
     }
-    vp.classList.remove('is-gliding');
-    if (best) vp.scrollBy({ left: isRTL() ? -bestD : bestD, behavior: 'smooth' });
+    // keep scroll-snap off (.is-gliding) until the smooth snap has finished: re-enabling mandatory snap while the
+    // smooth scrollBy is in flight makes Chrome re-snap to the previously snapped slide (drag "snaps back").
+    clearTimeout(glideEnd);
+    const done = () => { clearTimeout(glideEnd); vp.removeEventListener('scrollend', done); vp.classList.remove('is-gliding'); };
+    if (!best || Math.abs(bestD) < 1) { done(); return; }
+    vp.addEventListener('scrollend', done, { once: true });
+    glideEnd = setTimeout(done, 900);
+    vp.scrollBy({ left: isRTL() ? -bestD : bestD, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   };
   vp.addEventListener('pointerdown', (e) => {
     if (e.pointerType !== 'mouse' || e.button !== 0) return;
     cancelAnimationFrame(raf);
+    clearTimeout(glideEnd);
     down = true; moved = false;
     startX = lastX = e.clientX; startScroll = vp.scrollLeft; lastT = performance.now(); vel = 0;
   });
@@ -585,15 +606,39 @@ function setupCarousel(root) {
    ====================================================================== */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 function wrapperOf(el) { return el.closest('.field, .check, .dropzone') || el.parentElement; }
+/** All radios of el's group (same name, same form/document); [el] for anything else. */
+function groupOf(el) {
+  if (el.type !== 'radio' || !el.name) return [el];
+  const scope = el.form || el.closest('form') || document;
+  return $$(`input[type=radio][name="${CSS.escape(el.name)}"]`, scope);
+}
+// The message element for a control. A .check (checkbox/radio label) puts its message next to the label, in the
+// label's parent, tagged data-for="<name>" so that one message serves the whole radio group and each checkbox keeps
+// exactly one (no duplicates on repeated validation).
 function errorEl(el) {
+  if (el.__err?.isConnected) return el.__err;
   const w = wrapperOf(el);
-  let err = w.querySelector('.field__error');
-  if (!err) {
-    err = document.createElement('p');
-    err.className = 'field__error';
-    (w.classList.contains('check') ? w.parentElement : w).appendChild(err);
+  let err;
+  if (w.classList.contains('check')) {
+    const host = w.parentElement;
+    const key = el.name || el.id || '';
+    err = $$(':scope > .field__error', host).find((x) => (x.getAttribute('data-for') || '') === key);
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'field__error';
+      err.setAttribute('data-for', key);
+      host.appendChild(err);
+    }
+  } else {
+    err = w.querySelector('.field__error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'field__error';
+      w.appendChild(err);
+    }
   }
   err.id ||= uid('err');
+  el.__err = err;
   return err;
 }
 function ruleFor(el) {
@@ -651,12 +696,17 @@ function showFieldState(el, rule) {
 }
 function validateField(el) {
   const rule = ruleFor(el);
-  showFieldState(el, rule);
+  // a radio group is one control: every radio gets the same state (no stale aria-invalid / errors on siblings)
+  groupOf(el).forEach((r) => showFieldState(r, rule));
   return !rule;
 }
 const controlsOf = (form) => $$('input, select, textarea', form).filter((el) => el.name && !el.closest('[data-novalidate]'));
 
-/** Validate a form; returns true if valid (shows inline errors). */
+/**
+ * Validate every named control inside `form` — any container works, e.g. one step of a multi-step form:
+ * validateForm(stepEl). Shows inline errors, focuses the first invalid control, returns true when valid.
+ * Controls inside [data-novalidate] are skipped.
+ */
 export function validateForm(form) {
   let firstBad = null;
   for (const el of controlsOf(form)) {
@@ -691,7 +741,9 @@ function setupForm(form) {
   });
   form.addEventListener('input', (e) => { if (e.target.__rule !== undefined && e.target.__rule) validateField(e.target); });
   form.addEventListener('change', (e) => { if (['checkbox', 'radio', 'file'].includes(e.target.type) || e.target.tagName === 'SELECT') validateField(e.target); });
-  form.addEventListener('submit', (e) => {
+  // data-validate="manual": inline validation only (focusout / input / change / langchange) — the page handles
+  // submit itself (e.g. a wizard calling validateForm(step)).
+  if (form.getAttribute('data-validate') !== 'manual') form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!validateForm(form)) {
       if (controlsOf(form).filter((c) => c.__rule).length > 1) toast(S.fixErrors, { type: 'error', duration: 3200 });
@@ -861,6 +913,25 @@ function lbRender(dir = 0) {
     if (it) { const p = new Image(); p.src = it.src; }
   });
 }
+// Re-apply every language-dependent string of an open lightbox (called on langchange).
+function lbLocalize() {
+  if (!LB.el) return;
+  const item = LB.items[LB.index];
+  const set = (sel, key) => LB.el.querySelector(sel)?.setAttribute('aria-label', t(S[key]));
+  LB.el.setAttribute('aria-label', t(S.viewer));
+  set('[data-lb-zoom-out]', 'zoomOut');
+  set('[data-lb-zoom-in]', 'zoomIn');
+  set('[data-lb-close]', 'close');
+  set('[data-lb-prev]', 'prev');
+  set('[data-lb-next]', 'next');
+  const hint = LB.el.querySelector('.lightbox__hint');
+  if (hint) hint.textContent = t(S.lbHint);
+  if (item) {
+    LB.el.querySelector('.lightbox__caption').textContent = t(item.caption) || '';
+    const img = LB.slide?.querySelector('img');
+    if (img) img.alt = t(item.alt) || t(item.caption) || '';
+  }
+}
 function lbGo(delta) {
   if (LB.items.length < 2) return;
   LB.index = (LB.index + delta + LB.items.length) % LB.items.length;
@@ -1027,5 +1098,6 @@ export function initUI() {
   initCopy();
   initTooltips();
   initLightboxLinks();
+  onLang(lbLocalize);
   scanUI(document);
 }

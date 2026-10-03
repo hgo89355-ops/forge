@@ -432,7 +432,7 @@ export function createStudio(container, options = {}) {
     }
     return true;
   }
-  function fitFactor(pos, target, box) {
+  function fitFactor(pos, target, box, { closer = 0 } = {}) {
     if (!box || box.isEmpty()) return 1;
     fitCam.copy(camera, false);
     if (Math.abs(offset.tx) >= 0.5 || Math.abs(offset.ty) >= 0.5) fitCam.setViewOffset(width, height, offset.tx, offset.ty, width, height);
@@ -446,7 +446,13 @@ export function createStudio(container, options = {}) {
     if (rect.x1 - rect.x0 < 0.3 || rect.y1 - rect.y0 < 0.3) return 1;
     const dir = pos.clone().sub(target);
     const fits = (k) => boxFits(fitTmp.copy(target).addScaledVector(dir, k), target, box, rect);
-    if (fits(1)) return 1;
+    if (fits(1)) {
+      // optionally move in (down to `closer` × the preset) so every model fills the free area alike
+      if (!(closer > 0 && closer < 1) || fits(closer)) return closer > 0 && closer < 1 ? closer : 1;
+      let lo = closer, hi = 1;
+      for (let i = 0; i < 10; i++) { const mid = (lo + hi) / 2; if (fits(mid)) hi = mid; else lo = mid; }
+      return hi;
+    }
     let lo = 1, hi = 1.5;
     while (!fits(hi) && hi < 4) { lo = hi; hi *= 1.4; }
     if (hi >= 4) return 4;
@@ -466,9 +472,9 @@ export function createStudio(container, options = {}) {
     const p = new THREE.Vector3().fromArray(cam[name] || cam.aerial);
     if (name === 'street') return p;
     const tg = new THREE.Vector3().fromArray(cam.target);
-    // pull back only as far as needed for the buildings (exploded stack included) to sit in the free area
-    // between the panels; never closer than the authored preset
-    const f = fitFactor(p, tg, explodedBox(easeOutCubic(clamp(state.explodeTarget, 0, 1))));
+    // fit the buildings (exploded stack included) to the free area between the panels: pull back as far as
+    // needed, or move in by up to 28 % when the authored preset leaves them small
+    const f = fitFactor(p, tg, explodedBox(easeOutCubic(clamp(state.explodeTarget, 0, 1))), { closer: 0.72 });
     return p.sub(tg).multiplyScalar(f).add(tg);
   }
   function setView(name, { instant = false } = {}) {

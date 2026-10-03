@@ -12,8 +12,10 @@
 //   data-magnetic[="0.35"]                  element follows the pointer slightly (fine pointers)
 //   data-draw                               SVG path stroke draw-in on enter
 //
-// API: scan(root), refresh(), scrollTo(target, {offset, immediate}), getLenis(), gsapReady(),
+// API: scan(root), refresh(), scrollTo(target, {gap, offset, immediate}), getLenis(), gsapReady(),
 //      stopScroll(), startScroll(), onScroll(cb) → unsubscribe, reveal(el)
+// Same-page hash links scroll below the header (opt out with data-no-scroll on the link); a hash on load is
+// re-aligned after document.fonts.ready and window load.
 
 import { $$, clamp, prefersReducedMotion, hasFinePointer, isQA, rafThrottle, debounce, formatNumber } from './utils.js';
 import { onLang, getLang } from './i18n.js';
@@ -65,27 +67,54 @@ function initLenis() {
   }
 }
 
-/** Smoothly scroll to an element, selector or y position. Honors the fixed header. */
-export function scrollTo(target, { offset, immediate = false } = {}) {
+/**
+ * Smoothly scroll to an element, selector or y position, clearing the fixed header.
+ *
+ *   scrollTo(el)                      → el's top lands `--header-h + 16px` below the viewport top (Lenis or native)
+ *   scrollTo(el, { gap: 24 })         → same, with a custom gap below the header
+ *   scrollTo(1200)                    → absolute y (no header offset is applied to numbers unless `gap` is given)
+ *   scrollTo(el, { offset })          → legacy raw offset (kept for compatibility): with Lenis the offset is passed to
+ *                                       lenis.scrollTo() unchanged, which also subtracts html scroll-padding
+ *                                       (= header + 16px); without Lenis the element lands at -offset. Prefer `gap`.
+ *
+ * Element targets are converted to a numeric y from getBoundingClientRect() + window.scrollY, so the header offset
+ * is applied exactly once (Lenis would otherwise subtract html scroll-padding / :target scroll-margin on top of it),
+ * and a stale Lenis position after a native jump does not skew the result.
+ */
+export function scrollTo(target, { offset, gap, immediate = false } = {}) {
   const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
-  const off = offset ?? -(headerH + 16);
-  if (lenis) { lenis.scrollTo(target, { offset: off, immediate, duration: 1.2 }); return; }
-  let y = 0;
-  if (typeof target === 'number') y = target;
-  else {
-    const el = typeof target === 'string' ? document.querySelector(target) : target;
-    if (!el) return;
-    y = el.getBoundingClientRect().top + window.scrollY + off;
+  let el = null;
+  if (typeof target === 'string') { try { el = document.querySelector(target); } catch { el = null; } if (!el) return; }
+  else if (target && typeof target === 'object' && target.nodeType === 1) el = target;
+  const instant = immediate || reduced;
+  // legacy explicit offset on an element target with Lenis: preserve the previous behaviour exactly
+  if (el && lenis && offset !== undefined && gap === undefined) {
+    lenis.scrollTo(el, { offset, immediate: instant, duration: 1.2 });
+    return;
   }
-  window.scrollTo({ top: y, behavior: immediate || reduced ? 'auto' : 'smooth' });
+  let y;
+  if (el) {
+    const off = gap !== undefined ? -(headerH + gap) : (offset ?? -(headerH + 16));
+    y = el.getBoundingClientRect().top + window.scrollY + off;
+  } else {
+    y = Number(target) || 0;
+    if (gap !== undefined) y -= headerH + gap;
+    else if (offset) y += offset;
+  }
+  const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  y = Math.round(clamp(y, 0, max));
+  if (lenis) { lenis.scrollTo(y, { immediate: instant, duration: 1.2 }); return; }
+  window.scrollTo({ top: y, behavior: instant ? 'instant' : 'smooth' });
 }
 export function stopScroll() { lenis?.stop(); }
 export function startScroll() { lenis?.start(); }
 
 function initAnchors() {
+  // Same-page hash links scroll smoothly below the header. Opt out per link with [data-no-scroll] (the click is
+  // left alone, so the browser updates the hash natively and fires 'hashchange' — e.g. for hash-driven overlays).
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href*="#"]');
-    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.hasAttribute('data-no-scroll')) return;
     const url = new URL(a.href, location.href);
     if (url.pathname !== location.pathname || !url.hash || url.hash === '#') return;
     let target;
@@ -97,6 +126,24 @@ function initAnchors() {
     if (!target.matches('a,button,input,select,textarea,[tabindex]')) target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });
   });
+}
+
+// Deep link on load: jump below the header once layout is known, then re-align after web fonts and late images
+// settle (they shift everything above the target). Stops re-aligning as soon as the user scrolls themselves.
+function initHashOnLoad() {
+  if (!location.hash || location.hash.length < 2) return;
+  let el = null;
+  try { el = document.querySelector(decodeURIComponent(location.hash)); } catch { return; }
+  if (!el) return;
+  let userScrolled = false;
+  const stop = () => { userScrolled = true; };
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => window.addEventListener(ev, stop, { once: true, passive: true }));
+  // skipped while a modal/overlay holds the page (html.is-locked), e.g. a hash-driven project viewer
+  const align = () => { if (!userScrolled && el.isConnected && !document.documentElement.classList.contains('is-locked')) scrollTo(el, { immediate: true }); };
+  setTimeout(align, 60);
+  document.fonts?.ready?.then(() => requestAnimationFrame(align));
+  if (document.readyState === 'complete') setTimeout(align, 250);
+  else window.addEventListener('load', () => setTimeout(align, 120), { once: true });
 }
 
 /* ---------------------------------------------------------------- reveal */
@@ -143,6 +190,10 @@ const settle = debounce(() => {
     if (r.top < vh && r.bottom > 0 && (r.width || r.height)) { pendingReveal.delete(el); revealIO?.unobserve(el); reveal(el); }
   }
 }, 140);
+// second pass: a programmatic jump can end after the 140ms debounce fired (smooth scroll still in flight, busy
+// main thread) — check again once scrolling has really ended (scrollend, or 450ms after the last scroll event).
+const settleLate = debounce(() => settle(), 450);
+function onSettle() { settle(); settleLate(); }
 function observeAfterLoad(el) {
   whenLoaded().then(() => {
     if (/^mask/.test(el.getAttribute('data-reveal') || '')) { manualReveal.add(el); checkManual(); }
@@ -431,8 +482,9 @@ export function initMotion() {
     try { window.gsap.registerPlugin(window.ScrollTrigger); } catch { /* ignore */ }
   }
   initLenis();
-  window.addEventListener('scroll', () => { if (!lenis) emitScroll(); onParallax(); onManual(); settle(); }, { passive: true });
-  if (lenis) { lenis.on('scroll', onParallax); lenis.on('scroll', onManual); lenis.on('scroll', settle); }
+  window.addEventListener('scroll', () => { if (!lenis) emitScroll(); onParallax(); onManual(); onSettle(); }, { passive: true });
+  window.addEventListener('scrollend', () => { settle(); checkManual(); }, { passive: true });
+  if (lenis) { lenis.on('scroll', onParallax); lenis.on('scroll', onManual); lenis.on('scroll', onSettle); }
   window.addEventListener('resize', rafThrottle(() => {
     $$('[data-marquee].is-ready').forEach(setupMarquee);
     refresh();
@@ -453,12 +505,7 @@ export function initMotion() {
     $$('[data-marquee].is-ready').forEach(setupMarquee);
     refresh();
   });
-  // hash on load (after header offset is known)
-  if (location.hash && location.hash.length > 1) {
-    try {
-      const el = document.querySelector(decodeURIComponent(location.hash));
-      if (el) setTimeout(() => scrollTo(el, { immediate: true }), 60);
-    } catch { /* ignore */ }
-  }
+  // hash on load (after header offset is known), re-aligned after fonts.ready / load
+  initHashOnLoad();
   emitScroll();
 }

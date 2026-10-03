@@ -525,6 +525,33 @@ body[data-page='home'] .hb-studio__embed {
   transition: transform .9s var(--ease-out);
 }
 
+/* Live 3D embed (home-b.js → studio engine, lazy-imported on capable GPUs). The canvas host overlays the SVG drawing
+   (which keeps defining the size) and crossfades in once the model has loaded; the drawing stays the fallback. */
+body[data-page='home'] .hb-studio__live {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none; /* non-interactive turntable: clicks go to the .hb-studio__open link */
+  transition: opacity 1.4s var(--ease-out);
+  /* feather the rendered rectangle into the navy stage */
+  -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 58%, transparent 100%);
+}
+body[data-page='home'] .hb-studio__live .studio-canvas { display: block; inline-size: 100%; block-size: 100%; outline: none; }
+body[data-page='home'] .hb-studio__embed .hb-axo { transition: opacity 1s var(--ease-out); }
+body[data-page='home'] .hb-studio__embed.is-live { transform: none; }
+body[data-page='home'] .hb-studio__embed.is-live .hb-studio__live { opacity: 1; }
+body[data-page='home'] .hb-studio__embed.is-live .hb-axo { opacity: 0; }
+body[data-page='home'] .hb-studio__hud-3d { display: none; }
+body[data-page='home'] .hb-studio__stage.is-live .hb-studio__hud-axo { display: none; }
+body[data-page='home'] .hb-studio__stage.is-live .hb-studio__hud-3d { display: inline; }
+/* the whole stage opens the studio on the embedded model */
+body[data-page='home'] .hb-studio__open { position: absolute; inset: 0; z-index: 2; border-radius: var(--radius); }
+body[data-page='home'] .hb-studio__open:focus-visible { outline: 2px solid var(--focus, var(--teal-400)); outline-offset: 4px; }
+@media (hover: hover) {
+  body[data-page='home'] .hb-studio__stage:has(.hb-studio__open:hover) .hb-studio__corner { border-color: var(--teal-300); }
+}
+
 /* Isometric drawing (generated). Each path: pathLength=1, --s start, --d duration (scroll progress units).
    The <svg> carries --p (0→1) set by home-b.js; default 1 = fully drawn (no-JS / reduced motion). */
 body[data-page='home'] .hb-axo { --p: 1; display: block; inline-size: 100%; block-size: auto; overflow: visible; direction: ltr; }
