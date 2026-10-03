@@ -141,6 +141,11 @@ html[lang='ar'] .subs-hero__logo-meta { letter-spacing: 0; font-size: .8125rem; 
 .subs-hero__logo-meta .icon { color: var(--slate-400); transition: transform var(--dur) var(--ease-out), color var(--dur); }
 .subs-hero__logo:hover .subs-hero__logo-meta .icon, .subs-hero__logo:focus-visible .subs-hero__logo-meta .icon { transform: translateY(3px); color: var(--teal-700); }
 
+@media (max-width: 359.98px) {
+  .subs-hero__logo-meta { letter-spacing: .12em; gap: .375rem; padding-inline: .5rem; }
+  .subs-hero__logo-meta .icon { display: none; }
+  .subs-result__actions .btn, .subs-finder__nav .btn { white-space: normal; min-inline-size: 0; }
+}
 @media (min-width: 1024px) {
   .subs-hero__inner {
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
@@ -754,7 +759,7 @@ html[lang='ar'] .subs-co__focus-title { letter-spacing: 0; font-size: .875rem; }
   .subs-co__head { grid-template-columns: minmax(0, 1fr); }
   .subs-co__logo { inline-size: 120px; }
   .subs-co__logo--wide { inline-size: 176px; }
-  .subs-co__actions .btn { flex: 1 1 100%; }
+  .subs-co__actions .btn { flex: 1 1 100%; min-inline-size: 0; white-space: normal; text-align: center; }
   .subs-co__duo-b { outline-width: 4px; }
 }
 

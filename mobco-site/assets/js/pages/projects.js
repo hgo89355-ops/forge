@@ -290,7 +290,9 @@ const ringItem = (p, thumb) => ({
   data: { slug: p.slug },
 });
 const heroCardWidth = () => (innerWidth < 640 ? 172 : innerWidth < 1024 ? 220 : innerWidth < 1800 ? 264 : 300);
-const heroItems = () => FEATURED.map((p) => ringItem(p, innerWidth < 768));
+/** 480px thumbs are sharp enough while the card needs ≤ ~560 device pixels (most screens) — ~3× lighter than full size. */
+const heroThumbs = () => heroCardWidth() * (window.devicePixelRatio || 1) <= 560;
+const heroItems = () => FEATURED.map((p) => ringItem(p, heroThumbs()));
 
 function updateRingToggle() {
   if (!heroRing || !E.ringToggle) return;
@@ -342,12 +344,14 @@ function initHeroRing() {
   $('[data-pj-ring-prev]')?.addEventListener('click', () => heroRing?.prev());
   $('[data-pj-ring-next]')?.addEventListener('click', () => heroRing?.next());
 
-  let lastW = innerWidth;
+  let lastW = innerWidth, lastThumbs = heroThumbs();
   addEventListener('resize', debounce(() => {
     if (!heroRing || innerWidth === lastW) return;
-    const crossed = (lastW < 768) !== (innerWidth < 768);
     lastW = innerWidth;
-    heroRing.update(crossed ? { cardWidth: heroCardWidth(), items: heroItems() } : { cardWidth: heroCardWidth() });
+    const th = heroThumbs();
+    const swap = th !== lastThumbs;
+    lastThumbs = th;
+    heroRing.update(swap ? { cardWidth: heroCardWidth(), items: heroItems() } : { cardWidth: heroCardWidth() });
   }, 200));
 }
 
@@ -649,8 +653,8 @@ function cardEl(p) {
   li.innerHTML = `
     <a class="pj-card${p.location ? '' : ' is-tbc'}" href="projects.html#${esc(p.slug)}" data-slug="${esc(p.slug)}" data-cursor="view" data-cursor-label="${esc(t(S.view))}">
       <span class="pj-card__media">
-        ${cardPicture(p, { sizes: '(min-width: 1024px) 420px, (min-width: 640px) 46vw, 92vw', alt: t(p.name) })}
-        <span class="pj-card__idx num" data-idx></span>
+        ${cardPicture(p, { sizes: '(min-width: 1024px) 420px, (min-width: 640px) 46vw, 92vw' /* alt="": the link text already names the project */ })}
+        <span class="pj-card__idx num" aria-hidden="true" data-idx></span>
         <span class="pj-card__open" aria-hidden="true">${icon('arrow-up-right', 'icon--dir')}</span>
       </span>
       <span class="pj-card__body">
@@ -704,7 +708,7 @@ function rowEl(p) {
   li.dataset.slug = p.slug;
   li.innerHTML = `
     <a class="pj-row" href="projects.html#${esc(p.slug)}" data-slug="${esc(p.slug)}">
-      <span class="pj-row__idx num" data-idx></span>
+      <span class="pj-row__idx num" aria-hidden="true" data-idx></span>
       <span class="pj-row__thumb"><img src="${imgSrc(p.image, true, 'jpg')}" alt="" width="96" height="64" loading="lazy" decoding="async" style="object-position:${esc(p.pos || '50% 50%')}"></span>
       <span class="pj-row__name"><span class="pj-row__title">${esc(t(p.name))}</span><span class="pj-row__sub">${esc(catName(p))}${p.location ? ` · ${esc(locText(p))}` : ''}</span></span>
       <span class="pj-row__cat">${icon(catIcon(p), 'icon--sm')}<span>${esc(catName(p))}</span></span>
