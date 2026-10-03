@@ -299,6 +299,7 @@
     ];
 
     const panel = document.getElementById('panel');
+    const optionalRanges = []; // curve / tilt / perspective: follow the preset while on "auto"
     let uid = 0;
 
     const applyControl = (control, value) => {
@@ -313,6 +314,9 @@
         set({ rtl: value, labels: LABELS[ui.lang], items: makeItems(ui.itemCount, ui.lang) });
       } else {
         set({ [control.key]: value });
+        if (control.key === 'preset') {
+          for (const { key, input, auto } of optionalRanges) if (auto.checked) input.value = PRESETS[value][key];
+        }
       }
       log(`update({ ${control.key}: ${JSON.stringify(value)} })`);
     };
@@ -375,6 +379,7 @@
             auto.checked = current == null;
             auto.setAttribute('aria-label', `${control.key}: use preset value`);
             wrap.append(auto, 'auto');
+            optionalRanges.push({ key: control.key, input, auto });
             auto.addEventListener('change', () => {
               input.disabled = auto.checked;
               tail.textContent = auto.checked ? 'auto' : input.value;

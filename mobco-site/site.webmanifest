@@ -1,0 +1,15 @@
+{
+  "name": "MOBCO Group",
+  "short_name": "MOBCO",
+  "description": "MOBCO Group — Integrity & Excellence. Construction, real estate development and education since 2001.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1620",
+  "theme_color": "#122230",
+  "icons": [
+    { "src": "assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

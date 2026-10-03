@@ -1617,7 +1617,7 @@ fieldset.form__group > legend { padding: 0; margin-block-end: var(--space-3); }
   padding: 0 clamp(0px, 5vw, 96px);
   will-change: transform, opacity;
 }
-.lightbox__frame { transform-origin: 0 0; will-change: transform; }
+.lightbox__frame { transform-origin: center center; will-change: transform; }
 .lightbox__frame img, .lightbox__frame picture {
   display: block;
   max-inline-size: min(100vw, 1600px);
@@ -2811,3 +2811,13 @@ html.qa .site-header.is-hidden { transform: none; }
   a[href^='http']::after { content: ' (' attr(href) ')'; font-size: .8em; }
   .site-footer { background: #fff !important; color: #000 !important; }
 }
+
+/* Footer newsletter states (appended) */
+.newsletter .field.is-valid::before { display: none; }
+.newsletter .field.is-invalid .newsletter__row { border-color: var(--danger-300); }
+.newsletter .field__error { margin-block-start: .5rem; }
+
+/* Early-RTL guard: the <head> boot script sets html.i18n-pending when Arabic is requested, so English text
+   never flashes before i18n.js swaps it. Failsafe shows the page after 2s even if JS fails. */
+html.i18n-pending body { opacity: 0; animation: i18n-failsafe 1ms linear 2s forwards; }
+@keyframes i18n-failsafe { to { opacity: 1; } }

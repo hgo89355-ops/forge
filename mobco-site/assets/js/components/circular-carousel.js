@@ -698,23 +698,26 @@ export function createCircularCarousel(container, options = {}) {
         [s.cardW / 2, s.cardH / 2]
       ];
       // Sweep every card position (or just the visible window for the wheel) and project corners.
+      //
+      // Deviation from the React source: there the ring was pushed back by -radius *before* the
+      // tilt rotation, i.e. tilted about the front card. The camera transform in render() is
+      // `translate3d(0, 0, -R) rotateX(tilt)`, which tilts about the ring's centre and *then*
+      // pushes it back, so the original fit was off-centre by ≈ R·sin(tilt) — ~30px low for
+      // 'cylinder' and ~115px low for 'orbit' (its front cards ran into the captions). Projecting
+      // in the same order as the camera makes the fit/centring do what it was meant to.
       const limit = s.layout.window ? s.layout.window * s.step : 180;
       for (let a = -limit; a <= limit; a += limit / 24) {
         for (const [cx, cy] of corners) {
           let p;
           if (s.axis === 'x') {
-            p = rotateX([cx, cy, s.radius], -a);
-            p = [p[0], p[1], p[2] - s.radius];
-            p = rotateY(p, s.tilt);
+            p = rotateY(rotateX([cx, cy, s.radius], -a), s.tilt);
           } else if (s.layout.billboard) {
             const c = rotateY([0, 0, s.radius], a);
-            p = [c[0] + cx, cy, c[2] - s.radius];
-            p = rotateX(p, s.tilt);
+            p = rotateX([c[0] + cx, cy, c[2]], s.tilt);
           } else {
-            p = rotateY([cx, cy, s.radius], a);
-            p = [p[0], p[1], p[2] - s.radius];
-            p = rotateX(p, s.tilt);
+            p = rotateX(rotateY([cx, cy, s.radius], a), s.tilt);
           }
+          p[2] -= s.radius;
           if (p[2] >= P * 0.95) continue;
           const k = P / (P - p[2]);
           minX = Math.min(minX, p[0] * k);

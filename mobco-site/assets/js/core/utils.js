@@ -107,20 +107,22 @@ export const IMAGES = {
 /**
  * <picture> markup (webp + jpg fallback) for a photo base name in assets/img/.
  * picture('eastmain', { alt: 'Eastmain', loading: 'eager', className: 'x', imgClass: 'y',
- *                       position: '30% 50%', sizes: '100vw', fetchpriority: 'high' })
+ *                       position: '30% 50%', sizes: '100vw', fetchpriority: 'high', altAr: 'إيست مين' })
+ * thumb: true → 480px-wide version from assets/img/thumbs/ (all photos except aerial-panorama).
  */
 export function picture(base, opts = {}) {
   const {
     alt = '', loading = 'lazy', className = '', imgClass = '', position = '', sizes = '',
-    fetchpriority = '', width, height, altAr,
+    fetchpriority = '', width, height, altAr, thumb = false,
   } = opts;
   const meta = IMAGES[base] || {};
-  const w = width || meta.w || '';
-  const ht = height || meta.h || '';
+  const w = width || (thumb ? 480 : meta.w) || '';
+  const ht = height || (thumb && meta.w ? Math.round((480 * meta.h) / meta.w) : meta.h) || '';
+  const dir = thumb ? 'assets/img/thumbs' : 'assets/img';
   const style = position ? ` style="object-position:${esc(position)}"` : '';
   return `<picture${className ? ` class="${esc(className)}"` : ''}>` +
-    `<source type="image/webp" srcset="assets/img/${base}.webp"${sizes ? ` sizes="${esc(sizes)}"` : ''}>` +
-    `<img src="assets/img/${base}.jpg" alt="${esc(alt)}"${altAr ? ` data-ar-alt="${esc(altAr)}"` : ''}` +
+    `<source type="image/webp" srcset="${dir}/${base}.webp"${sizes ? ` sizes="${esc(sizes)}"` : ''}>` +
+    `<img src="${dir}/${base}.jpg" alt="${esc(alt)}"${altAr ? ` data-ar-alt="${esc(altAr)}"` : ''}` +
     `${w ? ` width="${w}"` : ''}${ht ? ` height="${ht}"` : ''} loading="${loading}" decoding="async"` +
     `${fetchpriority ? ` fetchpriority="${fetchpriority}"` : ''}${imgClass ? ` class="${esc(imgClass)}"` : ''}${style}>` +
     `</picture>`;

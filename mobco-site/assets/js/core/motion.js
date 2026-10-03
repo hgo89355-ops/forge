@@ -17,6 +17,7 @@
 
 import { $$, clamp, prefersReducedMotion, hasFinePointer, isQA, rafThrottle, formatNumber } from './utils.js';
 import { onLang, getLang } from './i18n.js';
+import { whenLoaded } from './preloader.js';
 
 let lenis = null;
 let initialized = false;
@@ -117,6 +118,11 @@ function makeRevealIO() {
   }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
 }
 
+// Reveals start only once the first-visit preloader has lifted, so the hero animates in view.
+function observeAfterLoad(el) {
+  whenLoaded().then(() => revealIO.observe(el));
+}
+
 function wireReveal(root) {
   // stagger: children with data-reveal get --stagger-i; children without get data-reveal="up"
   $$('[data-reveal-stagger]', root).forEach((parent) => {
@@ -140,7 +146,7 @@ function wireReveal(root) {
       try { el.style.setProperty('--len', Math.ceil(el.getTotalLength())); } catch { /* ignore */ }
     }
     if (reduced || !revealIO) { reveal(el); continue; }
-    revealIO.observe(el);
+    observeAfterLoad(el);
   }
 }
 
@@ -207,7 +213,7 @@ function wireSplit(root) {
     el.__splitWired = true;
     if (reduced) { el.classList.add('is-split', 'is-revealed'); continue; }
     split(el);
-    if (revealIO) revealIO.observe(el); else reveal(el);
+    if (revealIO) observeAfterLoad(el); else reveal(el);
   }
 }
 
