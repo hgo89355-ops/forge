@@ -158,7 +158,7 @@ export function build(THREE, ctx = {}) {
 
   /** Window-glow atlas: warm lit rooms / dark rooms; cell (0,0) is reserved dark. */
   function makeGlowTexture() {
-    const cw = 16, ch = 16;
+    const cw = 32, ch = 32;
     const c = document.createElement('canvas');
     c.width = GLOW_COLS * cw; c.height = GLOW_ROWS * ch;
     const g = c.getContext('2d');
@@ -167,15 +167,19 @@ export function build(THREE, ctx = {}) {
     for (let row = 0; row < GLOW_ROWS; row++) {
       for (let col = 0; col < GLOW_COLS; col++) {
         if (row === 0 && col === 0) continue;
-        if (r() > 0.52) continue; // dark room
-        const k = 0.55 + r() * 0.45;
+        if (r() > 0.5) continue; // dark room
+        const k = 0.5 + r() * 0.5;
         const warm = r() < 0.85;
-        const R = Math.round(255 * k), Gc = Math.round((warm ? 196 : 232) * k), B = Math.round((warm ? 128 : 222) * k);
-        g.fillStyle = `rgb(${R},${Gc},${B})`;
+        const rgb = (m) => `rgb(${Math.round(255 * k * m)},${Math.round((warm ? 192 : 230) * k * m)},${Math.round((warm ? 124 : 220) * k * m)})`;
         // canvas y=0 is the top of the texture (flipY): row index counts from the bottom
-        const y0 = (GLOW_ROWS - 1 - row) * ch;
-        const blind = r() < 0.3 ? Math.floor(ch * (0.25 + r() * 0.35)) : 0; // lowered blind
-        g.fillRect(col * cw + 1, y0 + 3 + blind, cw - 2, ch - 5 - blind);
+        const x0 = col * cw + 1, y0 = (GLOW_ROWS - 1 - row) * ch + 3, w = cw - 2, h = ch - 6;
+        // ceiling-lit gradient: brighter near the top of the room
+        const grd = g.createLinearGradient(0, y0, 0, y0 + h);
+        grd.addColorStop(0, rgb(1)); grd.addColorStop(1, rgb(0.55));
+        g.fillStyle = grd;
+        const blind = r() < 0.3 ? Math.floor(h * (0.2 + r() * 0.4)) : 0; // lowered blind
+        if (blind) { g.fillStyle = rgb(0.35); g.fillRect(x0, y0, w, blind); g.fillStyle = grd; }
+        g.fillRect(x0, y0 + blind, w, h - blind);
       }
     }
     const t = T(new THREE.CanvasTexture(c));
@@ -260,7 +264,7 @@ export function build(THREE, ctx = {}) {
     leafB: std('mt-tree-canopy-b', { color: 0x3d5b34, roughness: 0.92 }),
     leafC: std('mt-tree-canopy-c', { color: 0x63804a, roughness: 0.92 }),
     trunk: std('mt-tree-trunk', { color: 0x6a5947, roughness: 0.9 }),
-    wood: std('mt-timber-deck', { color: 0xb69673, roughness: 0.72 }),
+    wood: std('mt-timber-deck', { color: 0xa5835f, roughness: 0.7 }),
     poolTile: std('mt-pool-coping', { color: 0xf4f3ef, roughness: 0.45 }),
     water: reflective(phys('mt-pool-water', {
       color: 0x3aa9c2, roughness: 0.06, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.05,

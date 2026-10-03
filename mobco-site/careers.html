@@ -681,8 +681,9 @@
                   <p class="field__hint careers-count" id="ap-note-count"><span class="num-ltr"><span data-note-count>0</span> / 1500</span></p>
                 </div>
 
-                <div class="careers-consent">
-                  <label class="check">
+                <!-- consent wrapped in .field (not .check) so core validation keeps a single error element; see docs/requests/careers.md -->
+                <div class="field careers-consent">
+                  <label class="careers-check">
                     <input class="check__input" type="checkbox" name="consent" required data-error="Please confirm you agree so we can process your application." data-ar-error="يُرجى تأكيد موافقتك حتى نتمكّن من معالجة طلبك.">
                     <span class="check__box" aria-hidden="true"></span>
                     <span data-ar="أوافق على أن تستخدم مجموعة موبكو البيانات التي أقدّمها لتقييم طلبي والتواصل معي بشأنه.">I agree that MOBCO Group may use the details I provide to assess my application and to contact me about it.</span>

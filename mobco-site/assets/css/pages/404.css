@@ -81,6 +81,8 @@ html[lang='ar'] .notfound__link-title { letter-spacing: 0; text-transform: none;
   [dir='rtl'] .notfound__link:hover .notfound__link-icon { transform: scaleX(-1) translate(3px, -3px); }
 }
 
+html[lang='ar'] body[data-page='404'] :is([class*='notfound'], [class*='nf-']) { text-transform: none; letter-spacing: 0; }
+
 /* ------------------------------------------------------------------ art */
 .notfound__art { position: relative; inline-size: 100%; max-inline-size: 560px; margin: 0 auto; }
 .nf-crane { inline-size: 100%; block-size: auto; overflow: visible; }

@@ -145,9 +145,9 @@ export function build(THREE, ctx = {}) {
     metalLight:std('metal-light', { color: 0xcfd2d2, roughness: 0.4, metalness: 0.5 }),
     spandrel:  std('spandrel-glass', { color: 0x26343e, roughness: 0.18, metalness: 0.35, envMapIntensity: 1.2 }),
     glass: phys('glass', { color: 0x4d6e82, metalness: 0.1, roughness: 0.05, transmission: 0, transparent: true,
-      opacity: 0.5, envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide }),
+      opacity: 0.5, envMapIntensity: 1.2, depthWrite: false }),  // FrontSide: thin boxes → exactly one layer
     glassShop: phys('glass-shopfront', { color: 0x7d9cab, metalness: 0.1, roughness: 0.05, transparent: true,
-      opacity: 0.38, envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide }),
+      opacity: 0.38, envMapIntensity: 1.2, depthWrite: false }),
     deck:      std('timber-deck', { color: 0xb38d68, roughness: 0.8 }),
     asphalt:   std('asphalt', { color: 0x575c62, roughness: 0.95 }),
     marking:   std('road-marking', { color: 0xf1f0ea, roughness: 0.8 }),

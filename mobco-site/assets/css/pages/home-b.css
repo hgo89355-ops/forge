@@ -274,7 +274,10 @@ body[data-page='home'] .hb-marker {
   white-space: nowrap;
 }
 body[data-page='home'] .hb-marker--start { flex-direction: row-reverse; padding-inline: .5rem 4px; transform: translate(calc(-100% + 4px + var(--dot) / 2), -50%); }
+/* label under the dot (Canada): keeps clear of the Cairo pill at every width */
+body[data-page='home'] .hb-marker--below { flex-direction: column; gap: .4rem; padding: 4px 4px 2px; border-radius: var(--radius); transform: translate(-50%, calc(-4px - var(--dot) / 2)); }
 body[data-page='home'] .hb-marker:focus-visible { outline-offset: 0; border-radius: 22px; }
+body[data-page='home'] .hb-marker--below:focus-visible { border-radius: var(--radius); }
 body[data-page='home'] .hb-marker__dot {
   position: relative;
   flex: none;
@@ -326,6 +329,7 @@ body[data-page='home'] .hb-marker.is-active .hb-marker__label { background: var(
 @media (max-width: 639.98px) {
   body[data-page='home'] .hb-marker { --dot: 12px; gap: .4rem; padding-inline: 4px .25rem; }
   body[data-page='home'] .hb-marker--start { padding-inline: .25rem 4px; }
+  body[data-page='home'] .hb-marker--below { padding: 4px 4px 2px; gap: .25rem; }
   body[data-page='home'] .hb-marker__label { font-size: .625rem; letter-spacing: .1em; padding: .35rem .5rem; }
   html[lang='ar'] body[data-page='home'] .hb-marker__label { font-size: .8125rem; }
 }

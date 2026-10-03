@@ -729,6 +729,39 @@ export function build(THREE, ctx = {}) {
       const nv = top ? (HIGH ? 18 : 9) : (HIGH ? 3 : 2);
       levels[i].add(mesh(thickSurfaceGeo(band, finNu, nv, 0, 1, 0.6, outward), mat.shell, `tower-L${i}-sail`));
     }
+
+    /* A sparse scatter of glazed diamonds on the fin's outer face, denser
+       towards its free edge (echoes the ring shells). */
+    const finPanels = levels.map(() => []);
+    {
+      const rnd = makeRng(41), e = 0.01;
+      const P = new THREE.Vector3(), Tu = new THREE.Vector3(), Tv = new THREE.Vector3(), Nn = new THREE.Vector3();
+      const step = HIGH ? 1.3 : 1.8;
+      for (let y = 1.5; y < H - 2; y += step) {
+        for (let u = 0.1; u < 0.96; u += 0.055 * (step / 1.3)) {
+          if (y > crestY(u) - 2) continue;
+          const d = 0.05 + 0.6 * u * u * smoothstep(4, H * 0.7, y);
+          if (rnd() > d) continue;
+          P.copy(finAt(u, y));
+          Tu.copy(finAt(u + e, y)).sub(finAt(u - e, y)).normalize();
+          Tv.copy(finAt(u, y + e)).sub(finAt(u, y - e)).normalize();
+          Nn.crossVectors(Tu, Tv).normalize();
+          if (Nn.dot(outward(P)) < 0) Nn.negate();
+          if (new THREE.Vector3().crossVectors(Tu, Tv).dot(Nn) < 0) Tu.negate();
+          const size = 0.7 + 0.6 * d + rnd() * 0.25;
+          const ext = size * 0.55;
+          const li = levels.findIndex((_, i) => y - ext >= yAt(i) && (i === nLevels - 1 || y + ext <= yAt(i + 1)));
+          if (li < 0) continue;
+          const m4 = new THREE.Matrix4().makeBasis(Tu.clone().multiplyScalar(size * 0.8), Tv.clone().multiplyScalar(size), Nn.clone());
+          m4.setPosition(P.x + Nn.x * 0.06, P.y + Nn.y * 0.06, P.z + Nn.z * 0.06);
+          finPanels[li].push(m4);
+        }
+      }
+      finPanels.forEach((list, i) => {
+        const im = instancedMesh(diamondGeo, mat.panel, list, `tower-L${i}-sail-perforations`, { cast: false });
+        if (im) levels[i].add(im);
+      });
+    }
     return { topY, crownTop };
   }
   const tower = buildTower(TOWER);
@@ -857,13 +890,13 @@ export function build(THREE, ctx = {}) {
   // dashed centre lines
   {
     const dm = [];
-    for (let x = -68; x <= 68; x += 5) if (Math.abs(x) > ROAD.rbR + 1) dm.push(trs(x, 0.07, ROAD.ewZ, 0, 2.4, 0.02, 0.16));
-    for (let z = ROAD.ewZ + ROAD.rbR + 2; z <= 68; z += 5) dm.push(trs(0, 0.07, z, 0, 0.16, 0.02, 2.4));
+    for (let x = -68; x <= 68; x += 5) if (Math.abs(x) > ROAD.rbR + 1) dm.push(trs(x, 0.08, ROAD.ewZ, 0, 2.4, 0.02, 0.16));
+    for (let z = ROAD.ewZ + ROAD.rbR + 2; z <= 68; z += 5) dm.push(trs(0, 0.08, z, 0, 0.16, 0.02, 2.4));
     // pedestrian crossings near the roundabout
     for (const [cx, cz, rot] of [[0, ROAD.ewZ + ROAD.rbR + 4, 0], [-(ROAD.rbR + 4), ROAD.ewZ, Math.PI / 2], [ROAD.rbR + 4, ROAD.ewZ, Math.PI / 2]]) {
       for (let k = -3; k <= 3; k++) {
         const o = k * 1.2;
-        dm.push(rot ? trs(cx, 0.07, cz + o, 0, 2.6, 0.02, 0.6) : trs(cx + o, 0.07, cz, 0, 0.6, 0.02, 2.6));
+        dm.push(rot ? trs(cx, 0.08, cz + o, 0, 2.6, 0.02, 0.6) : trs(cx + o, 0.08, cz, 0, 0.6, 0.02, 2.6));
       }
     }
     site.add(instancedMesh(unitBox, mat.marking, dm, 'road-markings', { cast: false }));
@@ -910,7 +943,7 @@ export function build(THREE, ctx = {}) {
     for (let i = 0; i < uv.count; i++) uv.setXY(i, (ps.getX(i) - PLAZA.x) / (2 * PLAZA.r) + 0.5, -(ps.getZ(i) - PLAZA.z) / (2 * PLAZA.r) + 0.5);
     site.add(mesh(pg, mat.plaza, 'tower-plaza', { cast: false }));
     // plaza approach from the roundabout
-    site.add(mesh(raised(roundedRect(-5, PLAZA.z + PLAZA.r - 2, 5, ROAD.ewZ - ROAD.half, 0.01), 0.02, 0.24, 2), mat.stone, 'plaza-approach', { cast: false }));
+    site.add(mesh(raised(roundedRect(-5, PLAZA.z + PLAZA.r - 2, 5, ROAD.ewZ - ROAD.half, 0.01), 0.02, 0.18, 2), mat.stone, 'plaza-approach', { cast: false }));
     const water = mesh(flat(poolPath(false), 0.2, cs), mat.water, 'plaza-pool', { cast: false });
     const wuv = water.geometry.getAttribute('uv');
     const wps = water.geometry.getAttribute('position');

@@ -296,7 +296,7 @@ function initReel() {
     if (sx == null) return;
     const dx = e.clientX - sx, dy = e.clientY - sy;
     sx = null;
-    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.4 || performance.now() - st > 900) return;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.4 || performance.now() - st > 1200) return;
     const forward = isRTL() ? dx > 0 : dx < 0;
     show(index + (forward ? 1 : -1), { user: true });
   });

@@ -102,6 +102,12 @@ export const IMAGES = {
   'ksa-landmark': { w: 790, h: 710 },
   eastmain: { w: 790, h: 710 },
   'victoria-101': { w: 790, h: 710 },
+  // subsidiary pages
+  'sub-construction-hero': { w: 1484, h: 702 },
+  'sub-construction-render': { w: 633, h: 492 },
+  'sub-developments-hero': { w: 1421, h: 679 },
+  'sub-real-estate-hero': { w: 1477, h: 691 },
+  'sub-real-estate-office': { w: 624, h: 482 },
   // portfolio photos (projects page)
   'cluster-j07': { w: 1022, h: 689 },
   'sofitel-hotel': { w: 1022, h: 688 },

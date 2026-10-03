@@ -288,6 +288,7 @@ export function createStudio(container, options = {}) {
 
   /* -------------------------------------------------------------- render loop */
   const hotspotVec = new THREE.Vector3();
+  let perfFrames = 0;
   let occlusionClock = 0, occlusionIndex = 0;
   function frame() {
     if (!running) return;
@@ -324,7 +325,9 @@ export function createStudio(container, options = {}) {
     }
     if (!dirty) return;
     needsRender = false;
+    const r0 = PERF ? performance.now() : 0;
     renderer.render(scene, camera);
+    if (PERF && perfFrames++ < 12) plog('frame ms', Math.round(performance.now() - r0), renderer.info.render.calls, renderer.info.render.triangles);
     if (model && state.hotspots && opts.hotspots !== false) {
       occlusionClock += dt;
       emit('frame', { hotspots: projectHotspots(occlusionClock > 0.12) });
@@ -765,7 +768,10 @@ export function createStudio(container, options = {}) {
     renderer.renderLists.dispose();
   }
 
+  const PERF = new URLSearchParams(location.search).get('perf') === '1';
+  const plog = (...a) => { if (PERF) console.info('[perf]', Math.round(performance.now()), ...a); };
   async function load(id, { instantCamera = false, retry = false } = {}) {
+    plog('load start', id);
     const token = ++loadToken;
     state.loading = true;
     state.error = null;
@@ -781,6 +787,7 @@ export function createStudio(container, options = {}) {
       throw error;
     }
     if (token !== loadToken || disposed) return null;
+    plog('module imported');
     emit('progress', { id, value: 0.42 });
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
     if (token !== loadToken || disposed) return null;
@@ -796,6 +803,7 @@ export function createStudio(container, options = {}) {
       emit('error', { id, error, stage: 'build' });
       throw error;
     }
+    plog('built+prepared');
     emit('progress', { id, value: 0.7 });
 
     // swap
@@ -826,6 +834,7 @@ export function createStudio(container, options = {}) {
       else renderer.compile(scene, camera);
     } catch { /* non-fatal */ }
     if (token !== loadToken || disposed) return null;
+    plog('compiled');
     emit('progress', { id, value: 1 });
 
     // reveal: camera glides in, floors settle from a gentle explode

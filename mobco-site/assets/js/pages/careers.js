@@ -374,6 +374,8 @@ function initDisciplines() {
     ddIndex = i;
     renderDrawer();
     openDrawer('discipline-drawer', btn);
+    const body = $('#discipline-drawer [data-dd-body]');
+    if (body) body.scrollTop = 0; // the panel keeps its scroll offset between openings
   });
 
   apply({ animate: false });
@@ -504,7 +506,7 @@ function buildMap(root, onPick) {
       b.setAttribute('aria-pressed', String(b.dataset.office === active));
     });
     const geo = OFFICES.find((x) => x.id === active)?.geo;
-    if (geo) coords.textContent = `≈ ${Math.abs(geo.lat).toFixed(2)}°${geo.lat >= 0 ? 'N' : 'S'} · ${Math.abs(geo.lon).toFixed(2)}°${geo.lon >= 0 ? 'E' : 'W'}`;
+    if (geo) coords.innerHTML = `<span dir="ltr">≈ ${Math.abs(geo.lat).toFixed(2)}°${geo.lat >= 0 ? 'N' : 'S'} · ${Math.abs(geo.lon).toFixed(2)}°${geo.lon >= 0 ? 'E' : 'W'}</span>`;
   }
   function place() {
     const ctm = svgEl.getScreenCTM();
@@ -693,7 +695,8 @@ function initForm() {
 
   range.addEventListener('input', renderExp);
   note.addEventListener('input', renderCount);
-  dial.addEventListener('change', (e) => { if (e.isTrusted) dialTouched = true; });
+  // programmatic .value changes never fire 'change', so any change here comes from the visitor
+  dial.addEventListener('change', () => { dialTouched = true; });
   form.addEventListener('input', renderProgress);
   form.addEventListener('change', (e) => {
     if (e.target.name === 'location') {

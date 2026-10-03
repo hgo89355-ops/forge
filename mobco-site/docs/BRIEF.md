@@ -197,3 +197,16 @@ Primary nav: Home · About · Subsidiaries · Projects · 3D Studio · Media · 
 - Zero console errors; works with JS disabled at a basic level (content visible, no permanently hidden
   `data-reveal` content — reveal hiding is applied only when `html.js` is set).
 - Arabic/RTL layout looks intentional (mirrored arrows, aligned grids), not broken.
+
+---
+
+## 2b. Facts addendum (added mid-build from the client's subsidiary pages + projects page)
+
+- **Subsidiary pages** (verbatim text now in `site-data.js` → `SUBSIDIARIES[].about/tagline/facts/page/hero/image`):
+  - MOBCO Construction — "ELEVATING INDUSTRY STANDARDS". Founded 2001, construction arm of MOBCO Group; tier-one status; projects span Saudi Arabia, Canada, the UK, and Egypt; "completed 438 projects across four continents".
+  - MOBCO Developments — "CREATING LANDMARKS, DEFINING EXCELLENCE". Strategic entry into the Egyptian market; transforming prime locations in Canada and Egypt; sustainability + safety commitment.
+  - MOBCO Real Estate (Development) — "Simplifying Property Management". Established 2002 in Cairo; leasing & property management for multi-functional buildings; flagship Mivida Business Park, B1 (modern offices around a common core).
+  - Each of these three has its own page: `mobco-construction.html`, `mobco-developments.html`, `mobco-real-estate.html` (header "Subsidiaries" gets a dropdown to them).
+- **Projects**: 33 in `PROJECTS` (28 real portfolio projects with photos, each with a `category` from the client's own tabs — see `PROJECT_CATEGORIES`) and `featured` flags.
+- Number discrepancies to keep as-stated (do not reconcile in copy; flagged in content notes): 430+ projects (home stats) vs 438 (Construction page) vs "more than 150" (About narrative); "three continents" vs "four continents".
+- New photos (webp+jpg+thumbs, sizes in `IMAGES`): `sub-construction-hero` (tower under construction over a hillside city), `sub-construction-render` (night render, timber-clad low-rise), `sub-developments-hero` (Victoria 101 close-up), `sub-real-estate-hero` (MOBCO Developments sign on a building), `sub-real-estate-office` (office interior), and the 28 portfolio photos named by project slug.

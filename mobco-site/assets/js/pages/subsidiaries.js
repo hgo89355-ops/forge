@@ -11,7 +11,7 @@
 //  6. "Which MOBCO company do I need?" two-step finder with recommendation + office contact.
 
 import { t, onLang } from '../core/i18n.js';
-import { scan, scrollTo, onScroll } from '../core/motion.js';
+import { scan, onScroll, getLenis } from '../core/motion.js';
 import { scanUI } from '../core/ui.js';
 import { $, $$, esc, icon, clamp, debounce, rafThrottle, prefersReducedMotion, isRTL, wait } from '../core/utils.js';
 import { whenLoaded } from '../core/preloader.js';
@@ -30,6 +30,22 @@ const ALIAS = Object.fromEntries(COS.flatMap((c) => [[c.slug, c.slug], [c.id, c.
 
 const reduced = prefersReducedMotion();
 const nf = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+/**
+ * Scroll so `el` sits just below the fixed header. Uses a numeric target on purpose: with an element
+ * target Lenis also adds html scroll-padding and :target scroll-margin, which would double the header
+ * offset (see docs/requests/subsidiaries.md).
+ */
+function scrollToEl(el, { immediate = false } = {}) {
+  if (typeof el === 'string') el = document.querySelector(el);
+  if (!el) return;
+  const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+  const lenis = getLenis();
+  // rect is relative to the real scroll position (Lenis' own value can lag behind a native jump)
+  const y = Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY - headerH - 16));
+  if (lenis) lenis.scrollTo(y, { immediate: immediate || reduced, duration: 1.2, force: true });
+  else window.scrollTo({ top: y, behavior: immediate || reduced ? 'auto' : 'smooth' });
+}
 
 /* ------------------------------------------------------------------ strings (finder) */
 const S = {
@@ -143,7 +159,7 @@ function highlight(slug, delay = 0) {
 function goTo(slug, { immediate = false, focus = false } = {}) {
   const el = document.getElementById(slug);
   if (!el) return;
-  scrollTo(el, { immediate: immediate || reduced });
+  scrollToEl(el, { immediate: immediate || reduced });
   if (focus) {
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
     el.focus({ preventScroll: true });
@@ -356,19 +372,28 @@ function slugFromHash(hash) {
 function initDeepLinks() {
   // clicks on in-page company links (hero tiles, org nodes, side nav, finder): core/motion handles the
   // scroll + focus; we add the highlight and the active state.
+  // In-page links inside <main> (hero tiles, org nodes, side nav, finder, CTAs) are handled here in the
+  // capture phase so they land precisely under the header (core/motion then skips them: defaultPrevented).
   document.addEventListener('click', (e) => {
-    const a = e.target.closest?.('a[href*="#"]');
-    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    const a = e.target.closest?.('main a[href*="#"]');
+    if (!a || e.defaultPrevented || e.button > 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     const url = new URL(a.href, location.href);
-    if (url.pathname !== location.pathname) return;
+    if (url.pathname !== location.pathname || url.search !== location.search || !url.hash || url.hash === '#') return;
+    let target = null;
+    try { target = document.querySelector(decodeURIComponent(url.hash)); } catch { return; }
+    if (!target) return;
+    e.preventDefault();
     const slug = slugFromHash(url.hash);
-    if (!slug) return;
-    setActive(slug);
-    highlight(slug, reduced ? 0 : 750);
-  });
+    const dest = slug ? document.getElementById(slug) : target;
+    scrollToEl(dest);
+    history.pushState(null, '', url.hash);
+    if (!dest.matches('a,button,input,select,textarea,[tabindex]')) dest.setAttribute('tabindex', '-1');
+    dest.focus({ preventScroll: true });
+    if (slug) { setActive(slug); highlight(slug, reduced ? 0 : 750); }
+  }, true);
   window.addEventListener('hashchange', () => {
     const slug = slugFromHash(location.hash);
-    if (slug) goTo(slug);
+    if (slug) requestAnimationFrame(() => goTo(slug));
   });
   const initial = slugFromHash(location.hash);
   if (!initial) return;
@@ -377,7 +402,7 @@ function initDeepLinks() {
   Promise.all([whenLoaded(), document.fonts?.ready || Promise.resolve()])
     .then(() => wait(80))
     .then(() => {
-      scrollTo(`#${initial}`, { immediate: true });
+      scrollToEl(`#${initial}`, { immediate: true });
       highlight(initial, 250);
     });
 }
@@ -465,22 +490,28 @@ function initFinder() {
     }
     // keep the panel in view on small screens
     const r = root.getBoundingClientRect();
-    if (r.top < 0 || r.top > window.innerHeight * 0.6) scrollTo(root, { immediate: reduced });
+    if (r.top < 0 || r.top > window.innerHeight * 0.6) scrollToEl(root, { immediate: reduced });
   }
 
-  form.addEventListener('change', (e) => {
+  // Selection state follows the radios (pointer, keyboard arrows, form.reset()).
+  const sync = (input) => {
+    if (input.name === 'need' && input.checked) { state.need = input.value; nextBtn.disabled = false; }
+    if (input.name === 'region' && input.checked) { state.region = input.value; showBtn.disabled = false; }
+  };
+  form.addEventListener('change', (e) => { if (e.target instanceof HTMLInputElement) sync(e.target); });
+  // A pointer click on an option (even the one already selected) advances automatically;
+  // keyboard arrow selection (also a 'click', but without a recent pointerdown) does not.
+  form.addEventListener('click', (e) => {
     const input = e.target;
-    if (!(input instanceof HTMLInputElement)) return;
-    const viaPointer = performance.now() - lastPointer < 900;
-    if (input.name === 'need') {
-      state.need = input.value;
-      nextBtn.disabled = false;
-      if (viaPointer) setTimeout(() => { if (state.step === 1 && state.need === input.value) go(2); }, reduced ? 0 : 320);
-    } else if (input.name === 'region') {
-      state.region = input.value;
-      showBtn.disabled = false;
-      if (viaPointer) setTimeout(() => { if (state.step === 2 && state.region === input.value) go(3); }, reduced ? 0 : 320);
-    }
+    if (!(input instanceof HTMLInputElement) || input.type !== 'radio') return;
+    if (performance.now() - lastPointer > 900) return;
+    lastPointer = 0;
+    sync(input);
+    const step = input.name === 'need' ? 1 : 2;
+    setTimeout(() => {
+      if (state.step !== step || !input.checked) return;
+      go(step + 1);
+    }, reduced ? 0 : 320);
   });
   // Enter on a focused option advances (keyboard parity with the auto-advance on click)
   form.addEventListener('keydown', (e) => {

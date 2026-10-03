@@ -176,18 +176,22 @@ export const CAPABILITIES = [
 ];
 
 /* ------------------------------------------------------------------ subsidiaries */
-// Descriptions are written generically from each company's name + BRIEF facts → client must confirm (todo).
+// Construction / Developments / Real Estate: verbatim text from the client's subsidiary pages (about, tagline).
+// Each of those three has its own page (page). Elite Education: generic → client must confirm (todo).
 export const SUBSIDIARIES = [
   {
     id: 'mobco-construction',
     name: { en: 'MOBCO Construction', ar: 'موبكو للإنشاءات' },
     logo: { color: 'assets/img/logos/mobco-construction.png', white: 'assets/img/logos/mobco-construction-white.png', navy: 'assets/img/logos/mobco-construction-navy.png', w: 675, h: 497 },
+    page: "mobco-construction.html",
+    hero: "sub-construction-hero",
+    image: "sub-construction-render",
+    tagline: {"en": "Elevating industry standards", "ar": "نرتقي بمعايير الصناعة"},
+    about: [{"en": "Founded in 2001, MOBCO Construction, the construction arm of MOBCO Group, is a recognized leader in the industry, known for delivering innovative, high-quality projects. MOBCO Group operates across diverse sectors, including construction, development, education, hospitality, and facility management, consistently exceeding client expectations.", "ar": "تأسّست موبكو للإنشاءات عام 2001 بوصفها الذراع الإنشائية لمجموعة موبكو، وهي رائدة معترف بها في القطاع، تشتهر بتنفيذ مشاريع مبتكرة عالية الجودة. وتعمل مجموعة موبكو في قطاعات متنوّعة تشمل الإنشاءات والتطوير والتعليم والضيافة وإدارة المرافق، متجاوزةً توقعات عملائها باستمرار."}, {"en": "With tier-one status in the global construction industry, MOBCO's projects span Saudi Arabia, Canada, the UK, and Egypt. Having completed 438 projects across four continents, our portfolio reflects a strong commitment to excellence and delivering exceptional results.", "ar": "بفضل تصنيفها من الفئة الأولى في قطاع الإنشاءات العالمي، تمتد مشاريع موبكو عبر المملكة العربية السعودية وكندا والمملكة المتحدة ومصر. ومع إنجاز 438 مشروعًا في أربع قارات، تعكس محفظة أعمالنا التزامًا راسخًا بالتميّز وتحقيق نتائج استثنائية."}],
+    facts: [{"en": "Founded 2001", "ar": "تأسّست عام 2001"}, {"en": "438 projects completed", "ar": "438 مشروعًا مُنجزًا"}, {"en": "Saudi Arabia · Canada · UK · Egypt", "ar": "السعودية · كندا · المملكة المتحدة · مصر"}, {"en": "Tier-one status", "ar": "تصنيف الفئة الأولى"}],
     accent: '#6fd1c5',
     icon: 'hard-hat',
-    short: {
-      en: 'Contracting and construction delivery across the group’s sectors.',
-      ar: 'المقاولات وتنفيذ الإنشاءات عبر مختلف قطاعات المجموعة.',
-    },
+    short: {"en": "The construction arm of MOBCO Group, founded in 2001 — a recognized leader known for delivering innovative, high-quality projects.", "ar": "الذراع الإنشائية لمجموعة موبكو، تأسّست عام 2001، وهي رائدة معروفة بتنفيذ مشاريع مبتكرة عالية الجودة."},
     long: {
       en: 'MOBCO Construction carries the group’s contracting heritage, founded in Saudi Arabia in 2001. It brings planning, site delivery and management discipline to buildings ranging from high-rise and commercial to residential, civic and educational facilities.',
       ar: 'تحمل موبكو للإنشاءات إرث المجموعة في المقاولات منذ تأسيسها في المملكة العربية السعودية عام 2001، وتُسخّر الانضباط في التخطيط والتنفيذ الميداني والإدارة لتشييد مبانٍ تتنوّع بين الأبراج والمنشآت التجارية والسكنية والحكومية والتعليمية.',
@@ -197,18 +201,21 @@ export const SUBSIDIARIES = [
       { en: 'High-rise & commercial', ar: 'الأبراج والمنشآت التجارية' },
       { en: 'Civic & educational buildings', ar: 'المباني الحكومية والتعليمية' },
     ],
-    todo: 'Client to confirm description, scope, licences and leadership for MOBCO Construction.',
+    todo: "Text is verbatim from the client site (subsidiary page; last sentence was cut off after “delivering exceptional” — “results” added). 438 projects / four continents vs 430+ / three continents elsewhere — client to reconcile.",
   },
   {
     id: 'mobco-developments',
     name: { en: 'MOBCO Developments', ar: 'موبكو للتطوير' },
     logo: { color: 'assets/img/logos/mobco-developments.png', white: 'assets/img/logos/mobco-developments-white.png', navy: 'assets/img/logos/mobco-developments-navy.png', w: 638, h: 209 },
+    page: "mobco-developments.html",
+    hero: "sub-developments-hero",
+    image: "eastmain",
+    tagline: {"en": "Creating landmarks, defining excellence", "ar": "نصنع المعالم ونرسم ملامح التميّز"},
+    about: [{"en": "In our ongoing commitment to expand our world-class expertise, MOBCO Group introduced MOBCO Developments, with a strategic entry into the Egyptian market. This new division builds on the robust foundation of MOBCO Group's construction legacy, aiming to set unprecedented standards in the development sector.", "ar": "في إطار التزامنا المستمر بتوسيع خبراتنا عالمية المستوى، أطلقت مجموعة موبكو شركة موبكو للتطوير بدخولٍ استراتيجي إلى السوق المصرية. ويرتكز هذا القطاع الجديد على الأساس المتين لإرث مجموعة موبكو في الإنشاءات، ساعيًا إلى وضع معايير غير مسبوقة في قطاع التطوير."}, {"en": "At MOBCO Developments, we are focused on transforming prime locations in both Canada and Egypt through innovative and high-quality projects. Our commitment to safety and environmental responsibility drives us to incorporate sustainable practices into every aspect of our work.", "ar": "نركّز في موبكو للتطوير على تحويل مواقع متميّزة في كندا ومصر من خلال مشاريع مبتكرة عالية الجودة. ويدفعنا التزامنا بالسلامة والمسؤولية البيئية إلى تبنّي ممارسات مستدامة في كل جانب من جوانب عملنا."}, {"en": "Leveraging our extensive global experience, we are dedicated to enhancing Egypt's development landscape with visionary projects that reflect our dedication to excellence. Our mission is to create transformative developments that not only meet but surpass the highest industry standards, leaving a significant and lasting impact on Egypt's growth and prosperity. By prioritizing innovation and quality, MOBCO Developments is poised to reshape the future of urban living and commercial spaces in the region.", "ar": "مستفيدين من خبرتنا العالمية الواسعة، نكرّس جهودنا للارتقاء بمشهد التطوير في مصر عبر مشاريع رائدة تعكس التزامنا بالتميّز. ورسالتنا هي إنشاء مشاريع تطوير تحويلية لا تكتفي بتلبية أعلى معايير الصناعة بل تتجاوزها، لتترك أثرًا كبيرًا ودائمًا في نمو مصر وازدهارها. ومن خلال إعطاء الأولوية للابتكار والجودة، تستعد موبكو للتطوير لإعادة رسم مستقبل الحياة الحضرية والمساحات التجارية في المنطقة."}],
+    facts: [{"en": "Egypt & Canada", "ar": "مصر وكندا"}, {"en": "Eastmain — Golden Square, New Cairo", "ar": "إيست مين — المربع الذهبي، القاهرة الجديدة"}, {"en": "Victoria 101 — Port Whitby, Ontario", "ar": "فيكتوريا 101 — بورت ويتبي، أونتاريو"}],
     accent: '#9be3da',
     icon: 'building',
-    short: {
-      en: 'Developing communities and mixed-use destinations.',
-      ar: 'تطوير المجتمعات والوجهات متعددة الاستخدامات.',
-    },
+    short: {"en": "MOBCO Group’s development arm — a strategic entry into the Egyptian market, transforming prime locations in Canada and Egypt.", "ar": "ذراع التطوير في مجموعة موبكو — دخول استراتيجي إلى السوق المصرية، وتحويل مواقع متميّزة في كندا ومصر."},
     long: {
       en: 'MOBCO Developments reflects the group’s focus on acquiring, developing and managing exceptional communities, along with commercial, medical and business facilities for diverse clients.',
       ar: 'تُجسّد موبكو للتطوير تركيز المجموعة على الاستحواذ على المجتمعات الاستثنائية وتطويرها وإدارتها، إلى جانب المنشآت التجارية والطبية ومنشآت الأعمال لعملاء متنوّعين.',
@@ -218,18 +225,21 @@ export const SUBSIDIARIES = [
       { en: 'Mixed-use destinations', ar: 'الوجهات متعددة الاستخدامات' },
       { en: 'Commercial & business facilities', ar: 'المنشآت التجارية ومنشآت الأعمال' },
     ],
-    todo: 'Client to confirm description, portfolio and markets for MOBCO Developments.',
+    todo: "Text verbatim from the client site. Linking Eastmain / Victoria 101 to MOBCO Developments is an inference from “Canada and Egypt” + the subsidiary page imagery — client to confirm.",
   },
   {
     id: 'mobco-real-estate',
     name: { en: 'MOBCO Real Estate Development', ar: 'موبكو للتطوير العقاري' },
     logo: { color: 'assets/img/logos/mobco-real-estate.png', white: null, navy: 'assets/img/logos/mobco-real-estate.png', w: 652, h: 147, needsLightTile: true },
+    page: "mobco-real-estate.html",
+    hero: "sub-real-estate-hero",
+    image: "sub-real-estate-office",
+    tagline: {"en": "Simplifying property management", "ar": "نُبسّط إدارة العقارات"},
+    about: [{"en": "Established in 2002 in Cairo, Egypt, MOBCO Real Estate Development specializes in leasing and property management for multi-functional buildings. Our flagship project, Mivida Business Park, B1, features modern office spaces designed with a common core that provides essential services, ensuring maximum efficiency and flexibility for our clients. This design allows us to tailor office environments to meet the unique needs of each tenant.", "ar": "تأسّست موبكو للتطوير العقاري عام 2002 في القاهرة بمصر، وتتخصّص في تأجير وإدارة العقارات للمباني متعددة الوظائف. ويضمّ مشروعنا الرئيسي، مجمّع ميفيدا للأعمال – المبنى B1، مساحات مكتبية حديثة مصمّمة حول نواة مشتركة توفّر الخدمات الأساسية، بما يضمن أقصى درجات الكفاءة والمرونة لعملائنا. ويتيح لنا هذا التصميم تهيئة بيئات العمل بما يلبّي الاحتياجات الخاصة بكل مستأجر."}],
+    facts: [{"en": "Established 2002, Cairo", "ar": "تأسّست عام 2002، القاهرة"}, {"en": "Leasing & property management", "ar": "التأجير وإدارة العقارات"}, {"en": "Flagship: Mivida Business Park, B1", "ar": "المشروع الرئيسي: مجمّع ميفيدا للأعمال، B1"}],
     accent: '#b8975a',
     icon: 'landmark',
-    short: {
-      en: 'Real estate development, from land to lasting value.',
-      ar: 'التطوير العقاري من الأرض إلى القيمة المستدامة.',
-    },
+    short: {"en": "Established in 2002 in Cairo — leasing and property management for multi-functional buildings, including Mivida Business Park, B1.", "ar": "تأسّست عام 2002 في القاهرة — تأجير وإدارة العقارات للمباني متعددة الوظائف، ومنها مجمّع ميفيدا للأعمال، المبنى B1."},
     long: {
       en: 'MOBCO Real Estate Development represents the group’s real estate development activity — one of its three specialisms alongside construction and education — creating residential and commercial assets for long-term value.',
       ar: 'تمثّل موبكو للتطوير العقاري نشاط المجموعة في التطوير العقاري — أحد تخصصاتها الثلاثة إلى جانب الإنشاءات والتعليم — عبر إنشاء أصول سكنية وتجارية ذات قيمة طويلة الأمد.',
@@ -239,12 +249,13 @@ export const SUBSIDIARIES = [
       { en: 'Commercial assets', ar: 'الأصول التجارية' },
       { en: 'Asset management', ar: 'إدارة الأصول' },
     ],
-    todo: 'Client to confirm description and portfolio for MOBCO Real Estate Development. Gold logo: place on a light tile on dark backgrounds.',
+    todo: "Text verbatim from the client site (minor grammar fix: “features an modern” → “features modern”).",
   },
   {
     id: 'elite-education',
     name: { en: 'Elite Education Group', ar: 'مجموعة النخبة التعليمية' },
     logo: { color: 'assets/img/logos/elite-education.png', white: 'assets/img/logos/elite-education-white.png', navy: 'assets/img/logos/elite-education-navy.png', w: 508, h: 498 },
+    page: null,
     accent: '#6fd1c5',
     icon: 'graduation-cap',
     short: {

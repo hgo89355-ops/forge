@@ -202,7 +202,7 @@ export function build(THREE, ctx = {}) {
     timber: std('timber', { color: '#7a4a2b', roughness: 0.55 }),
     bronze: std('bronze', { color: '#5a4632', roughness: 0.38, metalness: 0.65 }),
     glass: phys('glass', { color: '#4d6b74', roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.42, envMapIntensity: 1.2, depthWrite: false }),
-    interiorLit: std('window-interior-lit', { color: '#2a3036', roughness: 0.9, emissive: new THREE.Color('#ffb870').multiplyScalar(1.1), emissiveIntensity: 0 }),
+    interiorLit: std('window-interior-lit', { color: '#2a3036', roughness: 0.9, emissive: new THREE.Color('#ffa850').multiplyScalar(1.25), emissiveIntensity: 0 }),
     interiorDark: std('window-interior', { color: '#22292f', roughness: 0.9 }),
     teal: std('mobco-teal-accent', { color: '#6fd1c5', roughness: 0.35, metalness: 0.25, emissive: '#6fd1c5', emissiveIntensity: 0 }),
     lawn: std('lawn', { color: '#6b8c45', roughness: 1 }),

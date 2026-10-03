@@ -337,7 +337,7 @@ html[lang='ar'] .contact-office__tz { font-size: .8125rem; font-weight: 500; }
   border-block-start: 1px dashed var(--line);
 }
 @container (min-width: 500px) {
-  .contact-office__reach { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); column-gap: var(--space-6); }
+  .contact-office__reach { grid-template-columns: max-content minmax(0, 1fr); column-gap: clamp(1.5rem, 4cqi, 3rem); }
   .contact-office__addr-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .contact-office__block { display: grid; align-content: start; gap: var(--space-2); min-inline-size: 0; }
@@ -393,7 +393,7 @@ html[lang='ar'] .contact-office__maplink { font-size: .875rem; font-weight: 600;
   gap: .625rem;
   min-block-size: 44px;
   min-inline-size: 0;
-  font-size: var(--fs-base);
+  font-size: .9375rem;
   font-weight: 500;
   color: var(--fg-strong);
   transition: color var(--dur) var(--ease-soft);
@@ -650,7 +650,6 @@ html:not(.js) .contact-map__dots { display: none; }
 html:not(.js) .contact-map__stage { grid-template-areas: 'panel'; }
 
 /* ------------------------------------------------------------------ 4. inquiry wizard */
-.contact-inquiry { scroll-margin-block-start: var(--header-h); }
 .contact-inquiry__layout { display: grid; gap: var(--space-9); }
 @media (min-width: 1024px) {
   .contact-inquiry__layout { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(3rem, 1rem + 4vw, 6rem); align-items: start; }
@@ -1022,7 +1021,7 @@ html[lang='ar'] .contact-talk__city { font-size: .875rem; font-weight: 600; }
   .contact-directory__item { grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.25fr); align-items: start; }
   .contact-directory__mails { grid-column: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-5); margin-block-start: 0; }
 }
-.contact-directory .contact-row--compact { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-2); align-items: center; }
+.contact-directory .contact-row--compact { display: grid; grid-template-columns: minmax(0, max-content) auto; justify-content: start; column-gap: var(--space-3); align-items: center; }
 .contact-directory .contact-row__tag { grid-column: 1 / -1; min-inline-size: 0; }
 .contact-directory .contact-row__link { min-block-size: 40px; }
 .contact-directory__item .icon-tile { inline-size: 48px; block-size: 48px; }
@@ -1038,7 +1037,7 @@ html[lang='ar'] .contact-talk__city { font-size: .875rem; font-weight: 600; }
 .contact-promise__layout { display: grid; gap: var(--space-9); }
 @media (min-width: 1024px) { .contact-promise__layout { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(3rem, 1rem + 5vw, 8rem); align-items: start; } }
 .contact-promise__intro { display: grid; gap: var(--space-5); justify-items: start; }
-.contact-promise__intro .h2 { max-inline-size: 14ch; }
+.contact-promise__intro .h2 { max-inline-size: 17ch; }
 .contact-promise__lead { color: var(--fg); max-inline-size: 48ch; }
 .contact-promise__sla { display: inline-flex; align-items: center; gap: .5rem; color: var(--fg-muted); }
 .contact-promise__sla .icon { --icon-size: 15px; color: var(--teal-400); }
@@ -1054,6 +1053,9 @@ html[lang='ar'] .contact-talk__city { font-size: .875rem; font-weight: 600; }
 .contact-promise__title { font-size: var(--fs-h5); letter-spacing: .06em; margin-block-end: var(--space-2); }
 html[lang='ar'] .contact-promise__title { font-size: var(--fs-h4); }
 .contact-promise__text { color: var(--fg-muted); max-inline-size: 46ch; }
+
+/* Arabic: never uppercase / letter-space (Latin words such as "Google" or "GMT" keep their case) */
+html[lang='ar'] body[data-page='contact'] :is([class*='contact-'], .tabs__tab):not(.contact-success__ref-code, .contact-wizard__count) { text-transform: none; letter-spacing: 0; }
 
 /* ------------------------------------------------------------------ reduced motion */
 @media (prefers-reduced-motion: reduce) {

@@ -30,3 +30,7 @@ None of these block `about.html`. Where a workaround was needed, it is local and
 5. **Logical `inset-inline-*` + `direction: ltr` on the same element.** (FYI, no change needed.)
    Logical insets resolve against the element's *own* direction. Giving a positioned numeral both `direction:ltr` and
    `inset-inline-end` pins it to the physical right in RTL. Worth one line in STYLEGUIDE §10.
+   Related: when an anchor is clicked shortly after load (the first ~2-3s, while hero reveals and lazy images settle), the
+   Lenis scroll sometimes stops early (e.g. at y≈100 or y≈470 instead of y≈765 for `#story`). It is intermittent, and
+   reproducible only under CPU load in headless Chromium. It may be Lenis's cached `limit` going stale; calling `lenis.resize()` before
+   `lenis.scrollTo()` in `scrollTo()` would rule that out.
