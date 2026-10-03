@@ -63,7 +63,7 @@ export const meta = {
     target: [0, 7, 0],
     aerial: [74, 58, 92],
     street: [3, 1.7, 61],
-    top: [0, 165, 0.01],
+    top: [0, 210, 0.01],
     front: [0, 12, 100],
   },
   hotspots: [
@@ -114,7 +114,7 @@ export const meta = {
 /* ------------------------------------------------------------------ build */
 export function build(THREE, ctx = {}) {
   const HIGH = (ctx.quality || 'high') !== 'low';
-  const envMap = ctx.envMap || null;
+  // ctx.envMap is not assigned to materials: the engine's scene.environment (and its night dimming) lights them.
   const SEG = HIGH ? 72 : 40;           // segments for a full circle on large curved forms
 
   /* ---------- resource tracking (everything created here is disposed in dispose()) */
@@ -201,8 +201,8 @@ export function build(THREE, ctx = {}) {
     roof: std('roof-deck', { color: '#c6bfb2', roughness: 0.92 }),
     timber: std('timber', { color: '#7a4a2b', roughness: 0.55 }),
     bronze: std('bronze', { color: '#5a4632', roughness: 0.38, metalness: 0.65 }),
-    glass: phys('glass', { color: '#4d6b74', roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.42, envMap, envMapIntensity: 1.2, depthWrite: false }),
-    interiorLit: std('window-interior-lit', { color: '#2a3036', roughness: 0.9, emissive: new THREE.Color('#ffc47f').multiplyScalar(2.4), emissiveIntensity: 0 }),
+    glass: phys('glass', { color: '#4d6b74', roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.42, envMapIntensity: 1.2, depthWrite: false }),
+    interiorLit: std('window-interior-lit', { color: '#2a3036', roughness: 0.9, emissive: new THREE.Color('#ffb870').multiplyScalar(1.1), emissiveIntensity: 0 }),
     interiorDark: std('window-interior', { color: '#22292f', roughness: 0.9 }),
     teal: std('mobco-teal-accent', { color: '#6fd1c5', roughness: 0.35, metalness: 0.25, emissive: '#6fd1c5', emissiveIntensity: 0 }),
     lawn: std('lawn', { color: '#6b8c45', roughness: 1 }),
@@ -212,10 +212,10 @@ export function build(THREE, ctx = {}) {
     paving: std('forecourt-paving', { color: '#ffffff', map: paveTex, roughness: 0.82 }),
     drive: std('drive-granite', { color: '#a89f8f', roughness: 0.85 }),
     poolTile: std('pool-tile', { color: '#5aa8a1', roughness: 0.5 }),
-    water: phys('water', { color: '#1f666c', roughness: 0.04, metalness: 0.1, transparent: true, opacity: 0.8, envMap, envMapIntensity: 1.3, normalMap: waterNormal, normalScale: new THREE.Vector2(0.12, 0.12), emissive: '#3fa89c', emissiveIntensity: 0, depthWrite: false }),
+    water: phys('water', { color: '#1f666c', roughness: 0.04, metalness: 0.1, transparent: true, opacity: 0.8, envMapIntensity: 1.3, normalMap: waterNormal, normalScale: new THREE.Vector2(0.12, 0.12), emissive: new THREE.Color('#3fa89c').multiplyScalar(0.45), emissiveIntensity: 0, depthWrite: false }),
     lamp: std('lamp-head', { color: '#f4efe6', roughness: 0.4, emissive: '#ffe2b4', emissiveIntensity: 0 }),
     darkMetal: std('dark-metal', { color: '#2b2d30', roughness: 0.5, metalness: 0.6 }),
-    carPaint: phys('car-paint', { color: '#1f3a30', roughness: 0.28, metalness: 0.55, clearcoat: 1, clearcoatRoughness: 0.12, envMap, envMapIntensity: 1 }),
+    carPaint: phys('car-paint', { color: '#1f3a30', roughness: 0.28, metalness: 0.55, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1 }),
     tyre: std('tyre', { color: '#1b1b1b', roughness: 0.9 }),
   };
   brickTex.repeat.set(1, 1);
@@ -313,10 +313,45 @@ export function build(THREE, ctx = {}) {
     } else s.lineTo(0, 0);
     return s;
   }
-  /** Extruded annular sector band from y0 to y0+h, centred on (cx, cz). */
+  /**
+   * Annular-sector band from y0 to y0+h centred on (cx, cz), built directly so curved faces get
+   * smooth normals (ExtrudeGeometry would facet them). Full rings (|t1−t0| = 2π) get no end caps.
+   */
   function arcBandGeo(cx, cz, rIn, rOut, y0, h, t0, t1) {
-    const g = new THREE.ExtrudeGeometry(arcShape(rIn, rOut, t0, t1), { depth: h, bevelEnabled: false, steps: 1, curveSegments: 1 });
-    g.rotateX(-Math.PI / 2); g.translate(cx, y0, cz);
+    const full = Math.abs(t1 - t0) >= TAU - 1e-6;
+    const seg = Math.max(4, Math.ceil(Math.abs(t1 - t0) / TAU * SEG * 1.5));
+    const P = [], N = [], UV = [], I = [];
+    const y1 = y0 + h, k = 1 / BRICK_TILE; // world-scaled UVs (brick-textured balustrades)
+    const quad = (a, b, c, d) => { I.push(a, b, c, a, c, d); };
+    // vertex at polar (r, t), height y; normal mode: 1 = radial out, -1 = radial in, 'up' / 'down', or [nx, nz] for end caps
+    const v = (r, t, y, mode) => {
+      const st = Math.sin(t), ct = Math.cos(t), x = r * st, z = r * ct;
+      P.push(cx + x, y, cz + z);
+      if (mode === 1 || mode === -1) { N.push(mode * st, 0, mode * ct); UV.push(t * r * k, y * k); }
+      else if (mode === 'up' || mode === 'down') { N.push(0, mode === 'up' ? 1 : -1, 0); UV.push(x * k, z * k); }
+      else { N.push(mode[0], 0, mode[1]); UV.push(r * k, y * k); }
+      return P.length / 3 - 1;
+    };
+    for (let i = 0; i < seg; i++) {
+      const ta = t0 + (t1 - t0) * i / seg, tb = t0 + (t1 - t0) * (i + 1) / seg;
+      quad(v(rOut, ta, y0, 1), v(rOut, tb, y0, 1), v(rOut, tb, y1, 1), v(rOut, ta, y1, 1));          // outer wall
+      quad(v(rIn, ta, y0, -1), v(rIn, ta, y1, -1), v(rIn, tb, y1, -1), v(rIn, tb, y0, -1));          // inner wall
+      quad(v(rOut, ta, y1, 'up'), v(rOut, tb, y1, 'up'), v(rIn, tb, y1, 'up'), v(rIn, ta, y1, 'up')); // top
+      quad(v(rOut, ta, y0, 'down'), v(rIn, ta, y0, 'down'), v(rIn, tb, y0, 'down'), v(rOut, tb, y0, 'down')); // bottom
+    }
+    if (!full) {
+      const dir = Math.sign(t1 - t0) || 1;
+      for (const [t, sgn] of [[t0, -dir], [t1, dir]]) {
+        const n = [sgn * Math.cos(t), -sgn * Math.sin(t)];
+        const a = v(rIn, t, y0, n), b = v(rOut, t, y0, n), c = v(rOut, t, y1, n), d = v(rIn, t, y1, n);
+        if (sgn * dir < 0) quad(a, b, c, d); else quad(a, d, c, b);
+      }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3));
+    g.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(UV, 2));
+    g.setIndex(I);
     return G(g);
   }
   /** Flat annular sector (ground markings, drive) at height y. */
@@ -685,10 +720,8 @@ export function build(THREE, ctx = {}) {
       mesh(S, 'pool-basin', boxGeo(x0, x1, 0, 0.06, z0, z1), M.poolTile, false, true);
       const wg = G(new THREE.PlaneGeometry(x1 - x0, z1 - z0)); wg.rotateX(-Math.PI / 2); wg.translate(0, ch - 0.07, (z0 + z1) / 2);
       mesh(S, 'pool-water', wg, M.water, false, true);
-      // small jets along the pool rim (bronze nozzles)
-      for (let z = z0 + 2; z < z1 - 1; z += 3.2) for (const x of [x0 + 0.35, x1 - 0.35]) inst(S, 'pool-nozzle', U.cyl, M.bronze, x, ch - 0.02, z, 0.08, 0.12, 0.08, 0, 0, 0, false);
-      const pl = new THREE.PointLight('#7fe0d4', 0, 16, 2); pl.name = 'pool-light'; pl.position.set(0, 1.2, 37); pl.userData.nightIntensity = 25; S.add(pl); lamps.push(pl);
-      const pl2 = pl.clone(); pl2.position.set(0, 1.2, 49.5); pl2.userData.nightIntensity = 25; S.add(pl2); lamps.push(pl2);
+      const pl = new THREE.PointLight('#7fe0d4', 0, 16, 2); pl.name = 'pool-light'; pl.position.set(0, 2.2, 37); pl.userData.nightIntensity = 8; S.add(pl); lamps.push(pl);
+      const pl2 = pl.clone(); pl2.position.set(0, 2.2, 49.5); pl2.userData.nightIntensity = 8; S.add(pl2); lamps.push(pl2);
     }
 
     // lawn parterres flanking the forecourt, framed by low hedges

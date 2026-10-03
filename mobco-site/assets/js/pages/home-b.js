@@ -43,9 +43,11 @@ const REGION_INFO = {
   canada: { name: { en: 'Port Whitby', ar: 'بورت ويتبي' }, lonlat: WORLD.offices?.canada?.lonlat || [-78.9429, 43.8975] },
 };
 const fmtCoord = ([lon, lat]) => {
-  const ns = t(lat >= 0 ? { en: 'N', ar: 'ش' } : { en: 'S', ar: 'ج' });
-  const ew = t(lon >= 0 ? { en: 'E', ar: 'ق' } : { en: 'W', ar: 'غ' });
-  return `≈ ${Math.abs(lat).toFixed(2)}° ${ns} · ${Math.abs(lon).toFixed(2)}° ${ew}`;
+  const la = Math.abs(lat).toFixed(2), lo = Math.abs(lon).toFixed(2);
+  return t({
+    en: `≈ ${la}° ${lat >= 0 ? 'N' : 'S'} · ${lo}° ${lon >= 0 ? 'E' : 'W'}`,
+    ar: `${la}° ${lat >= 0 ? 'شمالًا' : 'جنوبًا'} · ${lo}° ${lon >= 0 ? 'شرقًا' : 'غربًا'} تقريبًا`,
+  });
 };
 
 function mapSVG() {

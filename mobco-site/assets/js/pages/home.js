@@ -7,7 +7,7 @@
 //                sequence on desktop (sticky + progress), stacked elsewhere.
 // Core modules are singletons initialised by core/main.js (loaded first). Part B lives in home-b.js.
 
-import { t, onLang } from '../core/i18n.js';
+import { t, onLang, getLang } from '../core/i18n.js';
 import { scan, refresh, onScroll, scrollTo } from '../core/motion.js';
 import { scanUI } from '../core/ui.js';
 import { $, $$, clamp, esc, icon, isRTL, prefersReducedMotion, hasFinePointer, rafThrottle } from '../core/utils.js';
@@ -62,7 +62,19 @@ function initHero() {
       title.appendChild(out);
     }
     const words = src.textContent.trim().split(/\s+/).filter(Boolean);
-    out.innerHTML = words.map((w, i) => `<span class="ha-w"><span class="ha-w__i" style="--i:${i}">${esc(w)}</span></span>`).join(' ');
+    // art-directed line breaks: data-ha-break[-ar] = "punct" (after , . ،) or N (after the Nth word)
+    const mode = title.getAttribute(getLang() === 'ar' ? 'data-ha-break-ar' : 'data-ha-break');
+    let lines = [words];
+    if (mode === 'punct') {
+      lines = [];
+      let cur = [];
+      words.forEach((w) => { cur.push(w); if (/[.,،]$/.test(w)) { lines.push(cur); cur = []; } });
+      if (cur.length) lines.push(cur);
+    } else if (/^\d+$/.test(mode || '') && words.length > +mode) {
+      lines = [words.slice(0, +mode), words.slice(+mode)];
+    }
+    let n = 0;
+    out.innerHTML = lines.map((l) => `<span class="ha-line">${l.map((w) => `<span class="ha-w"><span class="ha-w__i" style="--i:${n++}">${esc(w)}</span></span>`).join(' ')}</span>`).join(' ');
     title.classList.add('is-split');
   }
   const splitAll = () => $$('[data-ha-title]', stage).forEach(splitTitle);
@@ -150,6 +162,7 @@ function initHero() {
     ], opts);
     anims = [a1, a2, a3, a4].filter(Boolean);
     a1.finished.then(() => { finish(); if (token === seq) anims = []; }).catch(() => finish());
+    setTimeout(finish, WIPE + 400); // safety net if the animation is cancelled/never settles
   }
 
   const next = (source) => go(index + 1, 1, source);
@@ -157,7 +170,7 @@ function initHero() {
 
   /* autoplay loop (progress fill + advance) */
   function tick(now) {
-    const dt = Math.min(64, now - last);
+    const dt = Math.min(250, now - last);   // tolerate slow frames; hidden tabs are paused separately
     last = now;
     if (started && !paused()) {
       elapsed += dt;

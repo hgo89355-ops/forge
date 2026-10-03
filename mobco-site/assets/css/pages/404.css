@@ -1,0 +1,187 @@
+/* ==========================================================================
+   assets/css/pages/404.css — "This page is still under construction" (404.html).
+   Owned by the contact builder. Scoped under body[data-page='404'] / .notfound* / .nf-*.
+   The crane is pure SVG + CSS keyframes. Every animation uses fill-mode `both`, so with
+   prefers-reduced-motion (main.css collapses durations) or ?qa=1 it renders its final frame:
+   the 404 block resting on the stack.
+   ========================================================================== */
+
+body[data-page='404'] .notfound {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: center;
+  min-block-size: 100vh;
+  min-block-size: 100svh;
+  padding-block: calc(var(--header-h) + clamp(2rem, 1rem + 4vw, 5rem)) clamp(3rem, 2rem + 4vw, 6rem);
+  background: var(--navy-950);
+  color: var(--fg);
+  overflow: hidden;
+}
+.notfound__grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 70% at 72% 55%, rgba(111, 209, 197, .1) 0%, rgba(11, 22, 32, 0) 70%),
+    linear-gradient(rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px;
+  mask-image: radial-gradient(90% 90% at 60% 50%, #000 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(90% 90% at 60% 50%, #000 30%, transparent 85%);
+}
+[dir='rtl'] .notfound__grid {
+  background:
+    radial-gradient(60% 70% at 28% 55%, rgba(111, 209, 197, .1) 0%, rgba(11, 22, 32, 0) 70%),
+    linear-gradient(rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px;
+}
+.notfound__inner { display: grid; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
+@media (min-width: 1024px) { .notfound__inner { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } }
+
+.notfound__copy { display: grid; gap: var(--space-5); justify-items: start; min-inline-size: 0; }
+.notfound__title { max-inline-size: 13ch; color: var(--white); }
+html[lang='ar'] .notfound__title { max-inline-size: 14ch; }
+.notfound__lead { max-inline-size: 48ch; color: rgba(255, 255, 255, .78); }
+.notfound__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
+
+.notfound__links { inline-size: 100%; max-inline-size: 560px; margin-block-start: var(--space-6); }
+.notfound__links-title {
+  margin-block-end: var(--space-3);
+  font-family: var(--font-display);
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+html[lang='ar'] .notfound__links-title { font-size: .875rem; }
+.notfound__links ul { display: grid; padding: 0; margin: 0; list-style: none; border-block-start: 1px solid var(--line); }
+.notfound__link {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-block-size: 64px;
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--line);
+  color: var(--fg);
+  transition: color var(--dur) var(--ease-soft), padding var(--dur-slow) var(--ease-out);
+}
+.notfound__link-num { font-family: 'Manrope', var(--font-display); font-size: var(--fs-xs); font-weight: 700; letter-spacing: .18em; color: var(--teal-400); }
+.notfound__link-body { display: grid; gap: 2px; }
+.notfound__link-title { font-family: var(--font-display); font-size: var(--fs-base); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--white); }
+html[lang='ar'] .notfound__link-title { letter-spacing: 0; text-transform: none; }
+.notfound__link-text { font-size: var(--fs-sm); color: var(--fg-muted); }
+.notfound__link-icon { --icon-size: 18px; color: var(--teal-400); transition: transform var(--dur) var(--ease-out); }
+@media (hover: hover) {
+  .notfound__link:hover { padding-inline-start: var(--space-3); }
+  .notfound__link:hover .notfound__link-title { color: var(--teal-300); }
+  .notfound__link:hover .notfound__link-icon { transform: translate(3px, -3px); }
+  [dir='rtl'] .notfound__link:hover .notfound__link-icon { transform: scaleX(-1) translate(3px, -3px); }
+}
+
+/* ------------------------------------------------------------------ art */
+.notfound__art { position: relative; inline-size: 100%; max-inline-size: 560px; margin: 0 auto; }
+.nf-crane { inline-size: 100%; block-size: auto; overflow: visible; }
+.notfound__caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .625rem;
+  margin-block-start: var(--space-3);
+  font-family: var(--font-display);
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+html[lang='ar'] .notfound__caption { font-size: .8125rem; letter-spacing: 0; }
+.notfound__caption-dot { inline-size: 6px; block-size: 6px; border-radius: 50%; background: var(--teal-400); animation: nf-blink 1.6s steps(1) infinite; }
+@media (max-width: 1023.98px) {
+  .notfound__art { order: -1; max-inline-size: 420px; }
+}
+@media (max-width: 639.98px) {
+  .notfound__art { max-inline-size: 300px; }
+  .notfound__caption { display: none; }
+}
+
+/* ------------------------------------------------------------------ crane animation
+   Lowering takes 3.6s (after a 0.8s beat). Cable (216 units) and load move on the same keyframe
+   percentages and easing, so the hook always stays on the end of the cable:
+   load offset -168 → cable visible 48/216 = .222 · load +2 (settle) → 218/216 = 1.009. */
+body[data-page='404'] {
+  --nf-delay: .8s;
+  --nf-dur: 3.6s;
+  --nf-ease: cubic-bezier(.45, .05, .25, 1);
+}
+.nf-travel { animation: nf-travel var(--nf-dur) var(--nf-ease) var(--nf-delay) both; }
+.nf-cable { transform-box: fill-box; transform-origin: 50% 0; animation: nf-cable var(--nf-dur) var(--nf-ease) var(--nf-delay) both; }
+.nf-load { animation: nf-load var(--nf-dur) var(--nf-ease) var(--nf-delay) both; }
+.nf-sway { transform-box: view-box; transform-origin: 360px 386px; animation: nf-sway var(--nf-dur) ease-in-out var(--nf-delay) both; }
+.nf-shadow { transform-box: fill-box; transform-origin: 50% 50%; animation: nf-shadow var(--nf-dur) var(--nf-ease) var(--nf-delay) both; }
+.nf-beam { animation: nf-beam var(--nf-dur) ease var(--nf-delay) both; }
+.nf-guide { animation: nf-guide var(--nf-dur) ease var(--nf-delay) both; }
+.nf-dust circle { transform-box: fill-box; transform-origin: 50% 50%; animation: nf-dust .9s var(--ease-out) calc(var(--nf-delay) + var(--nf-dur) * .9) both; }
+.nf-dust circle:nth-child(odd) { --dx: -10px; }
+.nf-dust circle:nth-child(even) { --dx: -16px; }
+.nf-dust circle:nth-child(n + 3) { --dx: 12px; }
+.nf-dust circle:nth-child(4) { --dx: 18px; }
+.nf-beacon { animation: nf-blink 1.6s steps(1) infinite; }
+.nf-beacon-halo { transform-box: fill-box; transform-origin: 50% 50%; animation: nf-halo 1.6s var(--ease-out) infinite; }
+
+@keyframes nf-travel {
+  0% { transform: translateX(84px); }
+  30% { transform: translateX(0); }
+  100% { transform: translateX(0); }
+}
+@keyframes nf-cable {
+  0%, 22% { transform: scaleY(.222); }
+  88% { transform: scaleY(1.009); }
+  100% { transform: scaleY(1); }
+}
+@keyframes nf-load {
+  0%, 22% { transform: translateY(-168px); }
+  88% { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+@keyframes nf-sway {
+  0% { transform: rotate(0deg); }
+  24% { transform: rotate(5deg); }
+  40% { transform: rotate(-3deg); }
+  56% { transform: rotate(2deg); }
+  72% { transform: rotate(-1deg); }
+  86% { transform: rotate(.4deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes nf-shadow {
+  0%, 22% { opacity: 0; transform: scaleX(.3); }
+  100% { opacity: 1; transform: scaleX(1); }
+}
+@keyframes nf-beam {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { opacity: .35; }
+}
+@keyframes nf-guide {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes nf-dust {
+  0% { opacity: 0; transform: translate(0, 0) scale(.4); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx, 0), -10px) scale(1.4); }
+}
+@keyframes nf-blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .2; } }
+@keyframes nf-halo { 0% { opacity: .8; transform: scale(.4); } 100% { opacity: 0; transform: scale(1.6); } }
+
+/* reduced motion: no looping beacon either */
+@media (prefers-reduced-motion: reduce) {
+  .nf-beacon-halo { display: none; }
+  .nf-travel, .nf-cable, .nf-load, .nf-sway, .nf-shadow, .nf-beam, .nf-guide, .nf-dust circle { animation-delay: 0s !important; }
+}
+html.qa .nf-beacon-halo { display: none; }

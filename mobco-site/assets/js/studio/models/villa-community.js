@@ -50,7 +50,7 @@ export const meta = {
       },
     },
     {
-      id: 'villas', position: [-22, 9.5, -56],
+      id: 'villas', position: [-22, 10.5, -56],
       title: { en: 'Villa rows', ar: 'صفوف الفلل' },
       text: {
         en: 'White two-storey villas with roof terraces, private gardens and pools, set along quiet internal streets.',
@@ -66,7 +66,7 @@ export const meta = {
       },
     },
     {
-      id: 'commercial', position: [-26, 12, 43],
+      id: 'commercial', position: [-45, 10.4, 47.6],
       title: { en: 'Commercial strip', ar: 'الشريط التجاري' },
       text: {
         en: 'Two levels of shops and dining with a shaded colonnade, a café plaza and roof-terrace pergolas along the main road.',
@@ -108,7 +108,7 @@ const L = {
   rows: [
     { z: -56, rot: 0, pools: 'alt0' },        // north row, faces south (+z)
     { z: -30, rot: Math.PI, pools: 'all' },   // faces north, gardens to the park
-    { z: 22, rot: Math.PI, pools: 'alt1' },   // faces north onto street B
+    { z: 23.5, rot: Math.PI, pools: 'alt1' }, // faces north onto street B
   ],
   eastCol: { x: 50, zs: [-58, -40, -22, -4, 14], rot: -Math.PI / 2 }, // faces west
   // Commercial strip (two blocks)
@@ -471,7 +471,7 @@ export function build(THREE, ctx = {}) {
   /* ---- villa gardens (site): driveways, private pools, hedges ---------- */
   {
     const drive = new Bin();
-    drive.box('paving', 1.0, 0, 5.6, 4.6, 0.1, 9.0);
+    drive.box('paving', 1.0, 0, 5.6, 4.6, 0.1, 7.9);
     drive.box('paving', -0.4, 0, 5.6, 0.8, 0.1, 7.0);   // path to door zone
     const vm = villas.map((v) => mat4(v.x, 0, v.z, v.rot));
     instancedFromBin(drive, site, 'villa-driveway', vm, { cast: false });
@@ -558,7 +558,7 @@ export function build(THREE, ctx = {}) {
   // Main road + sidewalks + markings
   ground.box('asphalt', -H, 0, L.road.z0, H, 0.06, L.road.z1);
   ground.box('paving', -H, 0, L.road.z1, H, 0.12, H);
-  for (let x = -H + 2; x < H - 2; x += 9) {
+  for (let x = -H + 2; x + 3.5 < H - 1; x += 9) {
     ground.box('marking', x, 0.05, 59.92, x + 3.5, 0.075, 60.08);
     ground.box('marking', x, 0.05, 65.92, x + 3.5, 0.075, 66.08);
   }
@@ -724,8 +724,8 @@ export function build(THREE, ctx = {}) {
     if (!v.pool) { const b2 = local(v, -2.5, -9.0); treeSpots.push([b2[0], b2[1], 0.75]); }
   }
   // East meadow & around the parking lot
-  for (let z = -66; z <= 30; z += 6.5) treeSpots.push([65.6 + (rand() - 0.5) * 1.6, z + rand() * 2, 0.85 + rand() * 0.2]);
-  for (let x = 43; x <= 67; x += 6) { treeSpots.push([x, 56.3, 0.75]); treeSpots.push([x + 2, 37.2, 0.75]); }
+  for (let z = -66; z <= 30; z += 6.5) treeSpots.push([64.8 + (rand() - 0.5) * 1.2, z + rand() * 2, 0.85 + rand() * 0.2]);
+  for (let x = 43; x <= 66; x += 5.75) { treeSpots.push([x, 56.3, 0.72]); treeSpots.push([Math.min(x + 2, 65.5), 37.2, 0.72]); }
   for (const z of [-60, -44, -28, -12, 4, 20]) treeSpots.push([-66.6, z, 0.8]);
   // Lawns south of the east villas and beside the gate
   for (const [x, z] of [[45, 27.5], [51, 28.5], [57.5, 27], [48.5, 32], [55, 32.3], [61, 30.5], [43, 23], [17.5, 30.5]]) treeSpots.push([x, z, 0.85 + rand() * 0.2]);
@@ -841,7 +841,7 @@ export function build(THREE, ctx = {}) {
     if (i % 3 !== 1) parked.push({ x, z: P.z0 + 3, rot: Math.PI / 2 });
     if (i % 4 !== 2) parked.push({ x, z: P.z1 - 3, rot: -Math.PI / 2 });
   }
-  villas.forEach((v, i) => { if (i % 3 === 0) { const p = local(v, 2.8, 7.4); parked.push({ x: p[0], z: p[1], rot: v.rot + Math.PI / 2 }); } });
+  villas.forEach((v, i) => { if (i % 3 === 0 && v.z !== L.rows[2].z) { const p = local(v, 2.8, 7.0); parked.push({ x: p[0], z: p[1], rot: v.rot + Math.PI / 2 }); } });
   // Moving cars: a loop on the boulevard + four lanes on the main road
   const loopLen = blvdLoopLength();
   const movers = [];

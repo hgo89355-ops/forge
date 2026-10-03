@@ -20,6 +20,19 @@ body[data-page='about'] .about-hero { min-block-size: clamp(620px, 94vh, 1000px)
     mask-image: linear-gradient(-90deg, transparent 0%, #000 34%);
   }
 }
+@media (min-width: 1800px) {
+  /* very wide screens: keep the 790px render from over-stretching — frame it inside the wide container */
+  .about-hero__bg {
+    inset-inline-start: calc(50% - 80px);
+    inset-inline-end: calc((100% - var(--container-wide)) / 2);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 82%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 82%, transparent 100%);
+  }
+  [dir='rtl'] .about-hero__bg {
+    -webkit-mask-image: linear-gradient(-90deg, transparent 0%, #000 30%, #000 82%, transparent 100%);
+    mask-image: linear-gradient(-90deg, transparent 0%, #000 30%, #000 82%, transparent 100%);
+  }
+}
 /* architectural hairlines aligned to the container quarters */
 .about-hero__lines {
   position: absolute;
@@ -38,8 +51,8 @@ body[data-page='about'] .about-hero { min-block-size: clamp(620px, 94vh, 1000px)
 .about-hero__lines span:last-child { border-inline-end: 1px solid rgba(255, 255, 255, .06); }
 .about-hero__lines span:nth-child(3) { grid-column: 4; }
 .about-hero__title {
-  font-size: clamp(2.25rem, .9rem + 5.6vw, 7.25rem);
-  max-inline-size: 12.5ch;
+  font-size: clamp(2.25rem, .9rem + 4.7vw, 6.5rem);
+  max-inline-size: 13ch;
 }
 html[lang='ar'] .about-hero__title { font-size: clamp(2.5rem, 1.2rem + 5vw, 6.5rem); max-inline-size: 11ch; }
 .about-hero__inner .page-hero__lead { max-inline-size: 50ch; }
@@ -55,17 +68,21 @@ html[lang='ar'] .about-hero__title { font-size: clamp(2.5rem, 1.2rem + 5vw, 6.5r
   letter-spacing: -.04em;
   color: transparent;
   -webkit-text-stroke: 1px rgba(111, 209, 197, .42);
-  direction: ltr;
   pointer-events: none;
   user-select: none;
   opacity: 0;
   animation: about-fade-in 1.6s var(--ease-out) .5s forwards;
 }
 @media (max-width: 767.98px) { .about-hero__year { display: none; } }
+@media (max-width: 639.98px) {
+  .about-hero .scroll-cue { display: none; }
+  .about-hero .page-hero__meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); inline-size: 100%; gap: var(--space-3); }
+}
 
 /* 02. Story ============================================================== */
 .about-story__grid { align-items: start; row-gap: var(--space-10); }
-.about-story__media-col { position: relative; }
+.about-story__media-col { position: relative; align-self: stretch; }
+.about-story__frame > [data-parallax] > picture { display: block; block-size: 100%; }
 @media (min-width: 1024px) {
   .about-story__sticky { position: sticky; inset-block-start: calc(var(--header-h) + var(--space-6)); }
 }
@@ -235,14 +252,15 @@ html[lang='ar'] .about-story__motto li { letter-spacing: 0; text-transform: none
 .about-fig--turnover { min-block-size: clamp(420px, 34vw + 120px, 600px); }
 .about-fig__bg { position: absolute; inset: 0; z-index: -1; }
 .about-fig__bg picture, .about-fig__bg img { inline-size: 100%; block-size: 100%; object-fit: cover; }
-.about-fig__bg img { opacity: .75; transform: scale(1.04); transition: transform 2.4s var(--ease-out); }
+.about-fig__bg img { opacity: .62; filter: grayscale(.85) contrast(1.15) brightness(.9); transform: scale(1.04); transition: transform 2.4s var(--ease-out); }
+.about-fig__bg::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(135deg, rgba(42, 122, 112, .35), rgba(18, 34, 48, .2)); mix-blend-mode: color; }
 .about-fig--turnover:hover .about-fig__bg img { transform: scale(1.1); }
 .about-fig__bg::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(0deg, var(--navy-950) 8%, rgba(11, 22, 32, .55) 55%, rgba(11, 22, 32, .2) 100%);
+  background: linear-gradient(0deg, var(--navy-950) 12%, rgba(11, 22, 32, .6) 50%, rgba(11, 22, 32, .1) 100%);
 }
 .about-fig__kicker {
   font-family: var(--font-display);
@@ -460,7 +478,7 @@ html[lang='ar'] .about-vm__tab-title { letter-spacing: 0; text-transform: none; 
 }
 @media (min-width: 640px) { .about-values__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1024px) { .about-values__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.about-value { --rx: 0deg; --ry: 0deg; --flip: 0deg; perspective: 1600px; min-block-size: clamp(320px, 26vw + 120px, 400px); }
+.about-value { --rx: 0deg; --ry: 0deg; --flip: 0deg; perspective: 1600px; min-block-size: clamp(280px, 16vw + 150px, 360px); }
 .about-value__inner {
   position: relative;
   block-size: 100%;
@@ -704,6 +722,8 @@ html[lang='ar'] .about-model__core-name { letter-spacing: 0; font-size: clamp(.7
   letter-spacing: .12em;
   text-transform: uppercase;
   text-wrap: balance;
+  padding: 2px 6px;
+  text-shadow: 0 0 4px var(--navy-900), 0 0 10px var(--navy-900), 0 0 16px var(--navy-900);
   transition: color var(--dur);
 }
 html[lang='ar'] .about-model__node-label { letter-spacing: 0; font-size: clamp(.75rem, .65rem + .3vw, .9375rem); }
@@ -781,7 +801,7 @@ html[lang='ar'] .about-model__card-sub-title { font-size: .875rem; text-transfor
   transition: background var(--dur), transform var(--dur-slow) var(--ease-spring), box-shadow var(--dur-slow);
 }
 .about-chapter.is-current .about-chapter__dot { background: var(--teal-400); border-color: var(--teal-400); transform: scale(1.25); box-shadow: 0 0 0 6px rgba(111, 209, 197, .2); }
-.about-chapter__when { display: grid; gap: var(--space-1); margin-block-start: var(--space-2); justify-items: start; }
+.about-chapter__when { display: grid; gap: var(--space-1); margin-block-start: var(--space-2); justify-items: start; align-self: flex-start; }
 .about-chapter__when[data-placeholder] { outline-offset: 6px; }
 .about-chapter__kicker {
   font-family: var(--font-display);
@@ -821,12 +841,12 @@ html[lang='ar'] .about-chapter__num { font-family: var(--font-display); letter-s
 
 /* 09. HSE ================================================================ */
 .about-hse__grid { align-items: center; row-gap: var(--space-10); }
-.about-hse__media { aspect-ratio: 4 / 5; overflow: visible; }
+.about-hse__figure { position: relative; padding-block-end: var(--space-8); }
+.about-hse__media { aspect-ratio: 4 / 5; }
 @media (max-width: 1023.98px) { .about-hse__media { aspect-ratio: 16 / 11; } }
-.about-hse__media > picture { overflow: hidden; border-radius: var(--radius); }
 .about-hse__seal {
   position: absolute;
-  inset-block-end: calc(-1 * var(--space-8));
+  inset-block-end: 0;
   inset-inline-end: clamp(1rem, 4vw, 3rem);
   z-index: 3;
   display: grid;
@@ -839,7 +859,7 @@ html[lang='ar'] .about-chapter__num { font-family: var(--font-display); letter-s
   box-shadow: var(--shadow-lg);
 }
 .about-hse__seal-ring { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; animation: about-spin 28s linear infinite; direction: ltr; }
-.about-hse__seal-ring text { font-family: 'Manrope', var(--font-arabic); font-size: 14.5px; font-weight: 700; letter-spacing: 3.2px; fill: var(--navy-950); }
+.about-hse__seal-ring text { font-family: 'Manrope', var(--font-arabic); font-size: 15px; font-weight: 700; letter-spacing: 2px; fill: var(--navy-950); }
 html[lang='ar'] .about-hse__seal-ring text { letter-spacing: 0; font-size: 17px; font-family: var(--font-arabic); }
 .about-hse__seal-icon { --icon-size: 34%; stroke-width: 1.4; }
 .about-hse__header { margin-block-end: var(--space-7); }
@@ -950,6 +970,17 @@ html[lang='ar'] .about-cta__go { font-size: .9375rem; text-transform: none; }
   [dir='rtl'] .about-cta__card:hover .about-cta__arrow .icon { transform: scaleX(-1) rotate(45deg); }
 }
 .about-cta__card:focus-visible { outline-offset: 4px; }
+
+/* list margins: beat the base `ul[role='list'] { margin: 0 }` reset */
+body[data-page='about'] .about-story__motto { margin-block-start: var(--space-9); }
+body[data-page='about'] .about-fig__places { margin-block-start: var(--space-2); }
+body[data-page='about'] .about-vm__chips { margin-block-start: var(--space-7); }
+body[data-page='about'] .about-hse__pillars { margin-block-start: var(--space-8); }
+@media (max-width: 639.98px) {
+  .about-story__motto li { font-size: .875rem; letter-spacing: .04em; }
+  .about-value { min-block-size: 260px; }
+  .about-value__icon { inline-size: 60px; block-size: 60px; }
+}
 
 /* 11. Keyframes =========================================================== */
 @keyframes about-rise { from { opacity: 0; transform: translate3d(0, 22px, 0); } to { opacity: 1; transform: none; } }

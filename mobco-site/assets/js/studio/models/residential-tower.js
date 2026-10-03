@@ -50,7 +50,7 @@ export const meta = {
       },
     },
     {
-      id: 'tower-crown', position: [-18, 46.5, -19],
+      id: 'tower-crown', position: [-18, 47.8, -19],
       title: { en: 'Crown', ar: 'التاج' },
       text: {
         en: 'A light white frame finishes the tower top and glows softly after dark.',
@@ -84,7 +84,7 @@ export const meta = {
   ],
   // azimuth: degrees around +Y measured from +Z (front) toward +X (three.js Spherical theta);
   // elevation: degrees above the horizon.
-  sun: { azimuth: -38, elevation: 40 },
+  sun: { azimuth: 32, elevation: 42 },
 };
 
 /* ========================================================================== */
@@ -170,7 +170,7 @@ export function build(THREE, ctx = {}) {
         if (r() > 0.52) continue; // dark room
         const k = 0.55 + r() * 0.45;
         const warm = r() < 0.85;
-        const R = Math.round(255 * k), Gc = Math.round((warm ? 205 : 232) * k), B = Math.round((warm ? 150 : 225) * k);
+        const R = Math.round(255 * k), Gc = Math.round((warm ? 196 : 232) * k), B = Math.round((warm ? 128 : 222) * k);
         g.fillStyle = `rgb(${R},${Gc},${B})`;
         // canvas y=0 is the top of the texture (flipY): row index counts from the bottom
         const y0 = (GLOW_ROWS - 1 - row) * ch;
@@ -239,7 +239,7 @@ export function build(THREE, ctx = {}) {
       color: 0x47586a, roughness: 0.38, metalness: 0.1,
       emissive: 0xffffff, emissiveMap: glowTex, emissiveIntensity: 0,
     }),
-    lobby: std('mt-interior-lobby', { color: 0x8c949a, roughness: 0.6, emissive: 0xffe2b8, emissiveIntensity: 0 }),
+    lobby: std('mt-interior-lobby', { color: 0x6c7880, roughness: 0.55, emissive: 0xffe2b8, emissiveIntensity: 0 }),
     glass: reflective(phys('mt-glass-curtain', {
       color: 0x8fb2c6, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.46,
       envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide,
@@ -277,6 +277,14 @@ export function build(THREE, ctx = {}) {
     carBlue: std('mt-car-blue', { color: 0x3c566b, roughness: 0.3, metalness: 0.4 }),
     carGlass: std('mt-car-glass', { color: 0x34414b, roughness: 0.15, metalness: 0.4 }),
   };
+  // Night glow strength: the engine ramps emissiveIntensity 0→1, so the brightness lives in the
+  // (HDR, >1) emissive colour. Interior glow is seen through ~45% glass, hence the boost.
+  mat.interior.emissive.setScalar(2.4);
+  mat.lobby.emissive.multiplyScalar(1.8);
+  mat.lampHead.emissive.multiplyScalar(3.0);
+  mat.lightStrip.emissive.multiplyScalar(3.0);
+  mat.teal.emissive.multiplyScalar(1.6);
+  mat.water.emissive.multiplyScalar(0.9);
   nightMaterials.push(mat.interior, mat.lobby, mat.water, mat.teal, mat.lampHead, mat.lightStrip);
 
   /* ------------------------------------------------------------------------ */
@@ -622,7 +630,7 @@ export function build(THREE, ctx = {}) {
     addInstances(g0, 'entrance-canopy-columns', colGeo, mat.white, [[cx0 + 2, cy / 2, cz1 - 1.2], [cx1 - 2, cy / 2, cz1 - 1.2]]);
     const canopyLight = new THREE.PointLight(0xffe2b8, 0, 18, 2);
     canopyLight.name = 'lamp-entrance-canopy'; canopyLight.position.set((cx0 + cx1) / 2, cy - 0.6, 1.2);
-    canopyLight.userData.intensity = 40;
+    canopyLight.userData.intensity = 120;
     g0.add(canopyLight); lamps.push(canopyLight);
 
     // Levels 1..11: wraparound balconies (only where the tower stands clear of the low blocks)
@@ -670,7 +678,7 @@ export function build(THREE, ctx = {}) {
       .map(([x, z]) => [x, y + SLAB_T + 0.08 + postH / 2, z, 0, 0.35, postH, 0.35]);
     addInstances(gr, 'tower-crown-posts', UNIT, mat.white, posts);
     // light line under the frame
-    const ly = fy0 - 0.05;
+    const ly = fy0 - 0.12;
     addSpan(gr, 'tower-crown-light-s', mat.lightStrip, fr.x0 + 0.3, fr.x1 - 0.3, ly, fy0, fr.z1 - 0.3, fr.z1 - 0.15, false, false);
     addSpan(gr, 'tower-crown-light-n', mat.lightStrip, fr.x0 + 0.3, fr.x1 - 0.3, ly, fy0, fr.z0 + 0.15, fr.z0 + 0.3, false, false);
     addSpan(gr, 'tower-crown-light-e', mat.lightStrip, fr.x1 - 0.3, fr.x1 - 0.15, ly, fy0, fr.z0 + 0.3, fr.z1 - 0.3, false, false);
@@ -823,7 +831,7 @@ export function build(THREE, ctx = {}) {
     // pool light (moves with the exploded roof level)
     const poolLight = new THREE.PointLight(0x7fe6f0, 0, 22, 2);
     poolLight.name = 'lamp-pool'; poolLight.position.set((pl.x0 + pl.x1) / 2, wy1 + 1.5, (pl.z0 + pl.z1) / 2);
-    poolLight.userData.intensity = 30;
+    poolLight.userData.intensity = 80;
     gr.add(poolLight); lamps.push(poolLight);
   }
 
@@ -934,8 +942,8 @@ export function build(THREE, ctx = {}) {
     addInstances(S, 'site-lamp-heads', UNIT, mat.lampHead, lampPts.map(([x, z]) => [x, lampH + 0.08, z, 0, 0.6, 0.16, 0.6]), true, false);
     // point lights on a selection of lamps (engine turns them on at night)
     [[-20, 10.5], [12, 10.5], [-12, 22.4], [8, 22.4], [19, 41], [0, 33.5]].forEach(([x, z], i) => {
-      const l = new THREE.PointLight(0xffd9a6, 0, 20, 2);
-      l.name = `lamp-court-${i}`; l.position.set(x, lampH - 0.4, z); l.userData.intensity = 45;
+      const l = new THREE.PointLight(0xffd9a6, 0, 26, 2);
+      l.name = `lamp-court-${i}`; l.position.set(x, lampH - 0.4, z); l.userData.intensity = 220;
       S.add(l); lamps.push(l);
     });
 

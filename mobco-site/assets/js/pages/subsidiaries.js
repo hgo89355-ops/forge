@@ -165,21 +165,24 @@ function initOrg() {
   let hot = null;
   let progress = reduced ? 1 : 0;
 
-  const rel = (r, box) => ({
-    l: r.left - box.left, r: r.right - box.left, t: r.top - box.top, b: r.bottom - box.top,
-    cx: (r.left + r.right) / 2 - box.left, cy: (r.top + r.bottom) / 2 - box.top,
-  });
+  // layout boxes relative to the org container, ignoring transforms (reveal / hover offsets)
+  const rel = (el) => {
+    let l = 0, t = 0, n = el;
+    while (n && n !== org) { l += n.offsetLeft; t += n.offsetTop; n = n.offsetParent; }
+    const w = el.offsetWidth, h = el.offsetHeight;
+    return { l, r: l + w, t, b: t + h, cx: l + w / 2, cy: t + h / 2 };
+  };
+  const rowMQ = window.matchMedia('(min-width: 1024px)');
 
   function layout() {
-    const box = org.getBoundingClientRect();
-    if (!box.width) return;
-    const W = Math.round(box.width), H = Math.round(box.height);
+    const W = org.offsetWidth, H = org.offsetHeight;
+    if (!W) return;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg.setAttribute('width', W);
     svg.setAttribute('height', H);
-    const P = rel(parent.getBoundingClientRect(), box);
-    const N = nodes.map((n) => rel(n.getBoundingClientRect(), box));
-    const row = N.length > 1 && N.every((n) => Math.abs(n.t - N[0].t) < 4);
+    const P = rel(parent);
+    const N = nodes.map(rel);
+    const row = rowMQ.matches;
     const defs = [];
     const junctions = [];
     if (row) {
@@ -253,9 +256,14 @@ function initOrg() {
 
   function measureProgress() {
     if (reduced) { progress = 1; return; }
-    const r = org.getBoundingClientRect();
+    // starts when the parent enters; completes when the companies reach ~72% of the viewport
     const vh = window.innerHeight;
-    progress = clamp((vh * 0.88 - r.top) / (r.height * 0.62 + vh * 0.22), 0, 1);
+    const o = org.getBoundingClientRect().top;
+    const P = rel(parent);
+    const N = nodes.map(rel);
+    const top = o + P.t;
+    const anchor = o + (org.classList.contains('is-row') ? Math.min(...N.map((n) => n.t)) : N[N.length - 1].cy);
+    progress = clamp((vh * 0.88 - top) / Math.max(1, anchor - top + vh * 0.16), 0, 1);
   }
 
   function setHot(key) {
@@ -278,6 +286,7 @@ function initOrg() {
   window.addEventListener('scroll', onS, { passive: true });
   const relayout = debounce(() => { layout(); measureProgress(); paint(); }, 80);
   window.addEventListener('resize', relayout);
+  rowMQ.addEventListener?.('change', relayout);
   if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(org);
   onLang(() => nf().then(() => { layout(); measureProgress(); paint(); }));
   document.fonts?.ready?.then(relayout);
@@ -323,13 +332,10 @@ function initSpy() {
       const r = a.getBoundingClientRect();
       const p = clamp((line - r.top) / Math.max(1, r.height), 0, 1);
       bars.get(a.id)?.style.setProperty('--p', p.toFixed(3));
-      if (r.top <= line && r.bottom > line) active = a.id;
+      // the last company whose top has crossed the reading line (gaps between cards keep the previous one)
+      if (r.top <= line) active = a.id;
     }
-    // before the first company: keep the first one marked as the entry point
-    if (!active) {
-      const first = arts[0].getBoundingClientRect();
-      active = first.top > line ? arts[0].id : arts[arts.length - 1].id;
-    }
+    if (!active) active = arts[0].id;
     setActive(active);
     const sc = $('.subs-showcase');
     if (sc) {

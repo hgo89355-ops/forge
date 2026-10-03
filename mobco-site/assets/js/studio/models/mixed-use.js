@@ -39,9 +39,9 @@ export const meta = {
   camera: {
     target: [-2, 9, -8],
     aerial: [-92, 66, 98],
-    street: [-30, 1.7, 34],
-    top: [0, 175, 0.1],
-    front: [0, 14, 118],
+    street: [-36, 1.7, 24],
+    top: [-2, 185, -7.9],
+    front: [0, 12, 96],
   },
   hotspots: [
     { id: 'retail', position: [-16, 4.2, -17.2],
@@ -137,26 +137,27 @@ export function build(THREE, ctx = {}) {
 
   const M = {
     stone:     std('stone', { color: 0xefebe3, roughness: 0.72 }),
+    frame:     std('stone-frame', { color: 0xd3cabb, roughness: 0.7 }),
     stoneWarm: std('stone-warm', { color: 0xe2dacd, roughness: 0.78 }),
-    core:      std('interior-core', { color: 0xbfc0bc, roughness: 0.9 }),
+    core:      std('interior-core', { color: 0xa9aba8, roughness: 0.9, emissive: 0x9a6d40, emissiveIntensity: 0 }),
     furniture: std('furniture', { color: 0xdedad2, roughness: 0.85 }),
     metal:     std('metal-graphite', { color: 0x3a4148, roughness: 0.38, metalness: 0.65 }),
     metalLight:std('metal-light', { color: 0xcfd2d2, roughness: 0.4, metalness: 0.5 }),
     spandrel:  std('spandrel-glass', { color: 0x26343e, roughness: 0.18, metalness: 0.35, envMapIntensity: 1.2 }),
-    glass: phys('glass', { color: 0x9db8c6, metalness: 0.1, roughness: 0.06, transmission: 0, transparent: true,
-      opacity: 0.4, envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide }),
-    glassShop: phys('glass-shopfront', { color: 0xb4ccd4, metalness: 0.1, roughness: 0.05, transparent: true,
-      opacity: 0.3, envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide }),
+    glass: phys('glass', { color: 0x4d6e82, metalness: 0.1, roughness: 0.05, transmission: 0, transparent: true,
+      opacity: 0.5, envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide }),
+    glassShop: phys('glass-shopfront', { color: 0x7d9cab, metalness: 0.1, roughness: 0.05, transparent: true,
+      opacity: 0.38, envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide }),
     deck:      std('timber-deck', { color: 0xb38d68, roughness: 0.8 }),
     asphalt:   std('asphalt', { color: 0x575c62, roughness: 0.95 }),
     marking:   std('road-marking', { color: 0xf1f0ea, roughness: 0.8 }),
     paving:    std('paving', { color: 0xffffff, map: paveTex, roughness: 0.85 }),
     kerb:      std('kerb', { color: 0xd3cdc2, roughness: 0.8 }),
-    grass:     std('grass', { color: 0x93ab76, roughness: 1 }),
+    grass:     std('grass', { color: 0x8ea374, roughness: 1 }),
     sedum:     std('green-roof', { color: 0x9aa97a, roughness: 1 }),
     hedge:     std('hedge', { color: 0x5f7d55, roughness: 0.95 }),
-    foliage:   std('foliage', { color: 0x7d9a66, roughness: 0.9 }),
-    frond:     std('palm-frond', { color: 0x6a8a52, roughness: 0.85, side: THREE.DoubleSide }),
+    foliage:   std('foliage', { color: 0x6f8c5b, roughness: 0.9 }),
+    frond:     std('palm-frond', { color: 0x5b7d48, roughness: 0.85, side: THREE.DoubleSide }),
     trunk:     std('palm-trunk', { color: 0x9a8670, roughness: 0.95 }),
     bark:      std('tree-trunk', { color: 0x7d6e5e, roughness: 0.95 }),
     fabric:    std('parasol-fabric', { color: 0xf7f4ee, roughness: 0.9, side: THREE.DoubleSide }),
@@ -165,19 +166,20 @@ export function build(THREE, ctx = {}) {
     carGlass:  std('car-glass', { color: 0x1e262d, roughness: 0.15, metalness: 0.3 }),
     tyre:      std('tyre', { color: 0x202326, roughness: 0.9 }),
     // ---- night-ramped (emissiveIntensity 0 → 1) ----
-    ceiling:   std('office-ceiling', { color: 0xf1efea, roughness: 0.85, emissive: 0xc8965c, emissiveIntensity: 0 }),
+    ceiling:   std('office-ceiling', { color: 0xc9cbcb, roughness: 0.85, emissive: 0xc8965c, emissiveIntensity: 0 }),
+    floorFin:  std('office-floor', { color: 0xb9b7b1, roughness: 0.8, emissive: 0x7a5634, emissiveIntensity: 0 }),
     strip:     std('light-strip', { color: 0xf4f4f0, roughness: 0.5, emissive: 0xfff0d8, emissiveIntensity: 0 }),
     shop:      std('shop-interior', { color: 0xe6dccd, roughness: 0.85, emissive: 0xe0a35e, emissiveIntensity: 0 }),
     lampHead:  std('lamp-head', { color: 0xf3f2ee, roughness: 0.4, emissive: 0xffe2a8, emissiveIntensity: 0 }),
     sign:      std('signage', { color: 0xf8f8f6, roughness: 0.4, emissive: 0xffffff, emissiveIntensity: 0 }),
     signTeal:  std('signage-teal', { color: TEAL, roughness: 0.4, emissive: TEAL, emissiveIntensity: 0 }),
     water: phys('pool-water', { color: 0x2a5c68, roughness: 0.06, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.05,
-      normalMap: ripple, normalScale: new THREE.Vector2(0.18, 0.18), envMapIntensity: 1.4, emissive: 0x1d7a80, emissiveIntensity: 0 }),
-    jet: std('fountain-jet', { color: 0xffffff, roughness: 0.2, transparent: true, opacity: 0.55, depthWrite: false,
+      normalMap: ripple, normalScale: new THREE.Vector2(0.18, 0.18), envMapIntensity: 1.4, emissive: 0x156a70, emissiveIntensity: 0 }),
+    jet: std('fountain-jet', { color: 0xffffff, roughness: 0.2, transparent: true, opacity: 0.42, depthWrite: false,
       emissive: 0xbfeeff, emissiveIntensity: 0 }),
   };
   ripple.repeat.set(5, 1.2);
-  const nightMaterials = [M.ceiling, M.strip, M.shop, M.lampHead, M.sign, M.signTeal, M.water, M.jet];
+  const nightMaterials = [M.ceiling, M.floorFin, M.core, M.strip, M.shop, M.lampHead, M.sign, M.signTeal, M.water, M.jet];
 
   /* ---------- shared geometries ------------------------------------ */
   const UNIT_BOX = G(new THREE.BoxGeometry(1, 1, 1));
@@ -347,6 +349,7 @@ export function build(THREE, ctx = {}) {
     const cx0 = rect.x0 + (o.open?.w ? 0 : ci), cx1 = rect.x1 - (o.open?.e ? 0 : ci);
     const cz0 = rect.z0 + (o.open?.n ? 0 : ci), cz1 = rect.z1 - (o.open?.s ? 0 : ci);
     kit.span('ceiling', M.ceiling, cx0, y0 + h - 0.12, cz0, cx1, y0 + h - 0.04, cz1);
+    kit.span('floor-finish', M.floorFin, cx0, y0 + P.slab, cz0, cx1, y0 + P.slab + 0.04, cz1);
     // light strips along the long axis
     const alongX = (cx1 - cx0) >= (cz1 - cz0);
     const across0 = alongX ? cz0 : cx0, across1 = alongX ? cz1 : cx1;
@@ -359,7 +362,7 @@ export function build(THREE, ctx = {}) {
     if (HIGH) {                                                   // desk clusters (read in section cuts)
       for (let x = x0 + 3; x < x1 - 2.5; x += 3.4) for (let z = z0 + 3; z < z1 - 2.5; z += 3.2) {
         if (x > c.x0 - 2.5 && x < c.x1 + 2.5 && z > c.z0 - 2.5 && z < c.z1 + 2.5) continue;
-        kit.box('desks', M.furniture, x, y0 + P.slab + 0.37, z, 1.6, 0.74, 1.4);
+        kit.box('desks', M.furniture, x, y0 + P.slab + 0.41, z, 1.6, 0.74, 1.4);
       }
     }
   }
@@ -486,7 +489,7 @@ export function build(THREE, ctx = {}) {
     if (n > B.levels) officeFacade(k, run('z', A.x0, A.z0, A.z1, -1), y0, h, { style: 'framed', module: 1.5, finEvery: 4, finProud: 0.5 });
     officeInterior(k, A, y0, h, { core: { x0: -14, x1: -2, z0: -32, z1: -24 }, open: { e: true, w: n <= B.levels } });
     // stone portal frames on the front facade (columns per floor; beams at podium and roof)
-    for (const x of [A.x0 + 0.7, -4, A.x1 - 0.7]) k.box('portal', M.stone, x, y0 + h / 2, A.z1 + 0.2, 1.4, h, 1.6);
+    for (const x of [A.x0 + 0.7, -4, A.x1 - 0.7]) k.box('portal', M.frame, x, y0 + h / 2, A.z1 + 0.2, 1.4, h, 1.6);
     // Corner volume (frameless curtain wall)
     officeFacade(k, run('x', C.z1, C.x0, C.x1, +1), y0, h, { style: 'curtain', module: 1.5 });
     officeFacade(k, run('z', C.x1, C.z0, C.z1, +1), y0, h, { style: 'curtain', module: 1.53 });
@@ -530,7 +533,7 @@ export function build(THREE, ctx = {}) {
     // Wing A roof slab, parapets, portal top beam
     k.span('roof-slab', M.stone, A.x0, y, A.z0, A.x1, y + 0.5, A.z1);
     parapet(k, [run('x', A.z0, A.x0, A.x1, -1), run('z', A.x0, A.z0, A.z1, -1)], y + 0.5, 1.0);
-    k.span('portal', M.stone, A.x0, y, A.z1 - 0.6, A.x1, y + 1.9, A.z1 + 1.0);
+    k.span('portal', M.frame, A.x0, y, A.z1 - 0.6, A.x1, y + 1.9, A.z1 + 1.0);
     // podium-level portal base beam is the colonnade lintel (L0); this crowns the frame.
     // plant enclosure (louvred screen) + lift overrun + PV array
     k.span('roof-overrun', M.stone, -14, y + 0.5, -32, -4, y + 3.6, -24);
@@ -618,10 +621,10 @@ export function build(THREE, ctx = {}) {
     // planting island in the right half + submerged lighting strip
     sk.span('pool-uplights', M.lampHead, PL.cx - PL.len / 2 + 5, 0.42, PL.cz - 0.06, PL.cx + PL.len / 2 - 5, 0.445, PL.cz + 0.06);
   }
-  const jetGeo = G(new THREE.CylinderGeometry(0.025, 0.09, 1, 6, 1, true)); jetGeo.translate(0, 0.5, 0);
+  const jetGeo = G(new THREE.CylinderGeometry(0.012, 0.05, 1, 6, 1, true)); jetGeo.translate(0, 0.5, 0);
   const jets = [];
-  for (let x = PL.cx - PL.len / 2 + 6; x <= PL.cx + PL.len / 2 - 6; x += 2.25) jets.push({ x, z: PL.cz - 2.6, h: 1.6 }, { x, z: PL.cz + 2.6, h: 1.6 });
-  jets.push({ x: PL.cx - PL.len / 2 + 5, z: PL.cz, h: 3.2 }, { x: PL.cx + PL.len / 2 - 5, z: PL.cz, h: 3.2 });
+  for (let x = PL.cx - PL.len / 2 + 6; x <= PL.cx + PL.len / 2 - 6; x += 2.25) jets.push({ x, z: PL.cz - 2.6, h: 1.1 }, { x, z: PL.cz + 2.6, h: 1.1 });
+  jets.push({ x: PL.cx - PL.len / 2 + 5, z: PL.cz, h: 2.4 }, { x: PL.cx + PL.len / 2 - 5, z: PL.cz, h: 2.4 });
   const jetMesh = instanced(site, 'fountain-jets', jetGeo, M.jet, jets.map((j) => mtx(j.x, 0.44, j.z, 1, j.h, 1)), null, { cast: false, receive: false });
 
   /* ---------- café terraces ---------------------------------------- */
@@ -707,15 +710,19 @@ export function build(THREE, ctx = {}) {
   const broadleaf = treeSpots.map(([x, z]) => [x, z, 0.62]);
   for (const [x, z] of [[55, 22], [62, 26], [57, 32], [-24, 30], [-17, 30], [10, 30], [17, 30]]) broadleaf.push([x, z, 0.47]);
   for (let x = -62; x <= 62; x += 10.5) broadleaf.push([x + rr(-1, 1), -48.5, 0.24]);
-  for (let x = -63; x <= 63; x += 14) broadleaf.push([x, 60, 0.12]);
   const tTr = [], tCr = [], tCol = [];
   const leafA = new THREE.Color(0x7d9a66), leafB = new THREE.Color(0x92a979);
   for (const [x, z, gy] of broadleaf) {
     const s = rr(0.85, 1.2), ry = rr(0, 6.28);
-    tTr.push(mtx(x, gy, z, s, 3.2 * s, s));
-    tCr.push(mtx(x, gy + 4.6 * s, z, 2.5 * s, 2.0 * s, 2.5 * s, 0, ry));
-    tCr.push(mtx(x + 0.9 * s, gy + 5.6 * s, z + 0.4 * s, 1.7 * s, 1.4 * s, 1.7 * s, 0, ry));
-    const c = leafA.clone().lerp(leafB, rnd()); tCol.push(c, c);
+    tTr.push(mtx(x, gy, z, s, 4.6 * s, s));
+    // irregular crown from 4 overlapping lobes
+    const lobes = [[0, 4.5, 0, 1.9, 1.5], [1.0, 5.2, 0.5, 1.4, 1.2], [-0.9, 5.0, -0.4, 1.45, 1.2], [0.1, 5.9, -0.2, 1.2, 1.0]];
+    const c = leafA.clone().lerp(leafB, rnd());
+    for (const [ox, oy, oz, r, ry2] of lobes) {
+      const ca = Math.cos(ry), sa = Math.sin(ry);
+      tCr.push(mtx(x + (ox * ca + oz * sa) * s, gy + oy * s, z + (-ox * sa + oz * ca) * s, r * s, ry2 * s, r * s, 0, ry + rnd()));
+      tCol.push(c.clone().offsetHSL(0, 0, rr(-0.03, 0.03)));
+    }
   }
   instanced(site, 'tree-trunks', treeTrunkGeo, M.bark, tTr);
   instanced(site, 'tree-crowns', crownGeo, M.foliage, tCr, tCol);
@@ -725,7 +732,10 @@ export function build(THREE, ctx = {}) {
   instanced(site, 'verge-shrubs', crownGeo, M.hedge, shrubs);
 
   /* ---------- scale figures ---------------------------------------- */
-  const figGeo = G(new THREE.CapsuleGeometry(0.2, 1.25, 2, HIGH ? 7 : 5)); figGeo.translate(0, 0.825, 0);
+  // abstract white scale figure: lathe silhouette (legs → torso → shoulders → head)
+  const figProfile = [[0, 0], [0.13, 0], [0.12, 0.45], [0.15, 0.9], [0.2, 1.25], [0.21, 1.38], [0.12, 1.47], [0.06, 1.5], [0.1, 1.56], [0.105, 1.66], [0.07, 1.74], [0, 1.76]]
+    .map(([r, y]) => new THREE.Vector2(r, y));
+  const figGeo = G(new THREE.LatheGeometry(figProfile, HIGH ? 8 : 6));
   const figs = [];
   const blocked = (x, z) => (x > PL.cx - PL.len / 2 - 2 && x < PL.cx + PL.len / 2 + 2 && z > PL.cz - PL.wid / 2 - 2 && z < PL.cz + PL.wid / 2 + 2)
     || (x > P.pav.x0 - 1 && x < P.pav.x1 + 1 && z > P.pav.z0 - 1 && z < P.pav.z1 + 1)

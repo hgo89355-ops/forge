@@ -592,8 +592,7 @@ export function createStudio(container, options = {}) {
   function onPointerLeave() { lastPointer = null; setHover(-1); canvas.style.cursor = ''; }
   function onDblClick(e) {
     if (!model) return;
-    const hit = pick(e.clientX, e.clientY, [...model.solids, ...model.siteSolids, env.ground]);
-    if (hit) focusPoint(hit.point);
+    focusAt(e.clientX, e.clientY);
   }
   if (opts.controls !== false) {
     canvas.addEventListener('pointermove', onPointerMove);
@@ -612,6 +611,14 @@ export function createStudio(container, options = {}) {
     to.y = Math.max(to.y, 1.6);
     tweenCamera(to, p, { duration: 1000 });
     emit('focus', { point: p.toArray() });
+  }
+
+  /** Focus the point under a screen position (double-tap on touch). Returns true when something was hit. */
+  function focusAt(clientX, clientY) {
+    if (!model) return false;
+    const hit = pick(clientX, clientY, [...model.solids, ...model.siteSolids, env.ground]);
+    if (hit) focusPoint(hit.point);
+    return !!hit;
   }
 
   function zoom(factor) {
@@ -720,8 +727,10 @@ export function createStudio(container, options = {}) {
     const lamps = (Array.isArray(built.lamps) ? built.lamps : []).filter((l) => l && l.isLight).slice(0, 8);
     lamps.forEach((l) => {
       if (!l.parent) scene.add(l);
-      l.userData.__nightIntensity = Number.isFinite(l.userData?.nightIntensity) ? l.userData.nightIntensity
-        : l.isSpotLight ? 90 : 26;
+      const ud = l.userData || {};
+      l.userData.__nightIntensity = Number.isFinite(ud.nightIntensity) ? ud.nightIntensity
+        : Number.isFinite(ud.intensity) ? ud.intensity
+          : l.isSpotLight ? 90 : 26;
       l.castShadow = false;
       l.intensity = 0;
     });
@@ -865,8 +874,7 @@ export function createStudio(container, options = {}) {
    */
   async function renderThumbnail(id, { w = 320, h = 200 } = {}) {
     if (disposed) return null;
-    let mod;
-    try { mod = await loadModelModule(id); } catch { return null; }
+    const mod = await loadModelModule(id); // rejects when the module is missing → caller marks it unavailable
     if (disposed || !model || themeFor(state.mode) !== 'sky' || state.loading) return null;
     const dpr = renderer.getPixelRatio();
     if (w * dpr > canvas.width || h * dpr > canvas.height) return null;
@@ -977,7 +985,7 @@ export function createStudio(container, options = {}) {
   const api = {
     THREE, renderer, scene, camera, controls, canvas, quality,
     on, load, setView, setExplode, setSection, setMode, setTime, setAutoRotate, setHotspots, setInsets,
-    select, selectStep, focusPoint, zoom, reset, snapshot, renderThumbnail, getState, invalidate, dispose, setControlsEnabled,
+    select, selectStep, focusPoint, focusAt, zoom, reset, snapshot, renderThumbnail, getState, invalidate, dispose, setControlsEnabled,
     get model() { return model ? { id: model.id, meta: model.meta, floors: model.floors.map((f, i) => floorInfo(i)) } : null; },
   };
   if (opts.model) api.ready = load(opts.model).catch(() => null);

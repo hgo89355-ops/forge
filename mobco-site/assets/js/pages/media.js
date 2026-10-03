@@ -13,9 +13,9 @@
 import { t, getLang, onLang } from '../core/i18n.js';
 import { scan, refresh } from '../core/motion.js';
 import { scanUI, toast, openLightbox } from '../core/ui.js';
-import { $, $$, esc, icon, picture, prefersReducedMotion, isRTL, debounce, clamp } from '../core/utils.js';
+import { $, $$, esc, icon, picture, prefersReducedMotion, isRTL, debounce, clamp, IMAGES } from '../core/utils.js';
 import { whenLoaded } from '../core/preloader.js';
-import { PROJECTS, getProject, projectUrl } from '../data/site-data.js';
+import { PROJECTS, PROJECT_CATEGORIES, REGIONS, getProject, getCategory, projectUrl } from '../data/site-data.js';
 
 const reduced = prefersReducedMotion();
 const pad = (n) => String(n).padStart(2, '0');
@@ -36,30 +36,40 @@ const S = {
 };
 const fmt = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 
-// Kinetic words are verbatim brand lines (BRIEF §2). Captions come from site-data.
+// A curated reel from the project library (art-directed order; names/locations come from site-data).
+// Kinetic words are verbatim brand lines or facts from BRIEF §2 (tagline, motto, "three continents", 2001).
 const SCENES = [
   { project: 'lagoon-villa-community', base: 'aerial-compound', pos: '50% 50%',
     words: { en: ['A legacy', '*of trust'], ar: ['إرثٌ', '*من الثقة'] },
     kb: ['scale(1.04) translate3d(0,0,0)', 'scale(1.16) translate3d(-2%,-1.5%,0)'] },
-  { project: 'eastmain', base: 'eastmain', pos: '50% 56%',
+  { project: 'raffles-hotel-residence', base: 'raffles-hotel-residence', pos: '50% 45%',
     words: { en: ['Integrity', '*& excellence'], ar: ['النزاهة', '*والتميّز'] },
     kb: ['scale(1.18) translate3d(1.5%,1%,0)', 'scale(1.04) translate3d(0,0,0)'] },
-  { project: 'victoria-101', base: 'victoria-101', pos: '50% 46%',
+  { project: 'sofitel-hotel', base: 'sofitel-hotel', pos: '40% 35%',
     words: { en: ['Shaping', '*skylines'], ar: ['نرسم', '*الأفق'] },
-    kb: ['scale(1.06) translate3d(-1%,1%,0)', 'scale(1.2) translate3d(1.5%,-1%,0)'] },
-  { project: 'innovation-campus', base: 'campus', pos: '50% 38%',
+    kb: ['scale(1.06) translate3d(0,2%,0)', 'scale(1.2) translate3d(1%,-2%,0)'] },
+  { project: 'as-safiyyah-museum-park', base: 'as-safiyyah-museum-park', pos: '60% 45%',
+    words: { en: ['Elevating', '*standards'], ar: ['نرتقي', '*بالمعايير'] },
+    kb: ['scale(1.05) translate3d(1%,0,0)', 'scale(1.17) translate3d(-1.5%,1%,0)'] },
+  { project: 'eastmain', base: 'eastmain', pos: '50% 56%',
     words: { en: ['*We plan.'], ar: ['*نخطّط.'] },
     kb: ['scale(1.2) translate3d(0,2%,0)', 'scale(1.05) translate3d(0,-1%,0)'] },
-  { project: 'classical-landmark', base: 'ksa-landmark', pos: '50% 40%',
+  { project: 'al-moosa-specialist-hospital', base: 'al-moosa-specialist-hospital', pos: '60% 40%',
     words: { en: ['*We build.'], ar: ['*نبني.'] },
-    kb: ['scale(1.05) translate3d(1%,0,0)', 'scale(1.17) translate3d(-1.5%,1%,0)'] },
-  { project: 'lagoon-villa-community', base: 'aerial-compound-portrait', pos: '50% 50%', gallery: 1,
+    kb: ['scale(1.04) translate3d(-1%,0,0)', 'scale(1.16) translate3d(1.5%,-1%,0)'] },
+  { project: 'red-palace-redevelopment', base: 'red-palace-redevelopment', pos: '50% 50%',
     words: { en: ['*We manage.'], ar: ['*نُدير.'] },
-    kb: ['scale(1.12) translate3d(0,-3%,0)', 'scale(1.12) translate3d(0,3%,0)'] },
-  { project: 'lagoon-villa-community', base: 'aerial-panorama', pos: '50% 50%', gallery: 3, pano: true,
+    kb: ['scale(1.16) translate3d(0,-2%,0)', 'scale(1.04) translate3d(0,1%,0)'] },
+  { project: 'victoria-101', base: 'victoria-101', pos: '50% 46%',
     words: { en: ['Three', '*continents'], ar: ['ثلاث', '*قارات'] },
+    kb: ['scale(1.06) translate3d(-1%,1%,0)', 'scale(1.2) translate3d(1.5%,-1%,0)'] },
+  { project: 'innovation-campus', base: 'campus', pos: '50% 38%',
+    words: { en: ['Since', '*2001'], ar: ['منذ', '*2001'] },
+    kb: ['scale(1.2) translate3d(0,2%,0)', 'scale(1.05) translate3d(0,-1%,0)'] },
+  { project: 'lagoon-villa-community', base: 'aerial-panorama', pos: '50% 50%', gallery: 3, pano: true,
+    words: { en: ['Our global', '*footprint'], ar: ['بصمتنا', '*العالمية'] },
     kb: ['none', 'none'] },
-];
+].filter((s) => getProject(s.project));
 const SCENE_MS = 6800;
 const FADE_MS = 1600;
 
@@ -69,11 +79,28 @@ function sceneMeta(s) {
   const meta = s.gallery != null ? t(p.gallery[s.gallery].caption) : t(p.location || p.typology);
   return { p, name, meta };
 }
+const sceneAlt = (s) => { const { name, meta } = sceneMeta(s); return meta && !meta.startsWith(name) ? `${name} — ${meta}` : name; };
 
 function initReel() {
   const root = $('[data-reel]');
   if (!root) return;
+  const stageEl = $('[data-reel-slides]', root);
+  // scene 0 is static markup (LCP image); the rest are built from SCENES
+  SCENES.slice(1).forEach((sc, k) => {
+    const el = document.createElement('div');
+    el.className = `mreel__slide${sc.pano ? ' mreel__slide--pano' : ''}`;
+    el.dataset.scene = String(k + 1);
+    el.innerHTML = sc.pano
+      ? `<div class="mreel__pano-bg" aria-hidden="true">${picture(sc.base, { alt: '' })}</div><div class="mreel__pano-strip">${picture(sc.base, { alt: '' })}</div>`
+      : picture(sc.base, { alt: '' });
+    stageEl.appendChild(el);
+  });
   const slides = $$('.mreel__slide', root);
+  const setAlts = () => slides.forEach((sl, i) => {
+    const img = sl.querySelector(sl.classList.contains('mreel__slide--pano') ? '.mreel__pano-strip img' : ':scope > picture img');
+    if (img && i > 0 && SCENES[i]) img.alt = sceneAlt(SCENES[i]);
+  });
+  setAlts();
   const kinetic = $('[data-reel-kinetic]', root);
   const segsEl = $('[data-reel-segs]', root);
   const toggle = $('[data-reel-toggle]', root);
@@ -274,6 +301,7 @@ function initReel() {
     show(index + (forward ? 1 : -1), { user: true });
   });
   root.addEventListener('pointercancel', () => { sx = null; });
+  root.addEventListener('dragstart', (e) => { if (e.target.closest('.mreel__slides')) e.preventDefault(); });
 
   // suspend while off-screen or the tab is hidden
   if ('IntersectionObserver' in window) {
@@ -297,6 +325,7 @@ function initReel() {
   }
 
   onLang(() => {
+    setAlts();
     label();
     renderCaption();
     buildWord(SCENES[index], false);
@@ -310,12 +339,14 @@ const G = {
   open: { en: 'Open image: {c}', ar: 'فتح الصورة: {c}' },
   dl: { en: 'Download image (JPG): {c}', ar: 'تنزيل الصورة (JPG): {c}' },
   status: { en: 'Showing {n} of {total} images', ar: 'عرض {n} من أصل {total} صورة' },
-  statusAll: { en: '{n} images', ar: '{n} صورة' },
+  more: { en: 'Show {n} more', ar: 'عرض {n} صورة إضافية' },
   descriptive: { en: 'descriptive name', ar: 'اسم وصفي' },
+  filter: { en: 'Filter images', ar: 'تصفية الصور' },
+  all: { en: 'All', ar: 'الكل' },
+  ksa: { en: 'KSA portfolio', ar: 'محفظة السعودية' },
 };
-// natural aspect ratios of the library
-const AR = { 'aerial-compound': 1560 / 849, 'aerial-compound-portrait': 996 / 912, 'aerial-panorama': 2000 / 233, campus: 999 / 863, 'ksa-landmark': 790 / 710, eastmain: 790 / 710, 'victoria-101': 790 / 710 };
-// display ratio of each crop: the full render keeps its own ratio, details get art-directed crops
+const PAGE = 16;
+// natural aspect ratios (utils IMAGES) — art-directed crops for the detail views
 const CROP_AR = {
   'eastmain:1': 0.8, 'eastmain:2': 1,
   'victoria-101:1': 0.78, 'victoria-101:2': 1.6,
@@ -323,49 +354,58 @@ const CROP_AR = {
   'innovation-campus:1': 0.8, 'innovation-campus:2': 1.6,
   'classical-landmark:1': 1.4, 'classical-landmark:2': 0.8,
 };
-// curated order (rhythm of wides / portraits / details); panorama closes the set
-const ORDER = [
-  'lagoon-villa-community:0', 'eastmain:0', 'innovation-campus:1', 'victoria-101:0',
-  'classical-landmark:2', 'eastmain:1', 'innovation-campus:0', 'lagoon-villa-community:2',
-  'victoria-101:1', 'classical-landmark:0', 'eastmain:2', 'lagoon-villa-community:1',
-  'victoria-101:2', 'innovation-campus:2', 'classical-landmark:1', 'lagoon-villa-community:3',
-];
-
-function categoriesOf(p) {
-  const c = [];
-  if (p.sectors.includes('residential')) c.push('residential');
-  if (p.sectors.includes('education')) c.push('education');
-  if (/^mixed-use/i.test(p.typology.en)) c.push('mixed-use');
-  if (/landmark/i.test(p.typology.en)) c.push('landmark');
-  if (p.region) c.push(p.region);
-  return c;
-}
+const natAR = (base) => (IMAGES[base] ? IMAGES[base].w / IMAGES[base].h : 1.4);
 
 function buildItems() {
-  const all = [];
+  const prim = [], primRest = [], crops = [], tail = [];
   PROJECTS.forEach((p) => p.gallery.forEach((g, gi) => {
     const key = `${p.id}:${gi}`;
-    all.push({ key, p, g, base: g.base, pos: g.pos, cats: categoriesOf(p), ar: CROP_AR[key] || AR[g.base] || 1.2 });
+    const regions = p.region ? [p.region] : [];
+    const x = { key, p, g, base: g.base, pos: g.pos, cats: [p.category, ...regions].filter(Boolean), ar: CROP_AR[key] || natAR(g.base) };
+    if (g.base === 'aerial-panorama') tail.push(x);
+    else if (gi > 0) crops.push(x);
+    else (p.featured ? prim : primRest).push(x);
   }));
-  return ORDER.map((k) => all.find((x) => x.key === k)).filter(Boolean).concat(all.filter((x) => !ORDER.includes(x.key)));
+  // rhythm: three full views, then an art-directed detail crop
+  const primaries = prim.concat(primRest);
+  const out = [];
+  primaries.forEach((x, i) => { out.push(x); if (i % 3 === 2 && crops.length) out.push(crops.shift()); });
+  return out.concat(crops, tail);
 }
 
 function initGallery() {
   const mount = $('[data-gallery]');
-  const chips = $('[data-gallery-filter]');
+  const chipMount = $('[data-gallery-filter-mount]');
   const status = $('[data-gallery-status]');
+  const moreWrap = $('[data-gallery-more-wrap]');
+  const moreBtn = $('[data-gallery-more]');
+  const moreLabel = $('[data-gallery-more-label]');
   if (!mount) return;
   const items = buildItems();
   let filter = 'all';
+  let shown = PAGE;
   let lastW = 0;
 
-  // counts in the chips (from data)
-  $$('[data-count-for]', chips).forEach((el) => {
-    const v = el.getAttribute('data-count-for');
-    el.textContent = String(v === 'all' ? items.length : items.filter((x) => x.cats.includes(v)).length);
-  });
+  // filter chips from data: categories that have images, then regions
+  const count = (v) => (v === 'all' ? items.length : items.filter((x) => x.cats.includes(v)).length);
+  const FILTERS = [{ id: 'all', label: G.all }]
+    .concat(PROJECT_CATEGORIES.filter((c) => count(c.id)).sort((a, b) => count(b.id) - count(a.id)).map((c) => ({ id: c.id, label: c.name, icon: c.icon })))
+    .concat([{ sep: true }])
+    .concat(REGIONS.filter((r) => count(r.id)).map((r) => ({ id: r.id, label: r.id === 'ksa' ? G.ksa : r.name })));
+  const group = document.createElement('div');
+  group.className = 'chip-group mgal-chips';
+  group.setAttribute('data-chip-group', 'single');
+  group.innerHTML = FILTERS.map((f) => (f.sep ? '<span class="mgal-chips__sep" aria-hidden="true"></span>'
+    : `<button class="chip" type="button" data-value="${f.id}" aria-pressed="${f.id === 'all'}">${f.icon ? icon(f.icon) : ''}<span data-chip-label="${f.id}"></span><span class="chip__count">${count(f.id)}</span></button>`)).join('');
+  chipMount?.replaceWith(group);
+  const labelChips = () => {
+    group.setAttribute('aria-label', t(G.filter));
+    FILTERS.forEach((f) => { if (!f.sep) group.querySelector(`[data-chip-label="${f.id}"]`).textContent = t(f.label); });
+  };
+  labelChips();
+  scanUI(group.parentElement);
 
-  const visible = () => items.filter((x) => filter === 'all' || x.cats.includes(filter));
+  const filtered = () => items.filter((x) => filter === 'all' || x.cats.includes(filter));
   // "Name — caption" (captions that already start with the project name are kept as they are)
   const caption = (x, lang = getLang()) => {
     const name = t(x.p.name, lang);
@@ -373,22 +413,23 @@ function initGallery() {
     return cap.startsWith(name) ? cap : `${name} — ${cap}`;
   };
 
-  const tile = (x, i) => {
-    const narrow = mount.clientWidth < 640;
+  const tile = (x, i, narrow) => {
     const isPano = x.base === 'aerial-panorama';
     const loc = x.p.location ? t(x.p.location) : t(x.p.typology);
     const cap = caption(x);
     const name = t(x.p.name);
     const detail = cap.startsWith(name) ? cap.slice(name.length).replace(/^\s*—\s*/, '') : t(x.g.caption);
     const label = `${cap}${x.p.nameIsDescriptive ? ` (${t(G.descriptive)})` : ''}`;
+    const cat = getCategory(x.p.category);
     return `
       <div class="mgal__item${isPano ? ' mgal__item--pano' : ''}" role="listitem" style="--ar:${(isPano && narrow ? 3 : x.ar).toFixed(4)}">
         <button class="mgal__open" type="button" data-open="${i}" data-cursor="zoom" aria-label="${esc(fmt(t(G.open), { c: label }))}">
           ${picture(x.base, { alt: '', position: x.pos })}
           <span class="mgal__shade" aria-hidden="true"></span>
           <span class="mgal__cap" aria-hidden="true">
+            ${cat ? `<span class="mgal__cap-cat">${esc(t(cat.name))}</span>` : ''}
             <span class="mgal__cap-name">${esc(name)}${x.p.nameIsDescriptive ? '<span class="mgal__mark">◇</span>' : ''}</span>
-            <span class="mgal__cap-text">${esc(detail)}</span>
+            ${detail ? `<span class="mgal__cap-text">${esc(detail)}</span>` : ''}
             <span class="mgal__cap-loc">${icon('map-pin', 'icon--xs')}<span>${esc(loc)}</span></span>
           </span>
           <span class="mgal__zoom" aria-hidden="true">${icon('maximize-2')}</span>
@@ -397,15 +438,13 @@ function initGallery() {
       </div>`;
   };
 
-  // justified rows: fill each row until its height drops to the target, keep the closer break
-  const layout = (list) => {
-    const W = mount.clientWidth;
+  // justified rows: add images until the row height drops to the target; keep whichever break is closer
+  const layout = (list, W) => {
     const gap = W < 640 ? 8 : W < 1024 ? 12 : 16;
     const target = W < 640 ? 150 : W < 1024 ? 230 : 300;
     const arOf = (x) => (x.base === 'aerial-panorama' && W < 640 ? 3 : x.ar);
     const rows = [];
-    let row = [];
-    let sum = 0;
+    let row = [], sum = 0;
     for (const x of list) {
       const a = arOf(x);
       const hWith = (W - gap * row.length) / (sum + a);
@@ -420,28 +459,31 @@ function initGallery() {
       row.push(x); sum += a;
     }
     if (row.length) rows.push({ row, sum, full: false });
-    return { rows, gap, target, W };
+    return { rows, gap, target };
   };
 
-  const render = ({ animate = false } = {}) => {
-    const list = visible();
-    const { rows, gap, target, W } = layout(list);
+  const render = ({ animateFrom = -1 } = {}) => {
+    const all = filtered();
+    const list = all.slice(0, shown);
+    const W = mount.clientWidth;
+    const narrow = W < 640;
+    const { rows, gap, target } = layout(list, W);
     lastW = W;
     let n = 0;
     mount.style.setProperty('--gap', `${gap}px`);
     mount.innerHTML = rows.map(({ row, sum, full }) => {
       const h = (W - gap * (row.length - 1)) / sum;
       const height = full ? h : Math.min(h, target);
-      const fill = full || height >= h - 0.5;
-      return `<div class="mgal__row${fill ? '' : ' mgal__row--open'}" role="none" style="--h:${height.toFixed(2)}px">${row.map((x) => tile(x, n++)).join('')}</div>`;
+      const open = !full && height < h - 0.5;
+      return `<div class="mgal__row${open ? ' mgal__row--open' : ''}" role="none" style="--h:${height.toFixed(2)}px">${row.map((x) => tile(x, n++, narrow)).join('')}</div>`;
     }).join('');
-    mount.__list = list;
-    scanUI(mount);
-    status.textContent = filter === 'all'
-      ? fmt(t(G.statusAll), { n: list.length })
-      : fmt(t(G.status), { n: list.length, total: items.length });
-    if (animate && !reduced) {
-      $$('.mgal__item', mount).forEach((el, i) => {
+    mount.__all = all;
+    status.textContent = fmt(t(G.status), { n: list.length, total: all.length });
+    const rest = all.length - list.length;
+    moreWrap.hidden = rest <= 0;
+    moreLabel.textContent = fmt(t(G.more), { n: Math.min(rest, PAGE) });
+    if (animateFrom >= 0 && !reduced) {
+      $$('.mgal__item', mount).slice(animateFrom).forEach((el, i) => {
         el.animate([{ opacity: 0, transform: 'translate3d(0, 24px, 0) scale(.98)' }, { opacity: 1, transform: 'none' }],
           { duration: 700, delay: Math.min(i, 12) * 45, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
       });
@@ -450,33 +492,40 @@ function initGallery() {
   };
 
   let busy = 0;
-  chips?.addEventListener('chipchange', (e) => {
+  group.addEventListener('chipchange', (e) => {
     const v = e.detail.values[0] || 'all';
     if (v === filter) return;
     filter = v;
+    shown = PAGE;
     clearTimeout(busy);
     if (reduced) { render(); return; }
     mount.classList.add('is-filtering');
-    busy = setTimeout(() => { render({ animate: true }); mount.classList.remove('is-filtering'); }, 220);
+    busy = setTimeout(() => { render({ animateFrom: 0 }); mount.classList.remove('is-filtering'); }, 220);
+  });
+  moreBtn?.addEventListener('click', () => {
+    const from = Math.min(shown, filtered().length);
+    shown += PAGE;
+    render({ animateFrom: from });
+    // keep keyboard users in place: focus the first newly revealed image
+    $$('.mgal__open', mount)[from]?.focus({ preventScroll: true });
   });
 
   mount.addEventListener('click', (e) => {
     const b = e.target.closest('[data-open]');
     if (!b) return;
-    const list = mount.__list || [];
-    const i = parseInt(b.getAttribute('data-open'), 10);
+    const all = mount.__all || [];
     const full = (x, lang) => `${caption(x, lang)}${x.p.location ? ` · ${t(x.p.location, lang)}` : ''}`;
-    openLightbox(list.map((x) => ({
+    openLightbox(all.map((x) => ({
       src: `assets/img/${x.base}.jpg`,
       srcWebp: `assets/img/${x.base}.webp`,
       alt: { en: caption(x, 'en'), ar: caption(x, 'ar') },
       caption: { en: full(x, 'en'), ar: full(x, 'ar') },
-    })), i);
+    })), parseInt(b.getAttribute('data-open'), 10));
   });
 
   new ResizeObserver(debounce(() => { if (Math.abs(mount.clientWidth - lastW) > 2) render(); }, 120)).observe(mount);
   render();
-  onLang(() => render());
+  onLang(() => { labelChips(); render(); });
 }
 
 /* ======================================================================
@@ -525,7 +574,7 @@ function initBrandKit() {
     preview.textContent = custom || t(f.sample);
     preview.style.fontFamily = f.family;
     preview.style.fontWeight = weight.value;
-    preview.style.fontSize = `${size.value}px`;
+    preview.style.setProperty('--size', `${size.value}px`);
     preview.dir = custom ? 'auto' : f.dir;
     preview.classList.toggle('is-upper', f.upper && !/[؀-ۿ]/.test(preview.textContent));
     tester.setAttribute('data-font', font);

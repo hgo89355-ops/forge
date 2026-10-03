@@ -138,6 +138,12 @@ body[data-page='home'] .hb-sector__name {
 }
 html[lang='ar'] body[data-page='home'] .hb-sector__name { letter-spacing: 0; text-transform: none; font-size: 1.125rem; font-weight: 600; }
 body[data-page='home'] .hb-sector__text { font-size: var(--fs-sm); line-height: 1.6; color: var(--fg-muted); }
+@media (max-width: 639.98px) {
+  /* compact index list on phones: icon · name · arrow (descriptions are generic capability copy) */
+  body[data-page='home'] .hb-sector__text { display: none; }
+  body[data-page='home'] .hb-sector__link { padding-block: var(--space-4); }
+  body[data-page='home'] .hb-sector__icon { inline-size: 44px; block-size: 44px; }
+}
 body[data-page='home'] .hb-sector__arrow {
   grid-area: arrow;
   display: grid;
@@ -158,7 +164,7 @@ body[data-page='home'] .hb-sector__arrow .icon { --icon-size: 16px; }
     grid-template-areas: 'icon .' 'body body' 'arrow arrow';
     align-items: start;
     gap: var(--space-5);
-    min-block-size: clamp(260px, 18vw + 80px, 340px);
+    min-block-size: clamp(240px, 14vw + 80px, 300px);
     padding: clamp(1.5rem, 1rem + 1.2vw, 2.25rem);
   }
   body[data-page='home'] .hb-sector__index { display: block; inset-block-start: clamp(1.5rem, 1rem + 1.2vw, 2.25rem); inset-inline-end: clamp(1.5rem, 1rem + 1.2vw, 2.25rem); }
@@ -197,6 +203,7 @@ body[data-page='home'] .hb-footprint::before { /* soft glow behind the map */
   pointer-events: none;
 }
 body[data-page='home'] .hb-footprint__head .h2 { max-inline-size: 12ch; }
+body[data-page='home'] .hb-footprint__head .section-header__aside { display: grid; gap: var(--space-4); }
 body[data-page='home'] .hb-footprint__sub { color: var(--fg-strong); max-inline-size: 30ch; }
 body[data-page='home'] .hb-footprint__body { color: var(--fg-muted); font-size: var(--fs-sm); max-inline-size: 52ch; }
 body[data-page='home'] .hb-footprint__layout { display: grid; gap: var(--space-8); align-items: start; }
@@ -221,7 +228,7 @@ body[data-page='home'] .hb-map__svg {
   inset: 0;
   inline-size: 100%;
   block-size: 100%;
-  overflow: visible;
+  overflow: hidden;
 }
 html.js body[data-page='home'] .hb-map__svg { clip-path: circle(0% at var(--cx, 62.6%) var(--cy, 41%)); transition: clip-path 2.2s var(--ease-out); }
 html.js body[data-page='home'] .hb-map.is-in .hb-map__svg { clip-path: circle(150% at var(--cx, 62.6%) var(--cy, 41%)); }
@@ -260,13 +267,13 @@ body[data-page='home'] .hb-marker {
   align-items: center;
   gap: .625rem;
   min-block-size: 44px;
-  padding-inline: 15px .5rem;
-  transform: translate(-22px, -50%);
+  padding-inline: 4px .5rem;
+  transform: translate(calc(-4px - var(--dot) / 2), -50%); /* dot centre sits exactly on the coordinate */
   color: var(--white);
   border-radius: 22px;
   white-space: nowrap;
 }
-body[data-page='home'] .hb-marker--start { flex-direction: row-reverse; padding-inline: .5rem 15px; transform: translate(calc(-100% + 22px), -50%); }
+body[data-page='home'] .hb-marker--start { flex-direction: row-reverse; padding-inline: .5rem 4px; transform: translate(calc(-100% + 4px + var(--dot) / 2), -50%); }
 body[data-page='home'] .hb-marker:focus-visible { outline-offset: 0; border-radius: 22px; }
 body[data-page='home'] .hb-marker__dot {
   position: relative;
@@ -317,8 +324,8 @@ body[data-page='home'] .hb-marker.is-active .hb-marker__dot { background: var(--
 body[data-page='home'] .hb-marker--project.is-active .hb-marker__dot { transform: rotate(45deg) scale(1.15); }
 body[data-page='home'] .hb-marker.is-active .hb-marker__label { background: var(--teal-400); border-color: var(--teal-400); color: var(--navy-950); }
 @media (max-width: 639.98px) {
-  body[data-page='home'] .hb-marker { --dot: 12px; gap: .4rem; padding-inline: 16px .25rem; }
-  body[data-page='home'] .hb-marker--start { padding-inline: .25rem 16px; }
+  body[data-page='home'] .hb-marker { --dot: 12px; gap: .4rem; padding-inline: 4px .25rem; }
+  body[data-page='home'] .hb-marker--start { padding-inline: .25rem 4px; }
   body[data-page='home'] .hb-marker__label { font-size: .625rem; letter-spacing: .1em; padding: .35rem .5rem; }
   html[lang='ar'] body[data-page='home'] .hb-marker__label { font-size: .8125rem; }
 }
@@ -549,6 +556,10 @@ body[data-page='home'] .hb-axo .axo-label {
   opacity: clamp(0, (var(--p) - var(--s)) * 12, 1);
 }
 html[lang='ar'] body[data-page='home'] .hb-axo .axo-label { letter-spacing: 0; font-size: 15px; font-weight: 600; }
+@media (max-width: 639.98px) {
+  body[data-page='home'] .hb-axo .axo-label { font-size: 20px; letter-spacing: .14em; }
+  html[lang='ar'] body[data-page='home'] .hb-axo .axo-label { font-size: 24px; letter-spacing: 0; }
+}
 body[data-page='home'] .hb-axo .axo-axis { font: 700 10px/1 'Manrope', sans-serif; fill: rgba(255, 255, 255, .55); }
 
 /* ========================================================================== 10. VALUES */
@@ -616,7 +627,9 @@ html[lang='ar'] body[data-page='home'] .hb-value__word { line-height: 1.25; lett
 body[data-page='home'] .hb-value__fill {
   display: inline-block;
   font-size: min(1em, 15cqi); /* "EXCELLENCE." ≈ 6.3em → always fits its column */
-  padding-block-end: .04em;
+  /* paint box larger than the glyph box so background-clip:text also fills overhanging tails (e.g. Arabic ز) */
+  padding: .06em .12em .1em;
+  margin: -.06em -.12em -.1em;
   color: transparent;
   -webkit-text-stroke: 1.5px var(--navy-900);
   background-image: linear-gradient(90deg, var(--navy-900) 0 50%, transparent 50% 100%);
@@ -627,7 +640,7 @@ body[data-page='home'] .hb-value__fill {
   background-clip: text;
 }
 [dir='rtl'] body[data-page='home'] .hb-value__fill { background-image: linear-gradient(270deg, var(--navy-900) 0 50%, transparent 50% 100%); background-position: calc(var(--hb-fill) * 100%) 0; }
-html[lang='ar'] body[data-page='home'] .hb-value__fill { -webkit-text-stroke-width: 1.25px; padding-block-end: .1em; font-size: min(1.05em, 26cqi); }
+html[lang='ar'] body[data-page='home'] .hb-value__fill { -webkit-text-stroke-width: 1.25px; padding: .1em .25em .3em; margin: -.1em -.25em -.3em; font-size: min(1.05em, 26cqi); }
 body[data-page='home'] .hb-value__fill::after { content: '.'; color: var(--teal-400); -webkit-text-stroke: 0; }
 html[lang='ar'] body[data-page='home'] .hb-value__fill::after { content: none; }
 body[data-page='home'] .hb-value__aside { grid-area: aside; display: flex; align-items: flex-start; gap: var(--space-4); }

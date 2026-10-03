@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title data-ar-title="المشاريع | مجموعة موبكو">Projects | MOBCO Group</title>
-  <meta name="description" content="Explore MOBCO Group projects across Saudi Arabia, Egypt and Canada — a 3D project ring, filters, map and list views and a detailed project viewer." data-ar-content="استكشف مشاريع مجموعة موبكو في المملكة العربية السعودية ومصر وكندا عبر حلقة مشاريع ثلاثية الأبعاد، ومرشّحات، وخريطة، وقائمة، وعارضٍ تفصيلي لكل مشروع.">
+  <meta name="description" content="Explore the MOBCO Group portfolio — airports, education, hospitality, infrastructure, medical, mixed-use, PPP, special and residential projects in Saudi Arabia, Egypt and Canada." data-ar-content="استكشف محفظة مشاريع مجموعة موبكو — المطارات والتعليم والضيافة والبنية التحتية والرعاية الصحية والمشاريع متعددة الاستخدامات والشراكة بين القطاعين والمشاريع الخاصة والسكنية في السعودية ومصر وكندا.">
   <!-- TODO(deploy): confirm production domain for canonical / og:url / og:image -->
   <link rel="canonical" href="https://mobco-group.com/projects.html">
   <link rel="alternate" hreflang="en" href="https://mobco-group.com/projects.html">
@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MOBCO Group">
   <meta property="og:title" content="Projects | MOBCO Group" data-ar-content="المشاريع | مجموعة موبكو">
-  <meta property="og:description" content="Iconic projects across three continents — explore the MOBCO Group portfolio in Saudi Arabia, Egypt and Canada." data-ar-content="مشاريع بارزة عبر ثلاث قارات — استكشف أعمال مجموعة موبكو في المملكة العربية السعودية ومصر وكندا.">
+  <meta property="og:description" content="Iconic projects across three continents — explore the MOBCO Group portfolio by sector, country and location." data-ar-content="مشاريع بارزة عبر ثلاث قارات — استكشف محفظة مشاريع مجموعة موبكو حسب القطاع والدولة والموقع.">
   <meta property="og:url" content="https://mobco-group.com/projects.html">
   <meta property="og:image" content="https://mobco-group.com/assets/img/og-default.jpg">
   <meta property="og:image:width" content="1200">
@@ -21,14 +21,13 @@
   <meta property="og:locale:alternate" content="ar_SA">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Projects | MOBCO Group" data-ar-content="المشاريع | مجموعة موبكو">
-  <meta name="twitter:description" content="Iconic projects across three continents — explore the MOBCO Group portfolio in Saudi Arabia, Egypt and Canada." data-ar-content="مشاريع بارزة عبر ثلاث قارات — استكشف أعمال مجموعة موبكو في المملكة العربية السعودية ومصر وكندا.">
+  <meta name="twitter:description" content="Iconic projects across three continents — explore the MOBCO Group portfolio by sector, country and location." data-ar-content="مشاريع بارزة عبر ثلاث قارات — استكشف محفظة مشاريع مجموعة موبكو حسب القطاع والدولة والموقع.">
   <meta name="twitter:image" content="https://mobco-group.com/assets/img/og-default.jpg">
   <meta name="theme-color" content="#0b1620">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/img/eastmain.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="assets/vendor/lenis/lenis.css">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/components/circular-carousel.css">
@@ -61,249 +60,169 @@
   <main id="main" tabindex="-1">
 
     <!-- ================================================================
-         1. HERO RING — 3D CircularCarousel of every project (+ alternate crops).
-            The <ul> fallback is shown when JS is off or the carousel fails.
+         1. HERO RING — 3D CircularCarousel of the featured projects (assets/js/components/circular-carousel.js).
+            The static <ul> below is the no-JS / failure fallback (generated from site-data.js).
          ================================================================ -->
-    <section class="pj-hero has-gridlines" aria-labelledby="pj-title" data-pj-hero>
-      <div class="pj-hero__glow" aria-hidden="true"></div>
+    <section class="pj-hero theme-dark" aria-labelledby="pj-title" data-pj-hero>
+      <div class="pj-hero__texture" aria-hidden="true"></div>
       <div class="container container--wide pj-hero__head">
-        <nav class="breadcrumb" aria-label="Breadcrumb" data-ar-aria-label="مسار التنقل" data-reveal="fade">
-          <ol>
-            <li><a href="index.html" data-ar="الرئيسية">Home</a></li>
-            <li><span aria-current="page" data-ar="المشاريع">Projects</span></li>
-          </ol>
-        </nav>
-        <div class="pj-hero__headline">
+        <div class="pj-hero__intro">
+          <nav class="breadcrumb" aria-label="Breadcrumb" data-ar-aria-label="مسار التنقل" data-reveal="fade">
+            <ol>
+              <li><a href="index.html" data-ar="الرئيسية">Home</a></li>
+              <li><span aria-current="page" data-ar="المشاريع">Projects</span></li>
+            </ol>
+          </nav>
           <p class="eyebrow" data-reveal="fade" data-reveal-delay="100" data-ar="مستكشف المشاريع">Project explorer</p>
           <h1 class="pj-hero__title" id="pj-title" data-split data-ar-html="مشاريع بارزة &lt;em&gt;عبر ثلاث قارات&lt;/em&gt;">Iconic projects <em>across three continents</em></h1>
         </div>
-        <p class="pj-hero__lead" data-reveal="up" data-reveal-delay="300" data-ar="نجحت مجموعة موبكو في تسليم مشاريع بارزة تتنوّع بين ناطحات السحاب والمراكز التجارية، والمجمّعات السكنية، والمؤسسات الحكومية والتعليمية، والفنادق الفاخرة.">MOBCO Group has successfully delivered iconic projects ranging from skyscrapers and commercial malls to residential compounds, governmental and educational institutions, and luxury hotels.</p>
+        <div class="pj-hero__aside" data-reveal="up" data-reveal-delay="250">
+          <p class="pj-hero__count">
+            <span class="pj-hero__count-num num" data-pj-total>33</span>
+            <span class="pj-hero__count-label" data-pj-total-label>projects</span>
+          </p>
+          <p class="pj-hero__facets" data-pj-facets>9 sectors · 3 countries</p>
+          <p class="pj-hero__lead" data-ar="نجحت مجموعة موبكو (MOBCO) في تسليم مشاريع بارزة تتنوّع بين ناطحات السحاب والمراكز التجارية، والمجمّعات السكنية، والمؤسسات الحكومية والتعليمية، والفنادق الفاخرة.">MOBCO Group has successfully delivered iconic projects ranging from skyscrapers and commercial malls to residential compounds, governmental and educational institutions, and luxury hotels.</p>
+        </div>
       </div>
 
       <div class="pj-hero__stage">
-        <div class="pj-ring" data-pj-ring></div>
-        <!-- Non-3D fallback (no JS / carousel failure) -->
-        <ul class="pj-ring-fallback container container--wide" role="list" data-pj-ring-fallback>
-          <li><a class="pj-ring-fallback__item" href="projects.html#eastmain"><span class="pj-ring-fallback__media"><picture><source type="image/webp" srcset="assets/img/thumbs/eastmain.webp"><img src="assets/img/thumbs/eastmain.jpg" alt="Night render of the Eastmain glazed office and retail building" data-ar-alt="تصوّر ليلي لمبنى إيست مين للمكاتب والمحلات بواجهاته الزجاجية" width="480" height="431" decoding="async"></picture></span><span class="pj-ring-fallback__name" data-ar="إيست مين">Eastmain</span><span class="pj-ring-fallback__sub" data-ar="مصر · متعدد الاستخدامات">Egypt · Mixed-use</span></a></li>
-          <li><a class="pj-ring-fallback__item" href="projects.html#victoria-101"><span class="pj-ring-fallback__media"><picture><source type="image/webp" srcset="assets/img/thumbs/victoria-101.webp"><img src="assets/img/thumbs/victoria-101.jpg" alt="Dusk aerial render of the Victoria 101 residential tower" data-ar-alt="تصوّر جوي عند الغسق لبرج فيكتوريا 101 السكني" width="480" height="431" decoding="async"></picture></span><span class="pj-ring-fallback__name" data-ar="فيكتوريا 101">Victoria 101</span><span class="pj-ring-fallback__sub" data-ar="كندا · سكني">Canada · Residential</span></a></li>
-          <li><a class="pj-ring-fallback__item" href="projects.html#lagoon-villa-community"><span class="pj-ring-fallback__media"><picture><source type="image/webp" srcset="assets/img/thumbs/aerial-compound.webp"><img src="assets/img/thumbs/aerial-compound.jpg" alt="Aerial render of a villa community with lagoon pools" data-ar-alt="تصوّر جوي لمجتمع فلل مع بحيرات اصطناعية" width="480" height="261" decoding="async"></picture></span><span class="pj-ring-fallback__name" data-ar="مجتمع فلل البحيرات">Lagoon Villa Community</span><span class="pj-ring-fallback__sub" data-ar="مجتمع سكني">Residential community</span></a></li>
-          <li><a class="pj-ring-fallback__item" href="projects.html#innovation-campus"><span class="pj-ring-fallback__media"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp"><img src="assets/img/thumbs/campus.jpg" alt="Aerial render of a white campus with ring buildings and a central tower" data-ar-alt="تصوّر جوي لحرم أبيض بمبانٍ حلقية وبرج مركزي" width="480" height="415" decoding="async"></picture></span><span class="pj-ring-fallback__name" data-ar="حرم الابتكار">Innovation Campus</span><span class="pj-ring-fallback__sub" data-ar="حرم تعليمي">Campus</span></a></li>
-          <li><a class="pj-ring-fallback__item" href="projects.html#classical-landmark"><span class="pj-ring-fallback__media"><picture><source type="image/webp" srcset="assets/img/thumbs/ksa-landmark.webp"><img src="assets/img/thumbs/ksa-landmark.jpg" alt="Render of a classical red and cream building with curved balconies" data-ar-alt="تصوّر لمبنى كلاسيكي بالأحمر والكريمي وشرفات منحنية" width="480" height="431" decoding="async"></picture></span><span class="pj-ring-fallback__name" data-ar="المَعلم الكلاسيكي">Classical Landmark</span><span class="pj-ring-fallback__sub" data-ar="المملكة العربية السعودية">Saudi Arabia</span></a></li>
-        </ul>
+        <div class="pj-hero__glow" aria-hidden="true"></div>
+        <div class="pj-ring" data-pj-ring data-cursor="drag"></div>
+        <!-- pj:fallback -->
+        <!-- /pj:fallback -->
       </div>
 
       <div class="container container--wide pj-hero__foot">
         <div class="pj-hero__controls" data-pj-ring-controls hidden>
           <button class="icon-btn icon-btn--sm" type="button" data-pj-ring-prev aria-label="Previous project" data-ar-aria-label="المشروع السابق"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
-          <button class="pj-play" type="button" data-pj-ring-toggle aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#pause"></use></svg><span data-pj-ring-toggle-label>Pause rotation</span></button>
+          <button class="pj-play" type="button" data-pj-ring-toggle aria-pressed="false"><span class="pj-play__icon" aria-hidden="true"><svg class="icon icon--sm pj-play__pause" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#pause"></use></svg><svg class="icon icon--sm pj-play__play" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#play"></use></svg></span><span data-pj-ring-toggle-label>Pause rotation</span></button>
           <button class="icon-btn icon-btn--sm" type="button" data-pj-ring-next aria-label="Next project" data-ar-aria-label="المشروع التالي"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
-          <p class="pj-hero__hint" data-ar="اسحب الحلقة أو استخدم الأسهم · اختر المشروع الأمامي لفتحه">Drag the ring or use the arrow keys · select the front project to open it</p>
         </div>
-        <dl class="pj-hero__meta">
-          <div><dt data-ar="مشروعًا مُنجزًا">Projects delivered</dt><dd><span class="num-ltr">430+</span></dd></div>
-          <div><dt data-ar="قارات">Continents</dt><dd>3</dd></div>
-          <div><dt data-ar="تأسست">Founded</dt><dd>2001</dd></div>
-        </dl>
-        <a class="scroll-cue pj-hero__cue" href="#explore"><span class="scroll-cue__line" aria-hidden="true"></span><span data-ar="استكشف المشاريع المعروضة">Explore the showcase</span></a>
+        <p class="pj-hero__hint" data-pj-ring-hint hidden><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hand"></use></svg><span data-ar="اسحب لتدوير الحلقة، واختر أي مشروع لفتحه">Drag to spin the ring — select any project to open it</span></p>
+        <a class="link-arrow pj-hero__browse" href="#explore"><span data-ar="تصفّح جميع المشاريع">Browse all projects</span><span class="link-arrow__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-down"></use></svg></span></a>
       </div>
     </section>
 
     <!-- ================================================================
-         2–4. EXPLORER — filters, search, sort, Grid | Ring | Map | List
+         2–4. EXPLORER — category tabs (the client's project tabs), toolbar, Grid | Ring | Map | List.
+              The static grid inside [data-pj-grid] is the no-JS / SEO version (generated from site-data.js);
+              projects.js re-renders it from data with FLIP-animated filtering.
          ================================================================ -->
     <section class="section pj-explorer" id="explore" aria-labelledby="pj-explore-title">
       <div class="container">
-        <header class="section-header section-header--split">
-          <p class="eyebrow" data-ar="مستكشف الأعمال">Portfolio explorer</p>
-          <h2 class="h2" id="pj-explore-title" data-split data-ar-html="صنِّف. قارِن. &lt;em&gt;استكشِف.&lt;/em&gt;">Filter. Compare. <em>Explore.</em></h2>
+        <header class="section-header section-header--split pj-explorer__header">
+          <div class="pj-explorer__heading">
+            <p class="eyebrow" data-ar="محفظة المشاريع">The portfolio</p>
+            <h2 class="h2" id="pj-explore-title" data-split data-ar-html="استكشف &lt;em&gt;حسب القطاع&lt;/em&gt;">Explore <em>by sector</em></h2>
+          </div>
           <div class="section-header__aside">
-            <p class="lead" data-reveal="up" data-ar="تصفّح مختارات من مشاريعنا حسب المنطقة والقطاع، وتنقّل بين عرض الشبكة والحلقة والخريطة والقائمة، وافتح أي مشروع لإلقاء نظرة أقرب.">Browse a selection of our projects by region and sector, switch between grid, ring, map and list views, and open any project for a closer look.</p>
+            <p class="lead" data-reveal="up" data-ar="تصفّح المشاريع حسب الفئات التي نعمل فيها، وضيّق النتائج حسب الدولة، وابحث بالاسم أو الموقع، ثم بدّل بين عرض الشبكة والحلقة والخريطة والقائمة.">Browse the portfolio by the categories we build in, narrow it by country, search by name or location — then switch between grid, ring, map and list views.</p>
           </div>
         </header>
 
+        <!-- Category tabs (role=tablist; rendered by projects.js from PROJECT_CATEGORIES) -->
+        <div class="pj-tabs" data-pj-tabs>
+          <div class="pj-tabs__scroller" data-pj-tabs-scroller>
+            <div class="pj-tabs__list" role="tablist" aria-label="Project categories" data-ar-aria-label="فئات المشاريع" data-pj-tablist></div>
+            <span class="pj-tabs__indicator" aria-hidden="true" data-pj-tabs-indicator></span>
+          </div>
+        </div>
+
+        <!-- Toolbar: country · search · sort · view -->
         <div class="pj-toolbar" data-pj-toolbar>
-          <div class="pj-toolbar__row">
-            <div class="pj-filter">
-              <span class="pj-filter__label" id="pj-region-label" data-ar="المنطقة">Region</span>
-              <div class="chip-group pj-chips" data-pj-regions aria-labelledby="pj-region-label" role="group"></div>
-            </div>
-            <div class="pj-views" role="group" aria-label="View" data-ar-aria-label="طريقة العرض" data-pj-views>
-              <button class="pj-views__btn" type="button" data-view="grid" aria-pressed="true"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#layout-grid"></use></svg><span data-ar="شبكة">Grid</span></button>
-              <button class="pj-views__btn" type="button" data-view="ring" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span data-ar="حلقة">Ring</span></button>
-              <button class="pj-views__btn" type="button" data-view="map" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map"></use></svg><span data-ar="خريطة">Map</span></button>
-              <button class="pj-views__btn" type="button" data-view="list" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#list"></use></svg><span data-ar="قائمة">List</span></button>
+          <div class="pj-toolbar__group pj-regions" role="group" aria-label="Country" data-ar-aria-label="الدولة" data-pj-regions></div>
+          <div class="pj-search">
+            <label class="visually-hidden" for="pj-search" data-ar="ابحث في المشاريع">Search projects</label>
+            <svg class="icon pj-search__icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#search"></use></svg>
+            <input class="pj-search__input" id="pj-search" type="search" name="q" autocomplete="off" spellcheck="false" placeholder="Search by name or location" data-ar-placeholder="ابحث بالاسم أو الموقع" data-pj-search>
+            <button class="pj-search__clear" type="button" aria-label="Clear search" data-ar-aria-label="مسح البحث" data-pj-search-clear hidden><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#x"></use></svg></button>
+          </div>
+          <div class="pj-sort">
+            <label class="pj-sort__label" for="pj-sort" data-ar="الترتيب">Sort</label>
+            <select class="pj-sort__select" id="pj-sort" data-pj-sort>
+              <option value="featured" data-pj-opt="featured">Featured first</option>
+              <option value="az" data-pj-opt="az">A–Z</option>
+              <option value="category" data-pj-opt="category">By category</option>
+            </select>
+            <svg class="icon icon--sm pj-sort__chevron" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-down"></use></svg>
+          </div>
+          <div class="pj-views-toggle" role="group" aria-label="View" data-ar-aria-label="طريقة العرض" data-pj-viewtoggle>
+            <button class="pj-vt" type="button" data-view-btn="grid" aria-pressed="true"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#layout-grid"></use></svg><span data-ar="شبكة">Grid</span></button>
+            <button class="pj-vt" type="button" data-view-btn="ring" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span data-ar="حلقة">Ring</span></button>
+            <button class="pj-vt" type="button" data-view-btn="map" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map"></use></svg><span data-ar="خريطة">Map</span></button>
+            <button class="pj-vt" type="button" data-view-btn="list" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#list"></use></svg><span data-ar="قائمة">List</span></button>
+          </div>
+        </div>
+
+        <div class="pj-status">
+          <p class="pj-status__text" role="status" aria-live="polite" data-pj-status>33 projects</p>
+          <button class="pj-status__reset" type="button" data-pj-reset hidden><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg><span data-ar="إعادة ضبط المرشّحات">Reset filters</span></button>
+        </div>
+
+        <div class="pj-results" id="pj-results" role="tabpanel" aria-label="Projects" data-ar-aria-label="المشاريع" data-pj-results>
+          <!-- Grid view -->
+          <div class="pj-view pj-view--grid" data-view="grid">
+            <ul class="pj-grid" role="list" data-pj-grid>
+              <!-- pj:grid -->
+              <!-- /pj:grid -->
+            </ul>
+            <div class="pj-more" data-pj-more hidden>
+              <span class="pj-more__line" aria-hidden="true"><span data-pj-more-progress></span></span>
+              <button class="btn btn--ghost" type="button" data-pj-more-btn><span data-pj-more-label>Load more projects</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
             </div>
           </div>
-          <div class="pj-toolbar__row">
-            <div class="pj-filter">
-              <span class="pj-filter__label" id="pj-sector-label" data-ar="القطاع">Sector</span>
-              <div class="chip-group pj-chips" data-pj-sectors aria-labelledby="pj-sector-label" role="group"></div>
-            </div>
-            <div class="pj-toolbar__tools">
-              <div class="pj-search">
-                <label class="visually-hidden" for="pj-search" data-ar="ابحث في المشاريع">Search projects</label>
-                <svg class="icon icon--sm pj-search__icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#search"></use></svg>
-                <input class="pj-search__input" id="pj-search" type="search" autocomplete="off" spellcheck="false" placeholder="Name, place or sector…" data-ar-placeholder="الاسم أو المكان أو القطاع…" data-pj-search>
-                <button class="pj-search__clear" type="button" aria-label="Clear search" data-ar-aria-label="مسح البحث" data-pj-search-clear hidden><svg class="icon icon--xs" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#x"></use></svg></button>
+
+          <!-- Ring view (second CircularCarousel, created on demand and destroyed when left) -->
+          <div class="pj-view pj-view--ring theme-dark" data-view="ring" hidden>
+            <div class="pj-ring2" data-pj-ring2 data-cursor="drag"></div>
+            <p class="pj-ring2__note" data-pj-ring2-note></p>
+          </div>
+
+          <!-- Map view -->
+          <div class="pj-view pj-view--map theme-dark" data-view="map" hidden>
+            <div class="pj-map" data-pj-map>
+              <div class="pj-map__canvas" data-pj-map-canvas>
+                <svg class="pj-map__svg" viewBox="0 0 1000 440" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" data-pj-map-svg></svg>
+                <div class="pj-map__pins" data-pj-map-pins></div>
+                <button class="pj-map__back btn btn--ghost btn--sm" type="button" data-pj-map-back hidden><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg><span data-ar="العودة إلى خريطة العالم">Back to world view</span></button>
+                <p class="pj-map__note" data-ar="مواقع الدبابيس تقريبية.">Pin positions are approximate.</p>
               </div>
-              <div class="pj-sort">
-                <label class="pj-sort__label" for="pj-sort" data-ar="الترتيب">Sort</label>
-                <select class="pj-sort__select" id="pj-sort" data-pj-sort>
-                  <option value="featured" data-ar="المختارة أولًا">Featured</option>
-                  <option value="az" data-ar="الاسم تصاعديًا">Name A–Z</option>
-                  <option value="za" data-ar="الاسم تنازليًا">Name Z–A</option>
-                  <option value="region" data-ar="حسب المنطقة">By region</option>
-                </select>
-                <svg class="icon icon--xs pj-sort__chev" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-down"></use></svg>
-              </div>
+              <aside class="pj-map__panel" aria-label="Projects by location" data-ar-aria-label="المشاريع حسب الموقع" data-pj-map-panel></aside>
             </div>
           </div>
-          <div class="pj-toolbar__meta">
-            <p class="pj-count" aria-live="polite" data-pj-count></p>
-            <button class="pj-clear" type="button" data-pj-clear hidden><svg class="icon icon--xs" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg><span data-ar="مسح عوامل التصفية">Clear filters</span></button>
-          </div>
-        </div>
 
-        <!-- Grid view (static cards = no-JS fallback; re-rendered from site-data.js) -->
-        <div class="pj-view pj-view--grid" data-pj-panel="grid">
-          <div class="pj-grid" data-pj-grid>
-            <article class="pj-card" id="eastmain" data-id="eastmain" data-size="xl">
-              <a class="project-card pj-card__link" href="projects.html#eastmain" data-cursor="view">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/eastmain.webp"><img src="assets/img/eastmain.jpg" alt="Night render of the Eastmain glazed office and retail building" data-ar-alt="تصوّر ليلي لمبنى إيست مين للمكاتب والمحلات بواجهاته الزجاجية" width="790" height="710" loading="lazy" decoding="async"></picture></div>
-                <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <span class="pj-card__index" aria-hidden="true">01</span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="مصر">Egypt</span><span class="badge badge--glass" data-ar="متعدد الاستخدامات">Mixed-use</span></div>
-                  <h3 class="project-card__title" data-ar="إيست مين">Eastmain</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المربع الذهبي، القاهرة الجديدة، مصر">Golden Square, New Cairo, Egypt</span></p>
-                </div>
-              </a>
-            </article>
-            <article class="pj-card" id="victoria-101" data-id="victoria-101" data-size="m">
-              <a class="project-card pj-card__link" href="projects.html#victoria-101" data-cursor="view">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/victoria-101.webp"><img src="assets/img/victoria-101.jpg" alt="Dusk aerial render of the Victoria 101 residential tower" data-ar-alt="تصوّر جوي عند الغسق لبرج فيكتوريا 101 السكني" width="790" height="710" loading="lazy" decoding="async"></picture></div>
-                <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <span class="pj-card__index" aria-hidden="true">02</span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="كندا">Canada</span><span class="badge badge--glass" data-ar="سكني">Residential</span></div>
-                  <h3 class="project-card__title" data-ar="فيكتوريا 101">Victoria 101</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="بورت ويتبي، أونتاريو، كندا">Port Whitby, Ontario, Canada</span></p>
-                </div>
-              </a>
-            </article>
-            <article class="pj-card" id="lagoon-villa-community" data-id="lagoon-villa-community" data-size="m">
-              <a class="project-card pj-card__link" href="projects.html#lagoon-villa-community" data-cursor="view">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/aerial-compound.webp"><img src="assets/img/aerial-compound.jpg" alt="Aerial render of a villa community with lagoon pools" data-ar-alt="تصوّر جوي لمجتمع فلل مع بحيرات اصطناعية" width="1560" height="849" loading="lazy" decoding="async"></picture></div>
-                <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <span class="pj-card__index" aria-hidden="true">03</span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="مجتمع سكني">Residential community</span></div>
-                  <h3 class="project-card__title" data-ar="مجتمع فلل البحيرات">Lagoon Villa Community</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="الموقع قيد التأكيد">Location to be confirmed</span></p>
-                </div>
-              </a>
-            </article>
-            <article class="pj-card" id="innovation-campus" data-id="innovation-campus" data-size="h">
-              <a class="project-card pj-card__link" href="projects.html#innovation-campus" data-cursor="view">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/campus.webp"><img src="assets/img/campus.jpg" alt="Aerial render of a white campus with ring buildings and a central tower" data-ar-alt="تصوّر جوي لحرم أبيض بمبانٍ حلقية وبرج مركزي" width="999" height="863" loading="lazy" decoding="async"></picture></div>
-                <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <span class="pj-card__index" aria-hidden="true">04</span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="حرم تعليمي">Campus</span></div>
-                  <h3 class="project-card__title" data-ar="حرم الابتكار">Innovation Campus</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="الموقع قيد التأكيد">Location to be confirmed</span></p>
-                </div>
-              </a>
-            </article>
-            <article class="pj-card" id="classical-landmark" data-id="classical-landmark" data-size="h">
-              <a class="project-card pj-card__link" href="projects.html#classical-landmark" data-cursor="view">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/ksa-landmark.webp"><img src="assets/img/ksa-landmark.jpg" alt="Render of a classical red and cream building with curved balconies" data-ar-alt="تصوّر لمبنى كلاسيكي بالأحمر والكريمي وشرفات منحنية" width="790" height="710" loading="lazy" decoding="async"></picture></div>
-                <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
-                <span class="pj-card__index" aria-hidden="true">05</span>
-                <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="السعودية">KSA</span><span class="badge badge--glass" data-ar="مبنى معلمي">Landmark building</span></div>
-                  <h3 class="project-card__title" data-ar="المَعلم الكلاسيكي">Classical Landmark</h3>
-                  <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
-                </div>
-              </a>
-            </article>
-          </div>
-        </div>
-
-        <!-- Ring view (compact CircularCarousel of the filtered set; created on demand) -->
-        <div class="pj-view pj-view--ring" data-pj-panel="ring" hidden>
-          <div class="pj-ringview">
-            <div class="pj-ringview__stage" data-pj-ringview></div>
-            <div class="pj-ringview__bar">
-              <button class="icon-btn icon-btn--sm" type="button" data-pj-ringview-prev aria-label="Previous project" data-ar-aria-label="المشروع السابق"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
-              <p class="pj-ringview__hint" data-ar="اسحب أو استخدم الأسهم · اختر المشروع الأمامي لفتحه">Drag or use the arrows · select the front project to open it</p>
-              <button class="icon-btn icon-btn--sm" type="button" data-pj-ringview-next aria-label="Next project" data-ar-aria-label="المشروع التالي"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
+          <!-- List view -->
+          <div class="pj-view pj-view--list" data-view="list" hidden>
+            <div class="pj-list__head" aria-hidden="true">
+              <span>#</span><span></span><span data-ar="المشروع">Project</span><span data-ar="الفئة">Category</span><span data-ar="الموقع">Location</span><span></span>
             </div>
+            <ol class="pj-list" role="list" data-pj-list></ol>
+            <div class="pj-list__preview" aria-hidden="true" data-pj-preview></div>
           </div>
-        </div>
 
-        <!-- Map view (WORLD dot map + pins; unknown locations listed beside) -->
-        <div class="pj-view pj-view--map" data-pj-panel="map" hidden>
-          <div class="pj-map">
-            <div class="pj-map__canvas">
-              <div class="pj-map__frame" data-pj-map></div>
-              <p class="pj-map__note"><svg class="icon icon--xs" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#info"></use></svg><span data-ar="مواقع الدبابيس تقريبية.">Pin positions are indicative.</span></p>
-            </div>
-            <aside class="pj-map__side" aria-labelledby="pj-map-title">
-              <h3 class="pj-map__title" id="pj-map-title" data-ar="مواقع المشاريع">Project locations</h3>
-              <ol class="pj-map__legend" role="list" data-pj-map-legend></ol>
-              <div class="pj-map__tbc" data-pj-map-tbc-wrap>
-                <h4 class="pj-map__subtitle" data-ar="الموقع قيد التأكيد">Location to be confirmed</h4>
-                <p class="pj-map__tbc-text" data-ar="نعرض هذه المشاريع من خلال تصاميمها، وستُضاف مواقعها إلى الخريطة فور تأكيدها.">Presented through their renders — they will join the map as soon as their locations are confirmed.</p>
-                <ul class="pj-map__tbc-list" role="list" data-pj-map-tbc></ul>
-              </div>
-            </aside>
-          </div>
-        </div>
-
-        <!-- List view -->
-        <div class="pj-view pj-view--list" data-pj-panel="list" hidden>
-          <table class="pj-table">
-            <caption class="visually-hidden" data-ar="قائمة المشاريع">Project list</caption>
-            <thead>
-              <tr>
-                <th scope="col" class="pj-table__num"><span class="visually-hidden" data-ar="الرقم">Number</span></th>
-                <th scope="col" data-ar="المشروع">Project</th>
-                <th scope="col" data-ar="الموقع">Location</th>
-                <th scope="col" data-ar="القطاع">Sector</th>
-                <th scope="col" data-ar="النوع">Type</th>
-                <th scope="col" class="pj-table__go"><span class="visually-hidden" data-ar="فتح">Open</span></th>
-              </tr>
-            </thead>
-            <tbody data-pj-list></tbody>
-          </table>
-          <div class="pj-preview" aria-hidden="true" data-pj-preview></div>
-        </div>
-
-        <!-- Empty state (all views) -->
-        <div class="pj-empty" data-pj-empty hidden>
-          <span class="pj-empty__icon" aria-hidden="true"><svg class="icon icon--lg icon--thin" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#drafting-compass"></use></svg></span>
-          <h3 class="pj-empty__title" data-ar="لا توجد مشاريع معروضة تطابق هذه المعايير">No showcased projects match these filters</h3>
-          <p class="pj-empty__text" data-ar="جرّب منطقة أو قطاعًا أو كلمة بحث مختلفة، أو تحدّث مع فريقنا عن مشروعك.">Try a different region, sector or search term — or talk to our team about your project.</p>
-          <div class="pj-empty__actions">
-            <button class="btn btn--dark btn--sm" type="button" data-pj-clear-empty><span data-ar="مسح عوامل التصفية">Clear filters</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-            <a class="btn btn--ghost btn--sm" href="contact.html#inquiry"><span data-ar="ابدأ مشروعك">Start a project</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
+          <!-- Empty state -->
+          <div class="pj-empty" data-pj-empty hidden>
+            <span class="pj-empty__icon" aria-hidden="true"><svg class="icon icon--xl" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#search"></use></svg></span>
+            <h3 class="h4 pj-empty__title" data-ar="لا توجد مشاريع تطابق هذه المرشّحات">No projects match these filters</h3>
+            <p class="pj-empty__text" data-ar="جرّب فئة أو دولة أخرى، أو امسح عبارة البحث.">Try another category or country, or clear your search.</p>
+            <button class="btn btn--dark btn--sm" type="button" data-pj-reset><span data-ar="إعادة ضبط المرشّحات">Reset filters</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ================================================================
-         CTA band — 3D Studio (kept away from the footer's own CTA)
+         5a. CTA — 3D Studio (kept away from the footer, which opens with its own CTA)
          ================================================================ -->
     <section class="cta-band pj-cta" aria-labelledby="pj-cta-title">
-      <div class="cta-band__bg" data-kenburns><picture><source type="image/webp" srcset="assets/img/campus.webp"><img src="assets/img/campus.jpg" alt="" width="999" height="863" loading="lazy" decoding="async"></picture></div>
+      <div class="cta-band__bg" data-kenburns><picture><source type="image/webp" srcset="assets/img/campus.webp"><img src="assets/img/campus.jpg" alt="" width="999" height="863" loading="lazy" decoding="async" style="--pos:50% 40%"></picture></div>
       <div class="pj-cta__grid" aria-hidden="true"></div>
       <div class="container cta-band__inner">
         <div>
           <p class="eyebrow" data-reveal="fade" data-ar="الاستوديو ثلاثي الأبعاد">3D Project Studio</p>
           <h2 class="cta-band__title" id="pj-cta-title" data-split data-ar-html="ادخل إلى المشاريع &lt;em&gt;بالأبعاد الثلاثية&lt;/em&gt;">Step inside the projects <em>in 3D</em></h2>
-          <p class="pj-cta__text" data-reveal="up" data-ar="تجوّل حول نماذج كتلية توضيحية لمشاريعنا في الاستوديو التفاعلي ثلاثي الأبعاد.">Orbit illustrative massing models of our projects in the interactive 3D Studio.</p>
+          <p class="pj-cta__text" data-reveal="up" data-ar="تجوّل حول نماذج كتلية توضيحية لعددٍ من مشاريعنا في الاستوديو التفاعلي ثلاثي الأبعاد.">Orbit illustrative massing models of selected projects in the interactive 3D Studio.</p>
         </div>
         <div class="cta-band__actions" data-reveal="up" data-reveal-delay="150">
           <a class="btn btn--primary" href="studio.html" data-magnetic><span data-ar="افتح الاستوديو ثلاثي الأبعاد">Open 3D Studio</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></a>
@@ -313,30 +232,98 @@
     </section>
 
     <!-- ================================================================
-         6. SECTORS WE BUILD (static fallback; re-rendered from SECTORS)
+         5b. SECTORS WE BUILD — the client's project categories (tiles filter the explorer) + SECTORS marquee
          ================================================================ -->
     <section class="section section--sand pj-sectors" id="sectors" aria-labelledby="pj-sectors-title">
       <div class="container">
         <header class="section-header section-header--split">
-          <p class="eyebrow" data-ar="ما نبنيه">What we build</p>
-          <h2 class="h2" id="pj-sectors-title" data-split data-ar-html="القطاعات &lt;em&gt;التي نبنيها&lt;/em&gt;">Sectors <em>we build</em></h2>
+          <div>
+            <p class="eyebrow" data-ar="ما نبنيه">What we build</p>
+            <h2 class="h2" id="pj-sectors-title" data-split data-ar-html="القطاعات &lt;em&gt;التي نبني فيها&lt;/em&gt;">Sectors <em>we build</em></h2>
+          </div>
           <div class="section-header__aside">
-            <p class="lead" data-reveal="up" data-ar="من ناطحات السحاب والمراكز التجارية إلى المجمّعات السكنية، والمؤسسات الحكومية والتعليمية، والفنادق الفاخرة.">From skyscrapers and commercial malls to residential compounds, governmental and educational institutions, and luxury hotels.</p>
+            <p class="lead" data-reveal="up" data-ar="أكثر من 25 عامًا من المشاريع المتميّزة في قطاعات متنوّعة، تشمل الإنشاءات والتطوير والتعليم والضيافة وإدارة المرافق.">More than 25 years of premium projects across various sectors, including construction, development, education, hospitality, and facility management.</p>
           </div>
         </header>
-        <ul class="pj-sector-grid" role="list" data-pj-sector-grid data-reveal="up">
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span><h3 class="pj-sector__name" data-ar="ناطحات السحاب">Skyscrapers</h3><p class="pj-sector__text" data-ar="أبراج شاهقة تُنفَّذ بهندسة منضبطة ولوجستيات موقع محكمة.">High-rise structures delivered with disciplined engineering and site logistics.</p></li>
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#shopping-bag"></use></svg></span><h3 class="pj-sector__name" data-ar="المراكز التجارية">Commercial malls</h3><p class="pj-sector__text" data-ar="وجهات تسوّق مُخطَّطة لسهولة الوصول واستيعاب الزوار والتشغيل طويل الأمد.">Retail destinations planned around access, footfall and long-term operation.</p></li>
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#house"></use></svg></span><h3 class="pj-sector__name" data-ar="المجمّعات السكنية">Residential compounds</h3><p class="pj-sector__text" data-ar="مجتمعات متكاملة تضمّ المساكن والمساحات الخضراء والمرافق والبنية التحتية.">Integrated communities of homes, landscape, amenities and infrastructure.</p></li>
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#landmark"></use></svg></span><h3 class="pj-sector__name" data-ar="المؤسسات الحكومية">Governmental institutions</h3><p class="pj-sector__text" data-ar="مبانٍ حكومية تُشيَّد وفق معايير دقيقة للجودة والمتانة.">Civic buildings built to exacting standards of quality and durability.</p></li>
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#graduation-cap"></use></svg></span><h3 class="pj-sector__name" data-ar="المؤسسات التعليمية">Educational institutions</h3><p class="pj-sector__text" data-ar="حرمٌ جامعية ومدارس مُصمَّمة للتعلّم والسلامة والنمو.">Campuses and schools designed around learning, safety and growth.</p></li>
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hotel"></use></svg></span><h3 class="pj-sector__name" data-ar="الفنادق الفاخرة">Luxury hotels</h3><p class="pj-sector__text" data-ar="مشاريع ضيافة تتصدّر فيها جودة التشطيب ودقّة التفاصيل.">Hospitality projects where finish quality and detailing matter most.</p></li>
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hospital"></use></svg></span><h3 class="pj-sector__name" data-ar="المنشآت الطبية">Medical facilities</h3><p class="pj-sector__text" data-ar="بيئات علاجية تتطلّب الدقة والتنسيق والامتثال.">Clinical environments that demand precision, coordination and compliance.</p></li>
-          <li class="pj-sector"><span class="icon-tile"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#briefcase"></use></svg></span><h3 class="pj-sector__name" data-ar="منشآت الأعمال">Business facilities</h3><p class="pj-sector__text" data-ar="مكاتب ومساحات عمل متعددة الاستخدامات للمؤسسات المتنامية.">Offices and mixed-use workplaces for growing organisations.</p></li>
+        <ul class="pj-cats" role="list" data-pj-cats data-reveal-stagger="70">
+          <!-- pj:cats -->
+          <!-- /pj:cats -->
         </ul>
+      </div>
+      <div class="marquee marquee--sm pj-sectors__marquee" data-marquee data-speed="40" aria-label="Sectors" data-ar-aria-label="القطاعات">
+        <div class="marquee__track"><div class="marquee__group">
+          <!-- pj:marquee -->
+          <!-- /pj:marquee -->
+        </div></div>
       </div>
     </section>
   </main>
+
+  <!-- ================================================================
+       PROJECT VIEWER — full-screen "product viewer" (uses the shared modal layer: focus trap, Esc, scroll lock)
+       ================================================================ -->
+  <div class="modal pj-viewer" id="pj-viewer" data-modal hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog pj-viewer__dialog theme-dark" role="dialog" aria-modal="true" aria-labelledby="pjv-title" aria-describedby="pjv-summary">
+      <header class="pjv-bar">
+        <div class="pjv-bar__start">
+          <p class="pjv-counter num" data-pjv-counter>01 / 33</p>
+          <p class="pjv-context" data-pjv-context></p>
+        </div>
+        <div class="pjv-bar__tools">
+          <button class="icon-btn icon-btn--sm" type="button" data-pjv-prev aria-label="Previous project" data-ar-aria-label="المشروع السابق"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
+          <button class="icon-btn icon-btn--sm" type="button" data-pjv-next aria-label="Next project" data-ar-aria-label="المشروع التالي"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
+          <span class="pjv-bar__sep" aria-hidden="true"></span>
+          <button class="icon-btn icon-btn--sm" type="button" data-pjv-share aria-label="Copy link to this project" data-ar-aria-label="نسخ رابط هذا المشروع"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#link"></use></svg></button>
+          <button class="icon-btn icon-btn--sm pjv-close" type="button" data-modal-close aria-label="Close" data-ar-aria-label="إغلاق"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#x"></use></svg></button>
+        </div>
+      </header>
+
+      <div class="pjv-body">
+        <div class="pjv-media">
+          <div class="pjv-stage" data-pjv-stage tabindex="0" role="group" aria-roledescription="image viewer" aria-label="Project image — use + and − to zoom, arrow keys to change project" data-ar-aria-label="صورة المشروع — استخدم + و − للتكبير والتصغير، ومفاتيح الأسهم للتنقّل بين المشاريع" autofocus>
+            <div class="pjv-layer pjv-layer--image" data-pjv-layer="image"><div class="pjv-frame" data-pjv-frame></div></div>
+            <div class="pjv-layer pjv-layer--blueprint" data-pjv-layer="blueprint"><div class="pjv-frame" data-pjv-frame></div></div>
+            <div class="pjv-split" data-pjv-split hidden>
+              <button class="pjv-split__handle" type="button" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-label="Blueprint comparison" data-ar-aria-label="مقارنة المخطط الأزرق" data-pjv-split-handle><svg class="icon icon--xs icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-left"></use></svg><svg class="icon icon--xs icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-right"></use></svg></button>
+            </div>
+            <span class="pjv-tag pjv-tag--blueprint" data-pjv-tag-bp><svg class="icon icon--xs" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#drafting-compass"></use></svg><span data-ar="عرض مخطط أزرق توضيحي">Stylised blueprint view</span></span>
+            <span class="pjv-tag pjv-tag--image" data-pjv-tag-img><span data-ar="الصورة">Image</span></span>
+            <div class="pjv-zoom" role="group" aria-label="Zoom" data-ar-aria-label="التكبير">
+              <button class="pjv-zoom__btn" type="button" data-pjv-zoom="out" aria-label="Zoom out" data-ar-aria-label="تصغير"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#minus"></use></svg></button>
+              <output class="pjv-zoom__value num" data-pjv-zoom-value aria-live="off">100%</output>
+              <button class="pjv-zoom__btn" type="button" data-pjv-zoom="in" aria-label="Zoom in" data-ar-aria-label="تكبير"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
+              <button class="pjv-zoom__btn" type="button" data-pjv-zoom="reset" aria-label="Reset view" data-ar-aria-label="إعادة ضبط العرض"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#maximize"></use></svg></button>
+            </div>
+            <span class="pjv-loader" aria-hidden="true" data-pjv-loader></span>
+          </div>
+          <div class="pjv-mediabar">
+            <div class="pjv-modes" role="group" aria-label="Image mode" data-ar-aria-label="نمط العرض">
+              <button class="pjv-mode" type="button" data-pjv-mode="image" aria-pressed="true"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#image"></use></svg><span data-ar="الصورة">Image</span></button>
+              <button class="pjv-mode" type="button" data-pjv-mode="compare" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#scan"></use></svg><span data-ar="مقارنة">Compare</span></button>
+              <button class="pjv-mode" type="button" data-pjv-mode="blueprint" aria-pressed="false"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#drafting-compass"></use></svg><span data-ar="مخطط أزرق">Blueprint</span></button>
+            </div>
+            <ul class="pjv-thumbs" role="list" aria-label="Image views" data-ar-aria-label="لقطات الصورة" data-pjv-thumbs></ul>
+          </div>
+          <p class="pjv-caption" data-pjv-caption></p>
+        </div>
+
+        <aside class="pjv-panel" data-pjv-panel>
+          <div class="pjv-panel__inner" data-pjv-panel-inner>
+            <p class="eyebrow pjv-eyebrow" data-pjv-eyebrow></p>
+            <h2 class="pjv-title" id="pjv-title" data-pjv-title>Project</h2>
+            <p class="pjv-loc" data-pjv-loc></p>
+            <p class="pjv-summary" id="pjv-summary" data-pjv-summary></p>
+            <dl class="pjv-facts" data-pjv-facts></dl>
+            <div class="pjv-highlights" data-pjv-highlights></div>
+            <div class="pjv-actions" data-pjv-actions></div>
+          </div>
+          <nav class="pjv-pager" aria-label="Other projects" data-ar-aria-label="مشاريع أخرى" data-pjv-pager></nav>
+          <p class="pjv-keys" aria-hidden="true"><span class="num-ltr"><kbd>←</kbd> <kbd>→</kbd></span> <span data-ar="المشاريع">projects</span> · <span class="num-ltr"><kbd>+</kbd> <kbd>−</kbd></span> <span data-ar="تكبير">zoom</span> · <kbd>Esc</kbd> <span data-ar="إغلاق">close</span></p>
+        </aside>
+      </div>
+    </div>
+  </div>
 
   <!-- @include footer -->
   <!-- /@include footer -->

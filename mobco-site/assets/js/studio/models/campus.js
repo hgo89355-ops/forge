@@ -33,13 +33,13 @@ export const meta = {
   camera: {
     target: [0, 9, -2],
     aerial: [86, 88, 150],
-    street: [13, 2.2, 82],
+    street: [0, 2.0, 68],
     top: [0, 180, 0.01],
     front: [0, 18, 150],
   },
   hotspots: [
     {
-      id: 'shell', position: [-36, 19, 30],
+      id: 'shell', position: [-36, 18.6, 47],
       title: { en: 'Perforated shell', ar: 'الغلاف المثقّب' },
       text: {
         en: 'A soft white shell wraps each ring building; a scatter of glazed panels lets daylight into the upper levels.',
@@ -47,7 +47,7 @@ export const meta = {
       },
     },
     {
-      id: 'bridge', position: [-2, 14.5, 45],
+      id: 'bridge', position: [0, 14.8, 47.5],
       title: { en: 'Sky bridge', ar: 'الجسر المعلّق' },
       text: {
         en: 'A curved, glazed pedestrian bridge links the two rings at an upper level and passes over the entrance boulevard.',
@@ -55,7 +55,7 @@ export const meta = {
       },
     },
     {
-      id: 'tower', position: [0, 52, -38],
+      id: 'tower', position: [0, 50, -38],
       title: { en: 'Central tower', ar: 'البرج المركزي' },
       text: {
         en: 'A slender glass drum with white floor bands, framed by a sail-like fin that rises above the crown.',
@@ -63,7 +63,7 @@ export const meta = {
       },
     },
     {
-      id: 'plaza', position: [-18, 2, -22],
+      id: 'plaza', position: [0, 1.6, -25],
       title: { en: 'Central plaza', ar: 'الساحة المركزية' },
       text: {
         en: 'A circular paved plaza with a reflecting pool and a glass pavilion gathers arrivals at the foot of the tower.',
@@ -79,7 +79,7 @@ export const meta = {
       },
     },
   ],
-  sun: { azimuth: 140, elevation: 42 },
+  sun: { azimuth: -35, elevation: 40 },
 };
 
 /* ------------------------------------------------------------------------ */
@@ -343,7 +343,7 @@ export function build(THREE, ctx = {}) {
     water: phys(withEnv({ name: 'campus-water', color: COLORS.water, roughness: 0.08, metalness: 0.1, normalMap: waterNormal, normalScale: new THREE.Vector2(0.35, 0.35), envMapIntensity: 1.2, emissive: COLORS.teal, emissiveIntensity: 0 })),
     trunk: std({ name: 'campus-palm-trunk', color: COLORS.trunk, roughness: 0.9 }),
     frond: std({ name: 'campus-palm-frond', color: COLORS.frond, roughness: 0.85, side: THREE.DoubleSide }),
-    canopy: std({ name: 'campus-tree-canopy', color: COLORS.canopy, roughness: 0.95, flatShading: true }),
+    canopy: std({ name: 'campus-tree-canopy', color: COLORS.canopy, roughness: 0.95 }),
     lampHead: std({ name: 'campus-lamp-head', color: 0xffffff, roughness: 0.4, emissive: COLORS.lampGlow, emissiveIntensity: 0 }),
     accent: std({ name: 'campus-accent-teal', color: COLORS.teal, roughness: 0.4, metalness: 0.1, emissive: COLORS.teal, emissiveIntensity: 0 }),
     carLight: std({ name: 'campus-car-white', color: 0xe9e9e7, roughness: 0.35, metalness: 0.4 }),
@@ -641,7 +641,7 @@ export function build(THREE, ctx = {}) {
         const wave = 0.5 + 0.5 * Math.sin(th * 3 + c.phase + sn * 5) * Math.cos(th * 2 - c.phase * 1.7 + sn * 3);
         const d = clamp(0.1 + 0.18 * wave + crown * (0.2 + 0.75 * wave), 0, 0.92);
         if (rand() > d) continue;
-        const size = pitch * (0.42 + 0.5 * d) * (0.85 + rand() * 0.3);
+        const size = pitch * (0.4 + 0.75 * d * d) * (0.85 + rand() * 0.3);
         const sth = Math.sin(th), cth = Math.cos(th);
         T.set(cth, 0, -sth);
         B.set(pr.tr * sth, pr.ty, pr.tr * cth);
@@ -972,7 +972,7 @@ export function build(THREE, ctx = {}) {
     g.computeVertexNormals();
     return g;
   })();
-  const canopyGeo = G(new THREE.IcosahedronGeometry(1, 1));
+  const canopyGeo = G(new THREE.IcosahedronGeometry(1, HIGH ? 2 : 1));
   const treeTrunkGeo = trunkGeo;
 
   // Placement: rejection against buildings, roads, pools, bridge
@@ -1085,7 +1085,7 @@ export function build(THREE, ctx = {}) {
     const crand = makeRng(5);
     const light = [], dark = [];
     const put = (x, z, ry) => (crand() < 0.6 ? light : dark).push(trs(x, 0.05, z, ry));
-    for (let i = 0; i < 9; i++) { const z = 14 + crand() * 50; put(crand() < 0.5 ? -2.2 : 2.2, z, Math.PI / 2); }
+    for (let i = 0; i < 8; i++) { const z = 14 + crand() * 40; put(crand() < 0.5 ? -2.2 : 2.2, z, Math.PI / 2); }
     for (let i = 0; i < 10; i++) { let x = (crand() * 2 - 1) * 64; if (Math.abs(x) < ROAD.rbR + 3) x += Math.sign(x || 1) * 16; put(x, ROAD.ewZ + (crand() < 0.5 ? -2.2 : 2.2), 0); }
     site.add(instancedMesh(carGeo, mat.carLight, light, 'cars-light'));
     site.add(instancedMesh(carGeo, mat.carDark, dark, 'cars-dark'));
