@@ -750,8 +750,8 @@ html[lang='ar'] .pj-ring2 .circular-carousel__title { letter-spacing: 0; text-tr
 .pj-map__svg.is-zoomed .pj-map__dots { opacity: 0; }
 /* Zoomed country view: feather the edges so the land/sea outline melts into the panel instead of ending in a hard box */
 .pj-map__svg.is-zoomed {
-  -webkit-mask-image: radial-gradient(ellipse 62% 66% at 50% 50%, #000 62%, transparent 100%);
-  mask-image: radial-gradient(ellipse 62% 66% at 50% 50%, #000 62%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 58%, transparent 100%);
 }
 .pj-map__svg.is-zoomed .pj-map__land, .pj-map__svg.is-zoomed .pj-map__borders, .pj-map__svg.is-zoomed .pj-map__ksa { opacity: 1; }
 .pj-map__pins { position: absolute; inset: 0; direction: ltr; }
@@ -1237,6 +1237,9 @@ html[lang='ar'] .pjv-pg__dir { font-size: .75rem; }
 }
 
 .pj-svgdefs { position: absolute; inline-size: 0; block-size: 0; overflow: hidden; }
+/* Local workaround (see docs/requests/projects.md #4): the first-visit consent banner (z 480) would sit on top of the
+   full-screen viewer (z 300) and cover its mode buttons; the viewer traps focus anyway, so hide it while open. */
+html:has(#pj-viewer.is-open) .consent { visibility: hidden; }
 
 /* ---------------------------------------------------------------- 5. CTA + SECTORS */
 .pj-cta__grid {
