@@ -12,6 +12,8 @@
   --cc-fade: #000000;
   --cc-radius: 12px;
   --cc-inner: 0.4;
+  /* --cc-focus: focus-ring colour (default currentColor).
+     --cc-placeholder: background of a card whose image is missing or failed to load. */
   position: relative;
   width: 100%;
   height: 100%;
@@ -36,7 +38,9 @@
 }
 
 .circular-carousel:focus-visible {
-  box-shadow: inset 0 0 0 2px rgba(128, 128, 140, 0.55);
+  /* Set --cc-focus to the site accent; defaults to the text colour (contrasts with the page). */
+  outline: 2px solid var(--cc-focus, currentColor);
+  outline-offset: -2px;
 }
 
 .circular-carousel__view {
@@ -101,6 +105,15 @@
   top: 0;
   width: 100%;
   overflow: hidden;
+}
+
+/* Missing / broken image: hide the broken-image glyph, show a neutral placeholder. */
+.circular-carousel__card[data-error] .circular-carousel__frame {
+  background: var(--cc-placeholder, #2b323c); /* flat: the card is cut into strips */
+}
+
+.circular-carousel__card[data-error] .circular-carousel__photo {
+  visibility: hidden;
 }
 
 .circular-carousel__photo {

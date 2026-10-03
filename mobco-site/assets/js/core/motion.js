@@ -15,7 +15,7 @@
 // API: scan(root), refresh(), scrollTo(target, {offset, immediate}), getLenis(), gsapReady(),
 //      stopScroll(), startScroll(), onScroll(cb) → unsubscribe, reveal(el)
 
-import { $$, clamp, prefersReducedMotion, hasFinePointer, isQA, rafThrottle, formatNumber } from './utils.js';
+import { $$, clamp, prefersReducedMotion, hasFinePointer, isQA, rafThrottle, debounce, formatNumber } from './utils.js';
 import { onLang, getLang } from './i18n.js';
 import { whenLoaded } from './preloader.js';
 
@@ -119,8 +119,35 @@ function makeRevealIO() {
 }
 
 // Reveals start only once the first-visit preloader has lifted, so the hero animates in view.
+// IntersectionObserver ignores fully clipped targets (clip-path: inset(0 100% 0 0) → zero area), so
+// mask variants are checked against their bounding box on scroll instead.
+const manualReveal = new Set();
+function checkManual() {
+  if (!manualReveal.size) return;
+  const vh = window.innerHeight;
+  for (const el of manualReveal) {
+    if (!el.isConnected) { manualReveal.delete(el); continue; }
+    const r = el.getBoundingClientRect();
+    if (r.top < vh * 0.92 && r.bottom > 0 && (r.width || r.height)) { manualReveal.delete(el); reveal(el); }
+  }
+}
+const onManual = rafThrottle(checkManual);
+// Safety net: when scrolling settles, reveal anything in view that IO has not reported yet
+// (IO can miss elements during very fast programmatic scrolls or on a busy main thread).
+const pendingReveal = new Set();
+const settle = debounce(() => {
+  const vh = window.innerHeight;
+  for (const el of pendingReveal) {
+    if (el.classList.contains('is-revealed') || !el.isConnected) { pendingReveal.delete(el); continue; }
+    const r = el.getBoundingClientRect();
+    if (r.top < vh && r.bottom > 0 && (r.width || r.height)) { pendingReveal.delete(el); revealIO?.unobserve(el); reveal(el); }
+  }
+}, 140);
 function observeAfterLoad(el) {
-  whenLoaded().then(() => revealIO.observe(el));
+  whenLoaded().then(() => {
+    if (/^mask/.test(el.getAttribute('data-reveal') || '')) { manualReveal.add(el); checkManual(); }
+    else { revealIO.observe(el); pendingReveal.add(el); }
+  });
 }
 
 function wireReveal(root) {
@@ -176,13 +203,16 @@ function splitTextNodes(node, words) {
   }
 }
 
+function unsplit(el) {
+  el.querySelectorAll('.split-word').forEach((w) => w.replaceWith(document.createTextNode(w.textContent)));
+  el.normalize();
+}
+
 function split(el) {
-  if (el.__splitSource == null || el.__splitLang !== getLang()) {
-    el.__splitSource = el.innerHTML;
-    el.__splitLang = getLang();
-  } else {
-    el.innerHTML = el.__splitSource; // re-split from the clean source
-  }
+  // always start from clean, unsplit markup (i18n may have replaced part or all of the text)
+  unsplit(el);
+  el.__splitSource = el.innerHTML;
+  el.__splitLang = getLang();
   const words = [];
   splitTextNodes(el, words);
   const mode = el.getAttribute('data-split') || 'words';
@@ -221,8 +251,6 @@ function resplitAll() {
   $$('[data-split].is-split').forEach((el) => {
     if (reduced) return;
     if (el.__splitAria) el.removeAttribute('aria-label');
-    // i18n replaced textContent; capture fresh source for the new language
-    el.__splitSource = null;
     const wasRevealed = el.classList.contains('is-revealed');
     split(el);
     if (wasRevealed) el.classList.add('is-revealed');
@@ -403,8 +431,8 @@ export function initMotion() {
     try { window.gsap.registerPlugin(window.ScrollTrigger); } catch { /* ignore */ }
   }
   initLenis();
-  window.addEventListener('scroll', () => { if (!lenis) emitScroll(); onParallax(); }, { passive: true });
-  if (lenis) lenis.on('scroll', onParallax);
+  window.addEventListener('scroll', () => { if (!lenis) emitScroll(); onParallax(); onManual(); settle(); }, { passive: true });
+  if (lenis) { lenis.on('scroll', onParallax); lenis.on('scroll', onManual); lenis.on('scroll', settle); }
   window.addEventListener('resize', rafThrottle(() => {
     $$('[data-marquee].is-ready').forEach(setupMarquee);
     refresh();
@@ -421,7 +449,7 @@ export function initMotion() {
   });
   // fonts change metrics → re-measure line splits & marquees
   document.fonts?.ready?.then(() => {
-    $$('[data-split="lines"].is-split').forEach((el) => { el.__splitSource = null; const r = el.classList.contains('is-revealed'); split(el); if (r) el.classList.add('is-revealed'); });
+    $$('[data-split="lines"].is-split').forEach((el) => { const r = el.classList.contains('is-revealed'); split(el); if (r) el.classList.add('is-revealed'); });
     $$('[data-marquee].is-ready').forEach(setupMarquee);
     refresh();
   });

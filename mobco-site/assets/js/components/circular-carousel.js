@@ -7,27 +7,62 @@
  * the React version re-rendered on state changes (active index, dragging, ready) this version
  * patches the DOM directly and minimally.
  *
- * Usage
- *   import { createCircularCarousel } from './components/circular-carousel.js';
+ * ── USAGE ───────────────────────────────────────────────────────────────────────────────────────
+ *   <link rel="stylesheet" href="/assets/css/components/circular-carousel.css">
+ *   <div id="ring" style="height: 520px"></div>      ← the container must have a size
+ *
+ *   import { createCircularCarousel } from '/assets/js/components/circular-carousel.js';
  *   const carousel = createCircularCarousel(document.querySelector('#ring'), {
- *     items: [{ src: 'img/a.webp', alt: '…', title: 'A', subtitle: 'Sub', href: '…', data: {…} }],
+ *     items: [{ src: 'img/a.webp', alt: 'Aerial view of …', title: 'A', subtitle: 'Sub', href: '…', data: {…} }],
  *     preset: 'cylinder',
  *     captions: true,
- *     onItemClick: (item, index) => { … }
+ *     onItemClick: (item, index) => { location.href = item.href; }
  *   });
- *   carousel.update({ preset: 'orbit' });
- *   carousel.destroy();
  *
- * The container needs a size (the carousel fills it: width/height 100%). Pair with
- * assets/css/components/circular-carousel.css.
+ * ── API (all methods return the instance, so calls chain) ──────────────────────────────────────
+ *   update(partial)   merge options and re-apply live (keeps the current angle; cards are only
+ *                     rebuilt when their markup changes; a new `intro` replays it).
+ *   setItems(items)   replace the items (new image sources reload and replay the intro).
+ *   focus(i)          spin to item i.      next() / prev()   one item forward / back (reading order).
+ *   pause() / play()  hold / resume autoplay (wire to a visible button — WCAG 2.2.2).
+ *   .paused  .active  .element   read-only: held by pause()? / index in front / root element.
+ *   destroy()         stop timers, observers and listeners; remove the DOM.
+ *   One carousel per container: creating a second one destroys the first (with a warning).
  *
- * Additions over the React props
- *   labels  – i18n strings (or functions) for the accessible names; see DEFAULT_LABELS.
- *   rtl     – right-to-left mode: the item order is mirrored on horizontal rings (item 2 sits to the
- *             left of item 1), so ArrowLeft / autoplay advance to the next item, and the default
- *             `direction` becomes 'right'. Arrow keys always move the ring the way they point.
- *   item.href / item.data – passed through untouched to onItemClick / onChange (never rendered).
- *   onChange(index, item) – also receives the item.
+ * ── OPTIONS (React Bits prop names and defaults; see DEFAULTS) ─────────────────────────────────
+ *   items          [{ src, alt, title, subtitle, href, data }]; non-objects are ignored. href/data are
+ *                  never rendered, only passed back to onItemClick / onChange. A missing or failed
+ *                  image gets data-error on its card and a flat placeholder (--cc-placeholder).
+ *   preset         'cylinder' | 'orbit' | 'wheel' (vertical) | 'panorama' (camera inside the ring).
+ *   intro          'rise' | 'assemble' | 'spin' | 'none'          (played once images are ready)
+ *   cardWidth 220  aspectRatio 1 (w/h)  gap 25  cornerRadius 12
+ *   curve / tilt / perspective   undefined → the preset's value (pass undefined to reset).
+ *   autoplay       'drift' (speed 14 deg/s) | 'step' (interval 3 s) | 'off'
+ *   direction      'left' | 'right'; undefined → 'left', or 'right' on horizontal rings in RTL.
+ *   draggable true  momentum 0.6  snap true  pauseOnHover true  focusOnClick true
+ *   parallax 0.3  stretch 0.5  depthFade 0.55  fadeColor '#000000' (match the page bg)  innerShade 0.6
+ *   captions false (title + subtitle + 01/10 counter under the ring)
+ *   onChange(index, item)  onItemClick(item, index)  className  style (object or CSS string)
+ *   An option passed as `undefined` means "use the default", as with React props.
+ *
+ * ── I18N: labels ───────────────────────────────────────────────────────────────────────────────
+ *   labels: { region, carousel, slideRole, slide, live, untitled, description } — any subset.
+ *   Each is a string with {title} {index} {count} {alt} placeholders (index is 1-based), or a
+ *   function ({ title, index, count, item, alt }) => string. Defaults: DEFAULT_LABELS (English).
+ *     labels: { region: 'معرض صور', slide: ({ title, index, count }) => `${title}، ${index} من ${count}` }
+ *
+ * ── RTL ────────────────────────────────────────────────────────────────────────────────────────
+ *   rtl: true sets dir="rtl" on the root and makes item 2 appear to the LEFT of item 1 on the
+ *   horizontal presets (cylinder/orbit mirror the order; panorama already reads that way), so
+ *   ArrowLeft, next() and autoplay all advance to the next item. The vertical wheel is unaffected.
+ *   Arrow keys always move the ring the way they point. Toggling rtl keeps the current item.
+ *
+ * ── ACCESSIBILITY ──────────────────────────────────────────────────────────────────────────────
+ *   Focusable region (Tab) with arrows / Home / End / Enter (= onItemClick). Keyboard focus pauses
+ *   autoplay; slide changes are announced politely except while autoplay is turning the ring.
+ *   Item alt text becomes the card's aria-description when it differs from the title.
+ *   prefers-reduced-motion: no intro, no autoplay, no parallax/stretch (also when toggled live).
+ *   CSS hooks: --cc-focus (focus ring colour, default currentColor), --cc-placeholder.
  */
 
 /* ------------------------------------------------------------------------------------------------
@@ -136,7 +171,8 @@ export const DEFAULT_LABELS = Object.freeze({
   slideRole: 'slide', // aria-roledescription of each card
   slide: '{title}, {index} of {count}', // aria-label of each card
   live: '{title}, {index} of {count}', // polite live-region announcement
-  untitled: 'Image {index}' // fallback title when an item has neither title nor alt
+  untitled: 'Image {index}', // fallback title when an item has neither title nor alt
+  description: '{alt}' // aria-description of a card whose alt text differs from its title
 });
 
 /* ------------------------------------------------------------------------------------------------
@@ -208,8 +244,29 @@ const kebab = name => (name.startsWith('--') ? name : name.replace(/[A-Z]/g, c =
  * Derived settings — the React component body, minus the JSX
  * --------------------------------------------------------------------------------------------- */
 
+/**
+ * Merges `partial` into `base` the way React default parameters behave: an explicit `undefined`
+ * means "use the default", so it is skipped — except for options whose default *is* undefined
+ * (curve, tilt, perspective, direction, callbacks, style, labels), where it resets to auto.
+ */
+function mergeOptions(base, partial) {
+  const merged = { ...base };
+  if (partial && typeof partial === 'object') {
+    for (const key of Object.keys(partial)) {
+      const value = partial[key];
+      if (value === undefined && hasOwn(DEFAULTS, key) && DEFAULTS[key] !== undefined) continue;
+      merged[key] = value;
+    }
+  }
+  return merged;
+}
+
+const flag = (value, fallback) => Boolean(value ?? fallback);
+
 function derive(options, reduced) {
-  const items = Array.isArray(options.items) ? options.items : [];
+  const raw = Array.isArray(options.items) ? options.items : [];
+  const items = raw.filter(item => item !== null && typeof item === 'object');
+  const dropped = raw.length - items.length;
   const count = items.length;
   const shape = hasOwn(PRESETS, options.preset) ? options.preset : 'cylinder';
   const layout = PRESETS[shape];
@@ -254,7 +311,12 @@ function derive(options, reduced) {
   });
 
   const dragSign = layout.inward ? -1 : 1;
-  const direction = options.direction ?? (rtl ? 'right' : 'left');
+  // RTL only concerns horizontal rings. On an outward ring (cylinder, orbit) item 2 would sit to
+  // the right of item 1, so the order is mirrored; inside a panorama it already sits to the left
+  // (the camera is inside the ring), so only the default drive direction flips there. The
+  // vertical wheel is unaffected by RTL.
+  const horizontalRtl = rtl && axis === 'y';
+  const direction = options.direction ?? (horizontalRtl ? 'right' : 'left');
   const introName = hasOwn(INTRO_LENGTH, options.intro) ? options.intro : 'rise';
 
   return {
@@ -273,14 +335,14 @@ function derive(options, reduced) {
     tiles,
     perspective: layout.inward ? radius : options.perspective == null ? layout.perspective : num(options.perspective, layout.perspective),
     intro: reduced ? 'none' : introName,
-    autoplay: reduced ? 'off' : options.autoplay,
+    autoplay: reduced ? 'off' : options.autoplay ?? DEFAULTS.autoplay,
     speed: num(options.speed, DEFAULTS.speed),
     interval: Math.max(0.5, num(options.interval, DEFAULTS.interval)),
-    draggable: Boolean(options.draggable),
+    draggable: flag(options.draggable, DEFAULTS.draggable),
     momentum: clamp(num(options.momentum, DEFAULTS.momentum), 0, 1),
-    snap: Boolean(options.snap),
-    pauseOnHover: Boolean(options.pauseOnHover),
-    focusOnClick: Boolean(options.focusOnClick),
+    snap: flag(options.snap, DEFAULTS.snap),
+    pauseOnHover: flag(options.pauseOnHover, DEFAULTS.pauseOnHover),
+    focusOnClick: flag(options.focusOnClick, DEFAULTS.focusOnClick),
     parallax: reduced ? 0 : clamp(num(options.parallax, DEFAULTS.parallax), 0, 1),
     stretch: reduced ? 0 : clamp(num(options.stretch, DEFAULTS.stretch), 0, 1),
     depthFade: clamp(num(options.depthFade, DEFAULTS.depthFade), 0, 1),
@@ -291,15 +353,18 @@ function derive(options, reduced) {
     dragSign,
     directionSign: (direction === 'right' ? 1 : -1) * dragSign,
     rtl,
-    // In RTL the item order runs the other way round a horizontal ring.
-    mirror: rtl && axis === 'y',
-    labels: { ...DEFAULT_LABELS, ...(options.labels || {}) }
+    // Screen-space mirroring: in RTL item 2 must end up to the LEFT of item 1.
+    mirror: horizontalRtl && !layout.inward,
+    labels: { ...DEFAULT_LABELS, ...(options.labels || {}) },
+    dropped
   };
 }
 
 /* ------------------------------------------------------------------------------------------------
  * Factory
  * --------------------------------------------------------------------------------------------- */
+
+const INSTANCES = new WeakMap(); // container → live instance
 
 /**
  * Mounts a circular carousel inside `container`.
@@ -313,12 +378,20 @@ export function createCircularCarousel(container, options = {}) {
     throw new TypeError('createCircularCarousel: a container element is required');
   }
 
-  let opts = { ...DEFAULTS, ...options };
+  // One carousel per container: a second create() replaces the first instead of stacking roots.
+  const previous = INSTANCES.get(container);
+  if (previous) {
+    console.warn('[circular-carousel] container already has a carousel — destroying the previous instance.');
+    previous.destroy();
+  }
+
+  let opts = mergeOptions(DEFAULTS, options);
   const motionQuery = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   let reduced = Boolean(motionQuery?.matches);
   let s = derive(opts, reduced); // current derived settings
   let destroyed = false;
   let warnedEmpty = false;
+  let warnedDropped = false;
 
   /* ---- DOM skeleton (mirrors the React JSX) ---- */
   const root = element('div', 'circular-carousel', { role: 'region', tabindex: '0' });
@@ -354,6 +427,8 @@ export function createCircularCarousel(container, options = {}) {
     press: null,
     drag: false,
     hover: false,
+    focused: false, // keyboard focus inside the carousel (pauses autoplay)
+    halted: false, // pause() / play()
     pointer: { inside: false, x: 0, y: 0 },
     yaw: 0,
     pitch: 0,
@@ -361,6 +436,7 @@ export function createCircularCarousel(container, options = {}) {
     introDone: false,
     holdUntil: 0,
     stepAt: 0,
+    wakeAt: 0,
     suppressClick: false,
     wheelTimer: 0,
     fit: 1,
@@ -370,6 +446,7 @@ export function createCircularCarousel(container, options = {}) {
   };
 
   let raf = 0;
+  let sleepTimer = 0; // parks the loop until the next autoplay step / end of a hold
   let visible = true;
 
   /* ---- Slot mapping: which angular slot an item occupies (mirrored in RTL) ---- */
@@ -431,6 +508,7 @@ export function createCircularCarousel(container, options = {}) {
     const fragment = document.createDocumentFragment();
     cards = s.items.map((item, index) => {
       const card = element('div', 'circular-carousel__card', { 'data-cc-index': String(index), role: 'group' });
+      if (!item.src) card.setAttribute('data-error', ''); // nothing to show: use the placeholder
       for (const tile of s.tiles) card.append(buildTile(item, tile, false));
       if (s.layout.backfaces) for (const tile of s.tiles) card.append(buildTile(item, tile, true));
       fragment.append(card);
@@ -443,9 +521,25 @@ export function createCircularCarousel(container, options = {}) {
     const { labels, count } = s;
     cards.forEach((card, index) => {
       const item = s.items[index];
+      const title = titleOf(item, index);
+      const alt = typeof item.alt === 'string' ? item.alt.trim() : '';
+      const context = { title, index: index + 1, count, item, alt };
       card.setAttribute('aria-roledescription', format(labels.slideRole, {}));
-      card.setAttribute('aria-label', format(labels.slide, { title: titleOf(item, index), index: index + 1, count, item }));
+      card.setAttribute('aria-label', format(labels.slide, context));
+      // The photos themselves are decorative (alt="" on every strip), so the image description
+      // travels on the slide — unless the label already says it.
+      const label = card.getAttribute('aria-label');
+      const description = alt && alt !== title && !label.includes(alt) ? format(labels.description, context) : '';
+      if (description) card.setAttribute('aria-description', description);
+      else card.removeAttribute('aria-description');
     });
+  }
+
+  /** A card photo failed to load: hide the broken image and show the placeholder instead. */
+  function onImageError(event) {
+    const target = event.target;
+    if (!(target instanceof HTMLImageElement) || !target.classList.contains('circular-carousel__photo')) return;
+    target.closest('.circular-carousel__card')?.setAttribute('data-error', '');
   }
 
   /** Sets the reel digits for the caption counter (React: <Digits value={active + 1} />). */
@@ -572,10 +666,17 @@ export function createCircularCarousel(container, options = {}) {
 
   /** Re-derives settings from `opts` and patches the DOM — rebuilding cards only when needed. */
   function apply() {
+    const before = s;
     s = derive(opts, reduced);
     applyRootAttributes();
 
+    if (s.dropped && !warnedDropped) {
+      console.warn(`[circular-carousel] ignored ${s.dropped} item(s) that are not objects.`);
+      warnedDropped = true;
+    }
+
     if (!s.count) {
+      active = 0;
       if (!warnedEmpty) {
         console.warn('[circular-carousel] `items` is empty — nothing is rendered.');
         warnedEmpty = true;
@@ -610,6 +711,12 @@ export function createCircularCarousel(container, options = {}) {
     labelCards();
 
     if (active >= s.count) active = 0;
+    // Switching rtl flips the slot mapping: turn the ring so the same item stays in front.
+    if (before.mirror !== s.mirror && before.count) {
+      state.angle = -slotOf(active) * s.step;
+      state.target = null;
+      state.velocity = 0;
+    }
     syncCaption(true);
 
     if (s.directionSign !== lastDirectionSign) {
@@ -776,9 +883,16 @@ export function createCircularCarousel(container, options = {}) {
       }
     }
 
-    const paused = (s.pauseOnHover && state.hover) || state.drag || now < state.holdUntil;
+    const paused =
+      (s.pauseOnHover && state.hover) || state.focused || state.halted || state.drag || now < state.holdUntil;
     const cruise = s.autoplay === 'drift' && !paused && !state.intro ? s.speed * state.dir : 0;
     let busy = Boolean(state.intro) || state.drag;
+    state.wakeAt = 0;
+
+    // While autoplay is turning the ring on its own, slide changes are not announced (APG
+    // carousel pattern); user-driven or paused changes are announced politely.
+    const politeness = (s.autoplay === 'drift' || s.autoplay === 'step') && !paused ? 'off' : 'polite';
+    if (live.getAttribute('aria-live') !== politeness) live.setAttribute('aria-live', politeness);
 
     if (state.drag || state.intro) {
       state.velocity = state.drag ? state.velocity : 0;
@@ -823,13 +937,18 @@ export function createCircularCarousel(container, options = {}) {
       if (now >= state.stepAt) {
         state.target = (state.target ?? nearest(state.angle)) + s.step * state.dir;
         state.stepAt = now + s.interval * 1000;
+        busy = true;
       }
-      busy = true;
+      // Between steps the ring is still: sleep until the next one instead of spinning the RAF.
+      state.wakeAt = state.stepAt;
     } else {
       state.stepAt = 0;
     }
 
-    if (now < state.holdUntil) busy = true;
+    // Autoplay resumes when a hold ends — wake up then (a timer, not 60 idle frames a second).
+    if (now < state.holdUntil && s.autoplay !== 'off' && s.autoplay != null) {
+      state.wakeAt = state.wakeAt ? Math.min(state.wakeAt, state.holdUntil) : state.holdUntil;
+    }
 
     // Parallax lean towards the mouse.
     const ease = 1 - Math.exp(-dt / 0.35);
@@ -907,17 +1026,34 @@ export function createCircularCarousel(container, options = {}) {
     state.last = now;
     const busy = advance(dt, now);
     render(now);
-    if (busy && visible && !document.hidden) raf = requestAnimationFrame(frame);
-    else state.last = 0;
+    if (!visible || document.hidden) {
+      state.last = 0;
+    } else if (busy) {
+      raf = requestAnimationFrame(frame);
+    } else {
+      state.last = 0;
+      if (state.wakeAt) {
+        sleepTimer = setTimeout(() => {
+          sleepTimer = 0;
+          wake();
+        }, Math.max(0, state.wakeAt - performance.now()) + 4);
+      }
+    }
   }
 
   function wake() {
+    if (sleepTimer) {
+      clearTimeout(sleepTimer);
+      sleepTimer = 0;
+    }
     if (!raf && !destroyed && s.count && visible && !document.hidden) raf = requestAnimationFrame(frame);
   }
 
   function stop() {
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
+    clearTimeout(sleepTimer);
+    sleepTimer = 0;
     state.last = 0;
   }
 
@@ -982,6 +1118,12 @@ export function createCircularCarousel(container, options = {}) {
       wake();
       return;
     }
+    // The button was released somewhere we never heard about (e.g. outside the window before
+    // the drag threshold took pointer capture): end the press instead of dragging with no button.
+    if (event.pointerType === 'mouse' && event.buttons === 0) {
+      endPress(press, event.pointerType);
+      return;
+    }
     const delta = s.axis === 'x' ? event.clientY - press.y : event.clientX - press.x;
     const cross = s.axis === 'x' ? event.clientX - press.x : event.clientY - press.y;
     if (!press.moved) {
@@ -1014,10 +1156,20 @@ export function createCircularCarousel(container, options = {}) {
   function onPointerRelease(event) {
     const press = state.press;
     if (!press || press.id !== event.pointerId) return;
+    endPress(press, event.pointerType);
+  }
+
+  /** Ends a press: a plain click does nothing more; a drag is released with momentum/snap. */
+  function endPress(press, pointerType) {
     state.press = null;
     if (!press.moved) return;
     state.drag = false;
     root.removeAttribute('data-dragging');
+    try {
+      if (root.hasPointerCapture?.(press.id)) root.releasePointerCapture(press.id);
+    } catch {
+      /* pointer already gone */
+    }
     state.suppressClick = true;
     const first = press.samples[0];
     const last = press.samples[press.samples.length - 1];
@@ -1026,7 +1178,7 @@ export function createCircularCarousel(container, options = {}) {
     state.velocity = velocity;
     // A throw sets the autoplay direction.
     if (Math.abs(velocity) > 60) state.dir = Math.sign(velocity);
-    const coasting = s.autoplay === 'drift' && !(s.pauseOnHover && state.hover && event.pointerType === 'mouse');
+    const coasting = s.autoplay === 'drift' && !(s.pauseOnHover && state.hover && pointerType === 'mouse');
     if (s.snap && !coasting) {
       const tau = 0.18 + s.momentum * 1.5;
       state.target = Math.round((state.angle + velocity * tau * 0.55) / s.step) * s.step;
@@ -1045,7 +1197,33 @@ export function createCircularCarousel(container, options = {}) {
       state.hover = false;
       state.pointer.inside = false;
     }
+    // A press that never became a drag has no pointer capture, so its pointerup may land
+    // outside the carousel: forget it now rather than resurrect it on re-entry.
+    if (state.press && !state.press.moved && state.press.id === event.pointerId) state.press = null;
     wake();
+  }
+
+  function onFocusIn() {
+    // Only keyboard focus pauses autoplay (a mouse click focuses the root too, and React keeps
+    // drifting after a click; hover-pause already covers the mouse).
+    let keyboard = true;
+    try {
+      keyboard = root.matches(':focus-visible') || root.querySelector(':focus-visible') !== null;
+    } catch {
+      /* :focus-visible unsupported → treat all focus as keyboard focus */
+    }
+    if (state.focused !== keyboard) {
+      state.focused = keyboard;
+      wake();
+    }
+  }
+
+  function onFocusOut(event) {
+    if (event.relatedTarget && root.contains(event.relatedTarget)) return;
+    if (state.focused) {
+      state.focused = false;
+      wake();
+    }
   }
 
   function onClick(event) {
@@ -1061,6 +1239,13 @@ export function createCircularCarousel(container, options = {}) {
   }
 
   function onKeyDown(event) {
+    // Leave browser / OS shortcuts (Alt+ArrowLeft = Back, Ctrl+Home, …) alone.
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    // Any navigation key means the keyboard is in use: pause autoplay from here on.
+    if (!state.focused) {
+      state.focused = true;
+      wake();
+    }
     const forward = s.axis === 'x' ? 'ArrowDown' : 'ArrowRight';
     const backward = s.axis === 'x' ? 'ArrowUp' : 'ArrowLeft';
     if (event.key === forward) stepBy(1);
@@ -1099,6 +1284,11 @@ export function createCircularCarousel(container, options = {}) {
 
   function onMotionChange() {
     reduced = Boolean(motionQuery?.matches);
+    if (reduced && state.intro) {
+      // Cut a running intro short — apply() alone would only stop future ones.
+      state.intro = null;
+      state.introDone = true;
+    }
     apply();
   }
 
@@ -1128,6 +1318,9 @@ export function createCircularCarousel(container, options = {}) {
     [root, 'pointerleave', onPointerLeave],
     [root, 'click', onClick],
     [root, 'keydown', onKeyDown],
+    [root, 'focusin', onFocusIn],
+    [root, 'focusout', onFocusOut],
+    [root, 'error', onImageError, true], // <img> errors don't bubble: capture them
     [root, 'wheel', onWheel, { passive: false }],
     [document, 'visibilitychange', onVisibility]
   ];
@@ -1147,9 +1340,9 @@ export function createCircularCarousel(container, options = {}) {
     update(partial = {}) {
       if (destroyed || !partial) return api;
       const previousIntro = opts.intro;
-      opts = { ...opts, ...partial };
+      opts = mergeOptions(opts, partial);
       // Changing the intro replays it (handy for previews; React only played it on load).
-      if ('intro' in partial && partial.intro !== previousIntro && ready) {
+      if (opts.intro !== previousIntro && ready) {
         state.intro = null;
         state.introDone = false;
       }
@@ -1174,6 +1367,26 @@ export function createCircularCarousel(container, options = {}) {
     prev() {
       if (!destroyed) stepSlots(s.mirror ? 1 : -1);
       return api;
+    },
+    /** Pauses autoplay until play() (e.g. for a visible pause button — WCAG 2.2.2). */
+    pause() {
+      if (!destroyed) {
+        state.halted = true;
+        wake();
+      }
+      return api;
+    },
+    /** Resumes autoplay after pause(). */
+    play() {
+      if (!destroyed) {
+        state.halted = false;
+        wake();
+      }
+      return api;
+    },
+    /** True while autoplay is held by pause(). */
+    get paused() {
+      return state.halted;
     },
     /** Index of the item currently facing the viewer. */
     get active() {
@@ -1206,9 +1419,11 @@ export function createCircularCarousel(container, options = {}) {
       cards = [];
       caption = null;
       root.remove();
+      if (INSTANCES.get(container) === api) INSTANCES.delete(container);
     }
   };
 
+  INSTANCES.set(container, api);
   return api;
 }
 

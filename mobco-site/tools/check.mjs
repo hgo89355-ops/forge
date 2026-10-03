@@ -86,9 +86,10 @@ function idsIn(file) {
   return idCache.get(file);
 }
 
-const IN_PAGE = () => {
+const IN_PAGE = (expectedW) => {
   const out = { overflow: [], hiddenReveal: [], brokenImages: [], noAlt: [], dupIds: [], links: [], nonLeafAr: [], scrollW: 0, vw: 0 };
-  const vw = document.documentElement.clientWidth;
+  // compare against the emulated device width: on mobile an overflowing page silently widens the layout viewport
+  const vw = Math.min(expectedW, document.documentElement.clientWidth);
   out.vw = vw;
   out.scrollW = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
   const sel = (el) => {
@@ -138,7 +139,12 @@ const IN_PAGE = () => {
   document.querySelectorAll('[id]').forEach((el) => seen.set(el.id, (seen.get(el.id) || 0) + 1));
   for (const [id, n] of seen) if (n > 1) out.dupIds.push(`${id} ×${n}`);
   document.querySelectorAll('a[href]').forEach((a) => out.links.push(a.getAttribute('href')));
-  document.querySelectorAll('[data-ar]').forEach((el) => { if (el.children.length && el.tagName !== 'TITLE') out.nonLeafAr.push(path(el)); });
+  document.querySelectorAll('[data-ar]').forEach((el) => {
+    if (el.tagName === 'TITLE') return;
+    // split headlines get generated <span>s: judge them by their pre-split source
+    const authored = el.hasAttribute('data-split') && el.__splitSource != null ? /<[a-z]/i.test(el.__splitSource) : el.children.length > 0;
+    if (authored) out.nonLeafAr.push(path(el));
+  });
   out.ids = [...seen.keys()];
   return out;
 };
@@ -192,9 +198,24 @@ async function run(browser, page, vpName, lang) {
     }
     window.scrollTo(0, document.documentElement.scrollHeight);
     await sleep(400);
+    // second chance: bring any still-unrevealed element into view (fast passes can skip IO frames under load)
+    const pending = [...document.querySelectorAll('[data-reveal]:not(.is-revealed), [data-split]:not(.is-revealed)')]
+      .filter((el) => !el.closest('.mobile-nav, .mega, [data-modal], [data-drawer], [hidden]'));
+    for (const el of pending.slice(0, 40)) {
+      el.scrollIntoView({ block: 'center' });
+      await sleep(260);
+      // give a busy main thread time to deliver the reveal before moving on
+      for (let k = 0; k < 8 && !el.classList.contains('is-revealed'); k++) {
+        window.dispatchEvent(new Event('scroll'));
+        await sleep(150);
+      }
+    }
+    await sleep(300);
   });
   await p.waitForTimeout(1300);
-  const data = await p.evaluate(IN_PAGE);
+  const data = await p.evaluate(IN_PAGE, vp.width);
+  const layoutW = await p.evaluate(() => window.innerWidth);
+  if (layoutW > vp.width + 1) err(`layout viewport widened to ${layoutW}px (> ${vp.width}px): something overflows horizontally`);
   if (data.scrollW > data.vw + 1) err(`horizontal scroll: scrollWidth ${data.scrollW} > ${data.vw}`);
   data.overflow.forEach((o) => err(`overflow: ${o}`));
   data.hiddenReveal.slice(0, 8).forEach((h) => err(`still hidden after scroll: ${h}`));

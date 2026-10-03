@@ -167,6 +167,7 @@
         <button type="button" data-action="next">Next</button>
         <button type="button" data-action="first">Focus first</button>
         <button type="button" data-action="last">Focus last</button>
+        <button type="button" data-action="pause" aria-pressed="false">Pause autoplay</button>
         <button type="button" data-action="remount">Remount (replay intro)</button>
         <span class="status" id="status" aria-live="off">—</span>
       </div>
@@ -254,6 +255,7 @@
       remount() {
         carousel.destroy();
         carousel = createCircularCarousel(stage, options);
+        if (document.querySelector('[data-action="pause"]')?.getAttribute('aria-pressed') === 'true') carousel.pause();
         return carousel;
       }
     };
@@ -415,6 +417,13 @@
       else if (action === 'first') carousel.focus(0);
       else if (action === 'last') carousel.focus(options.items.length - 1);
       else if (action === 'remount') window.__demo.remount();
+      else if (action === 'pause') {
+        const button = event.target.closest('[data-action]');
+        if (carousel.paused) carousel.play();
+        else carousel.pause();
+        button.setAttribute('aria-pressed', String(carousel.paused));
+        button.textContent = carousel.paused ? 'Play autoplay' : 'Pause autoplay';
+      }
       log(`${action}()`);
     });
   </script>

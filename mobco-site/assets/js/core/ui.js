@@ -190,8 +190,12 @@ function setupTabs(root) {
         if (on && emit) { p.classList.remove('is-entering'); void p.offsetWidth; p.classList.add('is-entering'); }
       }
     });
-    if (focus) tab.focus();
-    tab.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    if (focus) tab.focus({ preventScroll: true });
+    if (emit) { // keep the active tab visible inside a horizontally scrolling tab list (never scroll the page)
+      const lr = list.getBoundingClientRect(), tr = tab.getBoundingClientRect();
+      if (tr.left < lr.left) list.scrollLeft -= lr.left - tr.left + 16;
+      else if (tr.right > lr.right) list.scrollLeft += tr.right - lr.right + 16;
+    }
     moveIndicator();
     if (emit) root.dispatchEvent(new CustomEvent('tabchange', { bubbles: true, detail: { id: tab.getAttribute('data-tab'), tab } }));
   };
@@ -753,13 +757,15 @@ function setupDropzone(dz) {
     errors.forEach((m) => toast(m, { type: 'error' }));
     sync();
     render();
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+    notify();
   };
-  input.addEventListener('change', (e) => {
-    if (e.__dzInternal) return;
-    if (!e.isTrusted) return; // our own dispatch
+  let internal = false;
+  const notify = () => { internal = true; input.dispatchEvent(new Event('change', { bubbles: true })); internal = false; };
+  input.addEventListener('change', () => {
+    if (internal) return; // our own re-dispatch after syncing files
     const picked = Array.from(input.files || []);
-    if (input.multiple) { files = files.filter(() => true); add(picked); } else { files = []; add(picked); }
+    if (!input.multiple) files = [];
+    add(picked);
   });
   ['dragenter', 'dragover'].forEach((ev) => area.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add('is-dragover'); }));
   ['dragleave', 'dragend'].forEach((ev) => area.addEventListener(ev, (e) => { if (!area.contains(e.relatedTarget)) dz.classList.remove('is-dragover'); }));
@@ -774,7 +780,7 @@ function setupDropzone(dz) {
     files.splice(parseInt(b.dataset.i, 10), 1);
     sync();
     render();
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+    notify();
     input.focus();
   });
   onLang(render);
