@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Circular Carousel — Component Demo</title>
+  <meta name="description" content="Internal demo of the framework-free circular 3D carousel component, with live controls for every option.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/components/circular-carousel.css">
+  <style>
+    @font-face { font-family: 'Manrope'; src: url('../assets/fonts/manrope-latin-wght-normal.woff2') format('woff2'); font-weight: 200 800; font-display: swap; }
+    @font-face { font-family: 'Inter'; src: url('../assets/fonts/inter-latin-wght-normal.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+    @font-face { font-family: 'IBM Plex Sans Arabic'; src: url('../assets/fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'IBM Plex Sans Arabic'; src: url('../assets/fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+
+    :root {
+      --bg: #0b1620;
+      --panel: #122230;
+      --line: rgba(155, 227, 218, 0.14);
+      --text: #e8eef2;
+      --muted: #8fa1ae;
+      --teal: #6fd1c5;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font: 400 14px/1.5 Inter, system-ui, sans-serif;
+    }
+    header.demo-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px 24px;
+      padding: 24px clamp(16px, 4vw, 40px) 8px;
+      border-block-end: 1px solid var(--line);
+    }
+    .eyebrow {
+      margin: 0;
+      color: var(--teal);
+      font: 600 11px/1 Manrope, sans-serif;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font: 700 clamp(20px, 2.4vw, 28px)/1.2 Manrope, sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .demo-head p.note { flex-basis: 100%; margin: 4px 0 12px; color: var(--muted); max-width: 70ch; }
+    code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--teal); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 0;
+      min-height: calc(100vh - 120px);
+    }
+    @media (max-width: 960px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+
+    .stage-col { display: flex; flex-direction: column; min-width: 0; }
+    .stage {
+      position: relative;
+      height: clamp(420px, 66vh, 760px);
+      color: var(--text);
+    }
+    .stage[dir='rtl'] { font-family: 'IBM Plex Sans Arabic', Inter, sans-serif; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 12px clamp(16px, 4vw, 40px);
+      border-block: 1px solid var(--line);
+    }
+    .toolbar .status { margin-inline-start: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+    button {
+      min-height: 40px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: transparent;
+      color: var(--text);
+      font: 500 13px/1 Inter, sans-serif;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--teal); color: var(--teal); }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+    .log {
+      margin: 0;
+      padding: 12px clamp(16px, 4vw, 40px) 24px;
+      list-style: none;
+      color: var(--muted);
+      font: 12px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .log li:first-child { color: var(--text); }
+
+    aside.panel {
+      border-inline-start: 1px solid var(--line);
+      background: var(--panel);
+      padding: 8px 20px 32px;
+      overflow-y: auto;
+      max-height: calc(100vh - 120px);
+    }
+    @media (max-width: 960px) { aside.panel { border-inline-start: 0; border-block-start: 1px solid var(--line); max-height: none; } }
+    fieldset { margin: 0; padding: 16px 0 8px; border: 0; border-block-end: 1px solid var(--line); }
+    legend {
+      padding: 0;
+      margin-block-end: 8px;
+      color: var(--teal);
+      font: 600 11px/1 Manrope, sans-serif;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      float: left;
+      width: 100%;
+    }
+    legend + * { clear: both; }
+    .row {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) 48px;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+    }
+    .row label { color: var(--muted); font-size: 13px; }
+    .row output { text-align: end; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--text); }
+    .row .auto { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); justify-content: flex-end; }
+    select, input[type='range'], input[type='color'] { width: 100%; min-width: 0; }
+    select {
+      min-height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: var(--bg);
+      color: var(--text);
+      font: inherit;
+    }
+    input[type='range'] { accent-color: var(--teal); }
+    input[type='checkbox'] { accent-color: var(--teal); width: 18px; height: 18px; margin: 0; }
+    input[type='color'] { height: 32px; padding: 0; border: 1px solid var(--line); background: transparent; }
+    input:disabled { opacity: 0.35; }
+  </style>
+</head>
+<body>
+  <header class="demo-head">
+    <p class="eyebrow">Component demo</p>
+    <h1>Circular Carousel</h1>
+    <p class="note">
+      Framework-free port of React Bits' CircularCarousel —
+      <code>assets/js/components/circular-carousel.js</code>. Drag, throw, swipe a trackpad sideways,
+      use the arrow keys (focus the ring first), or click a card. Every control below calls
+      <code>update()</code> on the live instance.
+    </p>
+  </header>
+
+  <div class="layout">
+    <div class="stage-col">
+      <div class="stage" id="stage"></div>
+      <div class="toolbar" role="toolbar" aria-label="Carousel actions">
+        <button type="button" data-action="prev">Prev</button>
+        <button type="button" data-action="next">Next</button>
+        <button type="button" data-action="first">Focus first</button>
+        <button type="button" data-action="last">Focus last</button>
+        <button type="button" data-action="remount">Remount (replay intro)</button>
+        <span class="status" id="status" aria-live="off">—</span>
+      </div>
+      <ol class="log" id="log" aria-label="Event log"></ol>
+    </div>
+    <aside class="panel" id="panel" aria-label="Options"></aside>
+  </div>
+
+  <script type="module">
+    import { createCircularCarousel, PRESETS, DEFAULTS } from '../assets/js/components/circular-carousel.js';
+
+    /* ---------- Content (site photography only; descriptive names per the brief) ---------- */
+    const PHOTOS = [
+      { file: 'aerial-compound', en: ['Lagoon Villa Community', 'Residential · Aerial'], ar: ['مجتمع فلل البحيرات', 'سكني · منظر جوي'], alt: 'Aerial render of a villa community with lagoon pools' },
+      { file: 'campus', en: ['Innovation Campus', 'Education'], ar: ['الحرم الابتكاري', 'تعليم'], alt: 'Aerial render of a white campus with ring buildings and a central tower' },
+      { file: 'ksa-landmark', en: ['Riyadh Landmark', 'Saudi Arabia'], ar: ['معلم الرياض', 'المملكة العربية السعودية'], alt: 'Classical red and cream building with curved balconies' },
+      { file: 'eastmain', en: ['Eastmain', 'New Cairo, Egypt'], ar: ['إيست مين', 'القاهرة الجديدة، مصر'], alt: 'Night render of a glass office and retail building with a plaza' },
+      { file: 'victoria-101', en: ['Victoria 101', 'Port Whitby, Canada'], ar: ['فيكتوريا 101', 'بورت ويتبي، كندا'], alt: 'Dusk aerial of a residential tower with a rooftop pool' },
+      { file: 'aerial-compound-portrait', en: ['Community Park', 'Masterplan'], ar: ['حديقة المجتمع', 'المخطط العام'], alt: 'Aerial view of roads and a park in a residential community' }
+    ];
+
+    const LABELS = {
+      en: undefined, // component defaults
+      ar: {
+        region: 'معرض صور دائري',
+        carousel: 'عرض دوّار',
+        slideRole: 'شريحة',
+        slide: ({ title, index, count }) => `${title}، ${index} من ${count}`,
+        live: ({ title, index, count }) => `${title}، ${index} من ${count}`,
+        untitled: 'صورة {index}'
+      }
+    };
+
+    const makeItems = (count, lang) =>
+      Array.from({ length: count }, (_, i) => {
+        const photo = PHOTOS[i % PHOTOS.length];
+        const [title, subtitle] = photo[lang];
+        return {
+          src: `../assets/img/${photo.file}.webp`,
+          alt: photo.alt,
+          title,
+          subtitle,
+          href: `../projects.html#${photo.file}`, // passthrough only — onItemClick decides
+          data: { file: photo.file, n: i + 1 }
+        };
+      });
+
+    /* ---------- State ---------- */
+    const stage = document.getElementById('stage');
+    const statusEl = document.getElementById('status');
+    const logEl = document.getElementById('log');
+    const ui = { itemCount: 10, lang: 'en' };
+
+    const log = message => {
+      const li = document.createElement('li');
+      li.textContent = `${new Date().toLocaleTimeString([], { hour12: false })}  ${message}`;
+      logEl.prepend(li);
+      while (logEl.children.length > 8) logEl.lastElementChild.remove();
+    };
+
+    let options = {
+      ...DEFAULTS,
+      items: makeItems(ui.itemCount, ui.lang),
+      fadeColor: '#0b1620',
+      captions: true,
+      onChange: (index, item) => {
+        statusEl.textContent = `active ${index + 1} / ${options.items.length} — ${item.title}`;
+        log(`onChange(${index}) ${item.title}`);
+      },
+      onItemClick: (item, index) => log(`onItemClick(${index}) ${item.title} → href ${item.href}, data ${JSON.stringify(item.data)}`)
+    };
+
+    let carousel = createCircularCarousel(stage, options);
+    statusEl.textContent = `active 1 / ${options.items.length}`;
+
+    const set = patch => {
+      options = { ...options, ...patch };
+      carousel.update(patch);
+    };
+
+    // Exposed for automated checks.
+    window.__demo = {
+      get carousel() { return carousel; },
+      set,
+      remount() {
+        carousel.destroy();
+        carousel = createCircularCarousel(stage, options);
+        return carousel;
+      }
+    };
+
+    /* ---------- Controls ---------- */
+    const GROUPS = [
+      ['Layout', [
+        { key: 'preset', type: 'select', options: Object.keys(PRESETS) },
+        { key: 'aspectRatio', label: 'aspect', type: 'select', number: true, options: [[1, '1 : 1'], [4 / 3, '4 : 3'], [3 / 4, '3 : 4'], [16 / 9, '16 : 9'], [0.6, '3 : 5']] },
+        { key: 'cardWidth', type: 'range', min: 120, max: 360, step: 10 },
+        { key: 'gap', type: 'range', min: 0, max: 120, step: 1 },
+        { key: 'curve', type: 'range', min: 0, max: 1, step: 0.05, optional: true },
+        { key: 'tilt', type: 'range', min: -30, max: 30, step: 1, optional: true },
+        { key: 'perspective', type: 'range', min: 600, max: 4000, step: 50, optional: true },
+        { key: 'cornerRadius', label: 'radius', type: 'range', min: 0, max: 40, step: 1 }
+      ]],
+      ['Intro & autoplay', [
+        { key: 'intro', type: 'select', options: ['rise', 'assemble', 'spin', 'none'] },
+        { key: 'autoplay', type: 'select', options: ['drift', 'step', 'off'] },
+        { key: 'direction', type: 'select', options: [['', 'auto'], ['left', 'left'], ['right', 'right']] },
+        { key: 'speed', type: 'range', min: 0, max: 60, step: 1 },
+        { key: 'interval', type: 'range', min: 0.5, max: 8, step: 0.5 }
+      ]],
+      ['Interaction', [
+        { key: 'draggable', type: 'checkbox' },
+        { key: 'momentum', type: 'range', min: 0, max: 1, step: 0.05 },
+        { key: 'snap', type: 'checkbox' },
+        { key: 'pauseOnHover', label: 'pause hover', type: 'checkbox' },
+        { key: 'focusOnClick', label: 'focus click', type: 'checkbox' },
+        { key: 'parallax', type: 'range', min: 0, max: 1, step: 0.05 },
+        { key: 'stretch', type: 'range', min: 0, max: 1, step: 0.05 }
+      ]],
+      ['Look', [
+        { key: 'captions', type: 'checkbox' },
+        { key: 'depthFade', type: 'range', min: 0, max: 1, step: 0.05 },
+        { key: 'innerShade', type: 'range', min: 0, max: 1, step: 0.05 },
+        { key: 'fadeColor', type: 'color' }
+      ]],
+      ['Content & locale', [
+        { key: 'itemCount', label: 'items', type: 'select', number: true, ui: true, options: [[0, '0 (empty)'], [3, '3'], [6, '6'], [10, '10'], [14, '14'], [24, '24']] },
+        { key: 'rtl', label: 'rtl (Arabic)', type: 'checkbox' }
+      ]]
+    ];
+
+    const panel = document.getElementById('panel');
+    let uid = 0;
+
+    const applyControl = (control, value) => {
+      if (control.key === 'itemCount') {
+        ui.itemCount = value;
+        set({ items: makeItems(value, ui.lang) });
+        if (!value) statusEl.textContent = 'no items';
+      } else if (control.key === 'rtl') {
+        ui.lang = value ? 'ar' : 'en';
+        stage.dir = value ? 'rtl' : 'ltr';
+        stage.lang = ui.lang;
+        set({ rtl: value, labels: LABELS[ui.lang], items: makeItems(ui.itemCount, ui.lang) });
+      } else {
+        set({ [control.key]: value });
+      }
+      log(`update({ ${control.key}: ${JSON.stringify(value)} })`);
+    };
+
+    for (const [title, controls] of GROUPS) {
+      const fieldset = document.createElement('fieldset');
+      const legend = document.createElement('legend');
+      legend.textContent = title;
+      fieldset.append(legend);
+      for (const control of controls) {
+        const id = `ctl-${++uid}`;
+        const row = document.createElement('div');
+        row.className = 'row';
+        const label = document.createElement('label');
+        label.htmlFor = id;
+        label.textContent = control.label || control.key;
+        row.append(label);
+        const current = control.key === 'itemCount' ? ui.itemCount : options[control.key];
+        let input;
+        let tail = document.createElement('span');
+
+        if (control.type === 'select') {
+          input = document.createElement('select');
+          for (const option of control.options) {
+            const [value, text] = Array.isArray(option) ? option : [option, option];
+            const node = new Option(text, String(value));
+            if (String(value) === String(current ?? '')) node.selected = true;
+            input.append(node);
+          }
+          input.addEventListener('change', () => {
+            const raw = input.value;
+            applyControl(control, control.number ? Number(raw) : raw === '' ? undefined : raw);
+          });
+        } else if (control.type === 'checkbox') {
+          input = document.createElement('input');
+          input.type = 'checkbox';
+          input.checked = Boolean(current);
+          input.addEventListener('change', () => applyControl(control, input.checked));
+        } else if (control.type === 'color') {
+          input = document.createElement('input');
+          input.type = 'color';
+          input.value = current;
+          input.addEventListener('input', () => applyControl(control, input.value));
+        } else {
+          input = document.createElement('input');
+          input.type = 'range';
+          Object.assign(input, { min: control.min, max: control.max, step: control.step });
+          const preset = PRESETS[options.preset] || PRESETS.cylinder;
+          input.value = current ?? preset[control.key] ?? control.min;
+          tail = document.createElement('output');
+          tail.htmlFor = id;
+          tail.textContent = control.optional && current == null ? 'auto' : input.value;
+          let auto = null;
+          if (control.optional) {
+            input.disabled = current == null;
+            const wrap = document.createElement('label');
+            wrap.className = 'auto';
+            auto = document.createElement('input');
+            auto.type = 'checkbox';
+            auto.checked = current == null;
+            auto.setAttribute('aria-label', `${control.key}: use preset value`);
+            wrap.append(auto, 'auto');
+            auto.addEventListener('change', () => {
+              input.disabled = auto.checked;
+              tail.textContent = auto.checked ? 'auto' : input.value;
+              applyControl(control, auto.checked ? undefined : Number(input.value));
+            });
+            input.dataset.key = control.key;
+            input.addEventListener('input', () => { tail.textContent = input.value; applyControl(control, Number(input.value)); });
+            const box = document.createElement('div');
+            box.style.display = 'grid';
+            box.style.gridTemplateColumns = 'minmax(0,1fr) auto';
+            box.style.gap = '6px';
+            input.id = id;
+            box.append(input, wrap);
+            row.append(box, tail);
+            fieldset.append(row);
+            continue;
+          }
+          input.addEventListener('input', () => { tail.textContent = input.value; applyControl(control, Number(input.value)); });
+        }
+        input.id = id;
+        input.dataset.key = control.key;
+        row.append(input, tail);
+        fieldset.append(row);
+      }
+      panel.append(fieldset);
+    }
+
+    document.querySelector('.toolbar').addEventListener('click', event => {
+      const action = event.target.closest('[data-action]')?.dataset.action;
+      if (!action) return;
+      if (action === 'prev') carousel.prev();
+      else if (action === 'next') carousel.next();
+      else if (action === 'first') carousel.focus(0);
+      else if (action === 'last') carousel.focus(options.items.length - 1);
+      else if (action === 'remount') window.__demo.remount();
+      log(`${action}()`);
+    });
+  </script>
+</body>
+</html>

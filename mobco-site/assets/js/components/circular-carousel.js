@@ -802,7 +802,15 @@ export function createCircularCarousel(container, options = {}) {
       state.velocity += (cruise - state.velocity) * (1 - Math.exp(-dt / tau));
       state.angle += state.velocity * dt;
       if (cruise === 0 && s.snap && Math.abs(state.velocity) < SETTLE_SPEED) {
-        state.target = nearest(state.angle);
+        const goal = nearest(state.angle);
+        // Already resting on a slot: stay idle. (The React original re-armed the spring here on
+        // every frame, so its RAF never stopped once autoplay was off or paused.)
+        if (Math.abs(goal - state.angle) < 0.004 && Math.abs(state.velocity) < 0.03) {
+          state.angle = goal;
+          state.velocity = 0;
+        } else {
+          state.target = goal;
+        }
       }
       busy = busy || cruise !== 0 || Math.abs(state.velocity) > 0.01 || state.target !== null;
     }
