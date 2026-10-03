@@ -826,6 +826,8 @@ html[lang='ar'] .ha-steps__node { letter-spacing: 0; text-transform: none; font-
     align-items: end;
   }
   .ha-steps:not(.is-pinned) .ha-steps__visual { aspect-ratio: 16 / 9; }
+  .ha-steps:not(.is-pinned) .ha-steps__title { font-size: clamp(2.25rem, .25rem + 3.6vw, 4.5rem); }
+  .ha-steps__line { white-space: nowrap; }
   .ha-steps:not(.is-pinned) .ha-steps__panels { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--grid-gap); align-items: start; }
 }
 .ha-steps.is-pinned .ha-step__list li { font-size: var(--fs-base); padding-block: .7rem; }
@@ -854,11 +856,18 @@ html[lang='ar'] .ha-steps__node { letter-spacing: 0; text-transform: none; font-
 .ha-stats .section-header__aside .lead { max-inline-size: 42ch; }
 .ha-stats__grid { border-block-start-color: rgba(255, 255, 255, .22); }
 .ha-stats__grid .stat { padding-block: clamp(2rem, 1.4rem + 2vw, 3.5rem); border-color: rgba(255, 255, 255, .2); }
-.ha-stats__grid .stat__value { color: var(--white); }
+.ha-stats__grid .stat__value { color: var(--white); font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem); } /* capped: "10,000+" must fit a quarter of the 1320px container */
 .ha-stats__grid .stat__label { color: rgba(255, 255, 255, .66); }
 @media (min-width: 1024px) {
   .ha-stats__grid .stat { padding-inline: clamp(1.25rem, .5rem + 1.5vw, 2.5rem); }
   .ha-stats__grid .stat:first-child { padding-inline-start: 0; }
+}
+/* 1024–1279px: four columns are too narrow for "10,000+" at display size → 2 × 2 with hairline cross */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .ha-stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ha-stats__grid .stat { border-inline-end: 0; }
+  .ha-stats__grid .stat:nth-child(odd) { border-inline-end: 1px solid rgba(255, 255, 255, .2); padding-inline-start: 0; }
+  .ha-stats__grid .stat:nth-child(-n + 2) { border-block-end: 1px solid rgba(255, 255, 255, .2); }
 }
 
 /* -------------------------------------------------------------------------

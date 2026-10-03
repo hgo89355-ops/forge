@@ -672,7 +672,9 @@ body[data-page='home'] .hb-cta {
   background: var(--navy-900);
   color: var(--fg);
   border-radius: var(--radius);
+  grid-template-columns: minmax(0, 1fr); /* never let a nowrap button widen the panel past its clip */
 }
+@media (max-width: 559.98px) { body[data-page='home'] .hb-cta__actions .btn { flex: 1 1 100%; } }
 @media (min-width: 1024px) { body[data-page='home'] .hb-cta { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
 body[data-page='home'] .hb-cta::before {
   content: '';

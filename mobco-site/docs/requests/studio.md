@@ -74,3 +74,13 @@ is hidden. `hasWebGL()` → `false` means WebGL2 is unavailable (three r163+ req
 `assets/js/studio/models/_dev-box.js` is a contract-conformant test model. It is not listed in the library;
 reach it with `studio.html?dev=1` (adds it as item 06) or `studio.html?model=_dev-box`.
 `?nogl=1` forces the no-WebGL fallback; `?perf=1` logs load/frame timings to the console.
+
+## 5. Low-power profile (CPU rasterisers) & QA params
+
+When the WebGL implementation is a software rasteriser (SwiftShader / llvmpipe — headless CI, blocklisted
+GPUs), the engine switches to a low-power profile: no MSAA, render scale 0.6, 1024px shadows, no damping,
+no tweened motion (camera moves, explode easing, reveal), ambient model animation only on frames that render
+anyway, no idle thumbnail generation, and instant UI fades. Rendering is always on demand (nothing renders while
+idle), paused off-screen and when the tab is hidden. Overrides: `?lowpower=0|1`, `?hq=1` (full-resolution stills for
+screenshots). Headless SwiftShader in this container needs ~15–30 s to compile the first model's shaders, so
+QA scripts should wait for `window` `studio:ready` / `[data-studio][data-ready="true"]`.

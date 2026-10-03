@@ -286,7 +286,6 @@ function initCore() {
     const txt = t(CORE[key]);
     if (readout.textContent !== txt) readout.textContent = txt;
   };
-  const tenancyKey = () => `t${radios.find((r) => r.checked)?.value || '1'}`;
 
   function render() {
     const part = hover || pinned;
@@ -306,7 +305,7 @@ function initCore() {
       const p = b.dataset.sdPart;
       pinned = pinned === p ? null : p;
       render();
-      say(pinned || tenancyKey());
+      say(pinned || base);
     });
     if (hasFinePointer()) {
       b.addEventListener('pointerenter', () => { hover = b.dataset.sdPart; render(); say(hover); });
@@ -331,8 +330,7 @@ function initCore() {
     pinned = pinned === p ? null : p;
     hover = null;
     render();
-    base = pinned || base;
-    say(pinned || tenancyKey());
+    say(pinned || base);
   });
 
   radios.forEach((r) => r.addEventListener('change', () => {

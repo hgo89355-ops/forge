@@ -141,7 +141,7 @@ export function createStudio(container, options = {}) {
   // Section plane visual (teal frame + faint fill) — not clipped
   const sectionVis = new THREE.Group();
   sectionVis.name = 'studio-section-plane';
-  const secFill = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ color: '#6fd1c5', transparent: true, opacity: 0.07, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }));
+  const secFill = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ color: '#6fd1c5', transparent: true, opacity: 0.035, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }));
   secFill.rotation.x = -Math.PI / 2;
   const secFrameGeo = new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(-0.5, 0, -0.5), new THREE.Vector3(0.5, 0, -0.5), new THREE.Vector3(0.5, 0, 0.5), new THREE.Vector3(-0.5, 0, 0.5),

@@ -22,7 +22,17 @@ import { getSubsidiary, getOffice, getProject, PROJECTS, projectUrl } from '../d
 const COS = [
   { slug: 'construction', id: 'mobco-construction', icons: ['hard-hat', 'building-2', 'landmark'] },
   { slug: 'developments', id: 'mobco-developments', icons: ['trees', 'layers', 'briefcase'] },
-  { slug: 'real-estate', id: 'mobco-real-estate', icons: ['house', 'building', 'chart-line'] },
+  {
+    slug: 'real-estate', id: 'mobco-real-estate', icons: ['briefcase', 'clipboard-check', 'building'],
+    // Local override: site-data's generic focus list (residential / commercial / asset management) contradicts the
+    // verbatim "leasing and property management for multi-functional buildings". Taken from that copy until the
+    // data is updated (docs/requests/subsidiaries.md). Remove once SUBSIDIARIES['mobco-real-estate'].focus matches.
+    focus: [
+      { en: 'Office leasing', ar: 'تأجير المساحات المكتبية' },
+      { en: 'Property management', ar: 'إدارة العقارات' },
+      { en: 'Multi-functional buildings', ar: 'المباني متعددة الوظائف' },
+    ],
+  },
   { slug: 'education', id: 'elite-education', icons: ['school', 'drafting-compass', 'book-open'] },
 ];
 const BY_SLUG = Object.fromEntries(COS.map((c) => [c.slug, c]));
@@ -140,8 +150,10 @@ function hydrate() {
     if (!s) return;
     $$('[data-sub-field]', root).forEach((el) => {
       const key = el.getAttribute('data-sub-field');
-      const v = s[key] || (key === 'tagline' ? s.short : null);
-      if (v) el.textContent = t(v);
+      let v = s[key] ? t(s[key]) : null;
+      // no client tagline yet (Elite Education) → the short description, styled as a tagline (no full stop)
+      if (!v && key === 'tagline' && s.short) v = t(s.short).replace(/[.。۔]\s*$/, '');
+      if (v) el.textContent = v;
     });
     const facts = $('[data-sub-facts]', root);
     if (facts && s.facts) facts.innerHTML = s.facts.map((f) => `<li>${esc(t(f))}</li>`).join('');
@@ -149,7 +161,7 @@ function hydrate() {
     const focus = $('[data-sub-focus]', root);
     if (focus) {
       const cfg = COS.find((c) => c.id === s.id);
-      focus.innerHTML = s.focus.map((f, i) => `<li><span class="subs-co__focus-icon">${icon(cfg?.icons[i] || 'check')}</span><span>${esc(t(f))}</span></li>`).join('');
+      focus.innerHTML = (cfg?.focus || s.focus).map((f, i) => `<li><span class="subs-co__focus-icon">${icon(cfg?.icons[i] || 'check')}</span><span>${esc(t(f))}</span></li>`).join('');
     }
   });
   const work = $('[data-sub-work]');
@@ -229,6 +241,8 @@ function initOrg() {
   let dots = []; // { el, at }
   let hot = null;
   let progress = reduced ? 1 : 0;
+  let painted = -1;
+  let box = { pt: 0, anchor: 1 }; // cached layout offsets (relative to the org container) for measureProgress
 
   // layout boxes relative to the org container, ignoring transforms (reveal / hover offsets)
   const rel = (el) => {
@@ -302,11 +316,15 @@ function initOrg() {
     });
     org.classList.toggle('is-row', row);
     org.classList.toggle('is-stacked', !row);
+    box = { pt: P.t, anchor: row ? Math.min(...N.map((n) => n.t)) : N[N.length - 1].cy };
+    painted = -1;
     paint();
     setHot(hot);
   }
 
   function paint() {
+    if (progress === painted) return;
+    painted = progress;
     for (const s of segs) {
       const local = clamp((progress - s.from) / Math.max(0.0001, s.to - s.from), 0, 1);
       s.el.style.strokeDashoffset = `${(s.len * (1 - local)).toFixed(1)}`;
@@ -324,11 +342,9 @@ function initOrg() {
     // starts when the parent enters; completes when the companies reach ~72% of the viewport
     const vh = window.innerHeight;
     const o = org.getBoundingClientRect().top;
-    const P = rel(parent);
-    const N = nodes.map(rel);
-    const top = o + P.t;
-    const anchor = o + (org.classList.contains('is-row') ? Math.min(...N.map((n) => n.t)) : N[N.length - 1].cy);
-    progress = clamp((vh * 0.88 - top) / Math.max(1, anchor - top + vh * 0.16), 0, 1);
+    const top = o + box.pt;
+    const anchor = o + box.anchor;
+    progress = Math.round(clamp((vh * 0.88 - top) / Math.max(1, anchor - top + vh * 0.16), 0, 1) * 1000) / 1000;
   }
 
   function setHot(key) {
@@ -389,28 +405,30 @@ function initSpy() {
   const arts = COS.map((c) => document.getElementById(c.slug)).filter(Boolean);
   if (!nav || !arts.length) return;
   const bars = new Map(COS.map((c) => [c.slug, $(`[data-spy="${c.slug}"] .subs-nav__bar > span`)]));
+  const sc = $('.subs-showcase');
+  const last = new Map();
   const update = rafThrottle(() => {
     const vh = window.innerHeight;
     const line = vh * 0.42;
+    // all layout reads first, then the writes (no forced reflow inside the loop)
+    const scR = sc ? sc.getBoundingClientRect() : null;
+    if (scR && (scR.bottom < -vh || scR.top > vh * 2) && currentSpy) return; // far away: nothing visible changes
+    const rects = arts.map((a) => a.getBoundingClientRect());
     let active = null;
-    for (const a of arts) {
-      const r = a.getBoundingClientRect();
-      const p = clamp((line - r.top) / Math.max(1, r.height), 0, 1);
-      bars.get(a.id)?.style.setProperty('--p', p.toFixed(3));
+    arts.forEach((a, i) => {
+      const r = rects[i];
+      const p = clamp((line - r.top) / Math.max(1, r.height), 0, 1).toFixed(3);
+      if (last.get(a.id) !== p) { last.set(a.id, p); bars.get(a.id)?.style.setProperty('--p', p); }
       // the last company whose top has crossed the reading line (gaps between cards keep the previous one)
       if (r.top <= line) active = a.id;
-    }
-    if (!active) active = arts[0].id;
-    setActive(active);
-    const sc = $('.subs-showcase');
-    if (sc) {
-      const r = sc.getBoundingClientRect();
-      nav.classList.toggle('is-in-view', r.top < vh * 0.6 && r.bottom > vh * 0.3);
-    }
+    });
+    setActive(active || arts[0].id);
+    if (scR) nav.classList.toggle('is-in-view', scR.top < vh * 0.6 && scR.bottom > vh * 0.3);
   });
   onScroll(update);
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
+  onLang(() => { last.clear(); update(); });
   update();
 }
 

@@ -71,6 +71,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
 
   /* ============================================================ rail */
   function renderRail() {
+    railScrolledTo = null;
     railList.innerHTML = entries.map((e) => {
       const thumb = store.get(THUMB_KEY(e.id), 'session');
       const name = t(e.name);
@@ -81,7 +82,18 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     }).join('');
     syncRail();
   }
+  let railScrolledTo = null;
+  function revealActiveRailItem() {
+    if (railScrolledTo === current || railList.scrollWidth <= railList.clientWidth + 2) return;
+    const b = railList.querySelector(`[data-model="${CSS.escape(current)}"]`);
+    if (!b) return;
+    railScrolledTo = current;
+    const lr = railList.getBoundingClientRect(), br = b.parentElement.getBoundingClientRect();
+    const delta = br.left + br.width / 2 - (lr.left + lr.width / 2);
+    railList.scrollBy({ left: delta, behavior: reduced ? 'auto' : 'smooth' }); // horizontal only: never scrolls the page
+  }
   function syncRail() {
+    requestAnimationFrame(revealActiveRailItem);
     $$('.studio-rail__item', railList).forEach((b) => {
       const id = b.dataset.model;
       b.setAttribute('aria-pressed', String(id === current));

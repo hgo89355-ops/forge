@@ -161,8 +161,10 @@ function readUrl() {
   if (cat && CATS.some((c) => c.id === cat)) state.category = cat;
   const sector = u.get('sector'); // cross-page contract: projects.html?sector=<SECTORS id>
   if (!cat && sector) {
-    const match = CATS.find((c) => c.sectors?.includes(sector));
-    if (match) state.category = match.id;
+    // Explicit editorial mapping first (PROJECT_CATEGORIES.sectors lists "business" under Airport too,
+    // which would send ?sector=business to a single airport); then fall back to the data's own lists.
+    const id = SECTOR_TO_CATEGORY[sector] || CATS.find((c) => c.sectors?.includes(sector))?.id;
+    if (id && CATS.some((c) => c.id === id)) state.category = id;
   }
   const region = u.get('region');
   if (region && REGIONS.some((r) => r.id === region)) state.region = region;

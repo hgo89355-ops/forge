@@ -160,7 +160,7 @@ html[lang='ar'] .subs-hero__logo-meta { letter-spacing: 0; font-size: .8125rem; 
 /* ==========================================================================
    02 · GROUP STRUCTURE (org chart)
    ========================================================================== */
-.subs-structure__hint { display: inline-flex; align-items: center; gap: .5rem; color: var(--fg-muted); }
+.subs-structure__hint { display: flex; align-items: center; gap: .5rem; margin-block-start: var(--space-4); color: var(--fg-muted); }
 .subs-structure__hint .icon { color: var(--accent-text); }
 
 .subs-org { position: relative; --spine: 28px; isolation: isolate; }
@@ -558,14 +558,16 @@ html[lang='ar'] .subs-co__tagline { letter-spacing: 0; text-transform: none; fon
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
-  gap: 1px;
+  gap: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--line);
+  background: var(--sand-50);
   overflow: hidden;
 }
 .subs-co__facts li {
-  background: var(--sand-50);
+  /* hairlines on each cell's top + left edge; the outer ones are clipped by the list (works in LTR and RTL,
+     and an incomplete last row simply continues the sand background) */
+  box-shadow: -1px 0 0 var(--line), 0 -1px 0 var(--line);
   position: relative;
   padding: 1rem 1.25rem 1rem 1.25rem;
   padding-inline-start: 2.25rem;
@@ -631,6 +633,9 @@ html.no-js .subs-co__work { display: none; }
 .subs-co__parallax picture, .subs-co__parallax img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: var(--pos, center); }
 .subs-co__compare { border-radius: var(--radius); }
 .subs-co__compare .compare__layer img { object-position: 24% 45%; }
+/* blueprint layer: a lighter line-drawing read (inverted luminance on navy + the teal grid) instead of a dim photo */
+.subs-co__compare .media--blueprint > picture img { filter: grayscale(1) contrast(1.45) brightness(1.2); opacity: .62; mix-blend-mode: screen; }
+.subs-co__compare .media--blueprint { background: #173650; }
 .subs-co__caption {
   display: inline-flex;
   align-items: center;
@@ -669,9 +674,9 @@ html[lang='ar'] .subs-co__caption { letter-spacing: 0; font-size: .8125rem; }
   pointer-events: none;
 }
 .subs-co__duo .subs-co__caption { grid-column: 1 / -1; grid-row: 4; }
-/* single framed image with an accent corner (Real Estate: gold) */
-.subs-co__framed { position: relative; }
-.subs-co__framed::before {
+/* single framed image with accent corners (Real Estate: gold) — drawn on a wrapper of the image only */
+.subs-co__corners { position: relative; }
+.subs-co__corners::before {
   content: '';
   position: absolute;
   inset-block-start: -14px;
@@ -682,10 +687,10 @@ html[lang='ar'] .subs-co__caption { letter-spacing: 0; font-size: .8125rem; }
   border-inline-end: 1px solid var(--co-accent);
   pointer-events: none;
 }
-.subs-co__framed::after {
+.subs-co__corners::after {
   content: '';
   position: absolute;
-  inset-block-end: calc(1.5em + .75rem - 14px);
+  inset-block-end: -14px;
   inset-inline-start: -14px;
   inline-size: 28%;
   block-size: 28%;
@@ -693,7 +698,8 @@ html[lang='ar'] .subs-co__caption { letter-spacing: 0; font-size: .8125rem; }
   border-inline-start: 1px solid var(--co-accent);
   pointer-events: none;
 }
-@media (max-width: 639.98px) { .subs-co__framed::before, .subs-co__framed::after, .subs-co__duo::before { display: none; } }
+@media (max-width: 639.98px) { .subs-co__corners::before, .subs-co__corners::after, .subs-co__duo::before { display: none; } }
+.subs-co__framed .subs-co__caption { margin-block-start: .5rem; }
 @media (max-width: 1199.98px) { .subs-co__duo::before { inset-block-start: -10px; inset-inline-start: -10px; } }
 
 .subs-co__text { display: grid; gap: var(--space-5); align-content: start; min-inline-size: 0; }
@@ -1090,14 +1096,25 @@ html[lang='ar'] .subs-result__link { letter-spacing: 0; font-size: .875rem; }
 /* ==========================================================================
    06 · CTA BAND
    ========================================================================== */
-.subs-cta__title { font-size: var(--fs-h2); max-inline-size: 20ch; }
-.subs-cta .cta-band__bg img { opacity: .5; }
+.subs-cta__title { font-size: var(--fs-h2); max-inline-size: 22ch; }
+/* background: mosaic of six real portfolio projects, darkened towards the copy */
+.subs-cta__mosaic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 1px; background: var(--navy-950); }
+.subs-cta__tile { position: relative; overflow: hidden; min-block-size: 0; }
+.subs-cta .subs-cta__mosaic picture, .subs-cta .subs-cta__mosaic img { inline-size: 100%; block-size: 100%; object-fit: cover; }
+.subs-cta .subs-cta__mosaic picture { opacity: 1; filter: none; }
+.subs-cta .subs-cta__mosaic img { opacity: .55; filter: grayscale(.45) saturate(.9); transform: scale(1.06); transition: transform 2.4s var(--ease-out), opacity 1.2s var(--ease-soft); }
+.subs-cta:hover .subs-cta__mosaic img { transform: scale(1); }
+.subs-cta.subs-cta::before { background: linear-gradient(90deg, rgba(11, 22, 32, .96) 0%, rgba(11, 22, 32, .82) 45%, rgba(11, 22, 32, .45) 100%); }
+[dir='rtl'] .subs-cta.subs-cta::before { background: linear-gradient(-90deg, rgba(11, 22, 32, .96) 0%, rgba(11, 22, 32, .82) 45%, rgba(11, 22, 32, .45) 100%); }
+@media (min-width: 1024px) { .subs-cta__mosaic { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (max-width: 639.98px) { .subs-cta.subs-cta::before { background: linear-gradient(0deg, rgba(11, 22, 32, .94) 0%, rgba(11, 22, 32, .78) 100%); } }
 
 /* ==========================================================================
    Reduced motion
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .subs-hero__strip img, .subs-caps__img, .subs-caps__img img, .subs-org__junction, .subs-co::before { transition: none !important; }
+  .subs-hero__strip img, .subs-caps__img, .subs-caps__img img, .subs-org__junction, .subs-co::before, .subs-cta .subs-cta__mosaic img { transition: none !important; }
+  .subs-cta .subs-cta__mosaic img { transform: none; }
   .subs-hero__strip img { transform: none; }
   .subs-co.is-highlight, .subs-nav__link.is-highlight, .subs-finder__step.is-entering, .subs-finder__result.is-entering { animation: none; }
 }

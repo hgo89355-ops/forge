@@ -295,7 +295,7 @@
                 <span class="subs-org__node-top"><span class="subs-org__num num">04</span><span class="subs-org__dot" aria-hidden="true"></span></span>
                 <span class="subs-org__logo"><img src="assets/img/logos/elite-education-navy.png" alt="" width="508" height="498" loading="lazy" decoding="async"></span>
                 <span class="subs-org__name" data-sub-field="name">Elite Education Group</span>
-                <span class="subs-org__short" data-sub-field="short">The group’s education arm.</span>
+                <span class="subs-org__short" data-sub-field="tagline">The group’s education arm</span>
                 <span class="subs-org__cta"><span data-ar="عرض الملف">View profile</span><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-down"></use></svg></span>
               </a>
             </li>
@@ -460,19 +460,19 @@
               </ul>
               <div class="subs-co__body">
                 <figure class="subs-co__media subs-co__framed" data-reveal="up">
-                  <div class="media subs-co__frame" data-kenburns><picture><source type="image/webp" srcset="assets/img/sub-real-estate-office.webp"><img src="assets/img/sub-real-estate-office.jpg" alt="Bright modern office interior with floor-to-ceiling glazing" data-ar-alt="مساحة مكتبية حديثة ومضيئة بواجهات زجاجية من الأرض إلى السقف" width="624" height="482" loading="lazy" decoding="async" style="--pos:50% 55%"></picture></div>
+                  <div class="subs-co__corners"><div class="media subs-co__frame" data-kenburns><picture><source type="image/webp" srcset="assets/img/sub-real-estate-office.webp"><img src="assets/img/sub-real-estate-office.jpg" alt="Bright modern office interior with floor-to-ceiling glazing" data-ar-alt="مساحة مكتبية حديثة ومضيئة بواجهات زجاجية من الأرض إلى السقف" width="624" height="482" loading="lazy" decoding="async" style="--pos:50% 55%"></picture></div></div>
                   <figcaption class="subs-co__caption"><svg class="icon icon--xs" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#image"></use></svg><span data-ar="صورة تعبيرية — مساحة مكتبية">Representative imagery — office interior</span></figcaption>
                 </figure>
                 <div class="subs-co__text">
-                  <!-- TODO(content): Real Estate copy is verbatim from the client’s subsidiary page; focus areas in site-data.js are generic (residential/commercial/asset management) — client to confirm vs. “leasing &amp; property management”. -->
+                  <!-- TODO(content): Real Estate copy is verbatim from the client’s subsidiary page. Focus areas are taken from that copy (office leasing / property management / multi-functional buildings) and override the generic site-data.js list until the data is updated — client to confirm. -->
                   <div class="subs-co__about" data-sub-about>
                     <p class="subs-co__lede">Established in 2002 in Cairo, Egypt, MOBCO Real Estate Development specializes in leasing and property management for multi-functional buildings. Our flagship project, Mivida Business Park, B1, features modern office spaces designed with a common core that provides essential services, ensuring maximum efficiency and flexibility for our clients. This design allows us to tailor office environments to meet the unique needs of each tenant.</p>
                   </div>
                   <h4 class="subs-co__focus-title" data-ar="مجالات التركيز">Focus areas</h4>
                   <ul class="subs-co__focus" role="list" data-sub-focus>
-                    <li><span class="subs-co__focus-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#house"></use></svg></span><span>Residential development</span></li>
-                    <li><span class="subs-co__focus-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building"></use></svg></span><span>Commercial assets</span></li>
-                    <li><span class="subs-co__focus-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chart-line"></use></svg></span><span>Asset management</span></li>
+                    <li><span class="subs-co__focus-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#briefcase"></use></svg></span><span>Office leasing</span></li>
+                    <li><span class="subs-co__focus-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#clipboard-check"></use></svg></span><span>Property management</span></li>
+                    <li><span class="subs-co__focus-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building"></use></svg></span><span>Multi-functional buildings</span></li>
                   </ul>
                   <div class="subs-co__actions">
                     <a class="btn btn--dark" href="contact.html?company=mobco-real-estate#inquiry"><span data-ar="استفسر عن التأجير">Enquire about leasing</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
@@ -490,7 +490,7 @@
                 <div class="subs-co__titles">
                   <p class="eyebrow"><span class="eyebrow__num num">04</span><span data-ar="التعليم">Education</span></p>
                   <h3 class="subs-co__name" id="co-education-title" data-sub-field="name">Elite Education Group</h3>
-                  <p class="subs-co__tagline" data-sub-field="short">The group’s education arm.</p>
+                  <p class="subs-co__tagline" data-sub-field="tagline">The group’s education arm</p>
                 </div>
               </header>
               <div class="subs-co__body">
@@ -722,8 +722,14 @@
          06 · CTA BAND — portfolio (the footer already carries "Start a project")
          ===================================================================== -->
     <section class="cta-band subs-cta" aria-labelledby="subs-cta-title">
-      <div class="cta-band__bg" data-kenburns>
-        <picture><source type="image/webp" srcset="assets/img/victoria-101.webp"><img src="assets/img/victoria-101.jpg" alt="" width="790" height="710" loading="lazy" decoding="async" style="--pos:50% 40%"></picture>
+      <!-- Background: a mosaic of real portfolio projects (decorative, alt="") -->
+      <div class="cta-band__bg subs-cta__mosaic" aria-hidden="true">
+          <span class="subs-cta__tile"><picture><source type="image/webp" srcset="assets/img/thumbs/kaust-hotel.webp"><img src="assets/img/thumbs/kaust-hotel.jpg" alt="" width="480" height="323" loading="lazy" decoding="async"></picture></span>
+          <span class="subs-cta__tile"><picture><source type="image/webp" srcset="assets/img/thumbs/mawten-masar-tower.webp"><img src="assets/img/thumbs/mawten-masar-tower.jpg" alt="" width="480" height="323" loading="lazy" decoding="async"></picture></span>
+          <span class="subs-cta__tile"><picture><source type="image/webp" srcset="assets/img/thumbs/axis-olaya-business-tower.webp"><img src="assets/img/thumbs/axis-olaya-business-tower.jpg" alt="" width="480" height="301" loading="lazy" decoding="async"></picture></span>
+          <span class="subs-cta__tile"><picture><source type="image/webp" srcset="assets/img/thumbs/sulaiman-fakeeh-hospital.webp"><img src="assets/img/thumbs/sulaiman-fakeeh-hospital.jpg" alt="" width="480" height="301" loading="lazy" decoding="async"></picture></span>
+          <span class="subs-cta__tile"><picture><source type="image/webp" srcset="assets/img/thumbs/bank-albilad-head-office.webp"><img src="assets/img/thumbs/bank-albilad-head-office.jpg" alt="" width="480" height="323" loading="lazy" decoding="async"></picture></span>
+          <span class="subs-cta__tile"><picture><source type="image/webp" srcset="assets/img/thumbs/tbc-schools-group-12.webp"><img src="assets/img/thumbs/tbc-schools-group-12.jpg" alt="" width="480" height="301" loading="lazy" decoding="async"></picture></span>
       </div>
       <div class="container cta-band__inner">
         <div>

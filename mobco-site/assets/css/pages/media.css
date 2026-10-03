@@ -261,6 +261,8 @@ html[lang='ar'] .mgal-toolbar__status { letter-spacing: 0; text-transform: none;
   }
 }
 
+/* on very wide screens the gallery opens up to the wide container (aligned with the header) */
+@media (min-width: 1760px) { .mgal-section > .container { max-width: calc(var(--container-wide) + var(--gutter) * 2); } }
 .mgal { display: grid; gap: var(--gap, 16px); transition: opacity 220ms var(--ease-soft); }
 .mgal.is-filtering { opacity: 0; }
 .mgal__row { display: flex; gap: var(--gap, 16px); block-size: var(--h, 300px); }

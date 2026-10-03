@@ -438,6 +438,7 @@ function initGallery() {
   const items = buildItems();
   let filter = 'all';
   let shown = PAGE;
+  let displayed = 0;
   let lastW = 0;
 
   // filter chips from data: categories that have images, then regions
@@ -523,16 +524,27 @@ function initGallery() {
 
   const render = ({ animateFrom = -1 } = {}) => {
     const all = filtered();
-    const list = all.slice(0, shown);
     const W = mount.clientWidth;
     const narrow = W < 640;
-    const { rows, gap, target } = layout(list, W);
+    // lay out the whole filtered set, then show whole rows only (a page never ends on an orphan tile)
+    const { rows: allRows, gap, target } = layout(all, W);
+    const cut = (want) => {
+      let acc = 0, k = 0;
+      while (k < allRows.length && acc < want) acc += allRows[k++].row.length;
+      if (all.length - acc <= 4) return { k: allRows.length, acc: all.length };
+      return { k, acc };
+    };
+    const { k: nRows, acc: count } = cut(shown);
+    const rows = allRows.slice(0, nRows);
+    const list = all.slice(0, count);
+    displayed = count;
     lastW = W;
     let n = 0;
     mount.style.setProperty('--gap', `${gap}px`);
     mount.innerHTML = rows.map(({ row, sum, full }) => {
       const h = (W - gap * (row.length - 1)) / sum;
-      const height = full ? h : Math.min(h, target);
+      // a nearly full last row is justified too; only a short one keeps the target height (ragged end)
+      const height = full || h <= target * 1.3 ? h : Math.min(h, target);
       const open = !full && height < h - 0.5;
       return `<div class="mgal__row${open ? ' mgal__row--open' : ''}" role="none" style="--h:${height.toFixed(2)}px">${row.map((x) => tile(x, n++, narrow)).join('')}</div>`;
     }).join('');
@@ -540,7 +552,7 @@ function initGallery() {
     status.textContent = fmt(t(G.status), { n: list.length, total: all.length });
     const rest = all.length - list.length;
     moreWrap.hidden = rest <= 0;
-    moreLabel.textContent = fmt(t(G.more), { n: nextStep(rest) });
+    moreLabel.textContent = fmt(t(G.more), { n: cut(count + nextStep(rest)).acc - count });
     if (animateFrom >= 0 && !reduced) {
       $$('.mgal__item', mount).slice(animateFrom).forEach((el, i) => {
         el.animate([{ opacity: 0, transform: 'translate3d(0, 24px, 0) scale(.98)' }, { opacity: 1, transform: 'none' }],
@@ -562,8 +574,8 @@ function initGallery() {
     busy = setTimeout(() => { render({ animateFrom: 0 }); mount.classList.remove('is-filtering'); }, 220);
   });
   moreBtn?.addEventListener('click', () => {
-    const from = Math.min(shown, filtered().length);
-    shown += nextStep(filtered().length - shown);
+    const from = displayed;
+    shown = displayed + nextStep(filtered().length - displayed);
     render({ animateFrom: from });
     // keep keyboard users in place: focus the first newly revealed image
     $$('.mgal__open', mount)[from]?.focus({ preventScroll: true });
