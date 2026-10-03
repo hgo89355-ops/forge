@@ -154,6 +154,13 @@ function cardPicture(p, { sizes, eager = false, alt = '' } = {}) {
    State, URL & filtering
    ====================================================================== */
 const state = { category: 'all', region: 'all', q: '', sort: 'featured', view: 'grid', limit: PAGE };
+/** Legacy ?sector=<SECTORS id> (header / footer / home links) → the client's project tab that best covers it. */
+const SECTOR_TO_CATEGORY = {
+  skyscrapers: 'mixed-use-admin', malls: 'mixed-use-admin', business: 'mixed-use-admin', government: 'mixed-use-admin',
+  residential: 'residential', education: 'education', hotels: 'hospitality', medical: 'medical',
+};
+/** True when the page was opened with explorer filters in the URL (→ land on the explorer, not the hero). */
+const hasFilterParams = () => ['category', 'sector', 'region', 'view', 'q', 'sort'].some((k) => new URLSearchParams(location.search).has(k));
 
 function readUrl() {
   const u = new URLSearchParams(location.search);
@@ -1521,6 +1528,10 @@ function init() {
   onLang(onLanguage);
   const slug = slugFromHash();
   if (slug) whenLoaded().then(() => openProject(slug));
+  else if (E.explorer && hasFilterParams() && !location.hash) {
+    // Arriving from "projects.html?sector=hotels" etc.: show the filtered results, not the top of the hero.
+    whenLoaded().then(() => requestAnimationFrame(() => scrollTo(E.explorer, { immediate: true })));
+  }
 }
 
 init();

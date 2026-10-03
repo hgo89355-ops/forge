@@ -844,6 +844,7 @@ html[lang='ar'] .sd-seg__label { letter-spacing: 0; text-transform: none; font-s
 .sd-plan__hatch { stroke: rgba(255, 255, 255, .35); stroke-width: 1.2; }
 .sd-plan__part rect.sd-plan__fill-hatch { fill: url(#sd-hatch); stroke: none; }
 .sd-plan__wc { font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .1em; fill: rgba(255, 255, 255, .55); text-anchor: middle; pointer-events: none; }
+html[lang='ar'] .sd-plan__wc { font-family: var(--font-arabic); font-size: 14px; letter-spacing: 0; font-weight: 600; }
 .sd-plan__dim { stroke: rgba(255, 255, 255, .3); stroke-width: 1; fill: none; }
 .sd-plan__core-label { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: .3em; fill: var(--sd-accent); text-anchor: middle; }
 html[lang='ar'] .sd-plan__core-label { letter-spacing: 0; font-size: 15px; }
