@@ -382,8 +382,11 @@
           </div>
           <div class="col-lg-5 start-lg-8 ha-about__copy">
             <p class="eyebrow" data-reveal="fade" data-ar="من نحن">Who we are</p>
-            <h2 class="h2 ha-about__title" id="ha-about-title" data-split data-ar="نرسم الأفق ونرتقي بالمعايير">Shaping skylines, elevating standards</h2>
-            <p class="body-lg ha-about__body" data-reveal="up" data-reveal-delay="150" data-ar="تُعدّ مجموعة موبكو (MOBCO) اسمًا رائدًا في مجالات الإنشاءات العقارية والتطوير وإدارة المشاريع، إذ تخدم عملاءها عبر ثلاث قارات منذ أكثر من عقدين. وبفضل نهجها المبتكر والتزامها بالجودة، نجحت المجموعة في تسليم مشاريع بارزة تتنوّع بين ناطحات السحاب والمراكز التجارية، والمجمّعات السكنية، والمؤسسات الحكومية والتعليمية، والفنادق الفاخرة. اكتشف كيف تضع مجموعة موبكو معايير التميّز في هذا القطاع.">MOBCO Group is a leading name in real estate construction, development, and project management, serving clients across three continents for over two decades. Renowned for its innovative approach and commitment to quality, MOBCO Group has successfully delivered iconic projects ranging from skyscrapers and commercial malls to residential compounds, governmental and educational institutions, and luxury hotels. Explore how MOBCO Group sets the standard for excellence in the industry.</p>
+            <h2 class="h2 ha-about__title" id="ha-about-title" data-split data-ar-html="نرسم الأفق &lt;em&gt;ونرتقي بالمعايير&lt;/em&gt;">Shaping skylines, <em>elevating standards</em></h2>
+            <!-- Verbatim "Who we are" paragraph, split across the page: sentences 1 + 3 here; sentence 2 (the sector list)
+                 frames the Sectors section below (#hb-sectors), so the page never repeats it. -->
+            <p class="ha-about__lead" data-reveal="up" data-reveal-delay="150" data-ar="تُعدّ مجموعة موبكو (MOBCO) اسمًا رائدًا في مجالات الإنشاءات العقارية والتطوير وإدارة المشاريع، إذ تخدم عملاءها عبر ثلاث قارات منذ أكثر من عقدين.">MOBCO Group is a leading name in real estate construction, development, and project management, serving clients across three continents for over two decades.</p>
+            <p class="ha-about__body" data-reveal="up" data-reveal-delay="220" data-ar="اكتشف كيف تضع مجموعة موبكو معايير التميّز في هذا القطاع.">Explore how MOBCO Group sets the standard for excellence in the industry.</p>
             <dl class="ha-about__facts" data-reveal-stagger="90">
               <div class="ha-about__fact">
                 <dt data-ar="التأسيس">Founded</dt>
@@ -408,13 +411,13 @@
 
     <!-- =====================================================================
          03 · SUBDIVISIONS — the four subsidiary logos as interactive tiles
-         Descriptions = SUBSIDIARIES[].short (generic; client to confirm — see content notes)
+         Descriptions = SUBSIDIARIES[].short (verbatim from the client’s subsidiary pages; Elite Education generic — see content notes)
          ===================================================================== -->
     <section class="section section--dark has-gridlines ha-subs" id="ha-subsidiaries" aria-labelledby="ha-subs-title">
       <div class="container">
         <header class="section-header section-header--split">
           <p class="eyebrow" data-reveal="fade" data-ar="شركات المجموعة">The Group</p>
-          <h2 class="h2" id="ha-subs-title" data-split data-ar="شركات موبكو التابعة">MOBCO’s subdivisions</h2>
+          <h2 class="h2" id="ha-subs-title" data-split data-ar-html="شركات موبكو &lt;em&gt;التابعة&lt;/em&gt;">MOBCO’s <em>subdivisions</em></h2>
           <div class="section-header__aside" data-reveal="up" data-reveal-delay="150">
             <p class="lead" data-ar="مجموعةٌ خاصة متكاملة رأسيًا، تتخصص في الإنشاءات والتطوير العقاري والتعليم.">A privately owned, vertically integrated group specialising in construction, real estate development and education.</p>
             <a class="link-arrow" href="subsidiaries.html"><span data-ar="تعرّف على شركات المجموعة">Explore the group</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span></a>
@@ -428,7 +431,7 @@
               <span class="ha-sub__logo"><img src="assets/img/logos/mobco-construction-white.png" alt="" width="675" height="497" loading="lazy" decoding="async"></span>
               <span class="ha-sub__body">
                 <span class="ha-sub__name" data-ar="موبكو للإنشاءات">MOBCO Construction</span>
-                <span class="ha-sub__reveal"><span class="ha-sub__text" data-ar="المقاولات وتنفيذ الإنشاءات عبر مختلف قطاعات المجموعة.">Contracting and construction delivery across the group’s sectors.</span></span>
+                <span class="ha-sub__reveal"><span class="ha-sub__text" data-ar="الذراع الإنشائية لمجموعة موبكو، تأسّست عام 2001، وهي رائدة معروفة بتنفيذ مشاريع مبتكرة عالية الجودة.">The construction arm of MOBCO Group, founded in 2001 — a recognized leader known for delivering innovative, high-quality projects.</span></span>
               </span>
             </a>
           </li>
@@ -438,7 +441,7 @@
               <span class="ha-sub__logo"><img src="assets/img/logos/mobco-developments-white.png" alt="" width="638" height="209" loading="lazy" decoding="async"></span>
               <span class="ha-sub__body">
                 <span class="ha-sub__name" data-ar="موبكو للتطوير">MOBCO Developments</span>
-                <span class="ha-sub__reveal"><span class="ha-sub__text" data-ar="تطوير المجتمعات والوجهات متعددة الاستخدامات.">Developing communities and mixed-use destinations.</span></span>
+                <span class="ha-sub__reveal"><span class="ha-sub__text" data-ar="ذراع التطوير في مجموعة موبكو — دخول استراتيجي إلى السوق المصرية، وتحويل مواقع متميّزة في كندا ومصر.">MOBCO Group’s development arm — a strategic entry into the Egyptian market, transforming prime locations in Canada and Egypt.</span></span>
               </span>
             </a>
           </li>
@@ -448,7 +451,7 @@
               <span class="ha-sub__logo"><span class="ha-sub__plate"><img src="assets/img/logos/mobco-real-estate.png" alt="" width="652" height="147" loading="lazy" decoding="async"></span></span>
               <span class="ha-sub__body">
                 <span class="ha-sub__name" data-ar="موبكو للتطوير العقاري">MOBCO Real Estate Development</span>
-                <span class="ha-sub__reveal"><span class="ha-sub__text" data-ar="التطوير العقاري من الأرض إلى القيمة المستدامة.">Real estate development, from land to lasting value.</span></span>
+                <span class="ha-sub__reveal"><span class="ha-sub__text" data-ar="تأسّست عام 2002 في القاهرة — تأجير وإدارة العقارات للمباني متعددة الوظائف، ومنها مجمّع ميفيدا للأعمال، المبنى B1.">Established in 2002 in Cairo — leasing and property management for multi-functional buildings, including Mivida Business Park, B1.</span></span>
               </span>
             </a>
           </li>
@@ -554,15 +557,15 @@
       <div class="ha-stats__bg parallax-frame" aria-hidden="true">
         <div data-parallax="0.14">
           <picture>
-            <source type="image/webp" srcset="assets/img/ksa-landmark.webp">
-            <img src="assets/img/ksa-landmark.jpg" alt="" width="790" height="710" loading="lazy" decoding="async" style="--pos: 50% 35%">
+            <source type="image/webp" srcset="assets/img/maad-towers-voco.webp">
+            <img src="assets/img/maad-towers-voco.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos: 50% 40%">
           </picture>
         </div>
       </div>
       <div class="container ha-stats__inner">
         <header class="section-header section-header--split">
           <p class="eyebrow" data-reveal="fade" data-ar="موبكو بالأرقام">MOBCO in numbers</p>
-          <h2 class="h2" id="ha-stats-title" data-split data-ar="أكثر من عقدين. ثلاث قارات.">Two decades. Three continents.</h2>
+          <h2 class="h2" id="ha-stats-title" data-split data-ar-html="أكثر من عقدين. &lt;em&gt;ثلاث قارات.&lt;/em&gt;">Two decades. <em>Three continents.</em></h2>
           <div class="section-header__aside" data-reveal="up" data-reveal-delay="150">
             <p class="lead" data-ar="مشاريع تُسلَّم في مواعيدها، وضمن ميزانياتها، وبأعلى معايير الجودة — لأكثر من عقدين.">Projects delivered on time, within budget and to the highest quality standards — for over two decades.</p>
             <a class="link-arrow" href="about.html"><span data-ar="المزيد عنّا">More about us</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span></a>

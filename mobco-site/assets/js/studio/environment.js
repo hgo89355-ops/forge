@@ -252,9 +252,9 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     skyUniforms.uSunGlow.value = moon ? 0 : 0.35 + 0.65 * day;
     hemi.color.copy(skyUniforms.uTop.value).lerp(tmpB.set('#ffffff'), 0.45);
     hemi.groundColor.set(night > 0.5 ? '#1c2630' : '#b7ad9f');
-    hemi.intensity = 0.16 + 0.5 * day;
-    scene.environmentIntensity = 0.22 + 0.6 * day;
-    if (renderer) renderer.toneMappingExposure = 0.9 + 0.22 * night;
+    hemi.intensity = 0.07 + 0.59 * day;
+    scene.environmentIntensity = 0.07 + 0.75 * day;
+    if (renderer) renderer.toneMappingExposure = 0.9 + 0.1 * night;
     contactMat.opacity = 0.14 + 0.2 * day;
     current = { night, day, elevation, azimuth };
     return current;

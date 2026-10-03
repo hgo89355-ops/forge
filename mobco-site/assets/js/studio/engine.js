@@ -439,6 +439,17 @@ export function createStudio(container, options = {}) {
     if (!model) return;
     const e = easeOutCubic(clamp(state.explode, 0, 1));
     model.floors.forEach((f) => { f.group.position.y = f.baseY + f.level * model.gap * e; });
+    // keep the growing stack in frame: lift the orbit target and ease the camera back a little
+    const prev = model.lastEase || 0;
+    if (Math.abs(e - prev) > 1e-5 && !tween) {
+      const lift = model.maxLevel * model.gap * 0.42 * (e - prev);
+      controls.target.y += lift;
+      camera.position.y += lift;
+      const off = camera.position.clone().sub(controls.target).multiplyScalar((1 + 0.3 * e) / (1 + 0.3 * prev));
+      camera.position.copy(controls.target).add(off);
+      controls.update(0);
+    }
+    model.lastEase = e;
     updateBoxes();
   }
   function setExplode(v, { instant = false } = {}) {
@@ -651,7 +662,8 @@ export function createStudio(container, options = {}) {
   }
 
   function zoom(factor) {
-    if (factor > 1) controls.dollyOut(factor); else controls.dollyIn(1 / factor);
+    // factor < 1 → closer. OrbitControls: dollyIn(s<1) shrinks the distance, dollyOut(s<1) grows it.
+    if (factor < 1) controls.dollyIn(factor); else controls.dollyOut(1 / factor);
     controls.update(0);
     invalidate();
   }

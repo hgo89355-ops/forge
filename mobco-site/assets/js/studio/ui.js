@@ -111,7 +111,8 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const project = projectFor(id, meta);
     const name = nameOf(id);
     const tagline = t(meta?.tagline || entry.tagline || '');
-    let desc = (meta?.descriptors || []).filter((d) => d && d.label && d.value);
+    // the "illustrative" disclaimer has its own line below, so a model's own "Model: illustrative…" row is redundant
+    let desc = (meta?.descriptors || []).filter((d) => d && d.label && d.value && !/^model$/i.test(String(d.label.en || '').trim()));
     if (!desc.length && project) {
       desc = [
         { label: { en: 'Typology', ar: 'النمط' }, value: project.typology },
@@ -555,8 +556,10 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   }
   function placeHotcard() {
     if (!hotcard) return;
-    const p = lastFrameHot.find((x) => x.id === openHot);
-    if (!p) return;
+    const h = hotspots.find((x) => x.id === openHot);
+    const p = h && h.last.x >= 0 ? h.last : null;
+    if (!p) { hotcard.style.visibility = 'hidden'; engine?.invalidate(); return; }
+    hotcard.style.visibility = '';
     const vw = viewport.clientWidth, vh = viewport.clientHeight;
     const cw = hotcard.offsetWidth, ch = hotcard.offsetHeight;
     const rtl = getLang() === 'ar';

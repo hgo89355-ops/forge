@@ -1264,7 +1264,7 @@ html[lang='ar'] .pjv-pg__dir { font-size: .75rem; }
 @media (max-width: 767.98px) {
   .pj-cat { min-block-size: 150px; padding: 1rem; gap: var(--space-2); }
   .pj-cat__icon { inline-size: 44px; block-size: 44px; }
-  .pj-cat__name { margin-block-start: var(--space-4); font-size: var(--fs-sm); }
+  .pj-cat__name { margin-block-start: var(--space-4); font-size: .8125rem; letter-spacing: .02em; overflow-wrap: normal; hyphens: manual; }
   .pj-cat__count { font-size: var(--fs-xs); }
 }
 .pj-cat--all { background: var(--navy-900); color: var(--white); }

@@ -245,10 +245,10 @@ html[lang='ar'] .sd-quote__cite { letter-spacing: 0; font-size: .875rem; }
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   border-block: var(--hairline);
 }
-@media (min-width: 640px) { .sd-facts__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1023.98px) { .sd-fact:last-child:nth-child(odd) { grid-column: 1 / -1; } }
 @media (min-width: 1024px) { .sd-facts__list { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); } }
 .sd-fact {
   position: relative;
@@ -274,8 +274,13 @@ html[lang='ar'] .sd-quote__cite { letter-spacing: 0; font-size: .875rem; }
 }
 [dir='rtl'] .sd-fact::before { transform-origin: right; }
 .sd-fact.is-revealed::before, html.no-js .sd-fact::before { transform: scaleX(1); }
-@media (min-width: 640px) {
-  .sd-fact:nth-child(odd) { border-inline-end: var(--hairline); }
+.sd-fact:nth-child(odd):not(:last-child) { border-inline-end: var(--hairline); }
+@media (max-width: 639.98px) {
+  .sd-fact { padding: var(--space-5) var(--space-4); gap: var(--space-3); }
+  .sd-fact:nth-child(odd) { padding-inline-start: 0; }
+  .sd-fact__icon { inline-size: 40px; block-size: 40px; }
+  .sd-fact__value { font-size: clamp(2.25rem, 1.6rem + 3vw, 2.75rem); }
+  .sd-fact__value--text { font-size: 1.125rem; }
 }
 @media (min-width: 1024px) {
   .sd-fact { border-block-end: 0; border-inline-end: var(--hairline); }
@@ -860,6 +865,7 @@ html[lang='ar'] .sd-lease__label { font-size: .875rem; }
 html[lang='ar'] .sd-cta .cta-band__title { line-height: 1.3; }
 
 /* 10. Other MOBCO companies ============================================== */
+@media (max-width: 767.98px) { .sd-others { --sd-co-ratio: 16 / 7; } }
 .sd-others__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 768px) { .sd-others__list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .sd-co {
@@ -872,7 +878,7 @@ html[lang='ar'] .sd-cta .cta-band__title { line-height: 1.3; }
   overflow: hidden;
   transition: box-shadow var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out), border-color var(--dur);
 }
-.sd-co__visual { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--white); border-block-end: var(--hairline); }
+.sd-co__visual { position: relative; aspect-ratio: var(--sd-co-ratio, 16 / 10); overflow: hidden; background: var(--white); border-block-end: var(--hairline); }
 .sd-co__bg { position: absolute; inset: 0; opacity: 0; transition: opacity var(--dur-slow) var(--ease-soft); background: var(--navy-900); }
 .sd-co__bg picture, .sd-co__bg img { inline-size: 100%; block-size: 100%; object-fit: cover; }
 .sd-co__bg img { transform: scale(1.12); transition: transform 1.4s var(--ease-out); filter: saturate(.85); }

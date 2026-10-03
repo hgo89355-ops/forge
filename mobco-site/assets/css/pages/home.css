@@ -439,7 +439,17 @@ html[lang='ar'] .ha-about__badge-k { letter-spacing: 0; text-transform: none; fo
 .ha-about__copy { display: grid; gap: var(--space-6); justify-items: start; }
 .ha-about__title { max-inline-size: 14ch; }
 html[lang='ar'] .ha-about__title { max-inline-size: 16ch; }
-.ha-about__body { color: var(--fg-muted); line-height: 1.8; }
+.ha-about__lead {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1rem + .9vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--fg-strong);
+  max-inline-size: 30ch;
+  text-wrap: pretty;
+}
+html[lang='ar'] .ha-about__lead { line-height: 1.75; max-inline-size: 32ch; }
+.ha-about__body { color: var(--fg-muted); line-height: 1.8; font-size: var(--fs-md); margin-block-start: calc(var(--space-2) * -1); }
 .ha-about__facts { display: grid; inline-size: 100%; margin-block: var(--space-2); }
 .ha-about__fact {
   display: grid;
@@ -838,6 +848,21 @@ html[lang='ar'] .ha-steps__node { letter-spacing: 0; text-transform: none; font-
   .ha-stats__grid .stat { padding-inline: clamp(1.25rem, .5rem + 1.5vw, 2.5rem); }
   .ha-stats__grid .stat:first-child { padding-inline-start: 0; }
 }
+
+/* -------------------------------------------------------------------------
+   Page integration (Part A + Part B read as one experience)
+   ------------------------------------------------------------------------- */
+/* Split section headers: keep eyebrow + headline together; the aside bottom-aligns beside them.
+   (Core layout puts the eyebrow on its own row, so a tall aside pushed the headline away from its eyebrow.) */
+@media (min-width: 1024px) {
+  body[data-page='home'] .section-header--split { grid-template-rows: minmax(0, 1fr) auto; row-gap: var(--space-5); }
+  body[data-page='home'] .section-header--split > .eyebrow { grid-column: 1; grid-row: 1; align-self: end; }
+  body[data-page='home'] .section-header--split > :is(h2, .h2) { grid-column: 1; grid-row: 2; }
+  body[data-page='home'] .section-header--split > .section-header__aside { grid-column: 2; grid-row: 1 / span 2; align-self: end; }
+}
+/* One closing CTA: the home page ends with its own "Have a project in mind?" panel (#hb-cta), so the footer's
+   generic "Let's build what's next" block is hidden here (local stand-in for a shared body flag — docs/requests/home.md). */
+body[data-page='home'] .site-footer__cta { display: none; }
 
 /* -------------------------------------------------------------------------
    Reduced motion & QA: no Ken Burns, no wipes, no split motion, steps stacked

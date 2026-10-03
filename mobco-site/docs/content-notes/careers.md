@@ -67,3 +67,18 @@ The site is static, so **the application form does not upload anything**:
 - No social-media links, testimonials, employee names/photos, benefits packages, salaries or certifications are shown.
 - TODO(content): real photography of MOBCO people/sites would greatly strengthen this page (currently only project
   renders exist — used in the hero "skyline", the Why image and as textures).
+
+## 7. QA review (fresh-eyes pass) — changes
+- Benefit panels: the expanding-panel layout now starts at **1200px** (it was 1024px). Below that, the panels show as a
+  2-column grid (640–1199px) or stacked cards. At 1024px the collapsed panels were too narrow, and the numerals ran into the icons. Titles
+  now share one baseline; the supporting copy sits at the bottom of the panel.
+- Form: the phone + LinkedIn row uses a container query on the form card. It splits into two columns only when the
+  card is ≥700px wide, which fixes the truncated "Country code" and "Phone number" labels at 1024–1199px.
+- Map: removed the meaningless "02" label from the map header. Office tags now slide to stay inside the frame on narrow
+  maps; the pin stays on the city.
+- Hiring journey: step columns are top-aligned, so titles no longer drift when one step's text wraps to more lines (seen in AR).
+- Disciplines (mobile): compact cards (no fixed 300px height) to cut scrolling.
+- Drawer: shorter "Apply now" label under 480px (the long label was clipped). A polite live region announces the
+  discipline when moving with prev/next. The placeholder heading has its Arabic text.
+- FAQ: "Still have a question?" now follows the questions on small screens (three-area grid on desktop).
+- Hero: the height cap is raised to 1200px, so 1080p screens get a full-bleed hero. Buttons go full width under 480px.

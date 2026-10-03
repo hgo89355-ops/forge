@@ -411,7 +411,7 @@ function buildItems() {
   // companies' photos are woven into the second half of the full views
   const primaries = prim.concat(primRest);
   extras.forEach((x, i) => primaries.splice(Math.min(primaries.length, prim.length + 2 + i * 4), 0, x));
-  // rhythm: four full views, then an art-directed detail — never one from a project seen in the last 8 items
+  // rhythm: three full views, then an art-directed detail — never one from a project seen in the last 8 items
   const out = [];
   const recent = () => out.slice(-8).map((x) => x.p.id);
   // a detail only follows once its full view has been shown, and not right after it
@@ -421,7 +421,7 @@ function buildItems() {
   };
   primaries.forEach((x, i) => {
     out.push(x);
-    if (i % 4 === 3) { const c = takeCrop(); if (c) out.push(c); }
+    if (i % 3 === 2) { const c = takeCrop(); if (c) out.push(c); }
   });
   while (crops.length) { const c = takeCrop() || crops.shift(); out.push(c); }
   return out.concat(tail);
