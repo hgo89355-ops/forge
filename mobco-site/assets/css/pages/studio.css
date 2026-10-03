@@ -839,3 +839,8 @@ html.qa .studio-hotspot__dot::after { animation: none; }
 /* software (CPU) WebGL: frames are expensive, so UI fades are instant */
 .studio.is-lowpower :is(.studio__loader, .studio__poster, .studio-canvas, .studio__hint, .studio__info-body, .studio-rail__item, .studio-rail__item::before) { transition: none; animation: none; }
 .studio.is-lowpower .studio-hotspot__dot::after, .studio.is-lowpower .studio__loader-ring { animation: none; }
+
+/* without JavaScript the viewer cannot run: show the poster + noscript card only */
+html.no-js .studio__loader, html.no-js .studio__toolbar, html.no-js .studio__hint,
+html.no-js .studio__panel, html.no-js .studio__level { display: none; }
+.studio__state--noscript { z-index: 9; }

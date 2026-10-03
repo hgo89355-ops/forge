@@ -211,7 +211,7 @@ html:not(.js) .mreel__ctrl { display: none; } /* controls need JS */
 .mreel__count { flex: none; font-family: 'Manrope', var(--font-display); font-size: .8125rem; font-weight: 600; letter-spacing: .16em; color: rgba(255, 255, 255, .55); font-variant-numeric: tabular-nums; }
 .mreel__count b { color: var(--white); font-weight: 700; }
 .mreel__arrows { display: flex; gap: var(--space-2); flex: none; }
-.mreel .icon-btn { --fg-strong: var(--white); --bg: var(--navy-950); border-color: rgba(255, 255, 255, .3); color: var(--white); }
+.mreel .icon-btn { --fg-strong: var(--white); --bg: var(--navy-950); border-color: rgba(255, 255, 255, .3); color: var(--white); inline-size: 44px; block-size: 44px; }
 
 @media (min-width: 1024px) {
   .mreel__bar { grid-template-columns: minmax(16rem, .9fr) minmax(0, 1.6fr); align-items: center; column-gap: var(--space-10); }
@@ -342,7 +342,7 @@ html[lang='ar'] .mgal__cap-name { letter-spacing: 0; text-transform: none; }
 .mgal__open:focus-visible { outline: 2px solid var(--teal-400); outline-offset: -4px; }
 .mgal__dl:focus-visible { outline-color: var(--teal-400); }
 /* art-directed detail crops: zoom into the focal point of the same render */
-.mgal__item--detail .mgal__open img { transform: scale(var(--zoom, 1.5)); transform-origin: var(--focus, 50% 50%); }
+.mgal__item--detail .mgal__open img { transform: scale(var(--zoom, 1.5)); transform-origin: var(--focal, 50% 50%); }
 @media (hover: hover) {
   .mgal__item:hover .mgal__open img { transform: scale(1.06); }
   .mgal__item--detail:hover .mgal__open img { transform: scale(calc(var(--zoom, 1.5) * 1.06)); }
@@ -401,9 +401,10 @@ html[lang='ar'] .mkit-sub__title { letter-spacing: 0; text-transform: none; }
 .mkit-sub__tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 .mkit-sub__label { font-size: var(--fs-sm); color: var(--fg-muted); }
 .mkit-sub__label--wide { max-inline-size: 52ch; }
+.mkit-sub__label[data-placeholder] { margin-inline: 5px; } /* keep the dashed placeholder outline inside the container */
 .mkit-sub__intro { max-inline-size: 64ch; margin-block: calc(var(--space-3) * -1) var(--space-7); }
 .mkit-toggle { gap: .375rem; }
-.mkit-toggle .chip { min-block-size: 40px; }
+.mkit-toggle .chip { min-block-size: 44px; }
 
 /* logo cards */
 .mkit-logos { display: grid; gap: var(--grid-gap); grid-template-columns: minmax(0, 1fr); list-style: none; margin: 0; padding: 0; }
@@ -586,7 +587,7 @@ html[lang='ar'] .mpal__hint { font-size: .75rem; letter-spacing: 0; }
 .mpal__item--lg .mpal__swatch--light-ink { color: var(--navy-950); }
 .mpal__item--lg .mpal__swatch--light-ink :is(.mpal__name) { color: var(--navy-950); }
 .mpal__item--lg .mpal__swatch--light-ink .mpal__role { color: rgba(11, 22, 32, .7); }
-.mpal[data-format] .mpal__item--lg .mpal__swatch--light-ink :is(.mpal__hex, .mpal__rgb) { color: rgba(11, 22, 32, .55); }
+.mpal[data-format] .mpal__item--lg .mpal__swatch--light-ink :is(.mpal__hex, .mpal__rgb) { color: rgba(11, 22, 32, .74); }
 .mpal[data-format='hex'] .mpal__item--lg .mpal__swatch--light-ink .mpal__hex,
 .mpal[data-format='rgb'] .mpal__item--lg .mpal__swatch--light-ink .mpal__rgb { color: var(--navy-950); }
 .mpal__item--xl .mpal__swatch::after {
@@ -800,7 +801,7 @@ html[lang='ar'] .mnews-card__title { letter-spacing: 0; text-transform: none; }
 .mnews-contact__mail:hover, .mnews-contact__tel:hover { color: var(--teal-300); }
 .mnews-contact__tel { min-block-size: 44px; font-size: var(--fs-sm); color: var(--fg); }
 .mnews-contact__tels { display: flex; flex-wrap: wrap; column-gap: var(--space-6); }
-.mnews-copy { flex: none; }
+.mnews-copy { flex: none; inline-size: 44px; block-size: 44px; }
 .mnews-copy.is-copied { background: var(--teal-400); border-color: var(--teal-400); color: var(--navy-950); }
 .mnews-card__more { margin-block-start: var(--space-2); }
 

@@ -12,9 +12,16 @@ calc(var(--header-h) + 16px) }`, and on a `:target` element it applies `scroll-m
 - The hash jump also runs about 60ms after init, before web fonts settle, so the layout can still shift afterwards.
 - **Suggested fix:** pass `offset: 0` when Lenis is active (let it use scroll-padding), or drop the html
   scroll-padding and the `:target` margin while Lenis runs. Re-run the hash jump after `document.fonts.ready`.
-- **Local workaround** (contact.css / contact.js):
+- **Local workaround** (contact.css / contact.js), verified at 1440 (header 88px → targets land at 104px) and
+  390 (header 72px → 88px):
+  - `goTo()` in contact.js passes an offset that cancels the scroll-padding/scroll-margin Lenis already applies.
+  - A capture-phase click handler takes over same-page anchors (`#inquiry`, `#map`, and the header's
+    `contact.html#inquiry`) before core `initAnchors()`; it defers one tick when the mobile drawer is open so
+    header.js can unlock scrolling first.
+  - Deep links on load are re-aligned ~140ms after core's hash jump and again after `load` + `fonts.ready`
+    (skipped once the user has scrolled).
   - `body[data-page='contact'] main [id]:target { scroll-margin-block-start: 0 }`.
-  - A one-time realign to the hash after `load` + `fonts.ready`, skipped once the user has scrolled.
+  Once motion.js is fixed, `goTo()` can become a plain `scrollTo()` and `initAnchors()` in contact.js can be removed.
 - A test note: calling native `scrollIntoView()` (including Playwright's auto-scroll) puts Lenis's
   `animatedScroll` out of sync, and the next `scrollTo` then overshoots.
 
@@ -58,3 +65,10 @@ The current `partials/header.html` mega menu links to `mobco-construction.html`,
 ## 8. Hosting (404)
 Configure the host to serve `/404.html` for unknown URLs. Asset paths are relative, so either serve the error
 page from the root, or add `<base href="/">` to 404.html at deploy time.
+
+## 9. main.css — headline accent colour on light sections fails contrast
+`.section:not(.section--dark):not(.section--deep) .h2 em { color: var(--teal-600) }` gives 2.68:1 on `--sand-50`
+and 2.88:1 on white, below the 3:1 AA minimum for large text (measured on the 56px h2s on this page).
+- **Suggested fix:** use a slightly deeper teal for accent text on light sections, e.g. `#349487`
+  (3.41:1 on sand, 3.66:1 on white), or `--teal-700` where a stronger contrast is acceptable.
+- **Local workaround:** contact.css overrides the colour for the h2 accents on this page only.

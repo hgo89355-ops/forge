@@ -939,7 +939,7 @@ export function createStudio(container, options = {}) {
     const dir = new THREE.Vector3().fromArray(meta.camera.aerial).sub(tgt);
     const box = new THREE.Box3().setFromObject(built.root);
     const sphere = box.getBoundingSphere(new THREE.Sphere());
-    const fitDist = sphere.radius / Math.sin(THREE.MathUtils.degToRad(30) / 2) * 0.82;
+    const fitDist = sphere.radius / Math.sin(THREE.MathUtils.degToRad(30) / 2) * 0.6;
     thumbCam.position.copy(sphere.center).add(dir.normalize().multiplyScalar(fitDist));
     thumbCam.lookAt(sphere.center);
 
@@ -1032,7 +1032,7 @@ export function createStudio(container, options = {}) {
   const api = {
     THREE, renderer, scene, camera, controls, canvas, quality, lowPower,
     on, load, setView, setExplode, setSection, setMode, setTime, setAutoRotate, setHotspots, setInsets,
-    select, selectStep, focusPoint, focusAt, zoom, reset, snapshot, renderThumbnail, getState, invalidate, dispose, setControlsEnabled,
+    select, selectStep, focusPoint, focusAt, floorAt, zoom, reset, snapshot, renderThumbnail, getState, invalidate, dispose, setControlsEnabled,
     get model() { return model ? { id: model.id, meta: model.meta, floors: model.floors.map((f, i) => floorInfo(i)) } : null; },
   };
   if (opts.model) api.ready = load(opts.model).catch(() => null);

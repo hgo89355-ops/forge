@@ -9,9 +9,9 @@
 // All copy comes from bilingual {en, ar} objects rendered with t(); everything re-renders on 'langchange'.
 
 import { t, onLang } from '../core/i18n.js';
-import { scan } from '../core/motion.js';
-import { $, $$, icon, esc, prefersReducedMotion, hasFinePointer, rafThrottle, clamp, isRTL } from '../core/utils.js';
-import { STATS, getSubsidiary } from '../data/site-data.js';
+import { scan, scrollTo, getLenis } from '../core/motion.js';
+import { $, $$, icon, esc, picture, prefersReducedMotion, hasFinePointer, rafThrottle, clamp, isRTL } from '../core/utils.js';
+import { STATS, getSubsidiary, getProject, projectUrl } from '../data/site-data.js';
 import { LOGO } from '../data/logo-data.js';
 import { WORLD } from '../data/world-map.js';
 
@@ -145,6 +145,8 @@ const NODES = [
     },
     verb: { en: 'We build', ar: 'نبني' },
     subs: ['mobco-construction'],
+    image: { base: 'sub-construction-hero', pos: '28% 40%' },
+    projects: ['al-moosa-specialist-hospital', 'taif-municipality-building', 'cluster-j07'],
   },
   {
     id: 'development', a: -30, icon: 'landmark',
@@ -154,6 +156,8 @@ const NODES = [
       ar: 'الاستحواذ على مجتمعات استثنائية وتطويرها وإدارتها، إلى جانب منشآت تجارية وطبية وأعمال وتعليمية لعملاء متنوّعين حول العالم.',
     },
     subs: ['mobco-developments', 'mobco-real-estate'],
+    image: { base: 'eastmain', pos: '50% 55%', project: 'eastmain' },
+    projects: ['eastmain', 'victoria-101'],
   },
   {
     id: 'fm', a: 30, icon: 'cog',
@@ -164,6 +168,7 @@ const NODES = [
     },
     verb: { en: 'We manage', ar: 'نُدير' },
     subs: [],
+    image: { base: 'sub-real-estate-office', pos: '50% 50%' },
   },
   {
     id: 'hospitality', a: 90, icon: 'hotel',
@@ -173,6 +178,8 @@ const NODES = [
       ar: 'الفنادق الفاخرة ومشاريع الضيافة، حيث تتصدّر جودة التشطيب ودقّة التفاصيل.',
     },
     subs: [],
+    image: { base: 'raffles-hotel-residence', pos: '50% 45%', project: 'raffles-hotel-residence' },
+    projects: ['raffles-hotel-residence', 'sofitel-hotel', 'kaust-hotel'],
   },
   {
     id: 'pm', a: 150, icon: 'gauge',
@@ -183,6 +190,7 @@ const NODES = [
     },
     verb: { en: 'We plan', ar: 'نخطّط' },
     subs: [],
+    image: { base: 'taif-municipality-building', pos: '55% 50%' },
   },
   {
     id: 'education', a: 210, icon: 'graduation-cap',
@@ -192,6 +200,8 @@ const NODES = [
       ar: 'أحد تخصصات المجموعة الثلاثة إلى جانب الإنشاءات والتطوير العقاري — عبر تطوير المنشآت التعليمية وإدارتها.',
     },
     subs: ['elite-education'],
+    image: { base: 'tbc-schools-group-12', pos: '50% 45%', project: 'tbc-schools-group-12' },
+    projects: ['tbc-schools-group-12'],
   },
 ];
 // ring = the integrated loop between neighbours; tri = "we plan · we build · we manage"
@@ -202,6 +212,8 @@ const LINKS = [
 ];
 const L = {
   connects: { en: 'Connects with', ar: 'يرتبط بـ' },
+  projects: { en: 'Selected projects', ar: 'مشاريع مختارة' },
+  pictured: { en: 'Pictured', ar: 'في الصورة' },
   companies: { en: 'Group companies', ar: 'شركات المجموعة' },
   select: { en: 'Show', ar: 'عرض' },
 };
@@ -261,7 +273,13 @@ function initModel() {
     const pad = (x) => String(x).padStart(2, '0');
     const near = neighbours(n.id).map((id) => byId[id]);
     const subs = n.subs.map(getSubsidiary).filter(Boolean);
+    const projects = (n.projects || []).map(getProject).filter(Boolean);
+    const shown = n.image?.project ? getProject(n.image.project) : null;
     card.innerHTML = `
+      ${n.image ? `<div class="about-model__card-media" aria-hidden="true">
+        ${picture(n.image.base, { position: n.image.pos, loading: animate ? 'eager' : 'lazy' })}
+        ${shown ? `<span class="about-model__card-pictured">${esc(t(L.pictured))}: ${esc(t(shown.name))}</span>` : ''}
+      </div>` : ''}
       <div class="about-model__card-head">
         <span class="about-model__card-icon">${icon(n.icon)}</span>
         <span class="about-model__card-index">${pad(i + 1)} / ${pad(NODES.length)}</span>
@@ -269,6 +287,12 @@ function initModel() {
       ${n.verb ? `<p class="eyebrow">${esc(t(n.verb))}</p>` : ''}
       <h3 class="about-model__card-title">${esc(t(n.name))}</h3>
       <p class="about-model__card-text">${esc(t(n.text))}</p>
+      ${projects.length ? `<div class="about-model__card-sub">
+        <p class="about-model__card-sub-title">${esc(t(L.projects))}</p>
+        <ul class="about-model__projects" role="list">
+          ${projects.map((p) => `<li><a class="about-model__project" href="${projectUrl(p)}"><span>${esc(t(p.name))}</span>${icon('arrow-up-right', 'icon--sm icon--dir')}</a></li>`).join('')}
+        </ul>
+      </div>` : ''}
       <div class="about-model__card-sub">
         <p class="about-model__card-sub-title">${esc(t(L.connects))}</p>
         <ul class="about-model__chips" role="list">
@@ -278,7 +302,7 @@ function initModel() {
       ${subs.length ? `<div class="about-model__card-sub">
         <p class="about-model__card-sub-title">${esc(t(L.companies))}</p>
         <ul class="about-model__links-list" role="list">
-          ${subs.map((s) => `<li><a class="link-arrow link-arrow--plain" href="subsidiaries.html#${esc(s.id)}"><span>${esc(t(s.name))}</span><span class="link-arrow__icon">${icon('arrow-right', 'icon--dir')}</span></a></li>`).join('')}
+          ${subs.map((s) => `<li><a class="link-arrow link-arrow--plain" href="${esc(s.page || `subsidiaries.html#${s.id}`)}"><span>${esc(t(s.name))}</span><span class="link-arrow__icon">${icon('arrow-right', 'icon--dir')}</span></a></li>`).join('')}
         </ul>
       </div>` : ''}`;
     card.setAttribute('aria-labelledby', `model-node-${n.id}`);
@@ -329,7 +353,11 @@ function initModel() {
 
   highlight(selected);
   renderCard(false);
-  onLang(() => renderCard(false));
+  onLang(() => {
+    const hadFocus = card.contains(document.activeElement);
+    renderCard(false);
+    if (hadFocus) card.focus({ preventScroll: true }); // the focused link was replaced; keep focus in the panel
+  });
 }
 
 /* ======================================================================
@@ -377,6 +405,26 @@ function initJourney() {
   detect();
 }
 
+/* ======================================================================
+   6. In-page anchors (local workaround, see docs/requests/about.md #1)
+   With Lenis active, core scrollTo() passes -(header + 16) AND Lenis subtracts html scroll-padding,
+   so anchors land ~104px too low. Here we let Lenis apply the scroll padding alone.
+   ====================================================================== */
+function initAnchors() {
+  $$('main a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+    if (!getLenis() || e.metaKey || e.ctrlKey || e.shiftKey) return; // without Lenis the core path is correct
+    const hash = a.getAttribute('href');
+    let target = null;
+    try { target = document.querySelector(hash); } catch { return; }
+    if (!target) return;
+    e.preventDefault();
+    scrollTo(target, { offset: 0 });
+    history.pushState(null, '', hash);
+    if (!target.matches('a,button,input,select,textarea,[tabindex]')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  }));
+}
+
 /* ---------------------------------------------------------------- boot */
 safe('stats', initStats);
 safe('map', initMap);
@@ -384,3 +432,4 @@ safe('vision-mission', initVisionMission);
 safe('values', initValues);
 safe('model', initModel);
 safe('journey', initJourney);
+safe('anchors', initAnchors);

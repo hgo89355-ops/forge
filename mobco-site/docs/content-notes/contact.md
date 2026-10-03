@@ -42,6 +42,9 @@ placeholders, assumptions or derived copy that the client must confirm.
   clipboard; the success screen also offers “Copy inquiry text”.
 - **Consent** — the Google Maps iframe loads only after the cookie banner is accepted (core `consent.js`) or
   after an explicit “Load map” click (remembered for the browser session only, key `mobco-contact-map`).
+- **Accent colour** — on light sections the h2 accent words use `#349487` (a slightly deeper teal than
+  `--teal-600`) for AA contrast; see requests §9.
+- **Arabic hero eyebrow** reads «يسعدنا تواصلك» (rather than repeating the breadcrumb's «تواصل معنا»).
 - **Photography** — hero uses `aerial-compound` as atmosphere only (decorative, `alt=""`); it does not claim
   to depict an office.
 

@@ -1087,6 +1087,9 @@ function openProject(slug, { list, context, trigger } = {}) {
     heroRing?.pause();
     ring2?.pause();
     openModal(V.el, trigger || document.activeElement);
+    // Shared modal hides itself 650 ms after closing; re-assert visibility if we reopened inside that window.
+    const since = performance.now() - (V.closedAt || -1e9);
+    if (since < 700) setTimeout(() => { if (V.open) V.el.hidden = false; }, 720 - since);
     requestAnimationFrame(() => { measureStage(); applyCrop(V.crop, false); });
   }
   setHash(p.slug);
@@ -1096,6 +1099,7 @@ function closeViewer() { if (V.open) closeModal(V.el); }
 
 function onViewerClosed() {
   V.open = false;
+  V.closedAt = performance.now();
   V.pointers.clear();
   V.gesture = null;
   setHash('');

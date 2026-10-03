@@ -51,7 +51,9 @@ body[data-page='contact'] {
 .contact-hero__copy { display: grid; gap: var(--space-5); justify-items: start; min-inline-size: 0; }
 .contact-hero__title { max-inline-size: 11ch; }
 html[lang='ar'] .contact-hero__title { max-inline-size: 20ch; }
-@media (min-width: 1024px) {
+/* Arabic: keep the accented phrase «ما هو قادم» on one line */
+html[lang='ar'] .contact-hero__title em { white-space: nowrap; }
+@media (min-width: 1200px) {
   .contact-hero__inner { grid-template-columns: minmax(0, 1fr) minmax(340px, 400px); column-gap: var(--space-10); }
 }
 
@@ -203,7 +205,7 @@ html:not(.js) .contact-clock__time, html:not(.js) .contact-office__clock { displ
 @keyframes contact-ping { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.2); opacity: 0; } }
 @keyframes contact-blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: .25; } }
 
-@media (max-width: 1023.98px) {
+@media (max-width: 1199.98px) {
   .contact-hero { min-block-size: 0; }
   .contact-hero__inner { padding-block-end: var(--space-7); }
   .contact-clocks { max-inline-size: 520px; }
@@ -384,6 +386,7 @@ html[lang='ar'] .contact-office__maplink { font-size: .875rem; font-weight: 600;
   color: var(--fg-muted);
 }
 .contact-office__hours .icon { --icon-size: 16px; color: var(--accent-text); flex: none; }
+.contact-office__hours [data-placeholder] { outline-offset: 3px; }
 
 /* phone / email rows with a copy button */
 .contact-row { display: flex; align-items: center; gap: var(--space-2); min-inline-size: 0; }
@@ -398,7 +401,13 @@ html[lang='ar'] .contact-office__maplink { font-size: .875rem; font-weight: 600;
   color: var(--fg-strong);
   transition: color var(--dur) var(--ease-soft);
 }
-.contact-row__link > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.contact-row__link > span { min-inline-size: 0; overflow-wrap: anywhere; }
+@container (max-width: 360px) {
+  .contact-office .contact-row__link { gap: .5rem; font-size: .875rem; }
+}
+@media (max-width: 389.98px) {
+  .contact-office { padding-inline: 1.25rem; }
+}
 .contact-row__link .icon { --icon-size: 17px; color: var(--accent-text); flex: none; }
 .contact-row__link:hover { color: var(--accent-text); }
 .contact-row__copy {
@@ -503,11 +512,14 @@ html[lang='ar'] .contact-map__ext { font-size: .875rem; font-weight: 600; }
   color: rgba(255, 255, 255, .62);
   text-shadow: 0 0 6px var(--navy-950), 0 0 14px var(--navy-950), 0 0 2px var(--navy-950);
   white-space: nowrap;
+  padding: .125rem .375rem .125rem calc(.375rem + .32em);
+  border-radius: var(--radius);
+  background: rgba(11, 22, 32, .62);
   transform: translate(-50%, -50%);
   transition: opacity var(--dur-slow);
 }
-.contact-map__geo--water { font-style: italic; font-weight: 500; letter-spacing: .2em; color: rgba(155, 227, 218, .6); }
-html[lang='ar'] .contact-map__geo { font-size: .8125rem; letter-spacing: 0; font-style: normal; }
+.contact-map__geo--water { font-style: italic; font-weight: 500; letter-spacing: .2em; color: rgba(155, 227, 218, .7); background: none; }
+html[lang='ar'] .contact-map__geo { font-size: .8125rem; letter-spacing: 0; font-style: normal; padding-inline: .375rem; }
 
 .contact-pin__core {
   position: absolute;
@@ -617,7 +629,7 @@ html[lang='ar'] .contact-pin__label small { font-size: .75rem; }
 }
 .contact-map__panel-label { display: flex; align-items: center; gap: .625rem; font-family: var(--font-display); font-size: .625rem; font-weight: 700; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--teal-400); }
 html[lang='ar'] .contact-map__panel-label { font-size: .8125rem; font-weight: 600; letter-spacing: 0; }
-.contact-map__panel-num { color: rgba(255, 255, 255, .45); }
+.contact-map__panel-num { color: rgba(255, 255, 255, .62); }
 .contact-map__panel-title { font-family: var(--font-display); font-size: var(--fs-h4); font-weight: 600; line-height: 1.2; color: var(--white); }
 .contact-map__panel-addr { font-size: var(--fs-sm); color: rgba(255, 255, 255, .7); max-inline-size: 36ch; }
 @media (min-width: 1024px) {
@@ -919,8 +931,11 @@ html[lang='ar'] .contact-review__row dt { font-size: .875rem; font-weight: 600; 
 }
 .contact-wizard__back[hidden] { display: inline-flex !important; visibility: hidden; }
 .contact-wizard__hint { display: none; align-items: center; gap: .5rem; font-size: var(--fs-xs); color: var(--fg-muted); }
-@media (min-width: 768px) and (hover: hover) { .contact-wizard__hint { display: inline-flex; } }
 .contact-wizard__next { margin-inline-start: auto; }
+@media (min-width: 768px) and (hover: hover) {
+  .contact-wizard__hint { display: inline-flex; margin-inline-start: auto; }
+  .contact-wizard__hint + .contact-wizard__next { margin-inline-start: var(--space-2); }
+}
 @media (max-width: 479.98px) {
   .contact-wizard__nav .btn { --btn-px: 1.125rem; }
 }
@@ -1021,9 +1036,12 @@ html[lang='ar'] .contact-talk__city { font-size: .875rem; font-weight: 600; }
   border-block-end: var(--hairline);
 }
 .contact-directory__mails { grid-column: 2; }
-@media (min-width: 768px) {
+@media (min-width: 640px) {
+  .contact-directory__mails { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-5); }
+}
+@media (min-width: 1200px) {
   .contact-directory__item { grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.25fr); align-items: start; }
-  .contact-directory__mails { grid-column: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-5); margin-block-start: 0; }
+  .contact-directory__mails { grid-column: 3; margin-block-start: 0; }
 }
 .contact-directory .contact-row--compact { display: grid; grid-template-columns: minmax(0, max-content) auto; justify-content: start; column-gap: var(--space-3); align-items: center; }
 .contact-directory .contact-row__tag { grid-column: 1 / -1; min-inline-size: 0; }
@@ -1057,6 +1075,10 @@ html[lang='ar'] .contact-talk__city { font-size: .875rem; font-weight: 600; }
 .contact-promise__title { font-size: var(--fs-h5); letter-spacing: .06em; margin-block-end: var(--space-2); }
 html[lang='ar'] .contact-promise__title { font-size: var(--fs-h4); }
 .contact-promise__text { color: var(--fg-muted); max-inline-size: 46ch; }
+
+/* Headline accents on light sections: main.css uses teal-600 (2.7:1 on sand, fails AA large text).
+   A slightly deeper teal keeps the brand colour and reaches 3.4:1 (requests §9). */
+body[data-page='contact'] .section:is(.section--sand, .section--white) :is(h2, .h2) em { color: #349487; }
 
 /* Arabic: never uppercase / letter-space (Latin words such as "Google" or "GMT" keep their case) */
 html[lang='ar'] body[data-page='contact'] :is([class*='contact-'], .tabs__tab):not(.contact-success__ref-code, .contact-wizard__count) { text-transform: none; letter-spacing: 0; }

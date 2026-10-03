@@ -816,6 +816,18 @@ html[lang='ar'] .ha-steps__node { letter-spacing: 0; text-transform: none; font-
 .ha-steps.is-pinned .ha-step__index { display: none; }
 .ha-step__head ~ .ha-step__list { margin-block-start: var(--space-2); }
 .ha-steps:not(.is-pinned) .ha-steps__readout { display: none; }
+/* stacked fallback on wide screens (reduced motion / short viewports): lead beside the visual, three panels in a row */
+@media (min-width: 1024px) {
+  .ha-steps:not(.is-pinned) .ha-steps__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: 'lead visual' 'panels panels';
+    column-gap: clamp(2rem, 1rem + 4vw, 6rem);
+    row-gap: var(--space-10);
+    align-items: end;
+  }
+  .ha-steps:not(.is-pinned) .ha-steps__visual { aspect-ratio: 16 / 9; }
+  .ha-steps:not(.is-pinned) .ha-steps__panels { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--grid-gap); align-items: start; }
+}
 .ha-steps.is-pinned .ha-step__list li { font-size: var(--fs-base); padding-block: .7rem; }
 
 /* -------------------------------------------------------------------------
@@ -841,7 +853,7 @@ html[lang='ar'] .ha-steps__node { letter-spacing: 0; text-transform: none; font-
 .ha-stats .section-header { margin-block-end: clamp(3rem, 2rem + 3vw, 5.5rem); }
 .ha-stats .section-header__aside .lead { max-inline-size: 42ch; }
 .ha-stats__grid { border-block-start-color: rgba(255, 255, 255, .22); }
-.ha-stats__grid .stat { padding-block: clamp(2rem, 1.4rem + 2vw, 3.5rem); }
+.ha-stats__grid .stat { padding-block: clamp(2rem, 1.4rem + 2vw, 3.5rem); border-color: rgba(255, 255, 255, .2); }
 .ha-stats__grid .stat__value { color: var(--white); }
 .ha-stats__grid .stat__label { color: rgba(255, 255, 255, .66); }
 @media (min-width: 1024px) {

@@ -40,11 +40,27 @@ Placeholders, assumptions and items the client must confirm. The verbatim facts 
 - **Chapter order**: Egypt is shown before Canada, following the brief's order. That sequence is an assumption until the client supplies dates.
 - "Today" chapter: 25+ years · 10,000+ professionals · 3 continents (facts).
 
-## Images (renders, reused creatively; captions stay honest)
+## Images (QA pass: real portfolio photos now used for variety; captions stay honest)
 - Hero: `ksa-landmark` (Classical Landmark, a descriptive name, region KSA inferred from the old site). No caption claims a project name.
 - Story: `campus`, captioned "Innovation Campus — aerial render". **Descriptive name** (`nameIsDescriptive: true`); the real project name is unknown.
-- Vision panel: `campus`. Mission panel: `eastmain`. Turnover tile: `aerial-compound` (grey-teal treatment). HSE: `aerial-compound-portrait` (blueprint treatment). CTA cards: `eastmain` and `victoria-101`. All decorative (`alt=""`) except where the image carries meaning (story and timeline images have descriptive alt text in EN and AR).
-- Timeline: 2001 → `ksa-landmark`; KSA growth → `campus`; Egypt → `eastmain`; Canada → `victoria-101`; Today → `aerial-compound` (the Lagoon Villa Community render, also a descriptive name). These are illustrative pairings, not claims that a project belongs to a given year.
+- Turnover tile: `cluster-j07` (skyline, grey-teal treatment, decorative `alt=""`).
+- Vision panel: `hq-tower-masjid-museum`, labelled "Pictured: Headquarter Tower, Masjid & Museum" (short form of the portfolio name "Construction of the Headquarter Tower, Masjid, Museum and Tower Site Development"). Mission panel: `sofitel-hotel`, labelled "Pictured: Sofitel Hotel". Both are decorative backgrounds for the verbatim texts; they do not illustrate the vision or mission literally.
+- Vertically integrated model card (one image per discipline): Construction `sub-construction-hero` (from the MOBCO Construction page, no caption); Real Estate Development `eastmain` ("Pictured: Eastmain"); Facility Management `sub-real-estate-office` (no caption); Hospitality `raffles-hotel-residence` ("Pictured: Raffles Hotel & Branded Residence…"); Project Management `taif-municipality-building` (no caption: we do **not** claim a PM role on that project); Education `tbc-schools-group-12` ("Pictured: TBC Schools — Group 12").
+- HSE: `park-inn-olaya-hotel` (aerial with an active construction site, blueprint treatment, decorative).
+- CTA cards: Careers `bank-albilad-head-office`, Contact `as-safiyyah-museum-park` (decorative; neither is presented as an office of MOBCO).
+- Timeline: 2001 → `ksa-landmark`; Ch. 02 (growth across sectors in KSA) → a mosaic of three real portfolio projects with their client category: Al-Moosa Specialist Hospital (Medical), KAUST Hotel (Hospitality), NEOM Bay Airport (Airport), each linking to `projects.html#<slug>`; Egypt → `eastmain`; Canada → `victoria-101`; Today → `aerial-compound` (Lagoon Villa Community, descriptive name). These pairings are illustrative, not claims that a project belongs to a given year.
+
+## Model card: "Selected projects" (assumed mapping — client to confirm)
+Lists link to `projects.html#<slug>` and only use projects whose client category matches the discipline:
+- Construction: Al-Moosa Specialist Hospital, Taif Municipality Building, Remaining Works for Cluster J07 (from the projects portfolio).
+- Real Estate Development: Eastmain, Victoria 101 (per `SUBSIDIARIES` MOBCO Developments facts).
+- Hospitality: Raffles Hotel & Branded Residence, Sofitel Hotel, KAUST Hotel (category "Hospitality").
+- Education: TBC Schools — Group 12 (category "Education").
+- Project Management and Facility Management: no project list (no source states which projects MOBCO managed).
+- "Group companies" links now go to the dedicated subsidiary pages (`mobco-construction.html`, `mobco-developments.html`, `mobco-real-estate.html`); Elite Education Group falls back to `subsidiaries.html#elite-education`.
+
+## Possible future content (not used)
+- The MOBCO Real Estate Development page states it was "established in 2002 in Cairo". It could date the Egypt chapter, but MOBCO Developments describes its own "strategic entry into the Egyptian market" without a year. The Egypt chapter therefore keeps the "Chapter 03" placeholder until the client confirms which date marks the group's entry into Egypt.
 
 ## Arabic
 - All Arabic is a professional translation of the supplied English (story, vision and mission match `site-data.js`) and should be reviewed by the client.

@@ -436,14 +436,16 @@ body[data-page='home'] .hb-slide__3d .icon { --icon-size: 16px; color: var(--acc
   body[data-page='home'] .hb-slide__3d:hover { background: var(--navy-900); border-color: var(--navy-900); color: var(--white); }
   body[data-page='home'] .hb-slide__3d:hover .icon { color: var(--teal-400); transform: rotate(-30deg); }
 }
+/* portfolio slides: category glyph in place of the 3D chip (decorative) */
+body[data-page='home'] .hb-slide__cat { display: grid; place-items: center; inline-size: 44px; block-size: 44px; border-radius: 50%; border: 1px solid var(--line); color: var(--accent-text); }
+body[data-page='home'] .hb-slide__cat .icon { --icon-size: 18px; }
 body[data-page='home'] .hb-carousel__foot { gap: var(--space-5); }
 body[data-page='home'] .hb-carousel__hint { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--font-display); font-size: .625rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-muted); white-space: nowrap; }
 html[lang='ar'] body[data-page='home'] .hb-carousel__hint { letter-spacing: 0; font-size: .8125rem; text-transform: none; }
 body[data-page='home'] .hb-carousel__hint .icon { --icon-size: 16px; animation: hb-nudge 2.4s var(--ease-in-out) infinite; }
 @keyframes hb-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
 @media (max-width: 639.98px) {
-  body[data-page='home'] .hb-projects__tools .link-arrow { display: none; }
-  body[data-page='home'] .hb-projects__tools { inline-size: 100%; justify-content: flex-end; }
+  body[data-page='home'] .hb-projects__tools { inline-size: 100%; justify-content: space-between; }
   body[data-page='home'] .hb-carousel__hint { display: none; }
 }
 

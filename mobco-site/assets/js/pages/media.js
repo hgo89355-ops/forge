@@ -460,6 +460,8 @@ function initGallery() {
   labelChips();
   scanUI(group.parentElement);
 
+  // pages of 16; a small remainder (≤ 4) joins the last page instead of leaving a lone "Show 1 more"
+  const nextStep = (rest) => (rest - PAGE <= 4 ? rest : PAGE);
   const filtered = () => items.filter((x) => filter === 'all' || x.cats.includes(filter));
   // "Name — caption" (captions that already start with the project name are kept as they are)
   const caption = (x, lang = getLang()) => {
@@ -479,7 +481,7 @@ function initGallery() {
     const catName = x.catLabel ? t(COMPANIES.label) : cat ? t(cat.name) : '';
     const detailCls = x.zoom > 1 ? ' mgal__item--detail' : '';
     return `
-      <div class="mgal__item${isPano ? ' mgal__item--pano' : ''}${detailCls}" role="listitem" style="--ar:${(isPano && narrow ? 3 : x.ar).toFixed(4)}${x.zoom > 1 ? `;--zoom:${x.zoom};--focus:${esc(x.pos)}` : ''}">
+      <div class="mgal__item${isPano ? ' mgal__item--pano' : ''}${detailCls}" role="listitem" style="--ar:${(isPano && narrow ? 3 : x.ar).toFixed(4)}${x.zoom > 1 ? `;--zoom:${x.zoom};--focal:${esc(x.pos)}` : ''}">
         <button class="mgal__open" type="button" data-open="${i}" data-cursor="zoom" aria-label="${esc(fmt(t(G.open), { c: label }))}">
           ${picture(x.base, { alt: '', position: x.pos })}
           <span class="mgal__shade" aria-hidden="true"></span>
@@ -538,7 +540,7 @@ function initGallery() {
     status.textContent = fmt(t(G.status), { n: list.length, total: all.length });
     const rest = all.length - list.length;
     moreWrap.hidden = rest <= 0;
-    moreLabel.textContent = fmt(t(G.more), { n: Math.min(rest, PAGE) });
+    moreLabel.textContent = fmt(t(G.more), { n: nextStep(rest) });
     if (animateFrom >= 0 && !reduced) {
       $$('.mgal__item', mount).slice(animateFrom).forEach((el, i) => {
         el.animate([{ opacity: 0, transform: 'translate3d(0, 24px, 0) scale(.98)' }, { opacity: 1, transform: 'none' }],
@@ -561,7 +563,7 @@ function initGallery() {
   });
   moreBtn?.addEventListener('click', () => {
     const from = Math.min(shown, filtered().length);
-    shown += PAGE;
+    shown += nextStep(filtered().length - shown);
     render({ animateFrom: from });
     // keep keyboard users in place: focus the first newly revealed image
     $$('.mgal__open', mount)[from]?.focus({ preventScroll: true });

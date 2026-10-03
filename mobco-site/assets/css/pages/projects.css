@@ -140,12 +140,12 @@ html[lang='ar'] .pj-ring .circular-carousel__title { letter-spacing: 0; text-tra
 .pj-ring .circular-carousel__count, .pj-ring2 .circular-carousel__count { font-family: 'Manrope', var(--font-display); font-weight: 600; letter-spacing: .12em; }
 
 /* Ring visibility states (JS sets data-ring-state). No-JS: fallback grid only. */
-.pj-ring-fallback {
+.pj-hero .pj-ring-fallback {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
   gap: var(--space-4);
   list-style: none;
-  padding-block: var(--space-4);
+  padding: var(--space-4) var(--gutter);
 }
 html.no-js .pj-ring { display: none; }
 html.no-js .pj-hero__stage { block-size: auto; }
@@ -160,6 +160,7 @@ html.js .pj-hero:not([data-ring-state]) .pj-hero__stage { block-size: auto; min-
 
 .pj-ring-fallback__item { display: grid; gap: var(--space-2); color: var(--white); }
 .pj-ring-fallback__media { display: block; aspect-ratio: 1.4; overflow: hidden; border-radius: var(--radius); background: var(--navy-800); }
+.pj-ring-fallback__media picture { display: block; block-size: 100%; }
 .pj-ring-fallback__media img { inline-size: 100%; block-size: 100%; object-fit: cover; transition: transform 1s var(--ease-out); }
 .pj-ring-fallback__item:hover img { transform: scale(1.05); }
 .pj-ring-fallback__name { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-sm); letter-spacing: .06em; text-transform: uppercase; }

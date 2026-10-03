@@ -10,7 +10,7 @@
 // HONESTY: opening hours, budget bands and size bands are assumptions/inputs — see docs/content-notes/contact.md.
 
 import { t, getLang, onLang } from '../core/i18n.js';
-import { scrollTo } from '../core/motion.js';
+import { scrollTo, getLenis } from '../core/motion.js';
 import { toast, copyText, validateForm } from '../core/ui.js';
 import { $, $$, esc, icon, prefersReducedMotion, store, getParam, debounce } from '../core/utils.js';
 import { onConsent } from '../core/consent.js';
@@ -24,6 +24,18 @@ const DAYS = {
   ar: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
 };
 const DAYS_SHORT = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ar: DAYS.ar };
+const headerH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+// Scroll an element to just below the fixed header. Lenis.scrollTo() already subtracts the html scroll-padding
+// and the target's scroll-margin, and core motion.scrollTo() adds the header offset on top of that, so with Lenis
+// every jump landed one header too low (~208px instead of ~104px at 1440). Compensate locally (requests §1).
+function goTo(el, { gap = 16, immediate = false } = {}) {
+  let offset = -(headerH() + gap);
+  if (getLenis()) {
+    offset += (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0)
+      + (parseFloat(getComputedStyle(el).scrollMarginTop) || 0);
+  }
+  scrollTo(el, { offset, immediate });
+}
 const fmt = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ''));
 const pad2 = (n) => String(n).padStart(2, '0');
 
@@ -41,6 +53,7 @@ const S = {
   // wizard
   stepOf: { en: 'Step {n} of {total}', ar: 'الخطوة {n} من {total}' },
   continue: { en: 'Continue', ar: 'متابعة' },
+  toReview: { en: 'Back to review', ar: 'العودة إلى المراجعة' },
   send: { en: 'Send inquiry', ar: 'إرسال الطلب' },
   fixStep: { en: 'Please complete the highlighted fields to continue.', ar: 'يُرجى إكمال الحقول المظللة للمتابعة.' },
   edit: { en: 'Edit', ar: 'تعديل' },
@@ -479,6 +492,7 @@ function initWizard() {
   const message = $('#inq-message', form);
   const counter = $('[data-wizard-counter]', form);
   let step = 1, maxReached = 1, last = null;
+  let toReview = false; // set by a review "Edit" button: the next valid Continue returns straight to the review
 
   /* sector tiles from SECTORS (data-driven) */
   const sectorBox = $('[data-sector-tiles]', form);
@@ -626,7 +640,8 @@ function initWizard() {
     count.textContent = `${pad2(step)} / ${pad2(TOTAL)}`;
     name.textContent = t(STEP_NAMES[step - 1]);
     backBtn.hidden = step === 1;
-    nextLabel.textContent = t(step === TOTAL ? S.send : S.continue);
+    if (step === TOTAL) toReview = false;
+    nextLabel.textContent = t(step === TOTAL ? S.send : toReview ? S.toReview : S.continue);
     $('use', nextBtn)?.setAttribute('href', `assets/icons/sprite.svg#${step === TOTAL ? 'send' : 'arrow-right'}`);
     stepper.forEach((b) => {
       const n = parseInt(b.dataset.goto, 10);
@@ -638,8 +653,7 @@ function initWizard() {
     if (focus) {
       const title = $('.contact-step__title', steps[step - 1]);
       const top = wizard.getBoundingClientRect().top;
-      const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
-      if (top < headerH || top > window.innerHeight * 0.6) scrollTo(wizard, { offset: -(headerH + 24) });
+      if (top < headerH() || top > window.innerHeight * 0.6) goTo(wizard, { gap: 24 });
       title?.focus({ preventScroll: true });
       live.textContent = `${fmt(t(S.stepOf), { n: step, total: TOTAL })}: ${t(STEP_NAMES[step - 1])}`;
     }
@@ -654,12 +668,13 @@ function initWizard() {
     render({ focus: true, dir, ...opts });
   };
   const validateStep = (n) => validateForm(stepEl(n));
+  const advance = () => go(toReview ? TOTAL : step + 1);
   const next = () => {
     if (!validateStep(step)) {
       live.textContent = t(S.fixStep);
       return;
     }
-    go(step + 1);
+    advance();
   };
 
   // Intercept submit before core/ui.js (capture phase): Enter / Continue advance one step at a time.
@@ -676,7 +691,7 @@ function initWizard() {
   }));
   form.addEventListener('click', (e) => {
     const ed = e.target.closest('[data-edit]');
-    if (ed) go(parseInt(ed.dataset.edit, 10));
+    if (ed) { toReview = true; go(parseInt(ed.dataset.edit, 10)); }
   });
   // Radio groups: core validates the changed radio only → clear stale state on its siblings.
   form.addEventListener('change', (e) => {
@@ -693,7 +708,7 @@ function initWizard() {
     const tile = e.target.closest('.contact-tile');
     if (!tile || e.detail === 0) return; // e.detail 0 = keyboard-generated click
     const at = step;
-    if (at <= 2) setTimeout(() => { if (step === at && success.hidden && form.querySelector(`[data-step="${at}"] input:checked`)) go(at + 1); }, prefersReducedMotion() ? 0 : 280);
+    if (at <= 2) setTimeout(() => { if (step === at && success.hidden && form.querySelector(`[data-step="${at}"] input:checked`)) advance(); }, prefersReducedMotion() ? 0 : 280);
   });
 
   /* submit → mailto + success */
@@ -767,7 +782,7 @@ function initWizard() {
     stepper.forEach((b) => { b.disabled = true; b.classList.add('is-done'); b.removeAttribute('aria-current'); });
     store.remove(STORE_KEY, 'session');
     live.textContent = fmt(t(S.ready), { ref: last.ref });
-    scrollTo(wizard, { offset: -((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72) + 24) });
+    goTo(wizard, { gap: 24 });
     success.focus({ preventScroll: true });
   };
   $('[data-success-mail]', success).addEventListener('click', () => last && openMail(last.href));
@@ -791,7 +806,7 @@ function initWizard() {
     success.hidden = true;
     form.hidden = false;
     progress.hidden = false;
-    step = 1; maxReached = 1;
+    step = 1; maxReached = 1; toReview = false;
     setTimeout(() => { renderBudget(); renderSize(); renderCounter(); render({ focus: true }); });
   });
 
@@ -883,11 +898,33 @@ function initDeepLink() {
   let touched = false;
   const mark = () => { touched = true; };
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => window.addEventListener(ev, mark, { once: true, passive: true }));
-  const realign = () => { if (!touched) scrollTo(target, { immediate: true }); };
+  const realign = () => { if (!touched) goTo(target, { immediate: true }); };
+  setTimeout(realign, 140); // right after core's own hash jump (~60ms), which lands one header too low with Lenis
   window.addEventListener('load', () => (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(realign, 120)), { once: true });
 }
 
+/* Same-page anchors (#inquiry, #map, contact.html#inquiry in the header): handled here in the capture phase
+   so the header offset is applied once (see goTo). Core motion.js skips clicks that are already handled. */
+function initAnchors() {
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest?.('a[href*="#"]');
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (a.target && a.target !== '_self') return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || url.pathname !== location.pathname || !url.hash || url.hash === '#') return;
+    let target = null;
+    try { target = document.querySelector(decodeURIComponent(url.hash)); } catch { return; }
+    if (!target) return;
+    e.preventDefault();
+    // from the mobile drawer: let header.js close it (and unlock scrolling) first
+    if (document.documentElement.classList.contains('nav-open')) setTimeout(() => goTo(target)); else goTo(target);
+    if (location.hash !== url.hash) history.pushState(null, '', url.hash);
+    if (!target.matches('a,button,input,select,textarea,[tabindex]')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  }, true);
+}
+
 /* ===================================================================== boot */
-for (const [name, fn] of [['clocks', initClocks], ['map', initMap], ['wizard', initWizard], ['quickform', initQuickForm], ['misc', initMisc], ['deeplink', initDeepLink]]) {
+for (const [name, fn] of [['clocks', initClocks], ['map', initMap], ['wizard', initWizard], ['quickform', initQuickForm], ['misc', initMisc], ['anchors', initAnchors], ['deeplink', initDeepLink]]) {
   try { fn(); } catch (err) { console.error(`[contact] ${name} failed`, err); }
 }
