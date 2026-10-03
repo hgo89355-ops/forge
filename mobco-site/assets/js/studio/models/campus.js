@@ -379,7 +379,7 @@ export function build(THREE, ctx = {}) {
     const pos = [], nor = [], idx = [];
     let off = 0;
     for (const src of list) {
-      const g = src.index ? src : src;
+      const g = src;
       const p = g.getAttribute('position'), n = g.getAttribute('normal');
       for (let i = 0; i < p.count; i++) { pos.push(p.getX(i), p.getY(i), p.getZ(i)); nor.push(n.getX(i), n.getY(i), n.getZ(i)); }
       if (g.index) for (let i = 0; i < g.index.count; i++) idx.push(g.index.getX(i) + off);
@@ -764,7 +764,7 @@ export function build(THREE, ctx = {}) {
     }
     return { topY, crownTop };
   }
-  const tower = buildTower(TOWER);
+  buildTower(TOWER);
 
   /* ====================================================================== */
   /* Sky bridge (one floor group, level 1 — it joins the rings' first floor) */
@@ -807,7 +807,7 @@ export function build(THREE, ctx = {}) {
   bridgeGroup.add(mesh(sweepGeo(frames, [[-W + 0.3, 2.85], [W - 0.3, 2.85], [W - 0.3, 3.05], [-W + 0.3, 3.05]]), mat.interior, 'bridge-ceiling', { cast: false }));
   // a sweeping white "keel" ribbon under the deck, deepest at mid-span
   {
-    const keelFrames = frames.map((f) => ({ ...f }));
+    const keelFrames = frames;
     const pos = [], nor = [], idx = [];
     keelFrames.forEach((f, i) => {
       const depth = 0.3 + 1.5 * Math.sin(Math.PI * f.t);

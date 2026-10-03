@@ -650,6 +650,9 @@ html:not(.js) .contact-map__dots { display: none; }
 html:not(.js) .contact-map__stage { grid-template-areas: 'panel'; }
 
 /* ------------------------------------------------------------------ 4. inquiry wizard */
+/* Lenis (core) already applies html scroll-padding + motion.js offset; a :target scroll-margin would add a
+   third offset on deep links (#inquiry, #map). Local workaround — see docs/requests/contact.md. */
+body[data-page='contact'] main [id]:target { scroll-margin-block-start: 0; }
 .contact-inquiry__layout { display: grid; gap: var(--space-9); }
 @media (min-width: 1024px) {
   .contact-inquiry__layout { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(3rem, 1rem + 4vw, 6rem); align-items: start; }
