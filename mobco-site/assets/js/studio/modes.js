@@ -19,7 +19,11 @@ export function isGlassMaterial(m) {
  * plane and DoubleSide, cut solids read as filled sections. Only opaque materials are patched.
  */
 export function patchCap(mat, capUniform) {
-  if (!mat || mat.userData.__capPatched || mat.transparent || !mat.isMaterial) return;
+  if (!mat || !mat.isMaterial || mat.userData.__capPatched || mat.transparent) return;
+  // Open surfaces (palm fronds, parasols, lathe shells) are authored DoubleSide: their back faces are real
+  // surfaces, not the inside of a solid, so they must never be painted as a section cap. Same for cut-outs
+  // (alphaTest foliage) and anything a model flags with userData.noCap.
+  if (wasDoubleSided(mat) || mat.alphaTest > 0 || mat.userData.noCap) return;
   if (mat.isShaderMaterial || mat.isRawShaderMaterial || mat.isLineBasicMaterial || mat.isPointsMaterial) return;
   mat.userData.__capPatched = true;
   const prev = mat.onBeforeCompile;
@@ -40,6 +44,10 @@ export function patchCap(mat, capUniform) {
   mat.needsUpdate = true;
 }
 
+const DOUBLE_SIDE = 2; // THREE.DoubleSide
+/** Side the model author gave the material (the engine may force DoubleSide while a section cut is active). */
+export function wasDoubleSided(m) { return (m.userData.__side ?? m.side) === DOUBLE_SIDE; }
+
 export function createModeLibrary(THREE, { clipPlanes, capUniform }) {
   const owned = [];
   const mk = (m) => { m.clippingPlanes = clipPlanes; m.clipShadows = true; owned.push(m); return m; };
@@ -51,21 +59,39 @@ export function createModeLibrary(THREE, { clipPlanes, capUniform }) {
     bpFill: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-fill', color: '#123352', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),
     bpSite: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-site', color: '#11304e', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),
     bpGlass: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-glass', color: '#3f6f97', transparent: true, opacity: 0.22, depthWrite: false, toneMapped: false })),
-    xray: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray', color: '#6fd1c5', transparent: true, opacity: 0.06, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, toneMapped: false })),
-    xraySite: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray-site', color: '#9be3da', transparent: true, opacity: 0.025, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false })),
+    // X-ray uses normal (not additive) blending: stacked layers converge on the teal instead of
+    // blowing out to white where many surfaces overlap (e.g. the landmark's drum).
+    xray: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray', color: '#4fb8ac', transparent: true, opacity: 0.075, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })),
+    xraySite: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray-site', color: '#6fd1c5', transparent: true, opacity: 0.03, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })),
     ghost: mk(new THREE.MeshStandardMaterial({ name: 'mode-ghost', color: '#e9eef1', roughness: 0.6, transparent: true, opacity: 0.13, depthWrite: false })),
     bpGhost: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-ghost', color: '#2c5a82', transparent: true, opacity: 0.12, depthWrite: false, toneMapped: false })),
     edge: mk(new THREE.LineBasicMaterial({ name: 'edge-bp', color: '#eaf3fb', transparent: true, opacity: 0.9, toneMapped: false })),
     edgeSite: mk(new THREE.LineBasicMaterial({ name: 'edge-bp-site', color: '#bcd4ea', transparent: true, opacity: 0.32, toneMapped: false })),
     edgeGhost: mk(new THREE.LineBasicMaterial({ name: 'edge-ghost', color: '#bcd4ea', transparent: true, opacity: 0.14, toneMapped: false })),
-    xEdge: mk(new THREE.LineBasicMaterial({ name: 'edge-xray', color: '#9be3da', transparent: true, opacity: 0.55, toneMapped: false, blending: THREE.AdditiveBlending, depthWrite: false })),
-    xEdgeSite: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-site', color: '#6fd1c5', transparent: true, opacity: 0.16, toneMapped: false, blending: THREE.AdditiveBlending, depthWrite: false })),
-    xEdgeGhost: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-ghost', color: '#6fd1c5', transparent: true, opacity: 0.07, toneMapped: false, blending: THREE.AdditiveBlending, depthWrite: false })),
+    xEdge: mk(new THREE.LineBasicMaterial({ name: 'edge-xray', color: '#a8ece3', transparent: true, opacity: 0.42, toneMapped: false, depthWrite: false })),
+    xEdgeSite: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-site', color: '#6fd1c5', transparent: true, opacity: 0.18, toneMapped: false, depthWrite: false })),
+    xEdgeGhost: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-ghost', color: '#6fd1c5', transparent: true, opacity: 0.08, toneMapped: false, depthWrite: false })),
   };
   // Opaque mode materials also show teal caps when cut.
   [M.clay, M.claySite, M.bpFill, M.bpSite].forEach((m) => patchCap(m, capUniform));
 
-  const mapMat = (orig, fn) => (Array.isArray(orig) ? orig.map(fn) : fn(orig));
+  // Double-sided twins of the replacement materials (created on demand, never cap-patched) so open
+  // surfaces such as palm fronds, parasols and lathe shells keep both faces in Clay / Blueprint / ghost.
+  const twins = new Map();
+  function sided(base, orig) {
+    if (!orig || base.side === THREE.DoubleSide || !wasDoubleSided(orig)) return base;
+    let v = twins.get(base);
+    if (!v) {
+      v = base.clone();
+      v.name = `${base.name}-ds`;
+      delete v.userData.__capPatched;
+      delete v.userData.__side;
+      v.side = THREE.DoubleSide;
+      twins.set(base, mk(v));
+    }
+    return v;
+  }
+  const mapMat = (orig, fn) => (Array.isArray(orig) ? orig.map((m) => sided(fn(m), m)) : sided(fn(orig), orig));
 
   /** Material for one mesh given the render mode and whether it is ghosted (level isolation). */
   function materialFor(mesh, mode, ghost) {

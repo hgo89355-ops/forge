@@ -76,7 +76,8 @@ const S = {
   more: { en: 'Read more', ar: 'اقرأ المزيد' },
   less: { en: 'Show less', ar: 'عرض أقل' },
   portfolio: { en: 'From the group portfolio:', ar: 'من محفظة المجموعة:' },
-  hospitalityCount: { en: 'hospitality projects in the group portfolio', ar: 'مشروعًا في قطاع الضيافة ضمن محفظة المجموعة' },
+  // Arabic counted noun: 3–10 take the plural (مشاريع); 11+ take the accusative singular (مشروعًا)
+  hospitalityCount: (n) => ({ en: 'hospitality projects in the group portfolio', ar: `${n >= 3 && n <= 10 ? 'مشاريع' : 'مشروعًا'} في قطاع الضيافة ضمن محفظة المجموعة` }),
   viewProject: { en: 'View project', ar: 'عرض المشروع' },
   representative: { en: 'Representative imagery', ar: 'صورة تعبيرية' },
 };
@@ -507,7 +508,7 @@ function initCaps() {
     const list = PROJECTS.filter((p) => p.category === 'hospitality');
     if (!list.length) return;
     port.hidden = false;
-    $('[data-caps-portfolio-title]', port).innerHTML = `<span class="num">${list.length}</span> ${esc(t(S.hospitalityCount))}`;
+    $('[data-caps-portfolio-title]', port).innerHTML = `<span class="num">${list.length}</span> ${esc(t(S.hospitalityCount(list.length)))}`;
     $('[data-caps-portfolio-list]', port).innerHTML = list.map((p) => `<li><a class="subs-caps__chip" href="${esc(projectUrl(p))}">${esc(t(p.name))}</a></li>`).join('');
   };
   renderPortfolio();

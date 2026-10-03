@@ -141,9 +141,11 @@ html[lang='ar'] .subs-hero__logo-meta { letter-spacing: 0; font-size: .8125rem; 
 .subs-hero__logo-meta .icon { color: var(--slate-400); transition: transform var(--dur) var(--ease-out), color var(--dur); }
 .subs-hero__logo:hover .subs-hero__logo-meta .icon, .subs-hero__logo:focus-visible .subs-hero__logo-meta .icon { transform: translateY(3px); color: var(--teal-700); }
 
-@media (max-width: 359.98px) {
-  .subs-hero__logo-meta { letter-spacing: .12em; gap: .375rem; padding-inline: .5rem; }
+@media (max-width: 379.98px) {
+  .subs-hero__logo-meta { letter-spacing: .12em; gap: .375rem; padding-inline: .625rem; }
   .subs-hero__logo-meta .icon { display: none; }
+}
+@media (max-width: 359.98px) {
   .subs-result__actions .btn, .subs-finder__nav .btn { white-space: normal; min-inline-size: 0; }
 }
 @media (min-width: 1024px) {

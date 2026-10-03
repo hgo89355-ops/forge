@@ -273,6 +273,7 @@ html[lang='ar'] .pj-play { font-size: .8125rem; }
   transition: color var(--dur) var(--ease-soft), background var(--dur) var(--ease-soft);
 }
 .pj-tab + .pj-tab { border-inline-start: 1px solid var(--line); }
+@media (max-width: 1439.98px) { .pj-tab { min-inline-size: 92px; padding-inline: .5625rem; } }
 .pj-tab__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .pj-tab__icon { --icon-size: 22px; color: var(--slate-400); transition: color var(--dur), transform var(--dur-slow) var(--ease-out); }
 .pj-tab__count {
@@ -293,7 +294,7 @@ html[lang='ar'] .pj-play { font-size: .8125rem; }
   line-height: 1.35;
   letter-spacing: .12em;
   text-transform: uppercase;
-  max-inline-size: 16ch;
+  max-inline-size: 15em; /* em (not ch): wide enough for the longest single word incl. tracking */
   text-wrap: balance;
 }
 html[lang='ar'] .pj-tab__label { font-size: .875rem; letter-spacing: 0; text-transform: none; line-height: 1.45; }
@@ -1279,12 +1280,13 @@ html[lang='ar'] .pjv-pg__dir { font-size: .75rem; }
 @media (min-width: 768px) { .pj-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); } .pj-cats > li:last-child { grid-column: span 3; } }
 @media (min-width: 1100px) { .pj-cats { grid-template-columns: repeat(5, minmax(0, 1fr)); } .pj-cats > li:last-child { grid-column: auto; } }
 @media (max-width: 767.98px) {
-  .pj-cat { min-block-size: 150px; padding: 1rem; gap: var(--space-2); }
-  .pj-cat__icon { inline-size: 44px; block-size: 44px; }
+  /* (.pj-cats prefix: these must beat the base .pj-cat__* rules that come later in this file) */
+  .pj-cats .pj-cat { min-block-size: 150px; padding: 1rem; gap: var(--space-2); }
+  .pj-cats .pj-cat__icon { inline-size: 44px; block-size: 44px; }
   /* fluid so the longest single words ("INFRASTRUCTURE", "ADMINISTRATION") fit a 2-up tile at 360px without clipping */
-  .pj-cat__name { margin-block-start: var(--space-4); font-size: clamp(.6875rem, 3.2vw, .875rem); letter-spacing: .01em; overflow-wrap: normal; hyphens: manual; }
-  html[lang='ar'] .pj-cat__name { font-size: .9375rem; }
-  .pj-cat__count { font-size: var(--fs-xs); }
+  .pj-cats .pj-cat__name { margin-block-start: var(--space-4); font-size: clamp(.75rem, 3.4vw, .9375rem); letter-spacing: .01em; overflow-wrap: normal; hyphens: manual; }
+  html[lang='ar'] .pj-cats .pj-cat__name { font-size: 1rem; letter-spacing: 0; }
+  .pj-cats .pj-cat__count { font-size: var(--fs-xs); }
 }
 .pj-cat--all { background: var(--navy-900); color: var(--white); }
 .pj-cat--all .pj-cat__name { color: var(--white); }

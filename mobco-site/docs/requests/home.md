@@ -28,3 +28,19 @@ suggestions for the foundation to add shared support. None of them block the pag
    On an earlier run, `#hb-projects .carousel--bleed` overflowed the 390px layout viewport (scrollWidth 402). The
    latest run is clean. The overflow came from the shared `.carousel--bleed` rule, so it may be worth keeping an eye on
    at 360px.
+
+---
+
+## Added during the integrated home QA (Parts A + B joined)
+
+6. **Footer CTA opt-out (partials/footer.html + main.css).** The home spec requires a closing CTA right above the
+   footer, and the footer opens with its own "Let's build what's next" CTA, so the page showed two CTAs back to back.
+   - Workaround: `body[data-page='home'] .site-footer__cta { display: none }` in home.css, plus forcing its
+     `[data-reveal]` child visible so `check.mjs` does not report it as "still hidden".
+   - Suggested shared fix: a body flag such as `data-footer-cta="off"` handled in main.css (also asked by home-b).
+7. **Element screenshots on touch emulation (tools/check.mjs, FYI).** Playwright `locator.screenshot()` with
+   `isMobile/hasTouch` drops the touch emulation during capture, so `(hover: hover) and (pointer: fine)` rules apply
+   in the image (e.g. subsidiary descriptions look hidden). Viewport screenshots are correct. Worth knowing when
+   reading mobile shots.
+8. **Carry-overs from Part B still open:** `.section--dark .badge--glass` backing (home-b request 1) and the core
+   carousel snap-back after mouse drag (home-b request 5; worked around in home-b.css).
