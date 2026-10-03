@@ -491,7 +491,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
       el.innerHTML = `<span class="studio-hotspot__dot num-ltr" aria-hidden="true">${i + 1}</span>`;
       el.addEventListener('click', (ev) => { ev.stopPropagation(); toggleHotcard(h.id); });
       hotLayer.appendChild(el);
-      return { ...h, index: i + 1, el, last: { x: -1, y: -1, cls: '' } };
+      return { ...h, index: i + 1, el, last: { x: -1, y: -1, cls: 'init' } };
     });
     labelHotspots();
   }
