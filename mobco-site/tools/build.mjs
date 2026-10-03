@@ -12,7 +12,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, renameSync } from 'node:fs';
 import { dirname, join, resolve, basename, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -27,6 +27,21 @@ function partial(name) {
     partialCache.set(name, readFileSync(p, 'utf8').replace(/\s+$/, ''));
   }
   return partialCache.get(name);
+}
+
+// Sanity checks on partial content that mirrors data (kept static for SEO / no-JS): the header's
+// "View all N projects" link must match PROJECTS.length in assets/js/data/site-data.js.
+async function checkPartials() {
+  const problems = [];
+  try {
+    const { PROJECTS } = await import(pathToFileURL(join(ROOT, 'assets/js/data/site-data.js')).href);
+    const header = partial('header');
+    for (const m of header.matchAll(/View all (\d+) projects|المشاريع \((\d+)\)/g)) {
+      const n = parseInt(m[1] || m[2], 10);
+      if (n !== PROJECTS.length) problems.push(`partials/header.html says ${n} projects ("${m[0]}") but PROJECTS has ${PROJECTS.length}`);
+    }
+  } catch (err) { problems.push(`partial checks failed: ${err.message}`); }
+  return problems;
 }
 
 const RE = /([ \t]*)<!--\s*@include\s+([\w-]+)\s*-->[\s\S]*?<!--\s*\/@include\s+\2\s*-->/g;
@@ -55,6 +70,7 @@ const targets = files.length
   ? files
   : readdirSync(ROOT).filter((f) => f.endsWith('.html')).sort();
 let bad = 0;
+for (const p of await checkPartials()) { console.error(`✗ ${p}`); bad++; }
 for (const f of targets) {
   try {
     const r = processFile(f);

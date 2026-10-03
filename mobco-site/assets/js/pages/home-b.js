@@ -349,15 +349,15 @@ function initStudioEmbed() {
         compact: true, model: modelId, autoRotate: true, controls: false, ui: false, hotspots: false, quality: 'auto',
       });
       studio = s;
-      // optional art direction from the markup: data-studio-time (hours 6–22) · data-studio-mode (realistic|clay|blueprint|xray)
-      const hour = parseFloat(embed.dataset.studioTime);
-      if (Number.isFinite(hour)) s.setTime(hour);
-      if (embed.dataset.studioMode) s.setMode(embed.dataset.studioMode);
       s.canvas.style.touchAction = 'auto'; // OrbitControls sets 'none'; the embed must never block page scrolling
       s.on('contextlost', () => { if (studio === s) fail(); });
       const meta = await s.ready;
       if (studio !== s) return;
       if (!meta) { fail(); return; }
+      // optional art direction from the markup: data-studio-time (hours 6–22) · data-studio-mode (realistic|clay|blueprint|xray)
+      const hour = parseFloat(embed.dataset.studioTime);
+      if (Number.isFinite(hour)) s.setTime(hour);
+      if (embed.dataset.studioMode) s.setMode(embed.dataset.studioMode);
       // crossfade once the first frame of the loaded model is on screen
       requestAnimationFrame(() => requestAnimationFrame(() => {
         if (studio !== s) return;

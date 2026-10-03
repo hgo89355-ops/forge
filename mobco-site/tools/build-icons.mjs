@@ -29,6 +29,9 @@ export const ICONS = [
   'leaf', 'handshake', 'users', 'user-round', 'briefcase', 'globe-2', 'earth', 'compass', 'route', 'gauge',
   'chart-line', 'chart-bar', 'trending-up', 'badge-check', 'scale', 'network', 'workflow', 'git-merge', 'puzzle',
   'heart-pulse', 'book-open', 'medal', 'blocks', 'clipboard-check', 'cog', 'milestone', 'flag', 'plane',
+  // added in the integration pass (page requests)
+  'pencil', 'navigation', 'map-pinned', 'box-select', 'sun-moon', 'scissors', 'concierge-bell', 'key-round', 'key',
+  'door-open', 'quote',
 ];
 
 const out = [];

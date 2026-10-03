@@ -244,10 +244,11 @@ export const SUBSIDIARIES = [
       en: 'MOBCO Real Estate Development represents the group’s real estate development activity — one of its three specialisms alongside construction and education — creating residential and commercial assets for long-term value.',
       ar: 'تمثّل موبكو للتطوير العقاري نشاط المجموعة في التطوير العقاري — أحد تخصصاتها الثلاثة إلى جانب الإنشاءات والتعليم — عبر إنشاء أصول سكنية وتجارية ذات قيمة طويلة الأمد.',
     },
+    // derived from the verbatim client copy ("leasing and property management for multi-functional buildings")
     focus: [
-      { en: 'Residential development', ar: 'التطوير السكني' },
-      { en: 'Commercial assets', ar: 'الأصول التجارية' },
-      { en: 'Asset management', ar: 'إدارة الأصول' },
+      { en: 'Office leasing', ar: 'تأجير المساحات المكتبية' },
+      { en: 'Property management', ar: 'إدارة العقارات' },
+      { en: 'Multi-functional buildings', ar: 'المباني متعددة الوظائف' },
     ],
     todo: "Text verbatim from the client site (minor grammar fix: “features an modern” → “features modern”).",
   },
@@ -1268,12 +1269,12 @@ export const PROJECTS = [
 ];
 
 export const PROJECT_CATEGORIES = [
-  { id: "airport", icon: "plane", name: { en: "Airport", ar: "المطارات" }, sectors: ["business"] },
+  { id: "airport", icon: "plane", name: { en: "Airport", ar: "المطارات" }, sectors: [] },
   { id: "education", icon: "graduation-cap", name: { en: "Education", ar: "التعليم" }, sectors: ["education"] },
   { id: "hospitality", icon: "hotel", name: { en: "Hospitality", ar: "الضيافة" }, sectors: ["hotels"] },
   { id: "infrastructure", icon: "route", name: { en: "Infrastructure", ar: "البنية التحتية" }, sectors: [] },
   { id: "medical", icon: "hospital", name: { en: "Medical", ar: "الرعاية الصحية" }, sectors: ["medical"] },
-  { id: "mixed-use-admin", icon: "building-2", name: { en: "Mixed Use / Administration", ar: "متعدد الاستخدامات / إداري" }, sectors: ["business", "government"] },
+  { id: "mixed-use-admin", icon: "building-2", name: { en: "Mixed Use / Administration", ar: "متعدد الاستخدامات / إداري" }, sectors: ["business", "government", "skyscrapers", "malls"] },
   { id: "ppp", icon: "handshake", name: { en: "PPP", ar: "الشراكة بين القطاعين العام والخاص" }, sectors: [] },
   { id: "special-projects", icon: "sparkles", name: { en: "Special Projects", ar: "مشاريع خاصة" }, sectors: [] },
   { id: "residential", icon: "house", name: { en: "Residential", ar: "السكني" }, sectors: ["residential"] },
@@ -1314,6 +1315,24 @@ export const PAGES = [
     keywords: { en: ['subsidiaries', 'companies', 'construction', 'developments', 'real estate', 'education', 'elite'], ar: ['الشركات التابعة', 'شركات', 'إنشاءات', 'تطوير', 'عقاري', 'تعليم', 'النخبة'] },
   },
   {
+    id: 'mobco-construction', url: 'mobco-construction.html', icon: 'hard-hat',
+    title: { en: 'MOBCO Construction', ar: 'موبكو للإنشاءات' },
+    description: { en: 'Elevating industry standards — the construction arm of MOBCO Group, founded in 2001.', ar: 'نرتقي بمعايير الصناعة — الذراع الإنشائية لمجموعة موبكو، تأسّست عام 2001.' },
+    keywords: { en: ['construction', 'contracting', 'contractor', 'general contracting', 'tier one', 'building', 'uk', 'canada', 'egypt', 'saudi arabia', '438 projects'], ar: ['إنشاءات', 'مقاولات', 'مقاول', 'المقاولات العامة', 'الفئة الأولى', 'بناء', 'المملكة المتحدة', 'كندا', 'مصر', 'السعودية'] },
+  },
+  {
+    id: 'mobco-developments', url: 'mobco-developments.html', icon: 'building',
+    title: { en: 'MOBCO Developments', ar: 'موبكو للتطوير' },
+    description: { en: 'Creating landmarks, defining excellence — developments in Egypt and Canada.', ar: 'نصنع المعالم ونرسم ملامح التميّز — مشاريع تطوير في مصر وكندا.' },
+    keywords: { en: ['developments', 'developer', 'real estate development', 'egypt', 'canada', 'eastmain', 'victoria 101', 'new cairo', 'port whitby', 'sustainability'], ar: ['تطوير', 'مطوّر', 'التطوير العقاري', 'مصر', 'كندا', 'إيست مين', 'فيكتوريا 101', 'القاهرة الجديدة', 'الاستدامة'] },
+  },
+  {
+    id: 'mobco-real-estate', url: 'mobco-real-estate.html', icon: 'landmark',
+    title: { en: 'MOBCO Real Estate Development', ar: 'موبكو للتطوير العقاري' },
+    description: { en: 'Simplifying property management — leasing and property management since 2002, Cairo.', ar: 'نُبسّط إدارة العقارات — تأجير وإدارة العقارات منذ عام 2002، القاهرة.' },
+    keywords: { en: ['real estate', 'leasing', 'lease', 'property management', 'offices', 'office space', 'mivida', 'business park', 'b1', 'cairo', 'tenants'], ar: ['عقارات', 'تأجير', 'إيجار', 'إدارة العقارات', 'مكاتب', 'مساحات مكتبية', 'ميفيدا', 'مجمّع الأعمال', 'القاهرة', 'مستأجرين'] },
+  },
+  {
     id: 'projects', url: 'projects.html', icon: 'layout-grid',
     title: { en: 'Projects', ar: 'المشاريع' },
     description: { en: 'Explore the portfolio across Saudi Arabia, Egypt and Canada.', ar: 'استكشف المشاريع في السعودية ومصر وكندا.' },
@@ -1335,7 +1354,7 @@ export const PAGES = [
     id: 'careers', url: 'careers.html', icon: 'briefcase',
     title: { en: 'Careers', ar: 'الوظائف' },
     description: { en: 'Build your career with our KSA and Egypt teams.', ar: 'ابنِ مسيرتك المهنية مع فريقينا في السعودية ومصر.' },
-    keywords: { en: ['careers', 'jobs', 'join', 'cv', 'resume', 'hr', 'engineers'], ar: ['وظائف', 'توظيف', 'انضم', 'سيرة ذاتية', 'موارد بشرية', 'مهندسين'] },
+    keywords: { en: ['careers', 'jobs', 'join', 'cv', 'resume', 'hr', 'engineers', 'bim', 'hse', 'quantity surveying', 'procurement', 'facility management'], ar: ['وظائف', 'توظيف', 'انضم', 'سيرة ذاتية', 'موارد بشرية', 'مهندسين', 'نمذجة معلومات البناء', 'الصحة والسلامة والبيئة', 'حساب الكميات', 'المشتريات', 'إدارة المرافق'] },
   },
   {
     id: 'contact', url: 'contact.html', icon: 'mail',

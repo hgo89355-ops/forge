@@ -4,13 +4,15 @@
 //   node tools/check.mjs                                   → all root *.html, desktop+mobile, EN+AR
 //   node tools/check.mjs --pages about.html --port 8123 --shots /tmp/qa/about
 //   flags: --pages <f…>  --port <n> (default 8100)  --shots <dir>  --no-mobile  --no-ar  --no-desktop
-//          --strict (missing planned pages = error, not warning)  --qa (load pages with ?qa=1: no animations)
+//          --qa (load pages with ?qa=1: no animations)
 //          --concurrency <n> (default 4)
 //
 // Each page × viewport (desktop 1440×900, mobile 390×844) × language (EN, ?lang=ar) is loaded, scrolled
 // top→bottom to trigger lazy images and reveals, then checked for:
 //   console errors · page errors · failed / 4xx-5xx requests · horizontal overflow (+ offending elements)
-//   broken images · internal links to missing files · anchors to missing ids · [data-reveal]/[data-split] still
+//   broken images · internal links to missing files · anchors to missing ids (ids rendered by JS count: a target
+//   page whose id is not in its static HTML is loaded once in a browser and checked after its scripts ran) ·
+//   [data-reveal]/[data-split] still
 //   hidden after scrolling · <img> without alt · duplicate ids · data-ar on non-leaf elements (would wipe children)
 // With --shots: <page>-<desktop|mobile>-<en|ar>.png (full page) and, for tall pages, viewport-sized section
 // shots <page>-<vp>-<lang>-s01.png … every ~viewport height. Exit code 1 if any error.
@@ -25,11 +27,10 @@ const require = createRequire(import.meta.url);
 const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const PLANNED = ['index.html', 'about.html', 'subsidiaries.html', 'projects.html', 'studio.html', 'media.html', 'careers.html', 'contact.html', '404.html'];
 
 /* ---------------------------------------------------------------- args */
 const argv = process.argv.slice(2);
-const opt = { pages: [], port: 8100, shots: null, mobile: true, desktop: true, ar: true, strict: false, qa: false, concurrency: 4 };
+const opt = { pages: [], port: 8100, shots: null, mobile: true, desktop: true, ar: true, qa: false, concurrency: 4 };
 for (let i = 0; i < argv.length; i++) {
   const a = argv[i];
   if (a === '--pages') { while (argv[i + 1] && !argv[i + 1].startsWith('--')) opt.pages.push(argv[++i]); }
@@ -38,7 +39,7 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === '--no-mobile') opt.mobile = false;
   else if (a === '--no-desktop') opt.desktop = false;
   else if (a === '--no-ar') opt.ar = false;
-  else if (a === '--strict') opt.strict = true;
+  else if (a === '--strict') { /* kept for old scripts: every page is built now, missing files are always errors */ }
   else if (a === '--qa') opt.qa = true;
   else if (a === '--concurrency') opt.concurrency = parseInt(argv[++i], 10) || 4;
   else if (a.endsWith('.html')) opt.pages.push(a);
@@ -84,6 +85,24 @@ function idsIn(file) {
     idCache.set(file, new Set([...html.matchAll(/\sid=["']([^"']+)["']/g)].map((m) => m[1])));
   }
   return idCache.get(file);
+}
+
+// ids that exist once a page's scripts have run (JS-rendered cards, overlays …), cached per file
+const runtimeIdCache = new Map();
+function runtimeIdsIn(browser, file) {
+  if (!runtimeIdCache.has(file)) {
+    runtimeIdCache.set(file, (async () => {
+      const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+      await ctx.addInitScript(() => { try { sessionStorage.setItem('mobco-visited', '1'); localStorage.setItem('mobco-consent', 'declined'); } catch { /* ignore */ } });
+      const pg = await ctx.newPage();
+      try {
+        await pg.goto(`${BASE}/${file}`, { waitUntil: 'load', timeout: 30000 });
+        await pg.waitForTimeout(1500);
+        return new Set(await pg.evaluate(() => [...document.querySelectorAll('[id]')].map((el) => el.id)));
+      } catch { return new Set(); } finally { await ctx.close(); }
+    })());
+  }
+  return runtimeIdCache.get(file);
 }
 
 const IN_PAGE = (expectedW) => {
@@ -237,20 +256,17 @@ async function run(browser, page, vpName, lang) {
         if (!hash && href === '#') warn(`empty link href="#"`);
         continue;
       }
-      if (!existsSync(join(ROOT, file))) {
-        if (PLANNED.includes(file) && !opt.strict) warn(`link to planned page not built yet: ${href}`);
-        else err(`link to missing file: ${href}`);
-        continue;
-      }
+      if (!existsSync(join(ROOT, file))) { err(`link to missing file: ${href}`); continue; }
       if (hash && file.endsWith('.html') && !idsIn(file).has(hash)) {
-        // ids rendered by JS can't be verified statically → warning
-        warn(`anchor id not found statically: ${href}`);
+        // not in the static HTML: accept ids the target page renders with JS, else it's a broken anchor
+        const live = await runtimeIdsIn(p.context().browser(), file);
+        if (!live.has(hash)) err(`anchor to missing id (static and after JS): ${href}`);
       }
     }
   }
   // screenshots
   if (opt.shots) {
-    await p.evaluate(() => window.scrollTo(0, 0));
+    await p.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
     await p.waitForTimeout(700);
     const name = page.replace(/\.html$/, '').replace(/[^\w-]/g, '_');
     const base = `${opt.shots}/${name}-${vpName}-${lang}`;
@@ -260,7 +276,8 @@ async function run(browser, page, vpName, lang) {
       const step = vp.height;
       let i = 1;
       for (let y = 0; y < H && i <= 40; y += step, i++) {
-        await p.evaluate((yy) => window.scrollTo(0, yy), y);
+        // instant: html:not(.lenis) has scroll-behavior: smooth, which would capture a half-scrolled frame
+        await p.evaluate((yy) => window.scrollTo({ top: yy, behavior: 'instant' }), y);
         await p.waitForTimeout(350);
         await p.screenshot({ path: `${base}-s${String(i).padStart(2, '0')}.png` });
       }

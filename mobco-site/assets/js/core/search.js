@@ -1,11 +1,12 @@
 // MOBCO core/search.js — site search overlay (Ctrl/⌘+K or "/").
-// Fuzzy search over PAGES + PROJECTS + SUBSIDIARIES (+ sectors) from data/site-data.js, EN/AR.
+// Fuzzy search over PAGES + PROJECTS + SUBSIDIARIES + project categories (+ sectors) from data/site-data.js, EN/AR.
+// Results are de-duplicated by URL (a company page found as both a page and a company shows once).
 // Triggers: any [data-search-open] element. API: openSearch(query?), closeSearch()
 
 import { $$, esc, icon, normalize, trapFocus } from './utils.js';
 import { t, getLang, onLang } from './i18n.js';
 import { stopScroll, startScroll } from './motion.js';
-import { PAGES, PROJECTS, SUBSIDIARIES, SECTORS, QUICK_LINKS, projectUrl } from '../data/site-data.js';
+import { PAGES, PROJECTS, SUBSIDIARIES, SECTORS, PROJECT_CATEGORIES, QUICK_LINKS, projectUrl, getCategory } from '../data/site-data.js';
 
 const S = {
   label: { en: 'Search the site', ar: 'ابحث في الموقع' },
@@ -13,7 +14,9 @@ const S = {
   pages: { en: 'Pages', ar: 'الصفحات' },
   projects: { en: 'Projects', ar: 'المشاريع' },
   companies: { en: 'Group companies', ar: 'شركات المجموعة' },
+  categories: { en: 'Project categories', ar: 'فئات المشاريع' },
   sectors: { en: 'Sectors', ar: 'القطاعات' },
+  projectCount: { en: '{n} projects', ar: 'عدد المشاريع: {n}' },
   quick: { en: 'Quick links', ar: 'روابط سريعة' },
   empty: { en: 'No results for “{q}”. Try “projects”, “Riyadh” or “careers”.', ar: 'لا توجد نتائج لـ «{q}». جرّب «المشاريع» أو «الرياض» أو «الوظائف».' },
   navigate: { en: 'to navigate', ar: 'للتنقل' },
@@ -32,16 +35,32 @@ let initialized = false;
 function buildIndex() {
   const items = [];
   PAGES.forEach((p) => items.push({ group: 'pages', url: p.url, title: p.title, desc: p.description, keywords: p.keywords, icon: p.icon }));
-  PROJECTS.forEach((p) => items.push({
-    group: 'projects', url: projectUrl(p), title: p.name,
-    desc: p.location || p.typology,
-    keywords: { en: [p.typology.en, p.summary.en, ...(p.highlights || []).map((h) => h.en), p.region || ''], ar: [p.typology.ar, p.summary.ar, ...(p.highlights || []).map((h) => h.ar)] },
-    thumb: `assets/img/thumbs/${p.image}.webp`,
-  }));
+  PROJECTS.forEach((p) => {
+    const cat = getCategory(p.category);
+    items.push({
+      group: 'projects', url: projectUrl(p), title: p.name,
+      desc: p.location || p.typology,
+      keywords: {
+        en: [p.typology?.en, p.summary?.en, cat?.name.en, ...(p.highlights || []).map((h) => h.en), p.region || ''].filter(Boolean),
+        ar: [p.typology?.ar, p.summary?.ar, cat?.name.ar, ...(p.highlights || []).map((h) => h.ar)].filter(Boolean),
+      },
+      thumb: `assets/img/thumbs/${p.image}.webp`,
+    });
+  });
   SUBSIDIARIES.forEach((s) => items.push({
-    group: 'companies', url: `subsidiaries.html#${s.id}`, title: s.name, desc: s.short,
-    keywords: { en: s.focus.map((f) => f.en), ar: s.focus.map((f) => f.ar) }, icon: s.icon,
+    group: 'companies', url: s.page || `subsidiaries.html#${s.id}`, title: s.name, desc: s.tagline || s.short,
+    keywords: {
+      en: [...s.focus.map((f) => f.en), s.short?.en, ...(s.facts || []).map((f) => f.en)].filter(Boolean),
+      ar: [...s.focus.map((f) => f.ar), s.short?.ar, ...(s.facts || []).map((f) => f.ar)].filter(Boolean),
+    },
+    icon: s.icon,
   }));
+  PROJECT_CATEGORIES.forEach((c) => {
+    const n = PROJECTS.filter((p) => p.category === c.id).length;
+    if (!n) return;
+    const count = { en: S.projectCount.en.replace('{n}', n), ar: S.projectCount.ar.replace('{n}', n) };
+    items.push({ group: 'categories', url: `projects.html?category=${c.id}`, title: c.name, desc: count, keywords: { en: ['category', 'projects'], ar: ['فئة', 'مشاريع'] }, icon: c.icon });
+  });
   SECTORS.forEach((s) => items.push({
     group: 'sectors', url: `projects.html?sector=${s.id}`, title: s.name, desc: s.text, keywords: { en: [], ar: [] }, icon: s.icon,
   }));
@@ -85,7 +104,10 @@ function search(q) {
     }
     if (ok) scored.push({ it, score: total + (it.group === 'pages' ? 5 : 0) });
   }
-  return scored.sort((a, b) => b.score - a.score).slice(0, 12).map((s) => s.it);
+  const seen = new Set();
+  return scored.sort((a, b) => b.score - a.score)
+    .filter((s) => (seen.has(s.it.url) ? false : seen.add(s.it.url)))
+    .slice(0, 12).map((s) => s.it);
 }
 
 function highlight(text, q) {
@@ -113,7 +135,7 @@ function itemHTML(it, i, q) {
 
 function render() {
   const q = input.value;
-  const groupsOrder = ['pages', 'projects', 'companies', 'sectors'];
+  const groupsOrder = ['pages', 'companies', 'projects', 'categories', 'sectors'];
   let html = '';
   if (!q.trim()) {
     results = QUICK_LINKS.map((l) => ({ ...l, desc: l.description, group: 'quick' }))
