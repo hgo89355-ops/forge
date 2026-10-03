@@ -12,7 +12,7 @@ All items below are already worked around locally in projects.css / projects.js;
    Request: add `aria-roledescription` to the ATTRS list.
 4. **Consent banner over modals.** `--z-consent` (480) sits above modals (300), so the banner covers the bottom of
    full-screen overlays (the viewer's mode buttons) on a first visit. Request: lower the banner below `--z-modal`, or
-   hide it while `html.is-locked`.
+   hide it while `html.is-locked`. Local workaround: `html:has(#pj-viewer.is-open) .consent { visibility: hidden }`.
 5. **icon-btn--sm is 40 px** (< 44 px touch target). projects.css bumps it to 44 px locally where used.
 6. **Header mega menu** still lists only the five original projects. Suggest featuring a few of the 14 `featured`
    projects (with real photos), all linking `projects.html#<slug>` (the projects page opens its viewer for every slug).
@@ -21,3 +21,12 @@ All items below are already worked around locally in projects.css / projects.js;
 8. **circular-carousel.js (no changes made)**: nice-to-haves — expose `item.data` on the `onChange` callback's
    live-region label hook, and an option to let the root be wider than its container without the fit shrinking it
    (projects.css currently widens the ring container on small screens and lets the hero clip it).
+9. **site-data.js — `PROJECT_CATEGORIES[airport].sectors` contains `"business"`**, so any generic
+   "sector → category" lookup sends `?sector=business` to the one airport project. projects.js now uses its own explicit
+   map; consider `sectors: []` for Airport (and adding `skyscrapers`/`malls` to Mixed Use / Administration).
+10. **core/motion.js — `scrollTo(element)` with Lenis double-counts the header offset** (Lenis also applies the html
+    `scroll-padding-top` to element targets, on top of the `-(header-h + 16)` offset), landing ~100 px short.
+    projects.js passes numeric targets with `offset: 0`. Request: pass `offset: 0` to Lenis for element targets when
+    scroll-padding is set, or drop the manual offset in that path.
+11. **tools/**: the generator for the no-JS `<!-- pj:* -->` blocks of projects.html (`gen-static.mjs`) only exists in
+    scratch dirs; please adopt it into `tools/` so the static markup can be rebuilt when PROJECTS changes.

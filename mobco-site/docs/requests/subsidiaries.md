@@ -39,3 +39,20 @@ Each item has a local workaround already in place in `subsidiaries.js` / `subsid
 7. **icons (nice to have):** `concierge-bell` (hospitality) and `key-round` (leasing) would suit the
    capability and finder options. `hotel` and `landmark` are used for now.
 
+
+---
+
+## From the subsidiary detail pages QA pass (`mobco-*.html`)
+
+These are still outstanding. The full write-up is in `docs/requests/subsidiary-pages.md`. Each one has a local
+workaround in `subsidiary.css` / `subsidiary.js`.
+
+1. `site-data.js` `PAGES`: add `mobco-construction`, `mobco-developments` and `mobco-real-estate`, so that ⌘K
+   search finds the detail pages.
+2. `partials/footer.html` "The Group": link the three companies that have a page to `SUBSIDIARIES[].page`
+   instead of `subsidiaries.html#<id>`.
+3. `sitemap.xml`: add the three detail pages.
+4. `world-map.js`: add a shared UK marker, `WORLD.markers.uk = { lonlat: [-0.13, 51.5], xy: [499.7, 94.8] }`,
+   and optionally `highlight.uk`.
+5. Icon sprite: add `key` or `door-open` for leasing, and `quote` for pull quotes.
+6. `.contact-line`: add a variant for light backgrounds with a 44px touch target.

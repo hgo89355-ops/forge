@@ -35,6 +35,18 @@ All UI strings are authored in fluent MSA: static markup via `data-ar*`, dynamic
 sequences such as "01 — 05" and percentages are isolated LTR (`.num-ltr`). The 3D canvas is never mirrored;
 panels, scrims, chips and arrows mirror in RTL.
 
+## Fresh-eyes review edits (QA lead)
+- Removed storey/level counts from model copy (BRIEF §2 forbids storey specs): villa descriptors/hotspot now say
+  "Low-rise villas" (AR «فلل منخفضة الارتفاع») instead of "Two-storey"; the commercial strip is "along the main
+  road" instead of "two-level"; the Eastmain café pavilion is "a light glass pavilion" (no "single-storey").
+- Classical Landmark tagline shortened (the illustrative disclaimer already sits right below it):
+  "A classical courtyard building in terracotta and cream stone, crowned by a sculpted central drum."
+- Remaining model copy that describes features seen in the renders ("double-height podium", "rooftop pool",
+  "sky bridge", "lagoon pools", "porte-cochère") is descriptive of the illustrative model, not a specification —
+  still for client/architect review.
+- Arabic time readout ("2:30 م") is no longer forced into an LTR run, so the meridiem follows the time when read
+  right-to-left.
+
 ## Not shown on purpose
 No areas, heights, storeys, completion dates, client names, awards or certifications appear anywhere in the
 studio, even where a model has an obvious number of levels (levels are labelled by the model only).

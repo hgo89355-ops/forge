@@ -133,7 +133,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     }
     const location = project?.location && meta ? `<p class="studio__loc"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span>${esc(t(project.location))}</span></p>` : '';
     infoBody.innerHTML = `
-      <p class="studio__index num-ltr" aria-label="${esc(fmt(t(S.modelOf), { n: entry.index, total: entries.length }))}"><span data-info-num>${pad(entry.index)}</span><span class="studio__index-sep" aria-hidden="true"></span><span>${pad(entries.length)}</span></p>
+      <p class="studio__index num-ltr"><span class="visually-hidden">${esc(fmt(t(S.modelOf), { n: entry.index, total: entries.length }))}</span><span data-info-num aria-hidden="true">${pad(entry.index)}</span><span class="studio__index-sep" aria-hidden="true"></span><span aria-hidden="true">${pad(entries.length)}</span></p>
       <h2 class="studio__name">${esc(name)}</h2>
       ${tagline ? `<p class="studio__tagline">${esc(tagline)}</p>` : ''}
       ${location}
@@ -282,6 +282,8 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     outputs.section.textContent = sec >= 100 ? t(S.sectionOff) : fmt(t(S.sectionAt), { n: sec });
     const h = +inputs.time.value;
     outputs.time.textContent = formatHour(h);
+    // Arabic reads "2:30 م" right-to-left (time first, then the meridiem): no forced LTR run there
+    outputs.time.classList.toggle('num-ltr', getLang() !== 'ar');
     timeIcon?.setAttribute('href', `assets/icons/sprite.svg#${h >= 19.25 || h < 6.5 ? 'moon' : h >= 17.5 ? 'sunset' : h < 8 ? 'sunrise' : 'sun'}`);
   }
   function setInput(input, value) {
@@ -320,7 +322,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const flat = st.mode === 'blueprint' || st.mode === 'xray';
     inputs.time.disabled = flat;
     timeRange.classList.toggle('is-disabled', flat);
-    timeNote.hidden = !flat;
+    if (timeNote.hidden !== !flat) { timeNote.hidden = !flat; requestAnimationFrame(syncPanelOverflow); }
     if (isolateBtn) {
       isolateBtn.disabled = !st.floors;
       isolateBtn.setAttribute('aria-pressed', String(st.selected >= 0));
@@ -340,6 +342,18 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     else if (a === 'reset') reset();
     else if (a === 'help') openHelp(b);
     else if (a === 'panel') togglePanel();
+  });
+
+  // role="toolbar": arrow keys / Home / End move between the tools (mirrored in RTL)
+  toolbar?.addEventListener('keydown', (e) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+    const btns = $$('.studio-tool', toolbar).filter((b) => b.offsetParent !== null && !b.disabled);
+    const i = btns.indexOf(document.activeElement);
+    if (i < 0) return;
+    e.preventDefault();
+    const fwd = (e.key === 'ArrowRight') !== (getLang() === 'ar');
+    const n = e.key === 'Home' ? 0 : e.key === 'End' ? btns.length - 1 : (i + (fwd ? 1 : -1) + btns.length) % btns.length;
+    btns[n].focus();
   });
 
   function labelButton(btn, s) {
@@ -652,7 +666,14 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     }
     engine.setInsets(ins);
   }
-  const onResize = debounce(updateInsets, 120);
+  // desktop controls panel: fade its lower edge while more controls are hidden below the fold
+  function syncPanelOverflow() {
+    if (!panel) return;
+    const more = isDesktopLayout() && panel.scrollHeight - panel.clientHeight - panel.scrollTop > 4;
+    panel.classList.toggle('has-more', more);
+  }
+  panel?.addEventListener('scroll', syncPanelOverflow, { passive: true });
+  const onResize = debounce(() => { updateInsets(); syncPanelOverflow(); }, 120);
   window.addEventListener('resize', onResize);
   new ResizeObserver(onResize).observe(root);
 
@@ -734,7 +755,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     if (openHot) { renderHotcard(); placeHotcard(); }
     if (!loader.classList.contains('is-hidden') && engine) { loaderLabel.textContent = t(S.loading); loaderName.textContent = nameOf(current); }
     if (!engine) showFallbackImage(current);
-    requestAnimationFrame(updateInsets);
+    requestAnimationFrame(() => { updateInsets(); syncPanelOverflow(); });
   }
   onLang(relocalize);
 
@@ -752,7 +773,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     onModelChange(current, { push: false });
     fireReady(false);
   }
-  requestAnimationFrame(updateInsets);
+  requestAnimationFrame(() => { updateInsets(); syncPanelOverflow(); });
 
   return {
     go,

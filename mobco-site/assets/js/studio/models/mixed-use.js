@@ -62,8 +62,8 @@ export const meta = {
               ar: 'حوض عاكس ضحل بنوافير يتوسط ساحة مشاة تحفّها أشجار النخيل.' } },
     { id: 'pavilion', position: [46, 5.8, 1.5],
       title: { en: 'Café pavilion', ar: 'جناح المقهى' },
-      text: { en: 'A light single-storey glass pavilion with a deep roof overhang and outdoor seating.',
-              ar: 'جناح زجاجي خفيف من طابق واحد بسقف بارز وجلسات خارجية.' } },
+      text: { en: 'A light glass pavilion with a deep roof overhang and outdoor seating.',
+              ar: 'جناح زجاجي خفيف بسقف بارز وجلسات خارجية.' } },
   ],
   // Key-light direction. Convention assumed by this model's harness:
   // dir = (sin(az)·cos(el), sin(el), cos(az)·cos(el)) — azimuth measured from +Z (model front) towards +X.

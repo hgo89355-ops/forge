@@ -253,7 +253,8 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     hemi.color.copy(skyUniforms.uTop.value).lerp(tmpB.set('#ffffff'), 0.45);
     hemi.groundColor.set(night > 0.5 ? '#1c2630' : '#b7ad9f');
     hemi.intensity = 0.07 + 0.59 * day;
-    scene.environmentIntensity = 0.07 + 0.75 * day;
+    // very low at night: bright studio-room reflections on glass would wash out the lit interiors
+    scene.environmentIntensity = 0.035 + 0.785 * day;
     if (renderer) renderer.toneMappingExposure = 0.9 + 0.1 * night;
     contactMat.opacity = 0.14 + 0.2 * day;
     current = { night, day, elevation, azimuth };

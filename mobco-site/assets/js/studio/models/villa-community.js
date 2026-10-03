@@ -28,9 +28,9 @@ export const meta = {
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النمط' }, value: { en: 'Gated villa community', ar: 'مجتمع فلل مسوَّر' } },
-    { label: { en: 'Massing', ar: 'الكتلة' }, value: { en: 'Two-storey villas with roof terraces', ar: 'فلل من طابقين مع أسطح مفتوحة' } },
+    { label: { en: 'Massing', ar: 'الكتلة' }, value: { en: 'Low-rise villas with roof terraces', ar: 'فلل منخفضة الارتفاع مع أسطح مفتوحة' } },
     { label: { en: 'Landscape', ar: 'تنسيق الموقع' }, value: { en: 'Lagoon pools and a tree-lined boulevard', ar: 'بحيرات اصطناعية وجادّة مشجّرة' } },
-    { label: { en: 'Amenities', ar: 'المرافق' }, value: { en: 'Two-level commercial strip', ar: 'شريط تجاري من مستويين' } },
+    { label: { en: 'Amenities', ar: 'المرافق' }, value: { en: 'Commercial strip along the main road', ar: 'شريط تجاري على امتداد الطريق الرئيسي' } },
     { label: { en: 'Model', ar: 'النموذج' }, value: { en: 'Illustrative massing — not to scale', ar: 'نموذج كتلي توضيحي — ليس بمقياس رسم' } },
   ],
   camera: {
@@ -53,8 +53,8 @@ export const meta = {
       id: 'villas', position: [-22, 10.5, -56],
       title: { en: 'Villa rows', ar: 'صفوف الفلل' },
       text: {
-        en: 'White two-storey villas with roof terraces, private gardens and pools, set along quiet internal streets.',
-        ar: 'فلل بيضاء من طابقين مع أسطح مفتوحة وحدائق ومسابح خاصة على امتداد شوارع داخلية هادئة.',
+        en: 'White low-rise villas with roof terraces, private gardens and pools, set along quiet internal streets.',
+        ar: 'فلل بيضاء منخفضة الارتفاع مع أسطح مفتوحة وحدائق ومسابح خاصة على امتداد شوارع داخلية هادئة.',
       },
     },
     {
@@ -69,8 +69,8 @@ export const meta = {
       id: 'commercial', position: [-45, 10.4, 47.6],
       title: { en: 'Commercial strip', ar: 'الشريط التجاري' },
       text: {
-        en: 'Two levels of shops and dining with a shaded colonnade, a café plaza and roof-terrace pergolas along the main road.',
-        ar: 'مستويان من المتاجر والمطاعم مع رواق مظلّل وساحة مقاهٍ وبرجولات على السطح على امتداد الطريق الرئيسي.',
+        en: 'Shops and dining behind a shaded colonnade, with a café plaza and roof-terrace pergolas along the main road.',
+        ar: 'متاجر ومطاعم خلف رواق مظلّل، مع ساحة مقاهٍ وبرجولات على السطح على امتداد الطريق الرئيسي.',
       },
     },
     {

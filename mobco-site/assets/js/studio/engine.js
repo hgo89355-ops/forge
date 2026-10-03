@@ -26,7 +26,7 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 const now = () => performance.now();
-const DAY_ENV_INTENSITY = 0.82; // scene.environmentIntensity at full daylight (environment.js: 0.07 + 0.75)
+const DAY_ENV_INTENSITY = 0.82; // scene.environmentIntensity at full daylight (environment.js: 0.035 + 0.785)
 
 /** True when the browser can create a WebGL2 context (three.js r163+ requires WebGL2). */
 let gpuInfo = null;
@@ -115,7 +115,9 @@ export function createStudio(container, options = {}) {
   const canvas = renderer.domElement;
   canvas.className = 'studio-canvas';
   canvas.setAttribute('tabindex', opts.controls === false ? '-1' : '0');
-  canvas.setAttribute('role', 'img');
+  // interactive canvas: 'application' lets arrow / +/- keys reach the viewer under a screen reader;
+  // a non-interactive embed (controls:false) is just an image
+  canvas.setAttribute('role', opts.controls === false ? 'img' : 'application');
   container.appendChild(canvas);
 
   const scene = new THREE.Scene();

@@ -63,9 +63,23 @@ is hidden. `hasWebGL()` → `false` means WebGL2 is unavailable (three r163+ req
 - **Floors:** each floor group moves `level × gap × ease(explode)` with `gap = clamp(40 / maxLevel, 2.2, 6)` m.
   Meshes are mapped to the floor group that contains them; hover/selection uses the group's world box at load.
 - **Site:** may be a child of `root` or a separate group; it never explodes and is never ghosted.
+- **Lamps (alias):** `userData.intensity` is accepted as well as `userData.nightIntensity` (residential-tower uses
+  the former) — every model's lamps light at night.
 - **Materials:** the engine sets `clippingPlanes` / `clipShadows` on every model material and patches opaque ones
-  with a back-face "cap" (teal) via `onBeforeCompile` (chained with any existing hook). Transparent / glass
-  materials (opacity < 0.95 or transmission > 0.05) are not patched.
+  with a back-face "cap" (teal) via `onBeforeCompile` (chained with any existing hook). **Not** patched:
+  transparent / glass materials (opacity < 0.95 or transmission > 0.05), materials the author made
+  `side: DoubleSide` (open surfaces — palm fronds, parasols, lathe shells), cut-outs (`alphaTest > 0`) and any
+  material flagged `userData.noCap = true`. Back faces of those stay real surfaces in every mode and under a cut.
+- **Replacement materials** (Clay / Blueprint / X-ray / isolation ghost) keep the original `.side`: a DoubleSide
+  original gets a DoubleSide twin of the mode material (never cap-patched). X-ray uses normal alpha blending
+  (no additive white-out where many layers overlap, e.g. the landmark drum).
+- **Per-material env maps:** three r186 ignores `scene.environmentIntensity` for a material with its own `envMap`.
+  The engine therefore scales `envMapIntensity` of every such material by the day/night factor, from
+  `userData.baseEnvMapIntensity` when present (else the authored value), so glass/water reflections dim at night.
+  Night `scene.environmentIntensity` is 0.035 (day 0.82).
+- **Framing:** preset positions (except Street) and the explode pull-back are fitted so the building bounds
+  (exploded height included — the campus tower rises ~40 m) stay inside the canvas area not covered by the
+  panels; the fit only ever moves the camera back from the authored preset.
 - **Thumbnails** build a second, `quality:'low'` instance of each model in idle time; `dispose()` must free it.
 - three r186: `PCFSoftShadowMap` was removed — the engine uses `PCFShadowMap` (soft-filtered) with `shadow.radius`.
 

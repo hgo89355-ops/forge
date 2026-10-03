@@ -49,8 +49,8 @@ export const meta = {
   name: { en: 'Classical Landmark', ar: 'المَعلم الكلاسيكي' },
   projectSlug: 'classical-landmark',
   tagline: {
-    en: 'An illustrative massing study of a classical courtyard building in terracotta and cream stone, crowned by a sculpted central drum.',
-    ar: 'دراسة كتلية توضيحية لمبنى كلاسيكي حول فناء بطوب التيراكوتا والحجر الكريمي، تتوّجه أسطوانة مركزية منحوتة.',
+    en: 'A classical courtyard building in terracotta and cream stone, crowned by a sculpted central drum.',
+    ar: 'مبنى كلاسيكي حول فناء بطوب التيراكوتا والحجر الكريمي، تتوّجه أسطوانة مركزية منحوتة.',
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النمط' }, value: { en: 'Courtyard building', ar: 'مبنى حول فناء' } },

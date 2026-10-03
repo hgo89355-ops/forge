@@ -83,3 +83,31 @@ the same data.
 - The CTA band links to the portfolio and 3D Studio, not to "Start a project". The footer directly below already
   carries that CTA (STYLEGUIDE §6.9).
 - Arabic copy is a professional translation of the supplied English. The client should review it.
+
+---
+
+## Subsidiary detail pages (`mobco-construction.html`, `mobco-developments.html`, `mobco-real-estate.html`) — QA pass
+
+The full content log for these three pages is `docs/content-notes/subsidiary-pages.md` (still valid). Changes and
+additions from the QA / art-direction review:
+
+- **Hero eyebrow** on all three pages is now "A MOBCO Group company" («إحدى شركات مجموعة موبكو»). The old eyebrows
+  repeated the opening words of the lead paragraph directly below them.
+- **Developments: related-projects strip.** This is now a compact two-card strip: a thumbnail detail crop, the
+  typology, location and highlights from `PROJECTS`, "View project", and "Illustrative 3D model". The old version
+  repeated the full Eastmain / Victoria 101 renders already shown in the showcase above. The separate 3D box was
+  folded into the cards. A note says the 3D Studio models are illustrative massing models (honesty rule).
+  Highlights are verbatim from `PROJECTS[].highlights`. The Eastmain/Victoria 101 ↔ MOBCO Developments link is
+  still an inference; the client must confirm it.
+- **Real Estate: leasing strip.** The "Leasing enquiry" button was removed from the strip because the CTA band
+  directly below repeats it. The strip now lists both Egypt office numbers (02-23866591, 02-23866592) and
+  info.egy@mobco-group.com. It still uses the Egypt office's *general* contacts, because no dedicated leasing
+  contact was supplied. **TODO(content):** the client should give a leasing contact if one exists.
+- **Real Estate: B1 diagram.** The diagram stays labelled "Illustrative diagram / Not to scale, not the actual
+  floor plan of B1". The "WC" labels read «حمّام» in Arabic.
+- **Real Estate: CTA band eyebrow** is now "Let’s talk" («لنتحدّث»). It used to repeat "Leasing" from the title.
+- **Accessible names** (no visible copy change). "Visit company" links now read "Visit company MOBCO …" and the
+  Developments "Related projects" links now read "Related projects Eastmain" or "… Victoria 101", through
+  visually-hidden text. Previously an `aria-label` hid the visible words, which fails WCAG 2.5.3, Label in Name.
+- **Unchanged and still open:** 438 vs 430+ vs "more than 150" projects; four vs three continents; no UK project
+  details (the London marker is indicative); the Real Estate office photo is illustrative, not B1.
