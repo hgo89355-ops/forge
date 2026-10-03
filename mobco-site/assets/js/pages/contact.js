@@ -871,7 +871,23 @@ function initMisc() {
   });
 }
 
+/* =====================================================================
+   6. Deep links (#inquiry, #map…): re-align once fonts/layout have settled
+   ===================================================================== */
+// core/motion.js jumps to the hash ~60ms after init; web fonts can still shift the layout afterwards.
+function initDeepLink() {
+  if (!location.hash || location.hash.length < 2) return;
+  let target = null;
+  try { target = document.querySelector(decodeURIComponent(location.hash)); } catch { return; }
+  if (!target) return;
+  let touched = false;
+  const mark = () => { touched = true; };
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => window.addEventListener(ev, mark, { once: true, passive: true }));
+  const realign = () => { if (!touched) scrollTo(target, { immediate: true }); };
+  window.addEventListener('load', () => (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(realign, 120)), { once: true });
+}
+
 /* ===================================================================== boot */
-for (const [name, fn] of [['clocks', initClocks], ['map', initMap], ['wizard', initWizard], ['quickform', initQuickForm], ['misc', initMisc]]) {
+for (const [name, fn] of [['clocks', initClocks], ['map', initMap], ['wizard', initWizard], ['quickform', initQuickForm], ['misc', initMisc], ['deeplink', initDeepLink]]) {
   try { fn(); } catch (err) { console.error(`[contact] ${name} failed`, err); }
 }
