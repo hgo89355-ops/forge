@@ -332,7 +332,6 @@ html[lang='ar'] .sd-fact__value--text { text-transform: none; letter-spacing: 0;
   max-inline-size: 30ch;
   text-wrap: pretty;
 }
-.sd-fact__label .nowrap { white-space: nowrap; }
 
 /* 05. Footprint map (Construction) ======================================= */
 .sd-footprint { overflow: hidden; }
@@ -518,7 +517,7 @@ html.no-js .sd-panel + .sd-panel { padding-block-start: var(--space-6); border-b
 .sd-carousel .project-card__title { font-size: var(--fs-h5); }
 /* Developments: compact related-projects strip (thumbnail detail crops — the full renders are in the showcase above) */
 .sd-rel { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap); grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 1024px) { .sd-rel { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1200px) { .sd-rel { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .sd-rel__item {
   position: relative;
   display: grid;
@@ -774,15 +773,16 @@ html[lang='ar'] .sd-core__part { letter-spacing: 0; text-transform: none; font-s
 .sd-core__part[aria-pressed='true'] .sd-core__swatch { border-color: var(--navy-950); }
 .sd-seg { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-3); min-inline-size: 0; }
 .sd-seg__legend { padding: 0; margin-block-end: var(--space-3); }
-.sd-seg__opts { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 3px; gap: 3px; inline-size: fit-content; max-inline-size: 100%; }
+.sd-seg__opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 3px; gap: 3px; inline-size: min(100%, 30rem); }
 .sd-seg__opt { position: relative; display: block; cursor: pointer; }
 .sd-seg__input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
 .sd-seg__label {
   display: grid;
   place-items: center;
   min-block-size: 40px;
-  padding-inline: 1rem;
+  padding-inline: .5rem;
   border-radius: 1px;
+  text-align: center;
   font-family: var(--font-display);
   font-size: .75rem;
   font-weight: 600;
@@ -794,7 +794,7 @@ html[lang='ar'] .sd-core__part { letter-spacing: 0; text-transform: none; font-s
 html[lang='ar'] .sd-seg__label { letter-spacing: 0; text-transform: none; font-size: .9375rem; }
 @media (max-width: 639.98px) {
   /* three equal segments on one line (no orphan option on a second row) */
-  .sd-seg__opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); inline-size: 100%; }
+  .sd-seg__opts { inline-size: 100%; }
   .sd-seg__label { min-block-size: 44px; padding-inline: .4rem; font-size: .6875rem; letter-spacing: .04em; text-align: center; }
   html[lang='ar'] .sd-seg__label { font-size: .875rem; }
 }

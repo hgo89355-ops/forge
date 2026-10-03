@@ -463,7 +463,16 @@ function setCategory(id, { scroll = false } = {}) {
   updateTabs();
   requestAnimationFrame(() => positionIndicator(true));
   if (changed) update();
-  if (scroll) scrollTo(E.explorer);
+  if (scroll) scrollToExplorer();
+}
+
+/** Bring the category tabs (+ toolbar and first results) under the fixed header. Numeric target on purpose: Lenis
+ *  also applies the html scroll-padding to element targets, which doubled the offset and left the previous section in view. */
+function scrollToExplorer(immediate = false) {
+  const el = E.tabs || E.explorer;
+  if (!el) return;
+  const headerH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+  scrollTo(Math.max(0, el.getBoundingClientRect().top + scrollY - headerH - 24), { immediate, offset: 0 });
 }
 
 /* Country chips */
@@ -1535,7 +1544,8 @@ function init() {
   if (slug) whenLoaded().then(() => openProject(slug));
   else if (E.explorer && arrivedFiltered && !location.hash) {
     // Arriving from "projects.html?sector=hotels" etc.: show the filtered results, not the top of the hero.
-    whenLoaded().then(() => requestAnimationFrame(() => scrollTo(E.explorer, { immediate: true })));
+    const land = () => scrollToExplorer(true);
+    whenLoaded().then(() => (document.fonts?.ready || Promise.resolve()).then(() => requestAnimationFrame(land)));
   }
 }
 
