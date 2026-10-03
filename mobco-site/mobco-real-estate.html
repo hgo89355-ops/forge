@@ -208,9 +208,11 @@
         <div class="grid grid--loose sd-about__grid">
           <div class="col-lg-5 sd-about__media">
             <figure class="sd-about__figure">
-              <div class="sd-about__frame" aria-hidden="true"></div>
-              <div class="media sd-about__img" data-reveal="mask">
-                <picture><source type="image/webp" srcset="assets/img/sub-real-estate-office.webp" sizes="(min-width: 1024px) 40vw, 100vw"><img src="assets/img/sub-real-estate-office.jpg" alt="Bright, modern office interior with floor-to-ceiling glazing, a meeting table and plants" data-ar-alt="مساحة مكتبية حديثة ومضيئة بواجهات زجاجية من الأرض حتى السقف وطاولة اجتماعات ونباتات" width="624" height="482" loading="lazy" decoding="async" style="object-position:50% 50%"></picture>
+              <div class="sd-about__imgwrap">
+                <div class="sd-about__frame" aria-hidden="true"></div>
+                <div class="media sd-about__img" data-reveal="mask">
+                  <picture><source type="image/webp" srcset="assets/img/sub-real-estate-office.webp" sizes="(min-width: 1024px) 40vw, 100vw"><img src="assets/img/sub-real-estate-office.jpg" alt="Bright, modern office interior with floor-to-ceiling glazing, a meeting table and plants" data-ar-alt="مساحة مكتبية حديثة ومضيئة بواجهات زجاجية من الأرض حتى السقف وطاولة اجتماعات ونباتات" width="624" height="482" loading="lazy" decoding="async" style="object-position:50% 50%"></picture>
+                </div>
               </div>
               <figcaption class="caption" data-ar="مساحة مكتبية حديثة (صورة توضيحية)">Modern office interior (illustrative image)</figcaption>
             </figure>
@@ -292,6 +294,7 @@
                 <desc id="sd-plan-desc" data-ar="رسم توضيحي غير مطابق لمخطط المبنى B1: نواة مركزية تضم المصاعد والسلالم والخدمات الكهروميكانيكية ودورات المياه، تحيط بها أجنحة مكتبية مرنة.">Illustrative diagram, not the actual plan of B1: a central core with lifts, stairs, MEP services and washrooms, surrounded by flexible office wings.</desc>
                 <defs>
                   <pattern id="sd-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v8" class="sd-plan__hatch"/></pattern>
+                  <pattern id="sd-desks" x="44" y="44" width="56" height="40" patternUnits="userSpaceOnUse"><rect class="sd-plan__desk" x="6" y="8" width="40" height="14" rx="1"/><circle class="sd-plan__desk" cx="16" cy="30" r="3.5"/><circle class="sd-plan__desk" cx="36" cy="30" r="3.5"/></pattern>
                 </defs>
                 <g class="sd-plan__wings" data-part="wings">
                   <path class="sd-plan__wing" data-wing="nw" d="M20 20H400V180H280V260H20Z"/>
@@ -299,6 +302,7 @@
                   <path class="sd-plan__wing" data-wing="se" d="M780 260V500H400V340H520V260Z"/>
                   <path class="sd-plan__wing" data-wing="sw" d="M400 500H20V260H280V340H400Z"/>
                 </g>
+                <path class="sd-plan__desks" aria-hidden="true" d="M44 44H376V156H256V284H44ZM424 44H756V284H544V156H424ZM756 284V476H424V364H544V284ZM376 476H44V284H256V364H376Z"/>
                 <g class="sd-plan__tenants" aria-hidden="true">
                   <text class="sd-plan__tlabel" data-t="nw" x="150" y="130">A</text>
                   <text class="sd-plan__tlabel" data-t="ne" x="650" y="130">B</text>
@@ -356,7 +360,7 @@
       <div class="container cta-band__inner">
         <div>
           <p class="eyebrow" data-ar="التأجير">Leasing</p>
-          <h2 class="cta-band__title" id="sd-cta-title" data-split data-ar-html="استفسر عن التأجير في &lt;em&gt;مجمّع ميفيدا للأعمال&lt;/em&gt;">Enquire about leasing at <em>Mivida Business Park</em></h2>
+          <h2 class="cta-band__title" id="sd-cta-title" data-split data-ar-html="التأجير في &lt;em&gt;مجمّع ميفيدا للأعمال&lt;/em&gt;">Leasing at <em>Mivida Business Park</em></h2>
         </div>
         <div class="cta-band__actions" data-reveal="up">
             <a class="btn btn--primary" href="contact.html#inquiry"><span data-ar="استفسار عن التأجير">Leasing enquiry</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>

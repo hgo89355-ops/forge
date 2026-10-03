@@ -15,7 +15,7 @@ import { scan, refresh } from '../core/motion.js';
 import { scanUI, toast, openLightbox } from '../core/ui.js';
 import { $, $$, esc, icon, picture, prefersReducedMotion, isRTL, debounce, clamp, IMAGES } from '../core/utils.js';
 import { whenLoaded } from '../core/preloader.js';
-import { PROJECTS, PROJECT_CATEGORIES, REGIONS, getProject, getCategory, projectUrl } from '../data/site-data.js';
+import { PROJECTS, PROJECT_CATEGORIES, REGIONS, getProject, getCategory, getSubsidiary, projectUrl } from '../data/site-data.js';
 
 const reduced = prefersReducedMotion();
 const pad = (n) => String(n).padStart(2, '0');
@@ -237,6 +237,8 @@ function initReel() {
     void cur.offsetWidth;
     cur.classList.add('is-active');
     if (cur.classList.contains('mreel__slide--pano')) pano(cur);
+    // warm the following scene so its photo is decoded before the crossfade (slides are lazy by default)
+    slides[(next + 1) % total]?.querySelectorAll('img[loading="lazy"]').forEach((im) => { im.loading = 'eager'; });
     slides.forEach((sl, i) => sl.setAttribute('aria-hidden', String(i !== next)));
     index = next;
     elapsed = 0;
@@ -296,7 +298,7 @@ function initReel() {
     if (sx == null) return;
     const dx = e.clientX - sx, dy = e.clientY - sy;
     sx = null;
-    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.4 || performance.now() - st > 1200) return;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.4 || performance.now() - st > 2000) return;
     const forward = isRTL() ? dx > 0 : dx < 0;
     show(index + (forward ? 1 : -1), { user: true });
   });
@@ -355,22 +357,74 @@ const CROP_AR = {
   'classical-landmark:1': 1.4, 'classical-landmark:2': 0.8,
 };
 const natAR = (base) => (IMAGES[base] ? IMAGES[base].w / IMAGES[base].h : 1.4);
+// detail crops of the same render are zoomed in (object-position = focal point) so they read as real details
+const DETAIL_ZOOM = 1.55;
+
+// Photos that live outside PROJECTS[].gallery (the client's subsidiary pages, BRIEF §2b) so the gallery
+// really shows every image. Captions describe only what the image shows.
+const COMPANIES = { id: 'companies', label: { en: 'Group companies', ar: 'شركات المجموعة' }, icon: 'building' };
+const EXTRA = [
+  { base: 'sub-construction-hero', sub: 'mobco-construction', pos: '40% 50%',
+    caption: { en: 'A tower under construction above the city', ar: 'برج قيد الإنشاء يطلّ على المدينة' } },
+  { base: 'sub-developments-hero', project: 'victoria-101', pos: '50% 40%',
+    caption: { en: 'Victoria 101 — façade close-up', ar: 'فيكتوريا 101 — لقطة قريبة للواجهة' } },
+  { base: 'sub-construction-render', sub: 'mobco-construction', pos: '50% 55%',
+    caption: { en: 'Night render of a timber-clad low-rise building', ar: 'تصوّر ليلي لمبنى منخفض بواجهات خشبية' } },
+  { base: 'sub-real-estate-hero', sub: 'mobco-real-estate', pos: '50% 45%',
+    caption: { en: 'MOBCO Developments signage on a building façade', ar: 'لافتة «موبكو للتطوير» على واجهة مبنى' } },
+  { base: 'sub-real-estate-office', sub: 'mobco-real-estate', pos: '50% 50%',
+    caption: { en: 'Office interior', ar: 'مساحة مكتبية من الداخل' } },
+];
+
+function extraItems() {
+  return EXTRA.map((e) => {
+    if (e.project) {
+      const p = getProject(e.project);
+      if (!p || !IMAGES[e.base]) return null;
+      return { key: `x:${e.base}`, p, g: { base: e.base, pos: e.pos, caption: e.caption }, base: e.base, pos: e.pos,
+        cats: [p.category, p.region].filter(Boolean), ar: natAR(e.base), link: true };
+    }
+    const s = getSubsidiary(e.sub);
+    if (!s || !IMAGES[e.base]) return null;
+    // pseudo-project so tiles, captions and the lightbox share one code path
+    const p = { id: s.id, name: s.name, nameIsDescriptive: false, location: null, category: null,
+      typology: { en: 'Group company', ar: 'شركة تابعة' }, gallery: [] };
+    return { key: `x:${e.base}`, p, g: { base: e.base, pos: e.pos, caption: e.caption }, base: e.base, pos: e.pos,
+      cats: [COMPANIES.id], catLabel: s.name, ar: natAR(e.base) };
+  }).filter(Boolean);
+}
 
 function buildItems() {
   const prim = [], primRest = [], crops = [], tail = [];
   PROJECTS.forEach((p) => p.gallery.forEach((g, gi) => {
     const key = `${p.id}:${gi}`;
     const regions = p.region ? [p.region] : [];
-    const x = { key, p, g, base: g.base, pos: g.pos, cats: [p.category, ...regions].filter(Boolean), ar: CROP_AR[key] || natAR(g.base) };
+    const detail = gi > 0 && g.base === p.gallery[0].base;
+    const x = { key, p, g, gi, base: g.base, pos: g.pos, cats: [p.category, ...regions].filter(Boolean), ar: CROP_AR[key] || natAR(g.base), zoom: detail ? DETAIL_ZOOM : 1, link: true };
     if (g.base === 'aerial-panorama') tail.push(x);
     else if (gi > 0) crops.push(x);
     else (p.featured ? prim : primRest).push(x);
   }));
-  // rhythm: three full views, then an art-directed detail crop
+  // first detail of every project, then the second ones — so consecutive crops come from different projects
+  crops.sort((a, b) => a.gi - b.gi);
+  const extras = extraItems();
+  // companies' photos are woven into the second half of the full views
   const primaries = prim.concat(primRest);
+  extras.forEach((x, i) => primaries.splice(Math.min(primaries.length, prim.length + 2 + i * 4), 0, x));
+  // rhythm: four full views, then an art-directed detail — never one from a project seen in the last 8 items
   const out = [];
-  primaries.forEach((x, i) => { out.push(x); if (i % 3 === 2 && crops.length) out.push(crops.shift()); });
-  return out.concat(crops, tail);
+  const recent = () => out.slice(-8).map((x) => x.p.id);
+  // a detail only follows once its full view has been shown, and not right after it
+  const takeCrop = () => {
+    const i = crops.findIndex((c) => out.some((o) => o.p.id === c.p.id) && !recent().includes(c.p.id));
+    return i < 0 ? null : crops.splice(i, 1)[0];
+  };
+  primaries.forEach((x, i) => {
+    out.push(x);
+    if (i % 4 === 3) { const c = takeCrop(); if (c) out.push(c); }
+  });
+  while (crops.length) { const c = takeCrop() || crops.shift(); out.push(c); }
+  return out.concat(tail);
 }
 
 function initGallery() {
@@ -390,6 +444,7 @@ function initGallery() {
   const count = (v) => (v === 'all' ? items.length : items.filter((x) => x.cats.includes(v)).length);
   const FILTERS = [{ id: 'all', label: G.all }]
     .concat(PROJECT_CATEGORIES.filter((c) => count(c.id)).sort((a, b) => count(b.id) - count(a.id)).map((c) => ({ id: c.id, label: c.name, icon: c.icon })))
+    .concat(count(COMPANIES.id) ? [COMPANIES] : [])
     .concat([{ sep: true }])
     .concat(REGIONS.filter((r) => count(r.id)).map((r) => ({ id: r.id, label: r.id === 'ksa' ? G.ksa : r.name })));
   const group = document.createElement('div');
@@ -421,13 +476,15 @@ function initGallery() {
     const detail = cap.startsWith(name) ? cap.slice(name.length).replace(/^\s*—\s*/, '') : t(x.g.caption);
     const label = `${cap}${x.p.nameIsDescriptive ? ` (${t(G.descriptive)})` : ''}`;
     const cat = getCategory(x.p.category);
+    const catName = x.catLabel ? t(COMPANIES.label) : cat ? t(cat.name) : '';
+    const detailCls = x.zoom > 1 ? ' mgal__item--detail' : '';
     return `
-      <div class="mgal__item${isPano ? ' mgal__item--pano' : ''}" role="listitem" style="--ar:${(isPano && narrow ? 3 : x.ar).toFixed(4)}">
+      <div class="mgal__item${isPano ? ' mgal__item--pano' : ''}${detailCls}" role="listitem" style="--ar:${(isPano && narrow ? 3 : x.ar).toFixed(4)}${x.zoom > 1 ? `;--zoom:${x.zoom};--focus:${esc(x.pos)}` : ''}">
         <button class="mgal__open" type="button" data-open="${i}" data-cursor="zoom" aria-label="${esc(fmt(t(G.open), { c: label }))}">
           ${picture(x.base, { alt: '', position: x.pos })}
           <span class="mgal__shade" aria-hidden="true"></span>
           <span class="mgal__cap" aria-hidden="true">
-            ${cat ? `<span class="mgal__cap-cat">${esc(t(cat.name))}</span>` : ''}
+            ${catName ? `<span class="mgal__cap-cat">${esc(catName)}</span>` : ''}
             <span class="mgal__cap-name">${esc(name)}${x.p.nameIsDescriptive ? '<span class="mgal__mark">◇</span>' : ''}</span>
             ${detail ? `<span class="mgal__cap-text">${esc(detail)}</span>` : ''}
             <span class="mgal__cap-loc">${icon('map-pin', 'icon--xs')}<span>${esc(loc)}</span></span>

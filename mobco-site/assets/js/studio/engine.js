@@ -607,11 +607,11 @@ export function createStudio(container, options = {}) {
       canvas.style.cursor = state.hover >= 0 ? 'pointer' : '';
     });
   }
-  function onPointerDown(e) { downAt = { x: e.clientX, y: e.clientY, t: now() }; }
+  function onPointerDown(e) { downAt = { x: e.clientX, y: e.clientY, t: e.timeStamp }; }
   function onPointerUp(e) {
     if (!downAt || !model) return;
     const moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y);
-    const quick = now() - downAt.t < 450;
+    const quick = e.timeStamp - downAt.t < 600; // event timestamps: robust when the main thread is busy
     downAt = null;
     if (moved > 6 || !quick || e.button > 0) return;
     const i = floorAt(e.clientX, e.clientY);

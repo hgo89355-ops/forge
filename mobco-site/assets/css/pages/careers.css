@@ -645,7 +645,7 @@ html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-
   transform-origin: top center;
   transform: scaleY(var(--progress));
 }
-.careers-step { position: relative; display: grid; gap: .5rem; padding-inline-start: calc(var(--node) + var(--space-5)); min-block-size: var(--node); }
+.careers-step { position: relative; display: grid; align-content: start; gap: .5rem; padding-inline-start: calc(var(--node) + var(--space-5)); min-block-size: var(--node); }
 .careers-step__node {
   position: absolute;
   z-index: 1;

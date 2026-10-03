@@ -631,7 +631,7 @@ export function build(THREE, ctx = {}) {
     const cm = mesh(site, 'pool-coping', cop, M.stone); cm.position.set(PL.cx, 0.08, PL.cz);
     const wg = G(new THREE.ShapeGeometry(stadium(PL.len + 0.1, PL.wid + 0.1), 24)); wg.rotateX(-Math.PI / 2);
     const wm = mesh(site, 'pool-water', wg, M.water, { cast: false }); wm.position.set(PL.cx, 0.44, PL.cz);
-    // planting island in the right half + submerged lighting strip
+    // submerged linear light strip along the pool axis (glows at night)
     sk.span('pool-uplights', M.lampHead, PL.cx - PL.len / 2 + 5, 0.42, PL.cz - 0.06, PL.cx + PL.len / 2 - 5, 0.445, PL.cz + 0.06);
   }
   const jetGeo = G(new THREE.CylinderGeometry(0.012, 0.05, 1, 6, 1, true)); jetGeo.translate(0, 0.5, 0);
