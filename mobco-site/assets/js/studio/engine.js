@@ -438,7 +438,7 @@ export function createStudio(container, options = {}) {
     if (Math.abs(offset.tx) >= 0.5 || Math.abs(offset.ty) >= 0.5) fitCam.setViewOffset(width, height, offset.tx, offset.ty, width, height);
     else fitCam.clearViewOffset();
     fitCam.updateProjectionMatrix();
-    const m = 0.04;
+    const m = 0.07;
     const rect = {
       x0: -1 + (2 * insets.left) / width + m, x1: 1 - (2 * insets.right) / width - m,
       y0: -1 + (2 * insets.bottom) / height + m, y1: 1 - (2 * insets.top) / height - m,
@@ -465,11 +465,9 @@ export function createStudio(container, options = {}) {
     const cam = model.meta.camera;
     const p = new THREE.Vector3().fromArray(cam[name] || cam.aerial);
     if (name === 'street') return p;
-    const free = clamp((width - insets.left - insets.right) / Math.max(1, width), 0.3, 1);
-    const k = clamp(1 / (0.45 + 0.55 * free), 1, 1.45);
     const tg = new THREE.Vector3().fromArray(cam.target);
-    p.sub(tg).multiplyScalar(k).add(tg);
-    // never let the buildings disappear under the panels (wide models, exploded stacks)
+    // pull back only as far as needed for the buildings (exploded stack included) to sit in the free area
+    // between the panels; never closer than the authored preset
     const f = fitFactor(p, tg, explodedBox(easeOutCubic(clamp(state.explodeTarget, 0, 1))));
     return p.sub(tg).multiplyScalar(f).add(tg);
   }
