@@ -20,8 +20,8 @@ export const meta = {
   name: { en: 'Innovation Campus', ar: 'حرم الابتكار' },
   projectSlug: 'innovation-campus',
   tagline: {
-    en: 'Ring buildings, a sail-finned tower and a sweeping sky bridge — an illustrative massing study.',
-    ar: 'مبانٍ حلقية وبرج بعنصر شراعي وجسر معلّق انسيابي — دراسة كتلية توضيحية.',
+    en: 'Ring buildings, a sail-finned tower and a sweeping sky bridge, set in landscaped grounds.',
+    ar: 'مبانٍ حلقية وبرج بعنصر شراعي وجسر معلّق انسيابي، وسط مساحات خضراء منسّقة.',
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النمط' }, value: { en: 'Campus (illustrative)', ar: 'حرم تعليمي (توضيحي)' } },

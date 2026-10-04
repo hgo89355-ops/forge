@@ -24,8 +24,8 @@ export const meta = {
   name: { en: 'Victoria 101 — Residential', ar: 'فيكتوريا 101 — سكني' },
   projectSlug: 'victoria-101',
   tagline: {
-    en: 'An illustrative massing study: a glass residential tower and mid-rise wing set among mature trees.',
-    ar: 'دراسة كتلية توضيحية: برج سكني زجاجي وجناح متوسط الارتفاع بين الأشجار.',
+    en: 'A glass residential tower and a mid-rise wing, set among mature trees.',
+    ar: 'برج سكني زجاجي وجناح متوسط الارتفاع تحيط بهما الأشجار.',
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النوع' }, value: { en: 'Multi-residential', ar: 'سكني متعدد الوحدات' } },

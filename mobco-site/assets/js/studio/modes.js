@@ -53,8 +53,10 @@ export function createModeLibrary(THREE, { clipPlanes, capUniform }) {
   const mk = (m) => { m.clippingPlanes = clipPlanes; m.clipShadows = true; owned.push(m); return m; };
 
   const M = {
-    clay: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay', color: '#f1ede6', roughness: 0.88, metalness: 0, envMapIntensity: 0.55 })),
-    claySite: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay-site', color: '#e4dfd6', roughness: 0.95, metalness: 0, envMapIntensity: 0.45 })),
+    // Clay reads as a white presentation model: low ambient (env) on the clay so the engine's clay light
+    // profile (stronger sun, weaker fill, lower exposure — engine.applyTime) gives crisp form and shadows.
+    clay: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay', color: '#f1ede6', roughness: 0.88, metalness: 0, envMapIntensity: 0.22 })),
+    claySite: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay-site', color: '#dcd6cc', roughness: 0.95, metalness: 0, envMapIntensity: 0.18 })),
     clayGlass: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay-glass', color: '#cfdde2', roughness: 0.25, metalness: 0, transparent: true, opacity: 0.5, envMapIntensity: 0.8, depthWrite: false })),
     bpFill: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-fill', color: '#123352', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),
     bpSite: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-site', color: '#11304e', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),

@@ -581,6 +581,13 @@ export function createStudio(container, options = {}) {
     const { night } = env.setTime(state.hour, sunMeta, renderer);
     const flat = state.mode === 'blueprint' || state.mode === 'xray';
     if (flat) renderer.toneMappingExposure = 1;
+    else if (state.mode === 'clay') {
+      // white-model light profile: the all-white clay saturates under the realistic fill light, so trade
+      // fill for key light and lower the exposure — form and cast shadows read like a studio maquette
+      env.hemi.intensity *= 0.4;
+      env.sun.intensity *= 1.35;
+      renderer.toneMappingExposure *= 0.76;
+    }
     const n = flat ? 0 : night;
     if (model) {
       model.night.forEach((m) => { if ('emissiveIntensity' in m) m.emissiveIntensity = n * (m.userData.__nightMax ?? 1); });

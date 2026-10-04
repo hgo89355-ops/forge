@@ -5,14 +5,14 @@ Owner: studio page builder. Files: `studio.html`, `assets/css/pages/studio.css`,
 
 ## 1. Shared-file requests (nothing was edited outside the studio's own files)
 
-| # | Shared file | Request | Local workaround in place |
+| # | Shared file | Request | Status |
 |---|---|---|---|
-| 1 | `docs/STYLEGUIDE.md` / `_template.html` | `studio.html` loads its entry from `assets/js/studio/studio.js` (not `assets/js/pages/studio.js`). The brief's ownership table already lists `assets/js/studio/*.js`; please mention this in STYLEGUIDE §2 so nobody creates an empty `pages/studio.js`. | n/a |
-| 2 | `assets/css/main.css` | Optional: a shared `.glass` surface token (`--glass-bg`, `--glass-line`, `--glass-blur`) — the studio defines `--studio-glass*` locally. | `body[data-page="studio"]` custom properties |
-| 3 | `assets/js/core/ui.js` | The range helper overwrites `<output>` with the raw value on every `input`. A `data-format="none"` opt-out (or a `rangeformat` hook) would let pages format values (%/time) without racing the core listener. | The studio's own `input` listener runs after the core one and re-writes the output. |
-| 4 | `assets/js/core/ui.js` tooltips | Tooltips read `data-tooltip` at show time — fine. Request: hide the tooltip on `pointerdown` too (clicking a toolbar button that opens a modal leaves the tooltip until pointer-out). | none (cosmetic) |
-| 5 | Home page (`index.html` owner) | A compact studio embed is available — see §2. | — |
-| 6 | `assets/icons/sprite.svg` | Nice-to-have icons: `box-select` (isolate level), `sun-moon` (time of day), `scissors`/`slice` (section). | Using `boxes`, `sun`/`sunset`/`moon`, `ruler`. |
+| 1 | `docs/STYLEGUIDE.md` / `_template.html` | Mention that `studio.html` loads `assets/js/studio/studio.js` (no `pages/studio.js`). | **Done** (STYLEGUIDE §2). |
+| 2 | `assets/css/main.css` | Optional: a shared glass surface token (`--glass-bg`, `--glass-line`, `--glass-blur`). | Open (nice-to-have) — the studio keeps its local `--studio-glass*` custom properties. |
+| 3 | `assets/js/core/ui.js` | Range helper opt-out so pages can format the `<output>`. | **Done** (`data-format="none"`); the studio's three sliders now use it and set `aria-valuetext` from the formatted readout. |
+| 4 | `assets/js/core/ui.js` tooltips | Hide the tooltip on `pointerdown` (toolbar button that opens a modal). | **Done** (core). |
+| 5 | Home page (`index.html` owner) | A compact studio embed is available — see §2. | Info. |
+| 6 | `assets/icons/sprite.svg` | Icons `box-select`, `sun-moon`, `scissors`. | **Done**; the studio now uses `box-select` (isolate a level) and `scissors` (section cut). |
 
 ## 2. Engine API — `createStudio(container, options)` (for a compact home-page embed)
 
@@ -79,7 +79,8 @@ is hidden. `hasWebGL()` → `false` means WebGL2 is unavailable (three r163+ req
   Night `scene.environmentIntensity` is 0.035 (day 0.82).
 - **Framing:** preset positions (except Street) and the explode pull-back are fitted so the building bounds
   (exploded height included — the campus tower rises ~40 m) stay inside the canvas area not covered by the
-  panels; the fit only ever moves the camera back from the authored preset.
+  panels: the camera moves back along the preset's direction as far as needed, or in by up to 28 % when the
+  authored preset leaves the buildings small, so every model fills the free area alike.
 - **Thumbnails** build a second, `quality:'low'` instance of each model in idle time; `dispose()` must free it.
 - three r186: `PCFSoftShadowMap` was removed — the engine uses `PCFShadowMap` (soft-filtered) with `shadow.radius`.
 

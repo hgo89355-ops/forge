@@ -7,7 +7,7 @@ export const S = {
   studio: { en: '3D Project Studio', ar: 'الاستوديو ثلاثي الأبعاد' },
   modelOf: { en: 'Model {n} / {total}', ar: 'النموذج {n} / {total}' },
   illustrative: { en: 'Illustrative massing model — not to scale', ar: 'نموذج كتلي توضيحي — ليس بمقياس رسم' },
-  illustrativeShort: { en: 'Illustrative model', ar: 'نموذج توضيحي' },
+  illustrativeShort: { en: 'Illustrative 3D model', ar: 'نموذج توضيحي ثلاثي الأبعاد' },
   seeProject: { en: 'See the project', ar: 'استعرض المشروع' },
   relatedProject: { en: 'Related project', ar: 'المشروع المرتبط' },
   atAGlance: { en: 'At a glance', ar: 'لمحة سريعة' },

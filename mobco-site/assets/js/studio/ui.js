@@ -282,6 +282,10 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     outputs.section.textContent = sec >= 100 ? t(S.sectionOff) : fmt(t(S.sectionAt), { n: sec });
     const h = +inputs.time.value;
     outputs.time.textContent = formatHour(h);
+    // the raw values (0–100, 6–22 in quarter hours) mean little when read aloud: speak the formatted readouts
+    inputs.explode.setAttribute('aria-valuetext', outputs.explode.textContent);
+    inputs.section.setAttribute('aria-valuetext', outputs.section.textContent);
+    inputs.time.setAttribute('aria-valuetext', outputs.time.textContent);
     // Arabic reads "2:30 م" right-to-left (time first, then the meridiem): no forced LTR run there
     outputs.time.classList.toggle('num-ltr', getLang() !== 'ar');
     timeIcon?.setAttribute('href', `assets/icons/sprite.svg#${h >= 19.25 || h < 6.5 ? 'moon' : h >= 17.5 ? 'sunset' : h < 8 ? 'sunrise' : 'sun'}`);

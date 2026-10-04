@@ -179,7 +179,7 @@
 
         <div class="studio__level" data-studio-level hidden>
           <button class="studio-chipbtn" type="button" data-level-prev aria-label="Previous level" data-ar-aria-label="الطابق السابق"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-left"></use></svg></button>
-          <p class="studio__level-text" aria-live="polite"><span class="studio__level-num" data-level-num>—</span><span class="studio__level-label" data-level-label></span></p>
+          <p class="studio__level-text"><span class="studio__level-num" data-level-num>—</span><span class="studio__level-label" data-level-label></span></p>
           <button class="studio-chipbtn" type="button" data-level-next aria-label="Next level" data-ar-aria-label="الطابق التالي"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-right"></use></svg></button>
           <button class="studio-chipbtn studio-chipbtn--close" type="button" data-level-clear aria-label="Show all levels" data-ar-aria-label="عرض جميع الطوابق"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#x"></use></svg></button>
         </div>
@@ -292,21 +292,21 @@
               <label class="range__label" for="studio-explode"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#layers"></use></svg><span data-ar="تفكيك الطوابق">Explode levels</span></label>
               <output class="range__value num-ltr" for="studio-explode" data-out="explode">0%</output>
             </div>
-            <input class="range__input" id="studio-explode" type="range" min="0" max="100" step="1" value="0" data-control="explode">
+            <input class="range__input" id="studio-explode" type="range" min="0" max="100" step="1" value="0" data-control="explode" data-format="none" aria-valuetext="0%">
           </div>
           <div class="range studio-range">
             <div class="range__head">
-              <label class="range__label" for="studio-section"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#ruler"></use></svg><span data-ar="مقطع أفقي">Section cut</span></label>
+              <label class="range__label" for="studio-section"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#scissors"></use></svg><span data-ar="مقطع أفقي">Section cut</span></label>
               <output class="range__value" for="studio-section" data-out="section">Off</output>
             </div>
-            <input class="range__input" id="studio-section" type="range" min="0" max="100" step="1" value="100" data-control="section">
+            <input class="range__input" id="studio-section" type="range" min="0" max="100" step="1" value="100" data-control="section" data-format="none" aria-valuetext="Off">
           </div>
           <div class="range studio-range" data-time-range>
             <div class="range__head">
               <label class="range__label" for="studio-time"><svg class="icon icon--sm" aria-hidden="true" focusable="false" data-time-icon><use href="assets/icons/sprite.svg#sun"></use></svg><span data-ar="وقت اليوم">Time of day</span></label>
               <output class="range__value num-ltr" for="studio-time" data-out="time">2:30 PM</output>
             </div>
-            <input class="range__input" id="studio-time" type="range" min="6" max="22" step="0.25" value="14.5" data-control="time">
+            <input class="range__input" id="studio-time" type="range" min="6" max="22" step="0.25" value="14.5" data-control="time" data-format="none" aria-valuetext="2:30 PM">
             <p class="studio-range__note" data-time-note hidden data-ar="يُطبَّق على نمطَي العرض الواقعي والمجسّم فقط.">Applies to the Realistic and Clay modes only.</p>
           </div>
         </div>
@@ -314,7 +314,7 @@
         <div class="studio-group studio-group--toggles">
           <label class="switch"><input class="switch__input" type="checkbox" data-control="autorotate"><span class="switch__track" aria-hidden="true"></span><span data-ar="دوران تلقائي">Auto-rotate</span></label>
           <label class="switch"><input class="switch__input" type="checkbox" data-control="hotspots" checked><span class="switch__track" aria-hidden="true"></span><span data-ar="نقاط الاهتمام">Points of interest</span></label>
-          <button class="studio-isolate" type="button" data-action="isolate"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#boxes"></use></svg><span data-ar="عزل طابق">Isolate a level</span></button>
+          <button class="studio-isolate" type="button" data-action="isolate"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#box-select"></use></svg><span data-ar="عزل طابق">Isolate a level</span></button>
         </div>
       </aside>
 

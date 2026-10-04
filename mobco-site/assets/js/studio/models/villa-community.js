@@ -23,8 +23,8 @@ export const meta = {
   name: { en: 'Lagoon Villa Community', ar: 'مجتمع فلل البحيرات' },
   projectSlug: 'lagoon-villa-community',
   tagline: {
-    en: 'An illustrative massing model of a gated villa community around lagoon pools.',
-    ar: 'نموذج كتلي توضيحي لمجتمع فلل مسوَّر حول بحيرات اصطناعية.',
+    en: 'A gated community of white villas with private gardens, set around lagoon pools.',
+    ar: 'مجتمع مسوَّر من الفلل البيضاء ذات الحدائق الخاصة، يلتفّ حول بحيرات اصطناعية.',
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النمط' }, value: { en: 'Gated villa community', ar: 'مجتمع فلل مسوَّر' } },
@@ -206,6 +206,9 @@ export function build(THREE, ctx = {}) {
     emissive: 0x3fd6dc, emissiveIntensity: 0,
   }));
 
+  // HDR interior glow (peak at emissiveIntensity 1): the villas' small, recessed openings need more than
+  // the commercial strip's big shopfronts to read as lit after dusk
+  M.interior.emissive.multiplyScalar(1.7);
   const nightMaterials = [M.interior, M.lampHead, M.teal, M.water, M.waterShallow];
 
   /* ---- scene graph ----------------------------------------------------- */

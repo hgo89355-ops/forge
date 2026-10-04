@@ -18,6 +18,10 @@ body[data-page='studio'] {
   --studio-info-w: clamp(300px, 23vw, 380px);
   --studio-panel-w: clamp(284px, 21vw, 320px);
 }
+/* small laptops / landscape tablets: a slimmer info column leaves the model more of the free area */
+@media (min-width: 1024px) and (max-width: 1199.98px) {
+  body[data-page='studio'] { --studio-info-w: 276px; }
+}
 
 /* ---------------------------------------------------------------- stage */
 .studio {
@@ -705,7 +709,11 @@ html[lang='ar'] .studio-rail__name { font-family: var(--font-arabic); font-size:
 }
 .studio-rail__item.is-unavailable .studio-rail__thumb { opacity: .5; }
 .studio-rail__item.is-unavailable .studio-rail__num::after { content: ' ·  —'; color: rgba(255, 255, 255, .4); }
-@media (min-width: 1024px) { .studio-rail__thumb { inline-size: 112px; block-size: 76px; } }
+@media (min-width: 1024px) {
+  .studio-rail__thumb { inline-size: 112px; block-size: 76px; }
+  /* long descriptive names ("Lagoon Villa Community") get a third line instead of an ellipsis */
+  .studio-rail__name { -webkit-line-clamp: 3; }
+}
 @media (min-width: 1024px) and (max-width: 1279.98px) {
   .studio-rail__item { gap: .625rem; }
   .studio-rail__thumb { inline-size: 76px; block-size: 76px; }
