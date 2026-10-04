@@ -788,8 +788,8 @@ export function createStudio(container, options = {}) {
   }
 
   /**
-   * Fly to a hotspot (meta.hotspots[].id), seen from outside the building: the camera looks at the hotspot
-   * from the side it sits on (blended with the current view) at a pleasant elevation. Returns false when the
+   * Fly to a hotspot (meta.hotspots[].id) at a pleasant elevation, keeping the current side of the building
+   * when the hotspot is visible from it, else turning towards the side the hotspot sits on. Returns false when the
    * id is unknown. Options: `distance` (metres), `duration` (ms), `instant`.
    */
   function focusHotspot(id, { distance, duration = 1250, instant = false } = {}) {
@@ -806,7 +806,8 @@ export function createStudio(container, options = {}) {
     let dirH = cur;
     if (out.length() > Math.max(bsize.x, bsize.z) * 0.12) {
       out.normalize();
-      dirH = cur.clone().lerp(out, 0.72);
+      // a hotspot visible from here keeps (mostly) this side of the building; a hidden one swings round to its side
+      dirH = cur.clone().lerp(out, h.occluded ? 0.75 : 0.22);
       if (dirH.lengthSq() < 0.05) dirH = out;
       dirH.normalize();
     }

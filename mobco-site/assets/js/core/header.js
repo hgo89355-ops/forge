@@ -170,12 +170,13 @@ function initMega() {
     if (!toggle || !panel) return;
     megaItems.push(item);
     let timer;
+    let hoverOpenedAt = 0;
 
     // mouse hover (desktop row only; the tab bar uses taps so a passing pointer never drops a sheet)
     item.addEventListener('pointerenter', (e) => {
       if (e.pointerType !== 'mouse' || isTabBar()) return;
       clearTimeout(timer);
-      timer = setTimeout(() => openMega(item), 90);
+      timer = setTimeout(() => { openMega(item); hoverOpenedAt = performance.now(); }, 90);
     });
     item.addEventListener('pointerleave', (e) => {
       if (e.pointerType !== 'mouse' || isTabBar()) return;
@@ -186,7 +187,10 @@ function initMega() {
     toggle.addEventListener('click', (e) => {
       e.preventDefault();
       clearTimeout(timer);
-      item.classList.contains('is-open') ? closeMega(item) : openMega(item);
+      const open = item.classList.contains('is-open');
+      // a click that lands just after hover opened the menu means "open", not "close"
+      if (open && e.detail !== 0 && performance.now() - hoverOpenedAt < 600) return;
+      open ? closeMega(item) : openMega(item);
     });
 
     // First tap on the tab opens its menu (touch / pen anywhere, any pointer in the tab bar).
