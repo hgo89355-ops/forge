@@ -1,10 +1,10 @@
-// MOBCO core/motion.js — smooth scroll + scroll-driven motion.
+// MOBCO core/motion.js: smooth scroll + scroll-driven motion.
 //
 // Declarative attributes (wired by scan(root); main.js scans the whole document):
 //   data-reveal="up|fade|left|right|scale|clip|mask|mask-up"  reveal once when entering the viewport
 //   data-reveal-delay="200"                 extra delay (ms)
 //   data-reveal-stagger[="90"]              on a parent: children with data-reveal get incremental delays (step ms)
-//   data-split[="words|lines"]              split headline into masked words; reveals on enter; re-splits on langchange
+//   data-split[="chars|words|lines"]        GSAP SplitText headline reveal (auto: chars if short, words if long or Arabic)
 //   data-count="10000" [data-suffix="+"] [data-prefix=""] [data-decimals="0"] [data-native]  count-up number
 //   data-parallax="0.15"                    translateY by speed × scroll offset (negative = opposite)
 //   data-kenburns[="out"]                   slow zoom drift on the <img> inside; paused off-screen
@@ -111,7 +111,7 @@ export function startScroll() { lenis?.start(); }
 
 function initAnchors() {
   // Same-page hash links scroll smoothly below the header. Opt out per link with [data-no-scroll] (the click is
-  // left alone, so the browser updates the hash natively and fires 'hashchange' — e.g. for hash-driven overlays).
+  // left alone, so the browser updates the hash natively and fires 'hashchange', e.g. for hash-driven overlays).
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href*="#"]');
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.hasAttribute('data-no-scroll')) return;
@@ -152,6 +152,7 @@ export function reveal(el) {
   if (el.classList.contains('is-revealed')) return;
   el.classList.add('is-revealed');
   if (el.hasAttribute('data-count')) runCounter(el);
+  if (el.__splitReady) playSplit(el);
 }
 
 function makeRevealIO() {
@@ -191,7 +192,7 @@ const settle = debounce(() => {
   }
 }, 140);
 // second pass: a programmatic jump can end after the 140ms debounce fired (smooth scroll still in flight, busy
-// main thread) — check again once scrolling has really ended (scrollend, or 450ms after the last scroll event).
+// main thread), check again once scrolling has really ended (scrollend, or 450ms after the last scroll event).
 const settleLate = debounce(() => settle(), 450);
 function onSettle() { settle(); settleLate(); }
 function observeAfterLoad(el) {
@@ -228,62 +229,119 @@ function wireReveal(root) {
   }
 }
 
-/* ---------------------------------------------------------------- split text */
-function splitTextNodes(node, words) {
-  for (const child of Array.from(node.childNodes)) {
-    if (child.nodeType === 3) {
-      const parts = child.textContent.split(/(\s+)/);
-      if (!parts.some((p) => p.trim())) continue;
-      const frag = document.createDocumentFragment();
-      for (const part of parts) {
-        if (!part) continue;
-        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); continue; }
-        const w = document.createElement('span');
-        w.className = 'split-word';
-        const inner = document.createElement('span');
-        inner.className = 'split-inner';
-        inner.textContent = part;
-        w.appendChild(inner);
-        frag.appendChild(w);
-        words.push(w);
-      }
-      child.replaceWith(frag);
-    } else if (child.nodeType === 1 && !child.classList.contains('split-word') && child.tagName !== 'BR') {
-      splitTextNodes(child, words);
-    }
-  }
+/* ---------------------------------------------------------------- split text (GSAP SplitText) */
+// [data-split] headlines are split with GSAP SplitText once web fonts are ready, then animate once when they enter
+// the viewport (same once-only trigger as data-reveal, gated by the preloader): opacity 0, y 40 → 1, 0 over 1.25s,
+// power3.out, staggered. Short Latin headlines split into chars, long ones into words; Arabic ALWAYS splits into
+// words (splitting Arabic letters breaks contextual shaping). data-split="words|chars|lines" forces a type
+// (chars still becomes words for Arabic). The split is reverted on complete, so the heading is plain text again
+// (screen readers, resize, language switch). Reduced motion and ?qa=1: no split, text simply visible.
+// SplitText is loaded on demand when a page has not included assets/vendor/gsap/SplitText.min.js itself.
+const SPLIT_SRC = new URL('../../vendor/gsap/SplitText.min.js', import.meta.url).href;
+const CHAR_MAX = 24; // headlines up to this many characters animate per character
+const ARABIC = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
+let splitLib = null;
+
+function loadSplitText() {
+  if (splitLib) return splitLib;
+  splitLib = new Promise((resolve) => {
+    if (window.SplitText) { resolve(window.SplitText); return; }
+    if (!window.gsap) { resolve(null); return; }
+    const tag = document.createElement('script');
+    tag.src = SPLIT_SRC;
+    tag.async = true;
+    tag.onload = () => resolve(window.SplitText || null);
+    tag.onerror = () => resolve(null);
+    document.head.appendChild(tag);
+  }).then((ST) => {
+    if (ST) { try { window.gsap.registerPlugin(ST); } catch { /* ignore */ } }
+    return ST;
+  });
+  return splitLib;
+}
+const fontsReady = () => Promise.resolve(document.fonts?.ready).catch(() => {});
+
+function showPlain(el) { el.classList.add('is-split', 'is-revealed'); }
+
+function splitType(el) {
+  const text = el.textContent.replace(/\s+/g, ' ').trim();
+  const forced = el.getAttribute('data-split');
+  if (getLang() === 'ar' || ARABIC.test(text)) return forced === 'lines' ? 'lines' : 'words';
+  if (forced === 'chars' || forced === 'words' || forced === 'lines') return forced;
+  return text.length <= CHAR_MAX ? 'chars' : 'words';
 }
 
-function unsplit(el) {
-  el.querySelectorAll('.split-word').forEach((w) => w.replaceWith(document.createTextNode(w.textContent)));
-  el.normalize();
+/** Stop the animation and drop the split. If i18n already swapped the markup, the swapped markup is kept
+ *  (a plain revert() would restore the previous language). */
+function teardownSplit(el) {
+  el.__splitTween?.kill();
+  el.__splitTween = null;
+  el.__splitReady = false;
+  const inst = el.__split;
+  el.__split = null;
+  if (!inst) return;
+  const first = inst.chars?.[0] || inst.words?.[0] || inst.lines?.[0];
+  if (first && el.contains(first)) { try { inst.revert(); } catch { /* ignore */ } return; }
+  // markup was replaced: still revert (SplitText keeps a per-element record and would otherwise restore the
+  // stale markup on the next split), then put the current markup back
+  const now = el.innerHTML;
+  try { inst.revert(); } catch { /* ignore */ }
+  el.innerHTML = now;
+  if (!el.__splitHadAria) el.removeAttribute('aria-label');
 }
 
-function split(el) {
-  // always start from clean, unsplit markup (i18n may have replaced part or all of the text)
-  unsplit(el);
+async function prepareSplit(el) {
+  const token = (el.__splitToken = (el.__splitToken || 0) + 1);
+  const ST = await loadSplitText();
+  await fontsReady();
+  if (token !== el.__splitToken || !el.isConnected) return;
+  if (!ST || !window.gsap) { showPlain(el); return; }
+  teardownSplit(el);
+  const type = splitType(el);
+  el.__splitHadAria = el.hasAttribute('aria-label');
   el.__splitSource = el.innerHTML;
-  el.__splitLang = getLang();
-  const words = [];
-  splitTextNodes(el, words);
-  const mode = el.getAttribute('data-split') || 'words';
-  if (mode === 'lines') {
-    let line = -1, lastTop = null;
-    for (const w of words) {
-      const top = w.offsetTop;
-      if (lastTop === null || Math.abs(top - lastTop) > 4) { line++; lastTop = top; }
-      w.firstChild.style.setProperty('--i', line);
-    }
-    el.style.setProperty('--split-step', '120ms');
-  } else {
-    words.forEach((w, i) => w.firstChild.style.setProperty('--i', i));
+  let inst;
+  try {
+    inst = new ST(el, {
+      type: type === 'chars' ? 'words,chars' : type,  // chars stay inside word wrappers: no mid-word line breaks
+      wordsClass: 'split-word',
+      charsClass: 'split-char',
+      linesClass: 'split-line',
+      aria: el.querySelector('a, button') ? 'none' : 'auto',
+    });
+  } catch (err) {
+    console.warn('[motion] SplitText failed:', err);
+    showPlain(el);
+    return;
   }
-  if (!el.hasAttribute('aria-label') && !el.querySelector('a,button')) {
-    // keep the heading readable as a whole by assistive tech
-    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
-    el.__splitAria = true;
-  }
+  const targets = type === 'chars' ? inst.chars : type === 'lines' ? inst.lines : inst.words;
+  if (!targets?.length) { try { inst.revert(); } catch { /* ignore */ } showPlain(el); return; }
+  el.__split = inst;
+  el.__splitTargets = targets;
+  el.__splitStagger = type === 'chars' ? 0.05 : type === 'lines' ? 0.12 : 0.08;
+  window.gsap.set(targets, { opacity: 0, y: 40 });
+  el.__splitReady = true;
   el.classList.add('is-split');
+  if (el.classList.contains('is-revealed')) playSplit(el);
+}
+
+function playSplit(el) {
+  if (!el.__splitReady || el.__splitTween) return;
+  const delay = (parseInt(el.getAttribute('data-reveal-delay') || '0', 10) || 0) / 1000;
+  el.__splitTween = window.gsap.fromTo(el.__splitTargets, { opacity: 0, y: 40 }, {
+    opacity: 1,
+    y: 0,
+    duration: 1.25,
+    ease: 'power3.out',
+    stagger: el.__splitStagger,
+    delay,
+    force3D: true,
+    onComplete: () => {
+      el.__splitTween = null;
+      teardownSplit(el);  // revert: plain text again
+      el.__splitDone = true;
+    },
+  });
 }
 
 function wireSplit(root) {
@@ -292,19 +350,24 @@ function wireSplit(root) {
   for (const el of els) {
     if (el.__splitWired) continue;
     el.__splitWired = true;
-    if (reduced) { el.classList.add('is-split', 'is-revealed'); continue; }
-    split(el);
+    el.__splitSource = el.innerHTML;
+    if (reduced || !window.gsap) { showPlain(el); continue; }
+    prepareSplit(el);
     if (revealIO) observeAfterLoad(el); else reveal(el);
   }
 }
 
+// Language switch: i18n has just swapped the text. Headlines already shown stay plain; ones still waiting for
+// the viewport are split again from the new text.
 function resplitAll() {
-  $$('[data-split].is-split').forEach((el) => {
-    if (reduced) return;
-    if (el.__splitAria) el.removeAttribute('aria-label');
-    const wasRevealed = el.classList.contains('is-revealed');
-    split(el);
-    if (wasRevealed) el.classList.add('is-revealed');
+  if (reduced) return;
+  $$('[data-split]').forEach((el) => {
+    if (!el.__splitWired) return;
+    el.__splitToken = (el.__splitToken || 0) + 1;  // cancel a pending prepareSplit
+    teardownSplit(el);
+    el.__splitSource = el.innerHTML;
+    if (el.__splitDone || el.classList.contains('is-revealed') || !window.gsap) { showPlain(el); return; }
+    prepareSplit(el);
   });
 }
 
@@ -499,9 +562,8 @@ export function initMotion() {
     $$('[data-marquee].is-ready').forEach(setupMarquee);
     requestAnimationFrame(refresh);
   });
-  // fonts change metrics → re-measure line splits & marquees
+  // fonts change metrics: re-measure marquees
   document.fonts?.ready?.then(() => {
-    $$('[data-split="lines"].is-split').forEach((el) => { const r = el.classList.contains('is-revealed'); split(el); if (r) el.classList.add('is-revealed'); });
     $$('[data-marquee].is-ready').forEach(setupMarquee);
     refresh();
   });

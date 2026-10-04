@@ -1,4 +1,4 @@
-// MOBCO core/main.js — entry point loaded on every page (after the deferred GSAP/ScrollTrigger/Lenis UMDs).
+// MOBCO core/main.js: entry point loaded on every page (after the deferred GSAP/ScrollTrigger/Lenis UMDs).
 // Order matters: i18n first (so text is final before splitting), then preloader, motion, chrome, widgets.
 // Every init is idempotent; a failure in one module never blocks the others.
 
@@ -32,5 +32,5 @@ for (const [name, fn] of steps) {
 }
 html.classList.add('is-ready');
 
-// Small debug/QA handle (not an API for pages — import the modules instead).
+// Small debug/QA handle (not an API for pages, import the modules instead).
 window.MOBCO = Object.freeze({ setLang, getLang, t, toast, openLightbox, openModal, openSearch, scan, refresh });

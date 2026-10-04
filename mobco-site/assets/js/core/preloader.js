@@ -1,4 +1,4 @@
-// MOBCO core/preloader.js — first visit per session only.
+// MOBCO core/preloader.js: first visit per session only.
 // The inline <head> script adds html.preload (a navy cover via CSS) when this is the first page view of the
 // session (and not reduced motion / ?qa=1). This module replaces the cover with the animated logo mark
 // (stroke draw → fill) and a 000→100 counter, then lifts it (≈1.6s max). If JS fails, CSS removes the

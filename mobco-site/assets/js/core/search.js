@@ -1,4 +1,4 @@
-// MOBCO core/search.js — site search overlay (Ctrl/⌘+K or "/").
+// MOBCO core/search.js: site search overlay (Ctrl/⌘+K or "/").
 // Fuzzy search over PAGES + PROJECTS + SUBSIDIARIES + project categories (+ sectors) from data/site-data.js, EN/AR.
 // Results are de-duplicated by URL (a company page found as both a page and a company shows once).
 // Triggers: any [data-search-open] element. API: openSearch(query?), closeSearch()

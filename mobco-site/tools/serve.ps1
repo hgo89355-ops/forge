@@ -1,4 +1,4 @@
-# Tiny static web server for Windows (no installs needed) — used by "Start Website (Windows).bat".
+# Tiny static web server for Windows (no installs needed): used by "Start Website (Windows).bat".
 param([int]$Port = 8080)
 $root = Split-Path -Parent $PSScriptRoot
 $types = @{ '.html'='text/html; charset=utf-8'; '.css'='text/css'; '.js'='text/javascript'; '.mjs'='text/javascript';

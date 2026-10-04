@@ -1,5 +1,5 @@
 // MOBCO data/site-data.js: single source of truth for bilingual content used by pages,
-// search, the mega menu and the 3D Studio. Foundation-owned (request changes in docs/requests/).
+// search, the mega menu and the Project Builder. Foundation-owned (request changes in docs/requests/).
 //
 // Every user-facing string is { en, ar } → render with t() from core/i18n.js.
 // HONESTY: only facts from docs/BRIEF.md §2. Anything inferred carries a `todo` note and,
@@ -189,7 +189,7 @@ export const SUBSIDIARIES = [
     tagline: {"en": "Elevating industry standards", "ar": "نرتقي بمعايير الصناعة"},
     about: [{"en": "Founded in 2001, MOBCO Construction, the construction arm of MOBCO Group, is a recognized leader in the industry, known for delivering innovative, high-quality projects. MOBCO Group operates across diverse sectors, including construction, development, education, hospitality, and facility management, consistently exceeding client expectations.", "ar": "تأسّست موبكو للإنشاءات عام 2001 بوصفها الذراع الإنشائية لمجموعة موبكو، وهي رائدة معترف بها في القطاع، تشتهر بتنفيذ مشاريع مبتكرة عالية الجودة. وتعمل مجموعة موبكو في قطاعات متنوّعة تشمل الإنشاءات والتطوير والتعليم والضيافة وإدارة المرافق، متجاوزةً توقعات عملائها باستمرار."}, {"en": "With tier-one status in the global construction industry, MOBCO's projects span Saudi Arabia, Canada, the UK, and Egypt. Having completed 438 projects across four continents, our portfolio reflects a strong commitment to excellence and delivering exceptional results.", "ar": "بفضل تصنيفها من الفئة الأولى في قطاع الإنشاءات العالمي، تمتد مشاريع موبكو عبر المملكة العربية السعودية وكندا والمملكة المتحدة ومصر. ومع إنجاز 438 مشروعًا في أربع قارات، تعكس محفظة أعمالنا التزامًا راسخًا بالتميّز وتحقيق نتائج استثنائية."}],
     facts: [{"en": "Founded 2001", "ar": "تأسّست عام 2001"}, {"en": "438 projects completed", "ar": "438 مشروعًا مُنجزًا"}, {"en": "Saudi Arabia · Canada · UK · Egypt", "ar": "السعودية · كندا · المملكة المتحدة · مصر"}, {"en": "Tier-one status", "ar": "تصنيف الفئة الأولى"}],
-    accent: '#6fd1c5',
+    accent: '#5fb2b8',
     icon: 'hard-hat',
     short: {"en": "The construction arm of MOBCO Group, founded in 2001 and known for innovative, high-quality projects.", "ar": "الذراع الإنشائية لمجموعة موبكو، تأسّست عام 2001 وتُعرف بمشاريعها المبتكرة عالية الجودة."},
     long: {
@@ -213,7 +213,7 @@ export const SUBSIDIARIES = [
     tagline: {"en": "Creating landmarks, defining excellence", "ar": "نصنع المعالم ونرسم ملامح التميّز"},
     about: [{"en": "In our ongoing commitment to expand our world-class expertise, MOBCO Group introduced MOBCO Developments, with a strategic entry into the Egyptian market. This new division builds on the robust foundation of MOBCO Group's construction legacy, aiming to set unprecedented standards in the development sector.", "ar": "في إطار التزامنا المستمر بتوسيع خبراتنا عالمية المستوى، أطلقت مجموعة موبكو شركة موبكو للتطوير بدخولٍ استراتيجي إلى السوق المصرية. ويرتكز هذا القطاع الجديد على الأساس المتين لإرث مجموعة موبكو في الإنشاءات، ساعيًا إلى وضع معايير غير مسبوقة في قطاع التطوير."}, {"en": "At MOBCO Developments, we are focused on transforming prime locations in both Canada and Egypt through innovative and high-quality projects. Our commitment to safety and environmental responsibility drives us to incorporate sustainable practices into every aspect of our work.", "ar": "نركّز في موبكو للتطوير على تحويل مواقع متميّزة في كندا ومصر من خلال مشاريع مبتكرة عالية الجودة. ويدفعنا التزامنا بالسلامة والمسؤولية البيئية إلى تبنّي ممارسات مستدامة في كل جانب من جوانب عملنا."}, {"en": "Leveraging our extensive global experience, we are dedicated to enhancing Egypt's development landscape with visionary projects that reflect our dedication to excellence. Our mission is to create transformative developments that not only meet but surpass the highest industry standards, leaving a significant and lasting impact on Egypt's growth and prosperity. By prioritizing innovation and quality, MOBCO Developments is poised to reshape the future of urban living and commercial spaces in the region.", "ar": "مستفيدين من خبرتنا العالمية الواسعة، نكرّس جهودنا للارتقاء بمشهد التطوير في مصر عبر مشاريع رائدة تعكس التزامنا بالتميّز. ورسالتنا هي إنشاء مشاريع تطوير تحويلية لا تكتفي بتلبية أعلى معايير الصناعة بل تتجاوزها، لتترك أثرًا كبيرًا ودائمًا في نمو مصر وازدهارها. ومن خلال إعطاء الأولوية للابتكار والجودة، تستعد موبكو للتطوير لإعادة رسم مستقبل الحياة الحضرية والمساحات التجارية في المنطقة."}],
     facts: [{"en": "Egypt & Canada", "ar": "مصر وكندا"}, {"en": "Eastmain in the Golden Square, New Cairo", "ar": "إيست مين في المربع الذهبي، القاهرة الجديدة"}, {"en": "Victoria 101 in Port Whitby, Ontario", "ar": "فيكتوريا 101 في بورت ويتبي، أونتاريو"}],
-    accent: '#9be3da',
+    accent: '#8fcbd0',
     icon: 'building',
     short: {"en": "The group’s development company. It entered the Egyptian market and is transforming prime locations in Canada and Egypt.", "ar": "شركة التطوير في المجموعة. دخلت السوق المصرية، وتعمل على تطوير مواقع متميّزة في كندا ومصر."},
     long: {
@@ -237,7 +237,7 @@ export const SUBSIDIARIES = [
     tagline: {"en": "Simplifying property management", "ar": "نُبسّط إدارة العقارات"},
     about: [{"en": "Established in 2002 in Cairo, Egypt, MOBCO Real Estate Development specializes in leasing and property management for multi-functional buildings. Our flagship project, Mivida Business Park, B1, features modern office spaces designed with a common core that provides essential services, ensuring maximum efficiency and flexibility for our clients. This design allows us to tailor office environments to meet the unique needs of each tenant.", "ar": "تأسّست موبكو للتطوير العقاري عام 2002 في القاهرة بمصر، وتتخصّص في تأجير وإدارة العقارات للمباني متعددة الوظائف. ويضمّ مشروعنا الرئيسي، مجمّع ميفيدا للأعمال، المبنى B1، مساحات مكتبية حديثة مصمّمة حول نواة مشتركة توفّر الخدمات الأساسية، بما يضمن أقصى درجات الكفاءة والمرونة لعملائنا. ويتيح لنا هذا التصميم تهيئة بيئات العمل بما يلبّي الاحتياجات الخاصة بكل مستأجر."}],
     facts: [{"en": "Established 2002, Cairo", "ar": "تأسّست عام 2002، القاهرة"}, {"en": "Leasing & property management", "ar": "التأجير وإدارة العقارات"}, {"en": "Flagship: Mivida Business Park, B1", "ar": "المشروع الرئيسي: مجمّع ميفيدا للأعمال، B1"}],
-    accent: '#b8975a',
+    accent: '#b2aa8a',
     icon: 'landmark',
     short: {"en": "Established in Cairo in 2002. Leasing and property management for multi-functional buildings, including Mivida Business Park, B1.", "ar": "تأسّست في القاهرة عام 2002. تأجير وإدارة العقارات للمباني متعددة الوظائف، ومنها مجمّع ميفيدا للأعمال، المبنى B1."},
     long: {
@@ -257,7 +257,7 @@ export const SUBSIDIARIES = [
     name: { en: 'Elite Education Group', ar: 'مجموعة النخبة التعليمية' },
     logo: { color: 'assets/img/logos/elite-education.png', white: 'assets/img/logos/elite-education-white.png', navy: 'assets/img/logos/elite-education-navy.png', w: 508, h: 498 },
     page: null,
-    accent: '#6fd1c5',
+    accent: '#5fb2b8',
     icon: 'graduation-cap',
     short: {
       en: 'The group’s education arm.',
@@ -1287,7 +1287,7 @@ export const NAV = [
   { id: 'about', href: 'about.html', label: { en: 'About', ar: 'من نحن' } },
   { id: 'subsidiaries', href: 'subsidiaries.html', label: { en: 'Subsidiaries', ar: 'الشركات التابعة' } },
   { id: 'projects', href: 'projects.html', label: { en: 'Projects', ar: 'المشاريع' }, mega: true },
-  { id: 'studio', href: 'studio.html', label: { en: '3D Studio', ar: 'الاستوديو ثلاثي الأبعاد' } },
+  { id: 'studio', href: 'studio.html', label: { en: 'Project Builder', ar: 'مصمّم المشاريع' } },
   { id: 'media', href: 'media.html', label: { en: 'Media', ar: 'الإعلام' } },
   { id: 'careers', href: 'careers.html', label: { en: 'Careers', ar: 'الوظائف' } },
   { id: 'contact', href: 'contact.html', label: { en: 'Contact', ar: 'تواصل معنا' } },
@@ -1340,9 +1340,9 @@ export const PAGES = [
   },
   {
     id: 'studio', url: 'studio.html', icon: 'rotate-3d',
-    title: { en: '3D Project Studio', ar: 'الاستوديو ثلاثي الأبعاد' },
-    description: { en: 'Illustrative 3D models of our projects.', ar: 'نماذج توضيحية ثلاثية الأبعاد لمشاريعنا.' },
-    keywords: { en: ['3d', 'studio', 'viewer', 'model', 'interactive', 'massing'], ar: ['ثلاثي الأبعاد', 'استوديو', 'نموذج', 'تفاعلي', 'مجسم'] },
+    title: { en: 'Project Builder', ar: 'مصمّم المشاريع' },
+    description: { en: 'Build your own project in 3D, or explore models of ours.', ar: 'صمّم مشروعك بالأبعاد الثلاثية، أو استكشف نماذج مشاريعنا.' },
+    keywords: { en: ['project builder', 'builder', 'design', '3d', 'studio', 'viewer', 'model', 'interactive', 'massing'], ar: ['مصمم المشاريع', 'صمم مشروعك', 'ثلاثي الأبعاد', 'استوديو', 'نموذج', 'تفاعلي', 'مجسم'] },
   },
   {
     id: 'media', url: 'media.html', icon: 'images',
@@ -1367,7 +1367,7 @@ export const PAGES = [
 /** Shortcuts shown in the empty search state. */
 export const QUICK_LINKS = [
   { url: 'contact.html#inquiry', icon: 'send', title: { en: 'Start a project', ar: 'ابدأ مشروعك' }, description: { en: 'Send us an inquiry', ar: 'أرسل لنا استفسارك' } },
-  { url: 'studio.html', icon: 'rotate-3d', title: { en: 'Open the 3D Studio', ar: 'افتح الاستوديو ثلاثي الأبعاد' }, description: { en: 'Explore illustrative models', ar: 'استكشف النماذج التوضيحية' } },
+  { url: 'studio.html', icon: 'rotate-3d', title: { en: 'Project Builder', ar: 'مصمّم المشاريع' }, description: { en: 'Build your project in 3D', ar: 'صمّم مشروعك بالأبعاد الثلاثية' } },
   { url: 'careers.html', icon: 'briefcase', title: { en: 'Careers', ar: 'الوظائف' }, description: { en: 'Join our teams', ar: 'انضم إلى فرقنا' } },
 ];
 
@@ -1385,5 +1385,5 @@ export function projectsBy({ region, sector, category, featured } = {}) {
 }
 /** URL of a project detail anchor on the projects page. */
 export const projectUrl = (p) => `projects.html#${typeof p === 'string' ? p : p.slug}`;
-/** URL of a project in the 3D Studio. */
+/** URL of a project in the Project Builder (studio.html). */
 export const studioUrl = (p) => `studio.html?model=${typeof p === 'string' ? getProject(p)?.studioModel || p : p.studioModel}`;

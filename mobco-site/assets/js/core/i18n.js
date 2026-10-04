@@ -1,7 +1,7 @@
-// MOBCO core/i18n.js — attribute-based EN/AR switching with full RTL.
+// MOBCO core/i18n.js: attribute-based EN/AR switching with full RTL.
 //
 // Markup carries English. Arabic lives in attributes:
-//   data-ar             → textContent        (element must contain text only — wrap text in a <span> next to icons)
+//   data-ar             → textContent        (element must contain text only, wrap text in a <span> next to icons)
 //   data-ar-html        → innerHTML          (trusted, authored markup only)
 //   data-ar-placeholder → placeholder attr
 //   data-ar-aria-label  → aria-label attr
@@ -110,7 +110,7 @@ export const getLang = () => current;
 export const isRTL = () => current === 'ar';
 export const getDir = () => (current === 'ar' ? 'rtl' : 'ltr');
 
-/** Pick the right string from a bilingual object. t({en:'Hello', ar:'مرحبا'}) — strings pass through. */
+/** Pick the right string from a bilingual object. t({en:'Hello', ar:'مرحبا'}), strings pass through. */
 export function t(obj, lang = current) {
   if (obj == null) return '';
   if (typeof obj === 'string' || typeof obj === 'number') return String(obj);

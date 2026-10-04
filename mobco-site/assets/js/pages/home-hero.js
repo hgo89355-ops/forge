@@ -4,13 +4,13 @@
 //   (assets/js/studio/engine.js) is imported, the model is built with the same camera, and the live canvas
 //   crossfades in on its first frame.
 // · Drag to orbit (touch: horizontal one-finger drags orbit, vertical swipes scroll the page, pinch zooms),
-//   + / − buttons, double-click / double-tap zooms to a point, a click on the building flies in, mouse-wheel zoom
+//   plus / minus buttons, double-click / double-tap zooms to a point, a click on the building flies in, mouse-wheel zoom
 //   only after the visitor has pressed inside the viewer (until the pointer leaves it or Esc).
 // · Hotspot pins from each model's meta.hotspots: a pin flies the camera to that part and opens a small card.
-// · Toolbar: zoom, separate floors, day / night, reset, open in the full 3D Studio. Chips switch the building.
-// · Keyboard: the canvas is focusable (arrow keys orbit, + / − zoom, 0 resets, Esc closes the card).
+// · Toolbar: zoom, separate floors, day / night, reset, open in Project Builder. Chips switch the building.
+// · Keyboard: the canvas is focusable (arrow keys orbit, plus / minus zoom, 0 resets, Esc closes the card).
 // · Reduced motion: no auto-rotate, instant camera moves. Software renderers (SwiftShader / llvmpipe) get the
-//   engine's low-power profile and no auto-rotate. No WebGL2: the still stays, with a link to the 3D Studio.
+//   engine's low-power profile and no auto-rotate. No WebGL2: the still stays, with a link to Project Builder.
 
 import { t, onLang } from '../core/i18n.js';
 import { $, $$, clamp, isQA, isRTL, prefersReducedMotion, rafThrottle } from '../core/utils.js';
@@ -23,7 +23,7 @@ const MODELS = {
 };
 const S = {
   canvas: { en: '{name}, interactive 3D model', ar: '{name}، نموذج تفاعلي ثلاثي الأبعاد' },
-  studio: { en: 'Open {name} in the 3D Studio', ar: 'افتح {name} في الاستوديو ثلاثي الأبعاد' },
+  studio: { en: 'Open {name} in Project Builder', ar: 'افتح {name} في مصمّم المشاريع' },
   loading: { en: 'Loading {name}', ar: 'جارٍ تحميل {name}' },
   ready: { en: '{name} is ready', ar: '{name} جاهز' },
   still: { en: '{name}, illustrative 3D model', ar: '{name}، نموذج توضيحي ثلاثي الأبعاد' },
@@ -142,7 +142,7 @@ export function initHero3D() {
     if (box.w < 768) { stage.style.removeProperty('--hx-px'); return; }
     const slack = POSTER_ASPECT * box.h - box.w;
     if (slack <= 1) { stage.style.removeProperty('--hx-px'); return; }
-    // the live view shifts the building by (left − right) / 2 px; slide the wide still the same way
+    // the live view shifts the building by (left minus right) / 2 px; slide the wide still the same way
     const p = clamp(0.5 - ((ins.left - ins.right) / 2) / slack, 0, 1);
     stage.style.setProperty('--hx-px', `${(p * 100).toFixed(2)}%`);
   }
@@ -449,7 +449,7 @@ export function initHero3D() {
   }, true);
   root.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') engage(false); });
 
-  // keyboard: arrows orbit (instead of OrbitControls' pan), + / − zoom, 0 resets, Esc closes the card
+  // keyboard: arrows orbit (instead of OrbitControls' pan), plus / minus zoom, 0 resets, Esc closes the card
   root.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (openId) { e.preventDefault(); closeCard({ back: true, focusPin: true }); }

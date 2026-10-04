@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// MOBCO tools/check.mjs — Playwright QA for static pages (Chromium is preinstalled; never run `playwright install`).
+// MOBCO tools/check.mjs: Playwright QA for static pages (Chromium is preinstalled; never run `playwright install`).
 //
 //   node tools/check.mjs                                   → all root *.html, desktop+mobile, EN+AR
 //   node tools/check.mjs --pages about.html --port 8123 --shots /tmp/qa/about
@@ -313,7 +313,7 @@ server.close();
 /* ---------------------------------------------------------------- report */
 let errors = 0, warnings = 0;
 results.sort((a, b) => combos.indexOf(combos.find((c) => c.page === a.page && c.vpName === a.vpName && c.lang === a.lang)) - combos.indexOf(combos.find((c) => c.page === b.page && c.vpName === b.vpName && c.lang === b.lang)));
-console.log(`\nMOBCO QA — ${opt.pages.length} page(s), ${combos.length} run(s)${opt.qa ? ' [qa mode]' : ''}\n`);
+console.log(`\nMOBCO QA, ${opt.pages.length} page(s), ${combos.length} run(s)${opt.qa ? ' [qa mode]' : ''}\n`);
 for (const r of results) {
   const e = [...new Set(r.issues.errors)], w = [...new Set(r.issues.warnings)];
   errors += e.length; warnings += w.length;
@@ -323,5 +323,5 @@ for (const r of results) {
   if (e.length > 25) console.log(`    … ${e.length - 25} more errors`);
   w.slice(0, 12).forEach((m) => console.log(`    warn   ${m}`));
 }
-console.log(`\n${errors ? '✗' : '✓'} ${errors} error(s), ${warnings} warning(s)${opt.shots ? ` — screenshots in ${opt.shots}` : ''}\n`);
+console.log(`\n${errors ? '✗' : '✓'} ${errors} error(s), ${warnings} warning(s)${opt.shots ? `, screenshots in ${opt.shots}` : ''}\n`);
 process.exit(errors ? 1 : 0);

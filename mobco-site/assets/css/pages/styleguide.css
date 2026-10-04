@@ -1,4 +1,4 @@
-/* styleguide.css — only for the living component gallery (styleguide.html). sg- prefix. */
+/* styleguide.css: only for the living component gallery (styleguide.html). sg- prefix. */
 .sg-toc { display: flex; flex-wrap: wrap; gap: .5rem; }
 .sg-block { display: grid; gap: var(--space-6); }
 .sg-block + .sg-block { margin-block-start: var(--space-11); }
@@ -11,7 +11,7 @@
 .sg-panel { padding: clamp(1.25rem, 1rem + 2vw, 2.5rem); border: var(--hairline); border-radius: var(--radius); background: var(--surface); }
 .sg-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); }
 .sg-swatch { display: grid; gap: .5rem; font-size: var(--fs-xs); }
-.sg-swatch__chip { aspect-ratio: 3 / 2; border-radius: var(--radius); border: 1px solid rgba(18, 34, 48, .08); }
+.sg-swatch__chip { aspect-ratio: 3 / 2; border-radius: var(--radius); border: 1px solid rgba(31, 31, 56, .08); }
 .sg-swatch b { display: block; color: var(--fg-strong); font-size: var(--fs-sm); }
 .sg-type > * + * { margin-block-start: var(--space-5); }
 .sg-type-row { display: grid; gap: .5rem; padding-block: var(--space-4); border-block-end: var(--hairline); }
@@ -22,7 +22,7 @@
 .sg-icon:hover { background: var(--surface-2); color: var(--accent-text); }
 .sg-reveal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--grid-gap); }
 .sg-reveal-grid > div { display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--navy-900); color: var(--white); border-radius: var(--radius); font-family: var(--font-display); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: .75rem; }
-.sg-grid-demo .grid > * { padding: .75rem; background: rgba(111, 209, 197, .16); border: 1px dashed rgba(63, 168, 156, .5); font-size: var(--fs-xs); text-align: center; color: var(--fg-strong); }
+.sg-grid-demo .grid > * { padding: .75rem; background: rgba(95, 178, 184, .16); border: 1px dashed rgba(63, 149, 156, .5); font-size: var(--fs-xs); text-align: center; color: var(--fg-strong); }
 .sg-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
 @media (min-width: 768px) { .sg-gallery { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .sg-gallery a { display: block; }

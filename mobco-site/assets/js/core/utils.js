@@ -1,4 +1,4 @@
-// MOBCO core/utils.js — tiny, dependency-free helpers shared by every module.
+// MOBCO core/utils.js: tiny, dependency-free helpers shared by every module.
 // Foundation-owned. Import from page modules: import { $, $$, picture } from '../core/utils.js';
 
 /** querySelector shorthand. */

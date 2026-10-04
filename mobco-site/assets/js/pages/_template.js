@@ -1,4 +1,4 @@
-// assets/js/pages/_template.js — example page module. Copy to assets/js/pages/<page>.js.
+// assets/js/pages/_template.js: example page module. Copy to assets/js/pages/<page>.js.
 // Core modules are singletons already initialised by core/main.js (which loads first).
 import { t, onLang } from '../core/i18n.js';
 import { scan } from '../core/motion.js';

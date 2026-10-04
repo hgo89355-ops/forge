@@ -1,4 +1,4 @@
-// styleguide.js — demo wiring for the living component gallery.
+// styleguide.js: demo wiring for the living component gallery.
 import { t } from '../core/i18n.js';
 import { toast, openLightbox } from '../core/ui.js';
 import { $, $$, esc, icon } from '../core/utils.js';
@@ -23,7 +23,7 @@ $$('[data-sg-toast]').forEach((btn) => btn.addEventListener('click', () => {
   const type = btn.getAttribute('data-sg-toast');
   const msgs = {
     success: { en: 'Your inquiry has been prepared.', ar: 'تم تجهيز استفسارك.' },
-    info: { en: 'Heads up: models in the 3D Studio are illustrative.', ar: 'تنبيه: نماذج الاستوديو ثلاثي الأبعاد توضيحية.' },
+    info: { en: 'Models in the Project Builder are illustrative.', ar: 'النماذج في مصمّم المشاريع توضيحية.' },
     warning: { en: 'Some fields still need your attention.', ar: 'بعض الحقول لا تزال بحاجة إلى مراجعتك.' },
     error: { en: 'Something went wrong. Please try again.', ar: 'حدث خطأ ما، يُرجى المحاولة مرة أخرى.' },
   };
@@ -34,7 +34,7 @@ $$('[data-sg-toast]').forEach((btn) => btn.addEventListener('click', () => {
 $('[data-sg-lightbox]')?.addEventListener('click', () => {
   const items = PROJECTS.map((p) => ({
     src: `assets/img/${p.image}.jpg`, srcWebp: `assets/img/${p.image}.webp`,
-    alt: p.name, caption: { en: `${p.name.en} — ${p.typology.en}`, ar: `${p.name.ar} — ${p.typology.ar}` },
+    alt: p.name, caption: { en: `${p.name.en}, ${p.typology.en}`, ar: `${p.name.ar}، ${p.typology.ar}` },
   }));
   openLightbox(items, 0);
 });
@@ -44,7 +44,7 @@ const form = $('[data-sg-form]');
 form?.addEventListener('validsubmit', (e) => {
   const out = $('[data-sg-form-output]');
   if (out) { out.hidden = false; out.querySelector('code').textContent = JSON.stringify(e.detail.data, null, 2); }
-  toast({ en: 'Valid — payload serialised below.', ar: 'البيانات صحيحة — تظهر أدناه.' });
+  toast({ en: 'Valid. The data is shown below.', ar: 'البيانات صحيحة، وتظهر أدناه.' });
 });
 $('[data-sg-chips]')?.addEventListener('chipchange', (e) => {
   const out = $('[data-sg-chip-output]');

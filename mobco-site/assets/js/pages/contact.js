@@ -3,7 +3,7 @@
 //   1. Local time in the Riyadh and Cairo offices (Intl, no network)
 //   2. Map: WORLD dot-matrix map zoomed to the selected office (tabs), consent-gated Google Maps iframe
 //   3. "Start a project" wizard (#inquiry): 3 steps, inline validation (core ui.js), sessionStorage,
-//      deep-link prefill (?company=…&office=…&type=…), region routing, mailto: hand-off, success screen
+//      deep-link prefill (?company, ?office, ?type, ?brief), region routing, mailto: hand-off, success screen
 //
 // Every visible string is bilingual via t({en, ar}) and re-rendered on 'langchange'.
 // HONESTY: the site has no backend. The inquiry is handed to the visitor's own mail app (mailto:), and the
@@ -145,7 +145,7 @@ function initMap() {
     <svg class="contact-map__svg" xmlns="${NS}" preserveAspectRatio="none" viewBox="0 0 1000 520" focusable="false">
       <defs>
         <pattern id="cm-dot" patternUnits="userSpaceOnUse" width="1" height="1"><circle cx=".5" cy=".5" r=".2" fill="rgba(255,255,255,.3)"/></pattern>
-        <pattern id="cm-dot-hl" patternUnits="userSpaceOnUse" width="1" height="1"><circle cx=".5" cy=".5" r=".24" fill="#6fd1c5"/></pattern>
+        <pattern id="cm-dot-hl" patternUnits="userSpaceOnUse" width="1" height="1"><circle cx=".5" cy=".5" r=".24" fill="#5fb2b8"/></pattern>
         <clipPath id="cm-land"><path d="${WORLD.land}"/></clipPath>
       </defs>
       <path d="${WORLD.land}" fill="rgba(255,255,255,.025)"/>
@@ -154,9 +154,9 @@ function initMap() {
       <path d="${WORLD.highlight.egypt}" fill="url(#cm-dot-hl)" fill-opacity=".72"/>
       <path d="${WORLD.land}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1" vector-effect="non-scaling-stroke"/>
       <path d="${WORLD.borders}" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>
-      <path d="${WORLD.highlight.ksa}" fill="none" stroke="rgba(111,209,197,.55)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-      <path d="${WORLD.highlight.egypt}" fill="none" stroke="rgba(111,209,197,.55)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-      <path class="contact-map__arc" d="M${arcA[0]},${arcA[1]} Q${arcC[0]},${arcC[1]} ${arcB[0]},${arcB[1]}" fill="none" stroke="rgba(111,209,197,.75)" stroke-width="1.25" stroke-dasharray="5 6" vector-effect="non-scaling-stroke"/>
+      <path d="${WORLD.highlight.ksa}" fill="none" stroke="rgba(95, 178, 184,.55)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <path d="${WORLD.highlight.egypt}" fill="none" stroke="rgba(95, 178, 184,.55)" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <path class="contact-map__arc" d="M${arcA[0]},${arcA[1]} Q${arcC[0]},${arcC[1]} ${arcB[0]},${arcB[1]}" fill="none" stroke="rgba(95, 178, 184,.75)" stroke-width="1.25" stroke-dasharray="5 6" vector-effect="non-scaling-stroke"/>
     </svg>
     <div class="contact-map__overlay"></div>`;
   const svg = $('svg', dotsBox);
@@ -186,8 +186,8 @@ function initMap() {
   renderLabels();
 
   // mini locator (coarse WORLD.dots): shows the current window on the whole world
-  const dotsMarkup = WORLD.dots.filter((d) => d[1] < 440).map(([x, y, k]) => `<circle cx="${x}" cy="${y}" r="2.3"${k === 'ksa' || k === 'egypt' ? ' fill="#6fd1c5"' : ''}/>`).join('');
-  insetBox.innerHTML = `<svg viewBox="0 0 1000 440" xmlns="${NS}" focusable="false"><g fill="rgba(255,255,255,.28)">${dotsMarkup}</g><rect class="contact-map__window" x="0" y="0" width="10" height="10" fill="rgba(111,209,197,.12)" stroke="#6fd1c5" stroke-width="5"/></svg>`;
+  const dotsMarkup = WORLD.dots.filter((d) => d[1] < 440).map(([x, y, k]) => `<circle cx="${x}" cy="${y}" r="2.3"${k === 'ksa' || k === 'egypt' ? ' fill="#5fb2b8"' : ''}/>`).join('');
+  insetBox.innerHTML = `<svg viewBox="0 0 1000 440" xmlns="${NS}" focusable="false"><g fill="rgba(255,255,255,.28)">${dotsMarkup}</g><rect class="contact-map__window" x="0" y="0" width="10" height="10" fill="rgba(95, 178, 184,.12)" stroke="#5fb2b8" stroke-width="5"/></svg>`;
   const win = $('.contact-map__window', insetBox);
 
   /* --- camera: viewBox matched to the stage aspect so pins land exactly at --pin-x/--pin-y */
@@ -414,7 +414,8 @@ const BUDGETS = {
   unsure: { en: 'Not sure yet', ar: 'لم أحدد بعد' },
 };
 
-// Deep links: ?company=<subsidiary id> (subsidiaries finder), ?office=ksa|egypt, ?type=<need>
+// Deep links: ?company=<subsidiary id> (subsidiaries finder), ?office=ksa|egypt, ?type=<need>,
+// ?brief=<text> (Project Builder summary, prefills the project description)
 const COMPANY_TYPE = {
   'mobco-construction': 'construction',
   'mobco-developments': 'development',
@@ -733,8 +734,8 @@ function initWizard() {
   });
 
   /* ---------------------------------------------------------------- boot: restore, then deep-link prefill */
-  const q = { company: getParam('company'), office: getParam('office'), type: getParam('type') };
-  const prefillSig = [q.company, q.office, q.type].map((v) => v || '').join('|');
+  const q = { company: getParam('company'), office: getParam('office'), type: getParam('type'), brief: getParam('brief') };
+  const prefillSig = [q.company, q.office, q.type, q.brief].map((v) => v || '').join('|');
   const saved = readSaved();
   let restored = false;
   if (saved?.values) {
@@ -744,11 +745,14 @@ function initWizard() {
     company = COMPANY_TYPE[saved.company] ? saved.company : null;
     restored = FIELDS.some((k) => saved.values[k]);
   }
-  if (prefillSig !== '||' && saved?.sig !== prefillSig) {
+  if (prefillSig !== '|||' && saved?.sig !== prefillSig) {
     // A fresh deep link (not a reload of the same one) wins over older answers for the fields it carries.
     if (COMPANY_TYPE[q.company]) { company = q.company; setValue('type', COMPANY_TYPE[q.company]); }
     if (TYPE_ALIAS[q.type]) setValue('type', TYPE_ALIAS[q.type]);
     if (q.office === 'ksa' || q.office === 'egypt') setValue('region', q.office);
+    // ?brief= carries the Project Builder summary into the project description.
+    const brief = String(q.brief || '').replace(/\r\n?/g, '\n').trim().slice(0, message.maxLength > 0 ? message.maxLength : 1500);
+    if (brief) setValue('message', brief);
     step = 1;
     restored = false;
   }

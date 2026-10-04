@@ -24,24 +24,24 @@ body[data-page='404'] .notfound {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(60% 70% at 72% 55%, rgba(111, 209, 197, .1) 0%, rgba(11, 22, 32, 0) 70%),
-    linear-gradient(rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(90deg, rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px;
+    radial-gradient(60% 70% at 72% 55%, rgba(95, 178, 184, .1) 0%, rgba(22, 22, 42, 0) 70%),
+    linear-gradient(rgba(95, 178, 184, .06) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(95, 178, 184, .06) 1px, transparent 1px) 0 0 / 48px 48px;
   mask-image: radial-gradient(90% 90% at 60% 50%, #000 30%, transparent 85%);
   -webkit-mask-image: radial-gradient(90% 90% at 60% 50%, #000 30%, transparent 85%);
 }
 [dir='rtl'] .notfound__grid {
   background:
-    radial-gradient(60% 70% at 28% 55%, rgba(111, 209, 197, .1) 0%, rgba(11, 22, 32, 0) 70%),
-    linear-gradient(rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(90deg, rgba(111, 209, 197, .06) 1px, transparent 1px) 0 0 / 48px 48px;
+    radial-gradient(60% 70% at 28% 55%, rgba(95, 178, 184, .1) 0%, rgba(22, 22, 42, 0) 70%),
+    linear-gradient(rgba(95, 178, 184, .06) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(95, 178, 184, .06) 1px, transparent 1px) 0 0 / 48px 48px;
 }
 .notfound__inner { display: grid; gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
 @media (min-width: 1024px) { .notfound__inner { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } }
 
 .notfound__copy { display: grid; gap: var(--space-5); justify-items: start; min-inline-size: 0; }
-.notfound__title { max-inline-size: 13ch; color: var(--white); }
-html[lang='ar'] .notfound__title { max-inline-size: 14ch; }
+.notfound__title { font-size: clamp(2.25rem, 1.2rem + 4.2vw, 4.25rem); max-inline-size: 100%; color: var(--white); }
+html[lang='ar'] .notfound__title { max-inline-size: 16ch; }
 .notfound__lead { max-inline-size: 48ch; color: rgba(255, 255, 255, .78); }
 .notfound__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
 @media (max-width: 559.98px) { .notfound__actions .btn { flex: 1 1 100%; } }

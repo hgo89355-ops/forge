@@ -703,7 +703,7 @@ function validateField(el) {
 const controlsOf = (form) => $$('input, select, textarea', form).filter((el) => el.name && !el.closest('[data-novalidate]'));
 
 /**
- * Validate every named control inside `form` — any container works, e.g. one step of a multi-step form:
+ * Validate every named control inside `form`, any container works, e.g. one step of a multi-step form:
  * validateForm(stepEl). Shows inline errors, focuses the first invalid control, returns true when valid.
  * Controls inside [data-novalidate] are skipped.
  */
@@ -741,7 +741,7 @@ function setupForm(form) {
   });
   form.addEventListener('input', (e) => { if (e.target.__rule !== undefined && e.target.__rule) validateField(e.target); });
   form.addEventListener('change', (e) => { if (['checkbox', 'radio', 'file'].includes(e.target.type) || e.target.tagName === 'SELECT') validateField(e.target); });
-  // data-validate="manual": inline validation only (focusout / input / change / langchange) — the page handles
+  // data-validate="manual": inline validation only (focusout / input / change / langchange), the page handles
   // submit itself (e.g. a wizard calling validateForm(step)).
   if (form.getAttribute('data-validate') !== 'manual') form.addEventListener('submit', (e) => {
     e.preventDefault();

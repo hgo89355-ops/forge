@@ -12,14 +12,14 @@
 body[data-subsidiary] {
   --sd-accent: var(--teal-400);
   --sd-accent-ink: var(--teal-700);   /* accent as text on light surfaces (AA) */
-  --sd-accent-soft: rgba(111, 209, 197, .16);
+  --sd-accent-soft: rgba(95, 178, 184, .16);
 }
-body[data-subsidiary='mobco-developments'] { --sd-accent: var(--teal-300); --sd-accent-soft: rgba(155, 227, 218, .16); }
+body[data-subsidiary='mobco-developments'] { --sd-accent: var(--teal-300); --sd-accent-soft: rgba(143, 203, 208, .16); }
 /* MOBCO Real Estate Development is the only place the gold may appear (BRIEF §1) */
-body[data-subsidiary='mobco-real-estate'] { --sd-accent: var(--gold-500); --sd-accent-ink: #7f6331; --sd-accent-soft: rgba(184, 151, 90, .18); }
-body[data-subsidiary='mobco-real-estate'] main :is(.section, .sd-hero, .cta-band) { --accent: var(--gold-500); --accent-text: #7f6331; }
-body[data-subsidiary='mobco-real-estate'] main :is(.section--dark, .section--deep, .sd-hero, .cta-band) { --accent-text: #d4b984; }
-body[data-subsidiary='mobco-real-estate'] main .section:not(.section--dark):not(.section--deep) :is(h2, .h2) em { color: #8f7140; }
+body[data-subsidiary='mobco-real-estate'] { --sd-accent: var(--gold-500); --sd-accent-ink: var(--sand-700); --sd-accent-soft: rgba(178, 170, 138, .18); }
+body[data-subsidiary='mobco-real-estate'] main :is(.section, .sd-hero, .cta-band) { --accent: var(--gold-500); --accent-text: var(--sand-700); }
+body[data-subsidiary='mobco-real-estate'] main :is(.section--dark, .section--deep, .sd-hero, .cta-band) { --accent-text: var(--gold-500); }
+body[data-subsidiary='mobco-real-estate'] main .section:not(.section--dark):not(.section--deep) :is(h2, .h2) em { color: var(--sand-700); }
 
 /* 02. Hero ================================================================ */
 .sd-hero { min-block-size: clamp(640px, 94vh, 1000px); }
@@ -43,18 +43,6 @@ body[data-subsidiary='mobco-real-estate'] .sd-hero__bg img { --pos: 18% 45%; --k
   background: radial-gradient(60% 80% at 15% 100%, color-mix(in srgb, var(--sd-accent) 16%, transparent), transparent 70%);
 }
 [dir='rtl'] .sd-hero::after { background: radial-gradient(60% 80% at 85% 100%, color-mix(in srgb, var(--sd-accent) 16%, transparent), transparent 70%); }
-/* architectural hairlines aligned with the container quarters */
-.sd-hero__lines {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  --col: calc((min(100%, calc(var(--container) + var(--gutter) * 2)) - var(--gutter) * 2) / 4);
-  background-image: linear-gradient(to right, transparent calc(50% - .5px), rgba(255, 255, 255, .07) calc(50% - .5px), rgba(255, 255, 255, .07) calc(50% + .5px), transparent calc(50% + .5px));
-  background-size: var(--col) 100%;
-  background-position: center top;
-  mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 70%, transparent);
-}
 .sd-hero__inner {
   display: grid;
   gap: var(--space-8);
@@ -62,18 +50,18 @@ body[data-subsidiary='mobco-real-estate'] .sd-hero__bg img { --pos: 18% 45%; --k
   justify-items: stretch;
   inline-size: 100%;
 }
-@media (min-width: 1024px) {
-  .sd-hero__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 320px); column-gap: var(--space-10); }
-  .sd-hero__plate { justify-self: end; }
-}
 .sd-hero__copy { display: grid; gap: var(--space-5); justify-items: start; }
+/* sized so the longest word (CONSTRUCTION, DEVELOPMENT) always fits one line, down to 360px: never split a word */
 .sd-hero__title {
-  font-size: clamp(2.75rem, 1.3rem + 5.2vw, 7rem);
+  font-size: clamp(2rem, .9rem + 5.4vw, 7rem);
   line-height: .98;
   max-inline-size: 13ch;
   font-weight: 600;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
 }
-body[data-subsidiary='mobco-real-estate'] .sd-hero__title { font-size: clamp(2.5rem, 1.2rem + 4.2vw, 5.75rem); max-inline-size: 15ch; }
+body[data-subsidiary='mobco-real-estate'] .sd-hero__title { font-size: clamp(2rem, .9rem + 4.4vw, 5.75rem); max-inline-size: 15ch; }
 .sd-hero__pre {
   display: block;
   font-size: .5em;
@@ -106,43 +94,7 @@ html[lang='ar'] .sd-hero__pre { letter-spacing: 0; -webkit-text-stroke: 0; color
   margin-inline-end: .75rem;
 }
 html[lang='ar'] .sd-hero__tagline { letter-spacing: 0; text-transform: none; font-size: var(--fs-h4); }
-.sd-hero__lead { max-inline-size: 54ch; }
-/* logo plate (frosted glass; Real Estate's gold logo sits on a light tile) */
-.sd-hero__plate {
-  display: grid;
-  gap: var(--space-4);
-  justify-items: start;
-  inline-size: min(100%, 320px);
-  padding: clamp(1.25rem, 1rem + 1vw, 2rem);
-  border: 1px solid rgba(255, 255, 255, .16);
-  border-radius: var(--radius);
-  background: rgba(11, 22, 32, .38);
-  -webkit-backdrop-filter: blur(14px) saturate(1.1);
-  backdrop-filter: blur(14px) saturate(1.1);
-}
-.sd-hero__logo { display: flex; align-items: center; block-size: clamp(64px, 50px + 3vw, 104px); }
-.sd-hero__logo img { inline-size: auto; block-size: 100%; max-inline-size: 100%; object-fit: contain; }
-body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: clamp(48px, 40px + 2vw, 72px); }
-.sd-hero__plate--light .sd-hero__logo {
-  inline-size: 100%;
-  block-size: auto;
-  padding: var(--space-5);
-  background: var(--white);
-  border-radius: var(--radius);
-}
-.sd-hero__plate--light .sd-hero__logo img { inline-size: 100%; block-size: auto; }
-@media (max-width: 1023.98px) {
-  .sd-hero__plate { order: -1; inline-size: auto; padding: 0; border: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .sd-hero__logo { block-size: 56px; }
-  body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: 40px; }
-  .sd-hero__plate--light .sd-hero__logo { inline-size: 200px; padding: var(--space-3) var(--space-4); block-size: auto; }
-  .sd-hero__inner { gap: var(--space-6); }
-}
-@media (max-width: 639.98px) {
-  .sd-hero .page-hero__foot { flex-direction: column; align-items: flex-start; }
-  .sd-hero .scroll-cue { display: none; }
-  .sd-hero .page-hero__meta { gap: var(--space-3) var(--space-6); }
-}
+.sd-hero__lead { max-inline-size: 48ch; }
 
 /* 03. About =============================================================== */
 .sd-about__grid { align-items: start; row-gap: var(--space-10); }
@@ -155,26 +107,6 @@ body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: clamp(48
 .sd-about__img { aspect-ratio: 4 / 3.4; box-shadow: var(--shadow-lg); z-index: 1; }
 .sd-about__img img { transition: transform 1.6s var(--ease-out); }
 @media (hover: hover) { .sd-about__figure:hover .sd-about__img img { transform: scale(1.04); } }
-.sd-about__frame {
-  position: absolute;
-  --off: clamp(.625rem, .2rem + 1.6vw, 2rem);
-  inset-block: var(--off) calc(var(--off) * -1);
-  inset-inline: var(--off) calc(var(--off) * -1);
-  border: 1px solid var(--sd-accent);
-  border-radius: var(--radius);
-  opacity: .7;
-  pointer-events: none;
-}
-.sd-about__frame::after {
-  /* corner registration mark */
-  content: '';
-  position: absolute;
-  inset-block-end: -6px;
-  inset-inline-end: -6px;
-  inline-size: 11px;
-  block-size: 11px;
-  background: var(--sd-accent);
-}
 .sd-about__figure .caption { position: relative; z-index: 1; margin-block-start: var(--space-5); max-inline-size: 40ch; }
 .sd-about__copy { display: grid; gap: var(--space-5); align-content: start; }
 .sd-about__title { max-inline-size: 16ch; }
@@ -183,8 +115,6 @@ body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: clamp(48
 .sd-about__p { font-size: var(--fs-md); line-height: var(--lh-body); color: var(--fg); max-inline-size: 62ch; }
 
 /* 04. Key facts =========================================================== */
-.sd-facts__head { margin-block-end: var(--space-6); }
-.sd-facts__title { margin: 0; }
 .sd-facts__list {
   list-style: none;
   padding: 0;
@@ -198,8 +128,8 @@ body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: clamp(48
 .sd-fact {
   position: relative;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: var(--space-4);
+  grid-template-rows: 1fr auto;
+  gap: var(--space-3);
   padding: clamp(1.5rem, 1rem + 1.6vw, 2.5rem) clamp(1rem, .5rem + 1.5vw, 2rem);
   border-block-end: var(--hairline);
 }
@@ -223,7 +153,6 @@ body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: clamp(48
 @media (max-width: 639.98px) {
   .sd-fact { padding: var(--space-5) var(--space-4); gap: var(--space-3); }
   .sd-fact:nth-child(odd) { padding-inline-start: 0; }
-  .sd-fact__icon { inline-size: 40px; block-size: 40px; }
   .sd-fact__value { font-size: clamp(2.25rem, 1.6rem + 3vw, 2.75rem); }
   .sd-fact__value--text { font-size: 1.125rem; }
 }
@@ -233,19 +162,6 @@ body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: clamp(48
   .sd-fact:first-child { padding-inline-start: 0; }
   .sd-fact:first-child::before { inline-size: calc(100% - 0px); }
 }
-.sd-fact__head { display: flex; align-items: center; justify-content: space-between; }
-.sd-fact__icon {
-  display: grid;
-  place-items: center;
-  inline-size: 48px;
-  block-size: 48px;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
-  color: var(--sd-accent-ink);
-  background: var(--white);
-}
-.sd-fact__icon .icon { --icon-size: 22px; }
-.sd-fact__index { font-family: 'Manrope', var(--font-display); font-size: var(--fs-xs); font-weight: 700; letter-spacing: .2em; color: var(--fg-muted); }
 .sd-fact__value {
   align-self: end;
   font-family: 'Manrope', var(--font-display);
@@ -270,7 +186,6 @@ body[data-subsidiary='mobco-developments'] .sd-hero__logo { block-size: clamp(48
 }
 html[lang='ar'] .sd-fact__value--text { text-transform: none; letter-spacing: 0; line-height: 1.4; font-weight: 600; }
 .sd-fact__label {
-  min-block-size: 3.1em;
   font-size: var(--fs-sm);
   line-height: 1.55;
   color: var(--fg-muted);
@@ -501,8 +416,8 @@ html.no-js .sd-panel + .sd-panel { padding-block-start: var(--space-6); border-b
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(11, 22, 32, .55) 0%, rgba(11, 22, 32, 0) 22%),
-    linear-gradient(0deg, rgba(11, 22, 32, .94) 0%, rgba(11, 22, 32, .6) 30%, rgba(11, 22, 32, 0) 60%);
+    linear-gradient(180deg, rgba(22, 22, 42, .55) 0%, rgba(22, 22, 42, 0) 22%),
+    linear-gradient(0deg, rgba(22, 22, 42, .94) 0%, rgba(22, 22, 42, .6) 30%, rgba(22, 22, 42, 0) 60%);
 }
 .sd-split__top {
   position: relative;
@@ -581,27 +496,13 @@ html[lang='ar'] .sd-split__title { text-transform: none; letter-spacing: 0; line
 .sd-points { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); border-block-start: 1px solid rgba(255, 255, 255, .12); }
 .sd-point {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr);
   row-gap: var(--space-2);
   padding-block: clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem);
   border-block-end: 1px solid rgba(255, 255, 255, .12);
 }
-.sd-point__icon {
-  grid-row: span 2;
-  display: grid;
-  place-items: center;
-  inline-size: 52px;
-  block-size: 52px;
-  border: 1px solid color-mix(in srgb, var(--sd-accent) 55%, transparent);
-  border-radius: var(--radius);
-  color: var(--sd-accent);
-  transition: background var(--dur) var(--ease-soft), color var(--dur);
-}
-.sd-point__icon .icon { --icon-size: 22px; }
 .sd-point__title { font-family: var(--font-display); font-size: var(--fs-h5); font-weight: 600; line-height: 1.25; color: var(--white); }
 .sd-point__text { color: var(--fg); max-inline-size: 46ch; }
-@media (hover: hover) { .sd-point:hover .sd-point__icon { background: var(--sd-accent); color: var(--navy-950); } }
 
 /* leasing contact (inside the flagship intro) */
 .sd-lease { display: grid; gap: var(--space-3); justify-items: start; margin-block-start: var(--space-5); padding-block-start: var(--space-6); border-block-start: 1px solid rgba(255, 255, 255, .12); }
@@ -630,28 +531,26 @@ html[lang='ar'] .sd-cta .cta-band__title { line-height: 1.3; }
   display: flex;
   flex-direction: column;
   background: var(--white);
-  border: var(--hairline);
   border-radius: var(--radius);
   overflow: hidden;
   transition: box-shadow var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out), border-color var(--dur);
 }
-.sd-co__visual { position: relative; aspect-ratio: var(--sd-co-ratio, 16 / 10); overflow: hidden; background: var(--white); border-block-end: var(--hairline); }
-.sd-co__bg { position: absolute; inset: 0; opacity: 0; transition: opacity var(--dur-slow) var(--ease-soft); background: var(--navy-900); }
+.sd-co__visual { position: relative; aspect-ratio: var(--sd-co-ratio, 16 / 10); overflow: hidden; background: var(--navy-900); }
+.sd-co__bg { position: absolute; inset: 0; background: var(--navy-900); }
 .sd-co__bg picture, .sd-co__bg img { inline-size: 100%; block-size: 100%; object-fit: cover; }
-.sd-co__bg img { transform: scale(1.12); transition: transform 1.4s var(--ease-out); filter: saturate(.85); }
-.sd-co__bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11, 22, 32, .55), rgba(11, 22, 32, .78)); }
-.sd-co__logos { position: absolute; inset: 0; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; padding: 14% 22%; z-index: 1; }
+.sd-co__bg img { transform: scale(1.02); transition: transform 1.4s var(--ease-out); }
+.sd-co__bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(22, 22, 42, .25), rgba(22, 22, 42, .6)); }
+.sd-co__logos { position: absolute; inset: 0; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; padding: 18% 28%; z-index: 1; }
 @media (max-width: 767.98px) { .sd-co__logos { padding: 6% 24%; } }
 /* opacity lives on the wrapper span: main.css forces `[data-reveal] img { opacity: 1 }` under reduced motion / QA */
 .sd-co__logo { grid-area: 1 / 1; display: grid; place-items: center; inline-size: 100%; block-size: 100%; min-block-size: 0; transition: opacity var(--dur-slow) var(--ease-soft), transform var(--dur-slow) var(--ease-out); }
 .sd-co__logos img { inline-size: 100%; block-size: 100%; max-block-size: 120px; object-fit: contain; }
-.sd-co__logo--white { opacity: 0; }
-.sd-co--tile .sd-co__logos { padding: 10% 12%; }
+.sd-co__logo--navy { opacity: 0; }
+.sd-co--tile .sd-co__logos { padding: 14% 18%; }
 .sd-co__tile { display: block; inline-size: 100%; padding: 6% 8%; background: var(--white); border-radius: var(--radius); transition: box-shadow var(--dur-slow), transform var(--dur-slow) var(--ease-out); }
 .sd-co__tile img { inline-size: 100%; block-size: auto; }
 .sd-co__body { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: clamp(1.25rem, 1rem + 1vw, 2rem); flex: 1; }
 .sd-co__name { text-wrap: balance; }
-.sd-co__index { font-family: 'Manrope', var(--font-display); font-size: var(--fs-xs); font-weight: 700; letter-spacing: .2em; color: var(--fg-muted); }
 .sd-co__name { font-family: var(--font-display); font-size: var(--fs-h5); font-weight: 700; letter-spacing: .02em; color: var(--fg-strong); }
 .sd-co__tagline { color: var(--fg-muted); font-size: var(--fs-sm); line-height: 1.6; }
 .sd-co__link { margin-block-start: auto; padding-block-start: var(--space-3); }
@@ -670,19 +569,13 @@ html[lang='ar'] .sd-cta .cta-band__title { line-height: 1.3; }
 [dir='rtl'] .sd-co::after { transform-origin: right; }
 .sd-co:has([href='mobco-real-estate.html'])::after { background: var(--gold-500); }
 @media (hover: hover) {
-  .sd-co:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); border-color: transparent; }
+  .sd-co:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
   .sd-co:hover::after { transform: scaleX(1); }
-  .sd-co:hover .sd-co__bg { opacity: 1; }
-  .sd-co:hover .sd-co__bg img { transform: scale(1.02); }
-  .sd-co:hover .sd-co__logo--navy { opacity: 0; }
-  .sd-co:hover .sd-co__logo--white { opacity: 1; }
+  .sd-co:hover .sd-co__bg img { transform: scale(1.08); }
   .sd-co:hover :is(.sd-co__logo, .sd-co__tile) { transform: scale(1.04); }
   .sd-co:hover .sd-co__tile { box-shadow: var(--shadow-lg); }
 }
 .sd-co:focus-within { box-shadow: var(--shadow-md); }
-.sd-co:focus-within .sd-co__bg { opacity: 1; }
-.sd-co:focus-within .sd-co__logo--navy { opacity: 0; }
-.sd-co:focus-within .sd-co__logo--white { opacity: 1; }
 
 /* 11. Reduced motion / QA ================================================= */
 @media (prefers-reduced-motion: reduce) {

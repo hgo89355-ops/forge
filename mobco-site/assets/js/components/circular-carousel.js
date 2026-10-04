@@ -1,5 +1,5 @@
 /**
- * Circular Carousel — a framework-free 3D ring carousel.
+ * Circular Carousel: a framework-free 3D ring carousel.
  *
  * Ported from React Bits "CircularCarousel" (https://reactbits.dev, JS + CSS variant) to a plain
  * ES module: no React, no build step, no network. The maths (presets, ring radius, curved tile
@@ -24,7 +24,7 @@
  *                     rebuilt when their markup changes; a new `intro` replays it).
  *   setItems(items)   replace the items (new image sources reload and replay the intro).
  *   focus(i)          spin to item i.      next() / prev()   one item forward / back (reading order).
- *   pause() / play()  hold / resume autoplay (wire to a visible button — WCAG 2.2.2).
+ *   pause() / play()  hold / resume autoplay (wire to a visible button, WCAG 2.2.2).
  *   .paused  .active  .element   read-only: held by pause()? / index in front / root element.
  *   destroy()         stop timers, observers and listeners; remove the DOM.
  *   One carousel per container: creating a second one destroys the first (with a warning).
@@ -46,7 +46,7 @@
  *   An option passed as `undefined` means "use the default", as with React props.
  *
  * ── I18N: labels ───────────────────────────────────────────────────────────────────────────────
- *   labels: { region, carousel, slideRole, slide, live, untitled, description } — any subset.
+ *   labels: { region, carousel, slideRole, slide, live, untitled, description }, any subset.
  *   Each is a string with {title} {index} {count} {alt} placeholders (index is 1-based), or a
  *   function ({ title, index, count, item, alt }) => string. Defaults: DEFAULT_LABELS (English).
  *     labels: { region: 'معرض صور', slide: ({ title, index, count }) => `${title}، ${index} من ${count}` }
@@ -126,7 +126,7 @@ const SETTLE_SPEED = 9; // deg/s below which a free-spinning ring starts snappin
 const CAPTION_SPACE = 76; // px reserved under the ring when captions are on
 const TO_RAD = Math.PI / 180;
 
-/** Default option values — the React props' defaults, plus `labels` and `rtl`. */
+/** Default option values, the React props' defaults, plus `labels` and `rtl`. */
 export const DEFAULTS = Object.freeze({
   items: [],
   preset: 'cylinder',
@@ -241,12 +241,12 @@ const UNITLESS = new Set([
 const kebab = name => (name.startsWith('--') ? name : name.replace(/[A-Z]/g, c => `-${c.toLowerCase()}`));
 
 /* ------------------------------------------------------------------------------------------------
- * Derived settings — the React component body, minus the JSX
+ * Derived settings, the React component body, minus the JSX
  * --------------------------------------------------------------------------------------------- */
 
 /**
  * Merges `partial` into `base` the way React default parameters behave: an explicit `undefined`
- * means "use the default", so it is skipped — except for options whose default *is* undefined
+ * means "use the default", so it is skipped, except for options whose default *is* undefined
  * (curve, tilt, perspective, direction, callbacks, style, labels), where it resets to auto.
  */
 function mergeOptions(base, partial) {
@@ -381,7 +381,7 @@ export function createCircularCarousel(container, options = {}) {
   // One carousel per container: a second create() replaces the first instead of stacking roots.
   const previous = INSTANCES.get(container);
   if (previous) {
-    console.warn('[circular-carousel] container already has a carousel — destroying the previous instance.');
+    console.warn('[circular-carousel] container already has a carousel, destroying the previous instance.');
     previous.destroy();
   }
 
@@ -527,7 +527,7 @@ export function createCircularCarousel(container, options = {}) {
       card.setAttribute('aria-roledescription', format(labels.slideRole, {}));
       card.setAttribute('aria-label', format(labels.slide, context));
       // The photos themselves are decorative (alt="" on every strip), so the image description
-      // travels on the slide — unless the label already says it.
+      // travels on the slide, unless the label already says it.
       const label = card.getAttribute('aria-label');
       const description = alt && alt !== title && !label.includes(alt) ? format(labels.description, context) : '';
       if (description) card.setAttribute('aria-description', description);
@@ -664,7 +664,7 @@ export function createCircularCarousel(container, options = {}) {
     else root.removeAttribute('dir');
   }
 
-  /** Re-derives settings from `opts` and patches the DOM — rebuilding cards only when needed. */
+  /** Re-derives settings from `opts` and patches the DOM, rebuilding cards only when needed. */
   function apply() {
     const before = s;
     s = derive(opts, reduced);
@@ -678,7 +678,7 @@ export function createCircularCarousel(container, options = {}) {
     if (!s.count) {
       active = 0;
       if (!warnedEmpty) {
-        console.warn('[circular-carousel] `items` is empty — nothing is rendered.');
+        console.warn('[circular-carousel] `items` is empty, nothing is rendered.');
         warnedEmpty = true;
       }
       stop();
@@ -809,7 +809,7 @@ export function createCircularCarousel(container, options = {}) {
       // Deviation from the React source: there the ring was pushed back by -radius *before* the
       // tilt rotation, i.e. tilted about the front card. The camera transform in render() is
       // `translate3d(0, 0, -R) rotateX(tilt)`, which tilts about the ring's centre and *then*
-      // pushes it back, so the original fit was off-centre by ≈ R·sin(tilt) — ~30px low for
+      // pushes it back, so the original fit was off-centre by ≈ R·sin(tilt), ~30px low for
       // 'cylinder' and ~115px low for 'orbit' (its front cards ran into the captions). Projecting
       // in the same order as the camera makes the fit/centring do what it was meant to.
       const limit = s.layout.window ? s.layout.window * s.step : 180;
@@ -945,7 +945,7 @@ export function createCircularCarousel(container, options = {}) {
       state.stepAt = 0;
     }
 
-    // Autoplay resumes when a hold ends — wake up then (a timer, not 60 idle frames a second).
+    // Autoplay resumes when a hold ends, wake up then (a timer, not 60 idle frames a second).
     if (now < state.holdUntil && s.autoplay !== 'off' && s.autoplay != null) {
       state.wakeAt = state.wakeAt ? Math.min(state.wakeAt, state.holdUntil) : state.holdUntil;
     }
@@ -1285,7 +1285,7 @@ export function createCircularCarousel(container, options = {}) {
   function onMotionChange() {
     reduced = Boolean(motionQuery?.matches);
     if (reduced && state.intro) {
-      // Cut a running intro short — apply() alone would only stop future ones.
+      // Cut a running intro short, apply() alone would only stop future ones.
       state.intro = null;
       state.introDone = true;
     }
@@ -1368,7 +1368,7 @@ export function createCircularCarousel(container, options = {}) {
       if (!destroyed) stepSlots(s.mirror ? 1 : -1);
       return api;
     },
-    /** Pauses autoplay until play() (e.g. for a visible pause button — WCAG 2.2.2). */
+    /** Pauses autoplay until play() (e.g. for a visible pause button, WCAG 2.2.2). */
     pause() {
       if (!destroyed) {
         state.halted = true;

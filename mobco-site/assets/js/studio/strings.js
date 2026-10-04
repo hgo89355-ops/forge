@@ -1,85 +1,98 @@
-// MOBCO 3D Studio · strings.js
+// MOBCO Project Builder · strings.js
 // Every UI string rendered from JS, as { en, ar }. Render with t() from core/i18n.js; fmt() fills {tokens}.
 
 export const fmt = (s, vars = {}) => String(s).replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ''));
 
 export const S = {
-  studio: { en: '3D Project Studio', ar: 'الاستوديو ثلاثي الأبعاد' },
-  modelOf: { en: 'Model {n} / {total}', ar: 'النموذج {n} / {total}' },
+  studio: { en: 'Project Builder', ar: 'مصمّم المشاريع' },
   illustrative: { en: 'Illustrative model, not to scale.', ar: 'نموذج توضيحي، ليس بمقياس رسم.' },
-  illustrativeShort: { en: '3D model', ar: 'نموذج ثلاثي الأبعاد' },
+  concept: { en: 'Concept sketch, not to scale.', ar: 'رسم مبدئي، ليس بمقياس رسم.' },
   seeProject: { en: 'See the project', ar: 'استعرض المشروع' },
-  relatedProject: { en: 'Related project', ar: 'المشروع المرتبط' },
-  atAGlance: { en: 'At a glance', ar: 'لمحة سريعة' },
   loading: { en: 'Loading model', ar: 'جارٍ تحميل النموذج' },
-  loadingEngine: { en: 'Loading the studio', ar: 'جارٍ تحميل الاستوديو' },
   loaded: { en: 'Model loaded: {name}', ar: 'تم تحميل النموذج: {name}' },
+  updated: { en: 'Sketch updated', ar: 'تم تحديث الرسم' },
   canvasLabel: {
     en: 'Interactive 3D model of {name}. The arrow keys move the view.',
     ar: 'نموذج تفاعلي ثلاثي الأبعاد لـ{name}. حرّك العرض بمفاتيح الأسهم.',
   },
-  // views
-  view: { en: 'View', ar: 'زاوية العرض' },
-  aerial: { en: 'Aerial', ar: 'جوي' },
-  street: { en: 'Street', ar: 'الشارع' },
-  top: { en: 'Plan', ar: 'مسقط' },
-  front: { en: 'Front', ar: 'واجهة' },
-  // modes
-  render: { en: 'Style', ar: 'النمط' },
-  realistic: { en: 'Realistic', ar: 'واقعي' },
-  clay: { en: 'Clay', ar: 'مجسّم' },
-  blueprint: { en: 'Lines', ar: 'خطوط' },
-  xray: { en: 'X-ray', ar: 'شفاف' },
-  // sliders
-  explode: { en: 'Separate floors', ar: 'فصل الطوابق' },
-  section: { en: 'Slice', ar: 'قطع أفقي' },
-  sectionOff: { en: 'Off', ar: 'متوقف' },
-  sectionAt: { en: 'At {n}%', ar: 'عند {n}%' },
-  time: { en: 'Time of day', ar: 'وقت اليوم' },
-  timeFlat: { en: 'Works in Realistic and Clay.', ar: 'يعمل في النمطين الواقعي والمجسّم.' },
-  am: { en: 'AM', ar: 'ص' },
-  pm: { en: 'PM', ar: 'م' },
-  // toggles
-  autorotate: { en: 'Auto-rotate', ar: 'دوران تلقائي' },
-  hotspots: { en: 'Highlights', ar: 'أبرز العناصر' },
-  isolate: { en: 'Show one floor', ar: 'عرض طابق واحد' },
+  yourProject: { en: 'Your project', ar: 'مشروعك' },
+  // light
+  day: { en: 'Day', ar: 'نهار' },
+  sunset: { en: 'Sunset', ar: 'غروب' },
+  night: { en: 'Night', ar: 'ليل' },
+  // floors chip
   levelN: { en: 'Floor {n}', ar: 'الطابق {n}' },
   levelOf: { en: '{n} of {total}', ar: '{n} من {total}' },
   showAll: { en: 'Show all floors', ar: 'عرض جميع الطوابق' },
   prevLevel: { en: 'Previous floor', ar: 'الطابق السابق' },
   nextLevel: { en: 'Next floor', ar: 'الطابق التالي' },
   levelSelected: { en: 'Showing {label}', ar: 'يُعرض الآن: {label}' },
-  levelHint: { en: 'Click a floor to see it on its own', ar: 'انقر على طابق لعرضه وحده' },
-  noLevels: { en: 'This model has no separate floors.', ar: 'لا يحتوي هذا النموذج على طوابق منفصلة.' },
   // toolbar
   screenshot: { en: 'Save image', ar: 'حفظ صورة' },
   screenshotSaved: { en: 'Image saved', ar: 'تم حفظ الصورة' },
-  screenshotCaption: { en: 'MOBCO Group · 3D Project Studio', ar: 'مجموعة موبكو · الاستوديو ثلاثي الأبعاد' },
+  screenshotCaption: { en: 'MOBCO Group · Project Builder', ar: 'مجموعة موبكو · مصمّم المشاريع' },
   fullscreen: { en: 'Full screen', ar: 'ملء الشاشة' },
   exitFullscreen: { en: 'Exit full screen', ar: 'الخروج من ملء الشاشة' },
   reset: { en: 'Reset view', ar: 'إعادة ضبط العرض' },
-  help: { en: 'Controls', ar: 'عناصر التحكم' },
-  showControls: { en: 'Show panel', ar: 'إظهار اللوحة' },
-  hideControls: { en: 'Hide panel', ar: 'إخفاء اللوحة' },
+  showControls: { en: 'Show view options', ar: 'إظهار خيارات العرض' },
+  hideControls: { en: 'Hide view options', ar: 'إخفاء خيارات العرض' },
+  zoomIn: { en: 'Zoom in', ar: 'تكبير' },
+  zoomOut: { en: 'Zoom out', ar: 'تصغير' },
   // hints
   hintMouse: { en: 'Drag to rotate', ar: 'اسحب للتدوير' },
-  hintTouch: { en: 'Drag to rotate, pinch to zoom', ar: 'اسحب للتدوير، وقرّب بإصبعين للتكبير' },
-  zoomHint: { en: 'Click the model first to zoom, or hold Ctrl and scroll', ar: 'انقر على النموذج أولًا للتكبير، أو اضغط Ctrl مع التمرير' },
+  zoomHint: { en: 'Click the model, then scroll to zoom', ar: 'انقر على النموذج ثم مرّر للتكبير' },
   // states
-  errorTitle: { en: 'This model did not load', ar: 'تعذّر تحميل هذا النموذج' },
-  errorText: { en: 'Try again or pick another model.', ar: 'أعد المحاولة أو اختر نموذجًا آخر.' },
-  retry: { en: 'Try again', ar: 'إعادة المحاولة' },
-  nextModel: { en: 'Next model', ar: 'النموذج التالي' },
-  noWebglTitle: { en: '3D is not available on this device', ar: 'العرض ثلاثي الأبعاد غير متاح على هذا الجهاز' },
-  noWebglText: {
-    en: 'Your browser could not start WebGL 2, so we show the project photos instead.',
-    ar: 'تعذّر على متصفحك تشغيل WebGL 2، لذا نعرض صور المشاريع بدلًا من ذلك.',
-  },
   contextLost: { en: 'The browser paused the 3D view. Reload the page to continue.', ar: 'أوقف المتصفح العرض ثلاثي الأبعاد مؤقتًا. أعد تحميل الصفحة للمتابعة.' },
   close: { en: 'Close', ar: 'إغلاق' },
   hotspotLabel: { en: 'Highlight {n}: {title}', ar: 'عنصر بارز {n}: {title}' },
   hotspotNum: { en: 'Highlight {n}', ar: 'العنصر {n}' },
-  openInStudio: { en: 'Open in the studio', ar: 'افتح في الاستوديو' },
-  viewing: { en: 'Now viewing', ar: 'المعروض الآن' },
-  thumbAlt: { en: 'Preview of the {name} model', ar: 'معاينة نموذج {name}' },
+  openInStudio: { en: 'Open in 3D', ar: 'افتح بالأبعاد الثلاثية' },
+  // builder summary words
+  types: {
+    office: { en: 'Office', ar: 'مبنى مكاتب' },
+    residential: { en: 'Residential tower', ar: 'برج سكني' },
+    villa: { en: 'Villa', ar: 'فيلا' },
+    mixed: { en: 'Mixed-use', ar: 'مبنى متعدد الاستخدامات' },
+    school: { en: 'School', ar: 'مدرسة' },
+  },
+  sizes: {
+    s: { en: 'small footprint', ar: 'مساحة أرض صغيرة' },
+    m: { en: 'medium footprint', ar: 'مساحة أرض متوسطة' },
+    l: { en: 'large footprint', ar: 'مساحة أرض كبيرة' },
+  },
+  facades: {
+    glass: { en: 'glass facade', ar: 'واجهة زجاجية' },
+    stone: { en: 'stone facade', ar: 'واجهة حجرية' },
+    render: { en: 'white render facade', ar: 'واجهة بلياسة بيضاء' },
+    brick: { en: 'brick facade', ar: 'واجهة من الطوب' },
+  },
+  colours: {
+    indigo: { en: 'indigo', ar: 'النيلي' },
+    teal: { en: 'teal', ar: 'الفيروزي' },
+    sand: { en: 'sand', ar: 'الرملي' },
+    charcoal: { en: 'charcoal', ar: 'الفحمي' },
+  },
+  inColour: { en: '{facade} with {colour} details', ar: '{facade} بتفاصيل باللون {colour}' },
+  extras: {
+    terrace: { en: 'roof terrace', ar: 'تراس على السطح' },
+    solar: { en: 'solar panels', ar: 'ألواح شمسية' },
+    pool: { en: 'pool', ar: 'مسبح' },
+    landscape: { en: 'landscaping', ar: 'تنسيق حدائق' },
+    parking: { en: 'parking', ar: 'مواقف سيارات' },
+  },
+  floorsOne: { en: '1 floor', ar: 'طابق واحد' },
+  floorsMany: { en: '{n} floors', ar: '{n} طوابق' },
+  briefLead: { en: 'Project Builder sketch.', ar: 'رسم من مصمّم المشاريع.' },
+  shuffled: { en: 'New idea loaded', ar: 'فكرة جديدة' },
 };
+
+/** "8 floors" / Arabic number agreement (2 → طابقان, 3 to 10 → طوابق, 11+ → طابقًا). */
+export function floorsText(n, lang) {
+  if (lang === 'ar') {
+    if (n === 1) return 'طابق واحد';
+    if (n === 2) return 'طابقان';
+    if (n >= 3 && n <= 10) return `${n} طوابق`;
+    return `${n} طابقًا`;
+  }
+  return n === 1 ? '1 floor' : `${n} floors`;
+}

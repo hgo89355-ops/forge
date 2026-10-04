@@ -1,5 +1,5 @@
 /*
- * Circular Carousel — styles for assets/js/components/circular-carousel.js
+ * Circular Carousel: styles for assets/js/components/circular-carousel.js
  * Ported from React Bits "CircularCarousel" (reactbits.dev). Class names are unchanged.
  *
  * Adaptations: the caption uses logical properties, and the counter is kept left-to-right
@@ -109,7 +109,7 @@
 
 /* Missing / broken image: hide the broken-image glyph, show a neutral placeholder. */
 .circular-carousel__card[data-error] .circular-carousel__frame {
-  background: var(--cc-placeholder, #2b323c); /* flat: the card is cut into strips */
+  background: var(--cc-placeholder, #2b2b4a); /* flat: the card is cut into strips */
 }
 
 .circular-carousel__card[data-error] .circular-carousel__photo {

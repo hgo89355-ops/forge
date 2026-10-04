@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// MOBCO tools/build.mjs — inline shared partials into static pages.
+// MOBCO tools/build.mjs: inline shared partials into static pages.
 //
 //   node tools/build.mjs                 → every *.html in the site root (except partials)
 //   node tools/build.mjs about.html …    → ONLY the listed files (use this from page builders; safe in parallel)

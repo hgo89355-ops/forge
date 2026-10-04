@@ -1,7 +1,7 @@
 // Generator for the three subsidiary detail pages (mobco-construction / -developments / -real-estate).
 // Reads verbatim copy from assets/js/data/site-data.js and writes static, SEO-friendly HTML (EN text + data-ar*).
 // Run: node tools/gen-subsidiary-pages.mjs  (then: node tools/build.mjs <the three pages> to inline header/footer)
-// NOTE: the pages were reviewed and hand-tuned after generation — running this OVERWRITES them.
+// NOTE: the pages were reviewed and hand-tuned after generation, running this OVERWRITES them.
 // Commit first and review the git diff afterwards (or edit the HTML directly for small copy changes).
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
@@ -41,7 +41,7 @@ const S = {
   facts: { en: 'Key facts', ar: 'حقائق رئيسية' },
   group: { en: 'The group', ar: 'شركات المجموعة' },
   others: { en: 'Explore other <em>MOBCO companies</em>', ar: 'اكتشف <em>شركات موبكو</em> الأخرى' },
-  othersLead: { en: 'One vertically integrated group — construction, development, real estate and education.', ar: 'مجموعة واحدة متكاملة رأسيًا — في الإنشاءات والتطوير والعقارات والتعليم.' },
+  othersLead: { en: 'One vertically integrated group in construction, development, real estate and education.', ar: 'مجموعة واحدة متكاملة رأسيًا في الإنشاءات والتطوير والعقارات والتعليم.' },
   allSubs: { en: 'All subsidiaries', ar: 'جميع الشركات التابعة' },
   visit: { en: 'Visit company', ar: 'زيارة صفحة الشركة' },
   start: { en: 'Start a project', ar: 'ابدأ مشروعك' },
@@ -58,7 +58,7 @@ const count = (f) => PROJECTS.filter(f).length;
 const PAGES = {
   'mobco-construction': {
     file: 'mobco-construction.html',
-    title: { en: 'MOBCO Construction — Elevating Industry Standards | MOBCO Group', ar: 'موبكو للإنشاءات — نرتقي بمعايير الصناعة | مجموعة موبكو' },
+    title: { en: 'MOBCO Construction | MOBCO Group', ar: 'موبكو للإنشاءات | مجموعة موبكو' },
     desc: {
       en: 'MOBCO Construction, the construction arm of MOBCO Group since 2001: tier-one status and 438 projects completed across Saudi Arabia, Canada, the UK and Egypt.',
       ar: 'موبكو للإنشاءات، الذراع الإنشائية لمجموعة موبكو منذ عام 2001: تصنيف من الفئة الأولى و438 مشروعًا مُنجزًا في المملكة العربية السعودية وكندا والمملكة المتحدة ومصر.',
@@ -81,11 +81,11 @@ const PAGES = {
       ar: 'مع إنجاز 438 مشروعًا في أربع قارات، تعكس محفظة أعمالنا التزامًا راسخًا بالتميّز وتحقيق نتائج استثنائية.',
     },
     quoteAfter: 1,
-    figure: { pos: '50% 60%', alt: { en: 'Night render of a low-rise building with a timber-toned façade, lit from below and framed by palm trees', ar: 'تصوّر ليلي لمبنى منخفض الارتفاع بواجهة بلون الخشب، مضاء من الأسفل وتحيط به أشجار النخيل' }, caption: { en: 'Night render — low-rise building with a timber-toned façade', ar: 'تصوّر ليلي — مبنى منخفض الارتفاع بواجهة بلون الخشب' } },
+    figure: { pos: '50% 60%', alt: { en: 'Night render of a low-rise building with a timber-toned façade, lit from below and framed by palm trees', ar: 'تصوّر ليلي لمبنى منخفض الارتفاع بواجهة بلون الخشب، مضاء من الأسفل وتحيط به أشجار النخيل' }, caption: { en: 'Night render, low-rise building with a timber-toned façade', ar: 'تصوّر ليلي, مبنى منخفض الارتفاع بواجهة بلون الخشب' } },
     facts: [
       { icon: 'calendar', value: '2001', label: { en: 'Founded', ar: 'سنة التأسيس' } },
       { icon: 'hard-hat', value: '438', count: 438, label: { en: 'Projects completed', ar: 'مشروعًا مُنجزًا' } },
-      { icon: 'globe-2', value: '4', count: 4, label: { en: 'Countries — Saudi Arabia · Canada · UK · Egypt', ar: 'دول — السعودية · كندا · المملكة المتحدة · مصر' } },
+      { icon: 'globe-2', value: '4', count: 4, label: { en: 'Countries: Saudi Arabia · Canada · UK · Egypt', ar: 'دول: السعودية · كندا · المملكة المتحدة · مصر' } },
       { icon: 'award', text: { en: 'Tier one', ar: 'الفئة الأولى' }, label: { en: 'Status in the global construction industry', ar: 'تصنيفها في قطاع الإنشاءات العالمي' } },
     ],
     cta: {
@@ -97,10 +97,10 @@ const PAGES = {
   },
   'mobco-developments': {
     file: 'mobco-developments.html',
-    title: { en: 'MOBCO Developments — Creating Landmarks, Defining Excellence | MOBCO Group', ar: 'موبكو للتطوير — نصنع المعالم ونرسم ملامح التميّز | مجموعة موبكو' },
+    title: { en: 'MOBCO Developments | MOBCO Group', ar: 'موبكو للتطوير | مجموعة موبكو' },
     desc: {
-      en: 'MOBCO Developments — MOBCO Group’s strategic entry into the Egyptian market, transforming prime locations in Egypt and Canada through innovative, high-quality projects.',
-      ar: 'موبكو للتطوير — دخول مجموعة موبكو الاستراتيجي إلى السوق المصرية، وتحويل مواقع متميّزة في مصر وكندا عبر مشاريع مبتكرة عالية الجودة.',
+      en: 'MOBCO Developments is MOBCO Group’s strategic entry into the Egyptian market, transforming prime locations in Egypt and Canada through innovative, high-quality projects.',
+      ar: 'موبكو للتطوير هي دخول مجموعة موبكو الاستراتيجي إلى السوق المصرية، وتحويل مواقع متميّزة في مصر وكندا عبر مشاريع مبتكرة عالية الجودة.',
     },
     eyebrow: { en: 'The development arm of MOBCO Group', ar: 'ذراع التطوير في مجموعة موبكو' },
     h1: { en: '<span class="sd-hero__pre">MOBCO</span> <span class="sd-hero__name">Developments</span>', ar: '<span class="sd-hero__pre">موبكو</span> <span class="sd-hero__name">للتطوير</span>' },
@@ -120,7 +120,7 @@ const PAGES = {
       ar: 'رسالتنا هي إنشاء مشاريع تطوير تحويلية لا تكتفي بتلبية أعلى معايير الصناعة بل تتجاوزها.',
     },
     quoteAfter: 2,
-    figure: { pos: '50% 50%', alt: { en: 'Evening render of Eastmain, New Cairo: a glazed office and retail building with a landscaped plaza', ar: 'تصوّر مسائي لمشروع إيست مين بالقاهرة الجديدة: مبنى مكاتب ومحلات بواجهات زجاجية مع ساحة منسّقة' }, caption: { en: 'Eastmain, New Cairo — evening render', ar: 'إيست مين، القاهرة الجديدة — تصوّر مسائي' } },
+    figure: { pos: '50% 50%', alt: { en: 'Evening render of Eastmain, New Cairo: a glazed office and retail building with a landscaped plaza', ar: 'تصوّر مسائي لمشروع إيست مين بالقاهرة الجديدة: مبنى مكاتب ومحلات بواجهات زجاجية مع ساحة منسّقة' }, caption: { en: 'Eastmain, New Cairo, evening render', ar: 'إيست مين، القاهرة الجديدة, تصوّر مسائي' } },
     facts: [
       { icon: 'earth', text: { en: 'Egypt & Canada', ar: 'مصر وكندا' }, label: { en: 'Markets', ar: 'الأسواق' } },
       { icon: 'building-2', text: { en: 'Eastmain', ar: 'إيست مين' }, label: { en: 'Golden Square, New Cairo', ar: 'المربع الذهبي، القاهرة الجديدة' } },
@@ -135,10 +135,10 @@ const PAGES = {
   },
   'mobco-real-estate': {
     file: 'mobco-real-estate.html',
-    title: { en: 'MOBCO Real Estate Development — Simplifying Property Management | MOBCO Group', ar: 'موبكو للتطوير العقاري — نُبسّط إدارة العقارات | مجموعة موبكو' },
+    title: { en: 'MOBCO Real Estate Development | MOBCO Group', ar: 'موبكو للتطوير العقاري | مجموعة موبكو' },
     desc: {
-      en: 'MOBCO Real Estate Development, established in 2002 in Cairo — leasing and property management for multi-functional buildings, including the flagship Mivida Business Park, B1.',
-      ar: 'موبكو للتطوير العقاري، تأسّست عام 2002 في القاهرة — تأجير وإدارة العقارات للمباني متعددة الوظائف، ومنها المشروع الرئيسي مجمّع ميفيدا للأعمال، المبنى B1.',
+      en: 'MOBCO Real Estate Development, established in 2002 in Cairo. Leasing and property management for multi-functional buildings, including the flagship Mivida Business Park, B1.',
+      ar: 'موبكو للتطوير العقاري، تأسّست عام 2002 في القاهرة. تأجير وإدارة العقارات للمباني متعددة الوظائف، ومنها المشروع الرئيسي مجمّع ميفيدا للأعمال، المبنى B1.',
     },
     eyebrow: { en: 'Leasing & property management · Cairo', ar: 'التأجير وإدارة العقارات · القاهرة' },
     h1: { en: '<span class="sd-hero__pre">MOBCO</span> <span class="sd-hero__name">Real Estate Development</span>', ar: '<span class="sd-hero__pre">موبكو</span> <span class="sd-hero__name">للتطوير العقاري</span>' },
@@ -224,7 +224,7 @@ function head(id, P, sub) {
   <meta name="twitter:title" content="${esc(P.title.en)}" data-ar-content="${esc(P.title.ar)}">
   <meta name="twitter:description" content="${esc(P.desc.en)}" data-ar-content="${esc(P.desc.ar)}">
   <meta name="twitter:image" content="${img}">
-  <meta name="theme-color" content="#122230">
+  <meta name="theme-color" content="#1f1f38">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -251,6 +251,7 @@ function head(id, P, sub) {
   </script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/gsap/SplitText.min.js" defer></script>
   <script src="assets/vendor/lenis/lenis.min.js" defer></script>
   <script type="module" src="assets/js/core/main.js"></script>
   <script type="module" src="assets/js/pages/subsidiary.js"></script>
@@ -417,7 +418,7 @@ function footprint() {
           ${tx('p', { en: 'Global footprint', ar: 'حضورنا الدولي' }, 'class="eyebrow"')}
           ${th('h2', { en: 'Projects spanning <em>four countries</em>', ar: 'مشاريع تمتد عبر <em>أربع دول</em>' }, 'class="h2" id="sd-footprint-title" data-split')}
           <div class="section-header__aside">
-            ${tx('p', { en: 'Select a country — on the list or on the map — to see where MOBCO Construction builds.', ar: 'اختر دولةً — من القائمة أو على الخريطة — لتتعرّف على أماكن عمل موبكو للإنشاءات.' }, 'class="lead" data-reveal="up"')}
+            ${tx('p', { en: 'Select a country on the list or the map to see where MOBCO Construction builds.', ar: 'اختر دولةً من القائمة أو على الخريطة لتتعرّف على أماكن عمل موبكو للإنشاءات.' }, 'class="lead" data-reveal="up"')}
           </div>
         </header>
         <div class="sd-footprint__grid">
@@ -552,7 +553,7 @@ function relatedDevelopments() {
           ${tx('p', { en: 'Related projects', ar: 'مشاريع ذات صلة' }, 'class="eyebrow"')}
           ${th('h2', { en: 'Eastmain &amp; <em>Victoria 101</em>', ar: 'إيست مين و<em>فيكتوريا 101</em>' }, 'class="h2" id="sd-related-title" data-split')}
           <div class="section-header__aside">
-            ${tx('p', { en: 'Explore both projects in the portfolio — imagery, location and highlights.', ar: 'استكشف المشروعين في محفظة الأعمال — الصور والموقع وأبرز الملامح.' }, 'class="lead" data-reveal="up"')}
+            ${tx('p', { en: 'See both projects in the portfolio: imagery, location and highlights.', ar: 'استكشف المشروعين في محفظة الأعمال: الصور والموقع وأبرز الملامح.' }, 'class="lead" data-reveal="up"')}
             ${linkArrow('projects.html', S.allProjects)}
           </div>
         </header>
@@ -641,7 +642,7 @@ function flagship() {
                 ${tx('text', { en: 'COMMON CORE', ar: 'النواة المشتركة' }, 'class="sd-plan__core-label" x="400" y="384"')}
               </svg>`;
   return `
-    <!-- 04 · Flagship: Mivida Business Park B1 — illustrative common-core diagram (Real Estate) -->
+    <!-- 04 · Flagship: Mivida Business Park B1, illustrative common-core diagram (Real Estate) -->
     <section class="section section--deep sd-flagship" id="flagship" aria-labelledby="sd-flagship-title" data-sd-core>
       <div class="container">
         <div class="grid grid--loose sd-flagship__grid">
@@ -668,7 +669,7 @@ function flagship() {
                 ${tx('span', { en: 'Typical office floor', ar: 'طابق مكتبي نموذجي' }, 'class="sd-planbox__kicker"')}
               </div>
               ${svg}
-              ${tx('figcaption', { en: 'Not to scale — an illustration of the common-core concept, not the actual floor plan of B1.', ar: 'ليس بمقياس رسم — توضيحٌ لمفهوم النواة المشتركة، وليس المخطط الفعلي للمبنى B1.' }, 'class="sd-planbox__note"')}
+              ${tx('figcaption', { en: 'Not to scale. An illustration of the common-core concept, not the actual floor plan of B1.', ar: 'ليس بمقياس رسم. توضيحٌ لمفهوم النواة المشتركة، وليس المخطط الفعلي للمبنى B1.' }, 'class="sd-planbox__note"')}
             </figure>
           </div>
         </div>

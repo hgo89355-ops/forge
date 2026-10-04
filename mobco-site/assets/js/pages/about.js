@@ -210,12 +210,6 @@ const LINKS = [
   ['hospitality', 'pm', 'ring'], ['pm', 'education', 'ring'], ['education', 'construction', 'ring'],
   ['pm', 'construction', 'tri'], ['construction', 'fm', 'tri'], ['fm', 'pm', 'tri'],
 ];
-const L = {
-  connects: { en: 'Works with', ar: 'يعمل مع' },
-  projects: { en: 'Selected projects', ar: 'مشاريع مختارة' },
-  companies: { en: 'Group companies', ar: 'شركات المجموعة' },
-  select: { en: 'Show', ar: 'عرض' },
-};
 
 function initModel() {
   const root = $('[data-about-model]');
@@ -268,42 +262,19 @@ function initModel() {
 
   const renderCard = (animate) => {
     const n = byId[selected];
-    const i = NODES.indexOf(n);
-    const pad = (x) => String(x).padStart(2, '0');
-    const near = neighbours(n.id).map((id) => byId[id]);
     const subs = n.subs.map(getSubsidiary).filter(Boolean);
     const projects = (n.projects || []).map(getProject).filter(Boolean);
-    const shown = n.image?.project ? getProject(n.image.project) : null;
+    const sub = subs[0];
     card.innerHTML = `
       ${n.image ? `<div class="about-model__card-media" aria-hidden="true">
         ${picture(n.image.base, { position: n.image.pos, loading: animate ? 'eager' : 'lazy' })}
-        ${shown ? `<span class="about-model__card-pictured">${esc(t(shown.name))}</span>` : ''}
       </div>` : ''}
-      <div class="about-model__card-head">
-        <span class="about-model__card-icon">${icon(n.icon)}</span>
-        <span class="about-model__card-index">${pad(i + 1)} / ${pad(NODES.length)}</span>
-      </div>
-      ${n.verb ? `<p class="eyebrow">${esc(t(n.verb))}</p>` : ''}
-      <h3 class="about-model__card-title">${esc(t(n.name))}</h3>
-      <p class="about-model__card-text">${esc(t(n.text))}</p>
-      ${projects.length ? `<div class="about-model__card-sub">
-        <p class="about-model__card-sub-title">${esc(t(L.projects))}</p>
-        <ul class="about-model__projects" role="list">
-          ${projects.map((p) => `<li><a class="about-model__project" href="${projectUrl(p)}"><span>${esc(t(p.name))}</span>${icon('arrow-up-right', 'icon--sm icon--dir')}</a></li>`).join('')}
-        </ul>
-      </div>` : ''}
-      <div class="about-model__card-sub">
-        <p class="about-model__card-sub-title">${esc(t(L.connects))}</p>
-        <ul class="about-model__chips" role="list">
-          ${near.map((m) => `<li><button class="chip chip--sm" type="button" data-goto-node="${m.id}" aria-label="${esc(`${t(L.select)} ${t(m.name)}`)}">${icon(m.icon, 'icon--sm')}<span>${esc(t(m.name))}</span></button></li>`).join('')}
-        </ul>
-      </div>
-      ${subs.length ? `<div class="about-model__card-sub">
-        <p class="about-model__card-sub-title">${esc(t(L.companies))}</p>
-        <ul class="about-model__links-list" role="list">
-          ${subs.map((s) => `<li><a class="link-arrow link-arrow--plain" href="${esc(s.page || `subsidiaries.html#${s.id}`)}"><span>${esc(t(s.name))}</span><span class="link-arrow__icon">${icon('arrow-right', 'icon--dir')}</span></a></li>`).join('')}
-        </ul>
-      </div>` : ''}`;
+      <div class="about-model__card-body">
+        <h3 class="about-model__card-title">${esc(t(n.name))}</h3>
+        <p class="about-model__card-text">${esc(t(n.text))}</p>
+        ${sub ? `<a class="link-arrow link-arrow--plain about-model__card-link" href="${esc(sub.page || `subsidiaries.html#${sub.id}`)}"><span>${esc(t(sub.name))}</span><span class="link-arrow__icon">${icon('arrow-right', 'icon--dir')}</span></a>`
+          : projects[0] ? `<a class="link-arrow link-arrow--plain about-model__card-link" href="${projectUrl(projects[0])}"><span>${esc(t(projects[0].name))}</span><span class="link-arrow__icon">${icon('arrow-right', 'icon--dir')}</span></a>` : ''}
+      </div>`;
     card.setAttribute('aria-labelledby', `model-node-${n.id}`);
     if (animate && !prefersReducedMotion()) {
       card.classList.remove('is-swapping');
@@ -344,10 +315,6 @@ function initModel() {
       e.preventDefault();
       select(next.getAttribute('data-node'), { focus: true });
     });
-  });
-  card.addEventListener('click', (e) => {
-    const chip = e.target.closest('[data-goto-node]');
-    if (chip) select(chip.getAttribute('data-goto-node'), { focus: true });
   });
 
   highlight(selected);

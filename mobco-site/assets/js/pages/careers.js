@@ -470,8 +470,8 @@ function buildMap(root, onPick) {
     <svg class="careers-map__svg" viewBox="${VB.x} ${VB.y} ${VB.w} ${VB.h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
       <path d="${WORLD.land}" fill="rgba(255,255,255,.045)"/>
       <path d="${WORLD.borders}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width=".25"/>
-      <path class="careers-map__country" data-country="ksa" d="${WORLD.highlight.ksa}" fill="rgba(111,209,197,.08)" stroke="rgba(111,209,197,.45)" stroke-width=".3"/>
-      <path class="careers-map__country" data-country="egypt" d="${WORLD.highlight.egypt}" fill="rgba(111,209,197,.08)" stroke="rgba(111,209,197,.45)" stroke-width=".3"/>
+      <path class="careers-map__country" data-country="ksa" d="${WORLD.highlight.ksa}" fill="rgba(95, 178, 184,.08)" stroke="rgba(95, 178, 184,.45)" stroke-width=".3"/>
+      <path class="careers-map__country" data-country="egypt" d="${WORLD.highlight.egypt}" fill="rgba(95, 178, 184,.08)" stroke="rgba(95, 178, 184,.45)" stroke-width=".3"/>
       <g>${dots.map(([x, y, k]) => `<circle class="careers-map__dot${k === 'ksa' || k === 'egypt' ? ' is-country' : ''}" data-k="${k || ''}" cx="${x}" cy="${y}" r="${k ? 1.05 : 0.7}"/>`).join('')}</g>
       <path class="careers-map__arc" d="M${egy[0]},${egy[1]} Q${midX},${midY} ${ksa[0]},${ksa[1]}" data-draw/>
     </svg>`;
@@ -543,7 +543,7 @@ function buildMap(root, onPick) {
       b.setAttribute('aria-pressed', String(on));
     });
     $$('.careers-map__dot', svgEl).forEach((d) => d.classList.toggle('is-active', d.dataset.k === id));
-    $$('.careers-map__country', svgEl).forEach((c) => c.setAttribute('fill', c.dataset.country === id ? 'rgba(111,209,197,.2)' : 'rgba(111,209,197,.06)'));
+    $$('.careers-map__country', svgEl).forEach((c) => c.setAttribute('fill', c.dataset.country === id ? 'rgba(95, 178, 184,.2)' : 'rgba(95, 178, 184,.06)'));
     render();
   }
   render();

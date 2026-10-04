@@ -1,25 +1,10 @@
 // assets/js/pages/home.js: HOME page, part A behaviours.
 //   initHero3D()  interactive 3D building hero (home-hero.js)
-//   initSubs()    pointer spotlight on the company tiles (hover / focus reveal is pure CSS)
 //   initSteps()   "We plan. We build. We manage.": the three lines are tabs; the photo crossfades with the step
 // Core modules are singletons initialised by core/main.js (loaded first). Part B lives in home-b.js.
 
-import { $, $$, hasFinePointer, prefersReducedMotion } from '../core/utils.js';
+import { $, $$, hasFinePointer } from '../core/utils.js';
 import { initHero3D } from './home-hero.js';
-
-/* =========================================================================
-   03 · COMPANY TILES: pointer spotlight
-   ========================================================================= */
-function initSubs() {
-  if (!hasFinePointer() || prefersReducedMotion()) return;
-  $$('[data-ha-tile]').forEach((tile) => {
-    tile.addEventListener('pointermove', (e) => {
-      const r = tile.getBoundingClientRect();
-      tile.style.setProperty('--mx', `${Math.round(e.clientX - r.left)}px`);
-      tile.style.setProperty('--my', `${Math.round(e.clientY - r.top)}px`);
-    });
-  });
-}
 
 /* =========================================================================
    04 · WE PLAN. WE BUILD. WE MANAGE.
@@ -87,6 +72,6 @@ function initSteps() {
 }
 
 /* ========================================================================= */
-for (const [name, fn] of [['hero', initHero3D], ['subs', initSubs], ['steps', initSteps]]) {
+for (const [name, fn] of [['hero', initHero3D], ['steps', initSteps]]) {
   try { fn(); } catch (err) { console.error(`[home] ${name} failed to initialise`, err); }
 }

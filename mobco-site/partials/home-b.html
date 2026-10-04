@@ -3,79 +3,116 @@
      Styles: assets/css/pages/home-b.css (scoped to body[data-page="home"], "hb-" classes).
      Behaviour: assets/js/pages/home-b.js. Ids are "hb-" prefixed. -->
 
-    <!-- ============================================================ 6. SECTORS -->
-    <section class="section has-gridlines hb-sectors" id="hb-sectors" aria-labelledby="hb-sectors-title">
+    <!-- ============================================================ 6. SECTORS: accordion gallery, one real project photo per
+         sector (assets/js/components/accordion-gallery.js). Links use the projects page's ?category= filter. -->
+    <section class="section hb-sectors" id="hb-sectors" aria-labelledby="hb-sectors-title">
       <div class="container">
         <header class="hb-sectors__head">
-          <div class="hb-sectors__intro">
-            <h2 class="h2" id="hb-sectors-title" data-split data-ar-html="ما &lt;em&gt;نبنيه&lt;/em&gt;">What <em>we build</em></h2>
-          </div>
-          <p class="hb-statement" data-hb-statement data-reveal="up" data-ar-html="نجحت مجموعة موبكو في تسليم مشاريع بارزة تتنوّع بين &lt;span class=&quot;hb-term&quot; data-sector=&quot;skyscrapers&quot;&gt;ناطحات السحاب&lt;/span&gt; و&lt;span class=&quot;hb-term&quot; data-sector=&quot;malls&quot;&gt;المراكز التجارية&lt;/span&gt;، و&lt;span class=&quot;hb-term&quot; data-sector=&quot;residential&quot;&gt;المجمّعات السكنية&lt;/span&gt;، و&lt;span class=&quot;hb-term&quot; data-sector=&quot;government&quot;&gt;المؤسسات الحكومية&lt;/span&gt; و&lt;span class=&quot;hb-term&quot; data-sector=&quot;education&quot;&gt;التعليمية&lt;/span&gt;، و&lt;span class=&quot;hb-term&quot; data-sector=&quot;hotels&quot;&gt;الفنادق الفاخرة&lt;/span&gt;.">MOBCO Group has successfully delivered iconic projects ranging from <span class="hb-term" data-sector="skyscrapers">skyscrapers</span> and <span class="hb-term" data-sector="malls">commercial malls</span> to <span class="hb-term" data-sector="residential">residential compounds</span>, <span class="hb-term" data-sector="government">governmental</span> and <span class="hb-term" data-sector="education">educational institutions</span>, and <span class="hb-term" data-sector="hotels">luxury hotels</span>.</p>
+          <h2 class="h2" id="hb-sectors-title" data-split data-ar-html="ما &lt;em&gt;نبنيه&lt;/em&gt;">What <em>we build</em></h2>
+          <a class="link-arrow" href="projects.html" data-reveal="fade"><span data-ar="جميع المشاريع">All projects</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span></a>
         </header>
 
-        <ul class="hb-sectors__grid" role="list" data-hb-sectors data-reveal-stagger="70">
-          <li class="hb-sector" data-sector="skyscrapers">
-            <a class="hb-sector__link" href="projects.html?sector=skyscrapers">
-              <span class="hb-sector__index" aria-hidden="true">01</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="ناطحات السحاب">Skyscrapers</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+        <ul class="accordion-gallery hb-gallery" role="list" aria-label="Sectors" data-ar-aria-label="القطاعات" data-hb-sectors data-reveal="up">
+          <li class="ag-panel" data-sector="hospitality">
+            <a class="ag-panel__link" href="projects.html?category=hospitality">
+              <span class="ag-panel__frame">
+                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/raffles-hotel-residence.webp 480w, assets/img/raffles-hotel-residence.webp 1022w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/raffles-hotel-residence.jpg" srcset="assets/img/thumbs/raffles-hotel-residence.jpg 480w, assets/img/raffles-hotel-residence.jpg 1022w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="1022" height="665" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></span>
+                <span class="ag-panel__overlay" aria-hidden="true"></span>
+              </span>
+              <span class="ag-panel__tag" aria-hidden="true" data-ar="الفنادق">Hotels</span>
+              <span class="ag-panel__label">
+                <span class="ag-panel__bar" aria-hidden="true"></span>
+                <span class="ag-panel__copy">
+                  <h3 class="ag-panel__text" data-ar="الفنادق">Hotels</h3>
+                  <span class="hb-sector__desc" data-ar="فنادق لعلامات عالمية مثل سوفيتيل وهيلتون ورافلز.">Hotels for Sofitel, Hilton, Raffles and other international brands.</span>
+                  <span class="hb-sector__more"><span data-ar="عرض المشاريع">See projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+                </span>
+              </span>
             </a>
           </li>
-          <li class="hb-sector" data-sector="malls">
-            <a class="hb-sector__link" href="projects.html?sector=malls">
-              <span class="hb-sector__index" aria-hidden="true">02</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#shopping-bag"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="المراكز التجارية">Commercial malls</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+          <li class="ag-panel" data-sector="medical">
+            <a class="ag-panel__link" href="projects.html?category=medical">
+              <span class="ag-panel__frame">
+                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/al-moosa-specialist-hospital.webp 480w, assets/img/al-moosa-specialist-hospital.webp 1022w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/al-moosa-specialist-hospital.jpg" srcset="assets/img/thumbs/al-moosa-specialist-hospital.jpg 480w, assets/img/al-moosa-specialist-hospital.jpg 1022w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:60% 50%"></picture></span>
+                <span class="ag-panel__overlay" aria-hidden="true"></span>
+              </span>
+              <span class="ag-panel__tag" aria-hidden="true" data-ar="الرعاية الصحية">Healthcare</span>
+              <span class="ag-panel__label">
+                <span class="ag-panel__bar" aria-hidden="true"></span>
+                <span class="ag-panel__copy">
+                  <h3 class="ag-panel__text" data-ar="الرعاية الصحية">Healthcare</h3>
+                  <span class="hb-sector__desc" data-ar="مستشفيات تخصصية تُبنى وفق المعايير الطبية.">Specialist hospitals built to clinical standards.</span>
+                  <span class="hb-sector__more"><span data-ar="عرض المشاريع">See projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+                </span>
+              </span>
             </a>
           </li>
-          <li class="hb-sector" data-sector="residential">
-            <a class="hb-sector__link" href="projects.html?sector=residential">
-              <span class="hb-sector__index" aria-hidden="true">03</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#house"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="المجمّعات السكنية">Residential compounds</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+          <li class="ag-panel" data-sector="education">
+            <a class="ag-panel__link" href="projects.html?category=education">
+              <span class="ag-panel__frame">
+                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp 480w, assets/img/campus.webp 999w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/campus.jpg" srcset="assets/img/thumbs/campus.jpg 480w, assets/img/campus.jpg 999w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="999" height="863" loading="lazy" decoding="async" draggable="false" style="--pos:50% 45%"></picture></span>
+                <span class="ag-panel__overlay" aria-hidden="true"></span>
+              </span>
+              <span class="ag-panel__tag" aria-hidden="true" data-ar="التعليم">Education</span>
+              <span class="ag-panel__label">
+                <span class="ag-panel__bar" aria-hidden="true"></span>
+                <span class="ag-panel__copy">
+                  <h3 class="ag-panel__text" data-ar="التعليم">Education</h3>
+                  <span class="hb-sector__desc" data-ar="مدارس ومبانٍ للحرم الجامعي.">Schools and campus buildings.</span>
+                  <span class="hb-sector__more"><span data-ar="عرض المشاريع">See projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+                </span>
+              </span>
             </a>
           </li>
-          <li class="hb-sector" data-sector="government">
-            <a class="hb-sector__link" href="projects.html?sector=government">
-              <span class="hb-sector__index" aria-hidden="true">04</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#landmark"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="المؤسسات الحكومية">Governmental institutions</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+          <li class="ag-panel" data-sector="residential">
+            <a class="ag-panel__link" href="projects.html?category=residential">
+              <span class="ag-panel__frame">
+                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/victoria-101.webp 480w, assets/img/victoria-101.webp 790w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/victoria-101.jpg" srcset="assets/img/thumbs/victoria-101.jpg 480w, assets/img/victoria-101.jpg 790w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="790" height="710" loading="lazy" decoding="async" draggable="false" style="--pos:50% 45%"></picture></span>
+                <span class="ag-panel__overlay" aria-hidden="true"></span>
+              </span>
+              <span class="ag-panel__tag" aria-hidden="true" data-ar="السكني">Residential</span>
+              <span class="ag-panel__label">
+                <span class="ag-panel__bar" aria-hidden="true"></span>
+                <span class="ag-panel__copy">
+                  <h3 class="ag-panel__text" data-ar="السكني">Residential</h3>
+                  <span class="hb-sector__desc" data-ar="أبراج سكنية وفلل ومجمّعات متكاملة.">Residential towers, villas and communities.</span>
+                  <span class="hb-sector__more"><span data-ar="عرض المشاريع">See projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+                </span>
+              </span>
             </a>
           </li>
-          <li class="hb-sector" data-sector="education">
-            <a class="hb-sector__link" href="projects.html?sector=education">
-              <span class="hb-sector__index" aria-hidden="true">05</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#graduation-cap"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="المؤسسات التعليمية">Educational institutions</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+          <li class="ag-panel" data-sector="mixed-use-admin">
+            <a class="ag-panel__link" href="projects.html?category=mixed-use-admin">
+              <span class="ag-panel__frame">
+                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/axis-olaya-business-tower.webp 480w, assets/img/axis-olaya-business-tower.webp 1022w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/axis-olaya-business-tower.jpg" srcset="assets/img/thumbs/axis-olaya-business-tower.jpg 480w, assets/img/axis-olaya-business-tower.jpg 1022w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="1022" height="641" loading="lazy" decoding="async" draggable="false" style="--pos:40% 50%"></picture></span>
+                <span class="ag-panel__overlay" aria-hidden="true"></span>
+              </span>
+              <span class="ag-panel__tag" aria-hidden="true" data-ar="المكاتب والمباني الحكومية">Offices and civic</span>
+              <span class="ag-panel__label">
+                <span class="ag-panel__bar" aria-hidden="true"></span>
+                <span class="ag-panel__copy">
+                  <h3 class="ag-panel__text" data-ar="المكاتب والمباني الحكومية">Offices and civic</h3>
+                  <span class="hb-sector__desc" data-ar="مقار رئيسية وأبراج أعمال ومبانٍ حكومية.">Head offices, business towers and government buildings.</span>
+                  <span class="hb-sector__more"><span data-ar="عرض المشاريع">See projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+                </span>
+              </span>
             </a>
           </li>
-          <li class="hb-sector" data-sector="hotels">
-            <a class="hb-sector__link" href="projects.html?sector=hotels">
-              <span class="hb-sector__index" aria-hidden="true">06</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hotel"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="الفنادق الفاخرة">Luxury hotels</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
-            </a>
-          </li>
-          <li class="hb-sector" data-sector="medical">
-            <a class="hb-sector__link" href="projects.html?sector=medical">
-              <span class="hb-sector__index" aria-hidden="true">07</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hospital"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="المنشآت الطبية">Medical facilities</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
-            </a>
-          </li>
-          <li class="hb-sector" data-sector="business">
-            <a class="hb-sector__link" href="projects.html?sector=business">
-              <span class="hb-sector__index" aria-hidden="true">08</span>
-              <span class="hb-sector__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#briefcase"></use></svg></span>
-              <h3 class="hb-sector__name" data-ar="منشآت الأعمال">Business facilities</h3>
-              <span class="hb-sector__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+          <li class="ag-panel" data-sector="special-projects">
+            <a class="ag-panel__link" href="projects.html?category=special-projects">
+              <span class="ag-panel__frame">
+                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/as-safiyyah-museum-park.webp 480w, assets/img/as-safiyyah-museum-park.webp 1022w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/as-safiyyah-museum-park.jpg" srcset="assets/img/thumbs/as-safiyyah-museum-park.jpg 480w, assets/img/as-safiyyah-museum-park.jpg 1022w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="1022" height="689" loading="lazy" decoding="async" draggable="false" style="--pos:45% 50%"></picture></span>
+                <span class="ag-panel__overlay" aria-hidden="true"></span>
+              </span>
+              <span class="ag-panel__tag" aria-hidden="true" data-ar="مشاريع خاصة">Special projects</span>
+              <span class="ag-panel__label">
+                <span class="ag-panel__bar" aria-hidden="true"></span>
+                <span class="ag-panel__copy">
+                  <h3 class="ag-panel__text" data-ar="مشاريع خاصة">Special projects</h3>
+                  <span class="hb-sector__desc" data-ar="متاحف وحدائق ومستودعات ومشاريع فريدة أخرى.">Museums, parks, depots and other one-off builds.</span>
+                  <span class="hb-sector__more"><span data-ar="عرض المشاريع">See projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
+                </span>
+              </span>
             </a>
           </li>
         </ul>
@@ -109,26 +146,18 @@
                 <span class="hb-marker__label" data-ar="بورت ويتبي">Port Whitby</span>
               </button>
             </div>
-            <figcaption class="hb-map__foot">
-              <span class="hb-map__legend">
-                <span class="hb-map__key"><span class="hb-map__swatch" aria-hidden="true"></span><span data-ar="مكتب">Office</span></span>
-                <span class="hb-map__key"><span class="hb-map__swatch hb-map__swatch--project" aria-hidden="true"></span><span data-ar="مشروع">Project</span></span>
-              </span>
-              <span class="hb-map__readout" aria-hidden="true"><span data-hb-readout-name>Riyadh, HQ</span><span class="hb-map__coord" data-hb-readout-coord>24.71° N, 46.68° E</span></span>
-            </figcaption>
           </figure>
 
           <div class="tabs hb-regions" data-tabs data-hb-regions>
             <div class="tabs__list hb-regions__list" aria-label="Regions" data-ar-aria-label="المناطق">
-              <button class="tabs__tab hb-regions__tab" type="button" data-tab="ksa" aria-selected="true"><span class="hb-regions__num" aria-hidden="true">01</span><span data-ar="السعودية">KSA</span></button>
-              <button class="tabs__tab hb-regions__tab" type="button" data-tab="egypt" aria-selected="false"><span class="hb-regions__num" aria-hidden="true">02</span><span data-ar="مصر">Egypt</span></button>
-              <button class="tabs__tab hb-regions__tab" type="button" data-tab="canada" aria-selected="false"><span class="hb-regions__num" aria-hidden="true">03</span><span data-ar="كندا">Canada</span></button>
+              <button class="tabs__tab hb-regions__tab" type="button" data-tab="ksa" aria-selected="true"><span data-ar="السعودية">KSA</span></button>
+              <button class="tabs__tab hb-regions__tab" type="button" data-tab="egypt" aria-selected="false"><span data-ar="مصر">Egypt</span></button>
+              <button class="tabs__tab hb-regions__tab" type="button" data-tab="canada" aria-selected="false"><span data-ar="كندا">Canada</span></button>
             </div>
 
             <div class="tabs__panel hb-region" id="hb-region-ksa" data-tab-panel="ksa">
               <div class="media hb-region__media">
                 <picture><source type="image/webp" srcset="assets/img/ksa-landmark.webp"><img src="assets/img/ksa-landmark.jpg" alt="Render of a classical building in red and cream with curved balconies" data-ar-alt="تصوّر لمبنى كلاسيكي بالأحمر والكريمي بشرفات منحنية" width="790" height="710" loading="lazy" decoding="async" style="--pos:50% 40%"></picture>
-                <span class="badge badge--glass hb-region__badge"><span class="badge__dot" aria-hidden="true"></span><span data-ar="المقر الرئيسي، الرياض">Headquarters, Riyadh</span></span>
               </div>
               <div class="hb-region__body">
                 <h3 class="hb-region__name" data-ar="المملكة العربية السعودية">Saudi Arabia</h3>
@@ -139,7 +168,6 @@
             <div class="tabs__panel hb-region" id="hb-region-egypt" data-tab-panel="egypt" hidden>
               <div class="media hb-region__media">
                 <picture><source type="image/webp" srcset="assets/img/eastmain.webp"><img src="assets/img/eastmain.jpg" alt="Eastmain, New Cairo: evening render of the glazed office and retail building" data-ar-alt="إيست مين، القاهرة الجديدة: تصوّر مسائي لمبنى المكاتب والمحلات بواجهاته الزجاجية" width="790" height="710" loading="lazy" decoding="async" style="--pos:50% 55%"></picture>
-                <span class="badge badge--glass hb-region__badge"><span class="badge__dot" aria-hidden="true"></span><span data-ar="مكتب إقليمي، القاهرة">Regional office, Cairo</span></span>
               </div>
               <div class="hb-region__body">
                 <h3 class="hb-region__name" data-ar="مصر">Egypt</h3>
@@ -150,7 +178,6 @@
             <div class="tabs__panel hb-region" id="hb-region-canada" data-tab-panel="canada" hidden>
               <div class="media hb-region__media">
                 <picture><source type="image/webp" srcset="assets/img/victoria-101.webp"><img src="assets/img/victoria-101.jpg" alt="Victoria 101, Port Whitby: aerial render of the residential tower at dusk" data-ar-alt="فيكتوريا 101، بورت ويتبي: تصوّر جوي للبرج السكني عند الغسق" width="790" height="710" loading="lazy" decoding="async" style="--pos:50% 45%"></picture>
-                <span class="badge badge--glass hb-region__badge"><span class="badge__dot" aria-hidden="true"></span><span data-ar="مشروع، أونتاريو">Project, Ontario</span></span>
               </div>
               <div class="hb-region__body">
                 <h3 class="hb-region__name" data-ar="كندا">Canada</h3>
@@ -193,13 +220,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المربع الذهبي، القاهرة الجديدة، مصر">Golden Square, New Cairo, Egypt</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">01</span>
-                <span class="hb-slide__type" data-ar="تجزئة ومكاتب وعيادات">Retail, office &amp; clinic</span>
-                <a class="hb-slide__3d" href="studio.html?model=mixed-use" aria-label="Explore Eastmain in the 3D Studio" data-ar-aria-label="استكشف إيست مين في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="2 of 14" data-ar-aria-label="2 من 14">
               <!-- PROJECTS: victoria-101 (featured). TODO(content): Confirm status, unit count, storeys and completion date (do not infer from render). -->
@@ -212,13 +233,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="بورت ويتبي، أونتاريو، كندا">Port Whitby, Ontario, Canada</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">02</span>
-                <span class="hb-slide__type"></span>
-                <a class="hb-slide__3d" href="studio.html?model=residential-tower" aria-label="Explore Victoria 101 in the 3D Studio" data-ar-aria-label="استكشف فيكتوريا 101 في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="3 of 14" data-ar-aria-label="3 من 14">
               <!-- PROJECTS: lagoon-villa-community (featured) · descriptive name. TODO(content): Project name is descriptive; client to supply real name, location, status and role. -->
@@ -230,13 +245,7 @@
                   <h3 class="project-card__title" data-ar="مجتمع فلل البحيرات">Lagoon Villa Community</h3>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">03</span>
-                <span class="hb-slide__type"></span>
-                <a class="hb-slide__3d" href="studio.html?model=villa-community" aria-label="Explore Lagoon Villa Community in the 3D Studio" data-ar-aria-label="استكشف مجتمع فلل البحيرات في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="4 of 14" data-ar-aria-label="4 من 14">
               <!-- PROJECTS: innovation-campus (featured) · descriptive name. TODO(content): Project name is descriptive; client to supply real name, location, use and status (sign in render reads “SIC”). -->
@@ -248,13 +257,7 @@
                   <h3 class="project-card__title" data-ar="حرم الابتكار">Innovation Campus</h3>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">04</span>
-                <span class="hb-slide__type"></span>
-                <a class="hb-slide__3d" href="studio.html?model=campus" aria-label="Explore Innovation Campus in the 3D Studio" data-ar-aria-label="استكشف حرم الابتكار في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="5 of 14" data-ar-aria-label="5 من 14">
               <!-- PROJECTS: classical-landmark (featured) · descriptive name. TODO(content): Project name is descriptive. Region inferred from the old site’s KSA card; client to confirm name, city, use (sector) and status. -->
@@ -267,13 +270,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">05</span>
-                <span class="hb-slide__type"></span>
-                <a class="hb-slide__3d" href="studio.html?model=landmark" aria-label="Explore Classical Landmark in the 3D Studio" data-ar-aria-label="استكشف المَعلم الكلاسيكي في الاستوديو ثلاثي الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span aria-hidden="true">3D</span></a>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="6 of 14" data-ar-aria-label="6 من 14">
               <!-- PROJECTS: sofitel-hotel (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated; confirm status, year, client and MOBCO’s role. -->
@@ -286,13 +283,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">06</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hotel"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="7 of 14" data-ar-aria-label="7 من 14">
               <!-- PROJECTS: as-safiyyah-museum-park (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated; confirm status, year, client and MOBCO’s role. Commonly located in Madinah; confirm before stating a city. -->
@@ -305,13 +296,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">07</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#sparkles"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="8 of 14" data-ar-aria-label="8 من 14">
               <!-- PROJECTS: red-palace-redevelopment (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated; confirm status, year, client and MOBCO’s role. Commonly located in Riyadh; confirm before stating a city. The “Classical Landmark” render may depict this project; confirm. -->
@@ -324,13 +309,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">08</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="9 of 14" data-ar-aria-label="9 من 14">
               <!-- PROJECTS: hq-tower-masjid-museum (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated; confirm status, year, client and MOBCO’s role. Client/owner and city not stated on the old site. -->
@@ -343,13 +322,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">09</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="10 of 14" data-ar-aria-label="10 من 14">
               <!-- PROJECTS: neom-bay-airport (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); confirm status, year, client and MOBCO’s role. -->
@@ -362,13 +335,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="نيوم، المملكة العربية السعودية">NEOM, Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">10</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plane"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="11 of 14" data-ar-aria-label="11 من 14">
               <!-- PROJECTS: taif-municipality-building (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); confirm status, year, client and MOBCO’s role. -->
@@ -381,13 +348,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="الطائف، المملكة العربية السعودية">Taif, Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">11</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="12 of 14" data-ar-aria-label="12 من 14">
               <!-- PROJECTS: al-moosa-specialist-hospital (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated; confirm status, year, client and MOBCO’s role. -->
@@ -400,13 +361,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">12</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hospital"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="13 of 14" data-ar-aria-label="13 من 14">
               <!-- PROJECTS: raffles-hotel-residence (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated; confirm status, year, client and MOBCO’s role. Caption partly hidden in the screenshot (“Br… Residence”); confirm full name. -->
@@ -419,13 +374,7 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">13</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hotel"></use></svg></span>
-              </div>
             </div>
-
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="14 of 14" data-ar-aria-label="14 من 14">
               <!-- PROJECTS: sulaiman-fakeeh-hospital (featured). TODO(content): Region assumed Saudi Arabia (listed on the client’s projects page); city not stated; confirm status, year, client and MOBCO’s role. -->
@@ -438,16 +387,10 @@
                   <p class="project-card__loc"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="المملكة العربية السعودية">Saudi Arabia</span></p>
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">14</span>
-                <span class="hb-slide__type"></span>
-                <span class="hb-slide__cat" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hospital"></use></svg></span>
-              </div>
             </div>
           </div>
 
           <div class="carousel__foot hb-carousel__foot">
-            <span class="carousel__count">01 / 14</span>
             <div class="carousel__progress"><span></span></div>
           </div>
         </div>
@@ -458,31 +401,25 @@
     <section class="section hb-values" id="hb-values" aria-labelledby="hb-values-title">
       <div class="container">
         <div class="hb-values__head">
-          <h2 class="eyebrow" id="hb-values-title" data-ar="قيمنا الجوهرية">Our core values</h2>
+          <h2 class="visually-hidden" id="hb-values-title" data-ar="قيمنا الجوهرية">Our core values</h2>
           <p class="hb-values__intro" data-reveal="up" data-ar="تُحدِّد قيمنا الجوهرية في السلامة والنزاهة والتميّز أخلاقيات عملنا، وتوجّه فرقنا في عالم سريع التغيّر ومليء بالتحديات.">Our core values of safety, integrity and excellence define our work ethic and guide our workforce in today’s rapidly changing and challenging world.</p>
         </div>
         <ol class="hb-values__list" role="list" data-hb-values>
           <li class="hb-value" data-hb-value>
-            <span class="hb-value__num" aria-hidden="true">01</span>
             <h3 class="hb-value__word"><span class="hb-value__fill" data-ar="السلامة">Safety</span></h3>
             <div class="hb-value__aside">
-              <span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#shield-check"></use></svg></span>
               <p class="hb-value__text" data-ar="نحمي فرقنا وشركاءنا والناس من حولنا في كل موقع.">We protect our people, our partners and the public on every site.</p>
             </div>
           </li>
           <li class="hb-value" data-hb-value>
-            <span class="hb-value__num" aria-hidden="true">02</span>
             <h3 class="hb-value__word"><span class="hb-value__fill" data-ar="النزاهة">Integrity</span></h3>
             <div class="hb-value__aside">
-              <span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#scale"></use></svg></span>
               <p class="hb-value__text" data-ar="النزاهة والاتساق هما بصمة خدماتنا.">Integrity and consistency are the signatures of our service.</p>
             </div>
           </li>
           <li class="hb-value" data-hb-value>
-            <span class="hb-value__num" aria-hidden="true">03</span>
             <h3 class="hb-value__word"><span class="hb-value__fill" data-ar="التميّز">Excellence</span></h3>
             <div class="hb-value__aside">
-              <span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#award"></use></svg></span>
               <p class="hb-value__text" data-ar="نسلّم مشاريعنا في موعدها، وضمن ميزانيتها، وبأعلى معايير الجودة.">We deliver on time, within budget and to the highest quality standards.</p>
             </div>
           </li>
@@ -504,11 +441,6 @@
               <a class="btn btn--primary btn--lg" href="contact.html#inquiry" data-magnetic><span data-ar="ابدأ مشروعك">Start a project</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
               <a class="btn btn--ghost btn--lg" href="contact.html"><span data-ar="تواصل معنا">Contact us</span></a>
             </div>
-            <ul class="hb-cta__lines" role="list">
-              <li><a class="hb-cta__line" href="tel:+966112935966"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#phone"></use></svg><span class="hb-cta__line-k" data-ar="الرياض">Riyadh</span><span dir="ltr">+966 11 293 5966</span></a></li>
-              <li><a class="hb-cta__line" href="mailto:info.ksa@mobco-group.com"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mail"></use></svg><span>info.ksa@mobco-group.com</span></a></li>
-              <li><a class="hb-cta__line" href="mailto:info.egy@mobco-group.com"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mail"></use></svg><span>info.egy@mobco-group.com</span></a></li>
-            </ul>
           </div>
         </div>
       </div>

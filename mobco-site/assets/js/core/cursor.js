@@ -1,18 +1,18 @@
-// MOBCO core/cursor.js — custom cursor (dot + lagging ring) for fine pointers only.
-// States: hovering links/buttons → .cursor-link; [data-cursor="view|drag|open|play|zoom"] → label bubble.
-// Custom label: data-cursor-label="…" (+ data-ar-cursor-label). Disabled for touch, reduced motion and ?qa=1.
+// MOBCO core/cursor.js: custom cursor (dot + lagging ring) for fine pointers only.
+// States: hovering links/buttons → .cursor-link; [data-cursor="view|drag|open|play|zoom|explore"] → the ring grows
+// into a teal disc with a thin-stroke icon (no words). data-cursor-label is ignored here: the cursor is decorative
+// (aria-hidden), so targets must carry their own accessible name. Disabled for touch, reduced motion and ?qa=1.
 
 import { hasFinePointer, prefersReducedMotion, lerp } from './utils.js';
-import { t } from './i18n.js';
 
-const LABELS = {
-  view: { en: 'View', ar: 'عرض' },
-  drag: { en: 'Drag', ar: 'اسحب' },
-  open: { en: 'Open', ar: 'افتح' },
-  play: { en: 'Play', ar: 'تشغيل' },
-  zoom: { en: 'Zoom', ar: 'تكبير' },
-  explore: { en: 'Explore', ar: 'استكشف' },
+// 24×24 stroke icons (drawn with currentColor)
+const ICONS = {
+  drag: '<path d="M3 12h18"/><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/>',
+  view: '<path d="M7 17 17 7"/><path d="M8 7h9v9"/>',
+  zoom: '<path d="M12 5v14"/><path d="M5 12h14"/>',
+  play: '<path d="M8.5 5.5v13l10.5-6.5z"/>',
 };
+const KEY_ICON = { drag: 'drag', view: 'view', open: 'view', explore: 'view', zoom: 'zoom', play: 'play' };
 const INTERACTIVE = 'a[href], button, [role="button"], label[for], select, summary, input[type="checkbox"], input[type="radio"], input[type="range"], [data-tooltip]';
 let initialized = false;
 
@@ -24,12 +24,13 @@ export function initCursor() {
   dot.className = 'cursor';
   const ring = document.createElement('div');
   ring.className = 'cursor-ring';
-  ring.innerHTML = '<div class="cursor-ring__inner"><span class="cursor-ring__label"></span></div>';
+  ring.innerHTML = '<div class="cursor-ring__inner"><svg class="cursor-ring__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"></svg></div>';
   dot.setAttribute('aria-hidden', 'true');
   ring.setAttribute('aria-hidden', 'true');
   document.body.append(ring, dot);
   html.classList.add('has-cursor');
-  const label = ring.querySelector('.cursor-ring__label');
+  const icon = ring.querySelector('.cursor-ring__icon');
+  let currentIcon = '';
 
   let x = -100, y = -100, rx = -100, ry = -100, running = false;
   const loop = () => {
@@ -57,10 +58,12 @@ export function initCursor() {
   document.addEventListener('pointerover', (e) => {
     const special = e.target.closest?.('[data-cursor]');
     if (special) {
-      const key = special.getAttribute('data-cursor');
-      const custom = special.getAttribute('data-cursor-label');
-      const text = custom ? t({ en: custom, ar: special.getAttribute('data-ar-cursor-label') || custom }) : t(LABELS[key] || LABELS.view);
-      label.textContent = text;
+      const name = KEY_ICON[special.getAttribute('data-cursor')] || 'view';
+      if (name !== currentIcon) {
+        icon.innerHTML = ICONS[name];
+        icon.setAttribute('data-icon', name);
+        currentIcon = name;
+      }
       html.classList.add('cursor-label');
       html.classList.remove('cursor-link');
       return;

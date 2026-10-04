@@ -20,7 +20,7 @@ import { PROJECTS, PROJECT_CATEGORIES, REGIONS, getProject, getCategory, getRegi
 import { WORLD } from '../data/world-map.js';
 import { createCircularCarousel } from '../components/circular-carousel.js';
 import { whenLoaded } from '../core/preloader.js';
-import { closeMega, closeMobileNav } from '../core/header.js';
+import { closeMega } from '../core/header.js';
 
 /* ======================================================================
    Constants & strings
@@ -28,7 +28,7 @@ import { closeMega, closeMobileNav } from '../core/header.js';
 const PAGE = 12; // grid "load more" step
 const RING_CAP = 24; // max cards in the explorer ring
 const EASE = 'cubic-bezier(.16, 1, .3, 1)';
-const HERO_BG = '#0b1620';
+const HERO_BG = '#16162a';
 const VIEWS = ['grid', 'ring', 'map', 'list'];
 const SORTS = ['featured', 'az', 'category'];
 const reduced = () => prefersReducedMotion();
@@ -52,7 +52,6 @@ const S = {
     en: 'The ring holds {cap} projects. Switch to Grid to see all {total}.',
     ar: 'تتّسع الحلقة لـ{cap} مشروعًا. انتقل إلى الشبكة لعرض المشاريع كلها ({total}).',
   },
-  ringHint: { en: 'Drag to spin', ar: 'اسحب للتدوير' },
   whereWeBuild: { en: 'Where we build', ar: 'أين نبني' },
   showAllKsa: { en: 'All of Saudi Arabia', ar: 'كل المملكة العربية السعودية' },
   noneHere: { en: 'No projects match these filters.', ar: 'لا توجد مشاريع تطابق هذه المرشّحات.' },
@@ -232,7 +231,6 @@ const E = {
   ringControls: $('[data-pj-ring-controls]'),
   ringToggle: $('[data-pj-ring-toggle]'),
   ringToggleLabel: $('[data-pj-ring-toggle-label]'),
-  ringHint: $('[data-pj-ring-hint]'),
   total: $('[data-pj-total]'),
   totalLabel: $('[data-pj-total-label]'),
   facets: $('[data-pj-facets]'),
@@ -325,7 +323,6 @@ function initHeroRing() {
       });
       E.hero.setAttribute('data-ring-state', 'ready');
       E.ringControls.hidden = false;
-      E.ringHint.hidden = false;
       // Reduced motion: the component never autoplays → no pause button needed.
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) E.ringToggle.hidden = true;
       updateRingToggle();
@@ -370,12 +367,17 @@ function renderHeroCounts() {
    2. CATEGORY TABS + TOOLBAR
    ====================================================================== */
 const TAB_DEFS = () => [{ id: 'all', icon: 'layout-grid', name: S.all }, ...CATS];
+// one real portfolio photo per category (a featured project when there is one) makes each chip recognisable
+const tabThumb = (id) => {
+  if (id === 'all') return '<span class="pj-tab__thumb pj-tab__thumb--all" aria-hidden="true"><span></span><span></span><span></span><span></span></span>';
+  const p = PROJECTS.find((x) => x.category === id && x.featured && x.image) || PROJECTS.find((x) => x.category === id && x.image);
+  return p ? `<span class="pj-tab__thumb" aria-hidden="true"><img src="assets/img/thumbs/${p.image}.jpg" alt="" width="64" height="64" loading="lazy" decoding="async" style="object-position:${p.pos || '50% 50%'}"></span>` : '';
+};
 
 function buildTabs() {
   E.tablist.innerHTML = TAB_DEFS().map((c) => `
     <button class="pj-tab" type="button" role="tab" id="pj-tab-${c.id}" data-cat="${c.id}" aria-controls="pj-results" aria-selected="false" tabindex="-1">
-      <span class="pj-tab__top">${icon(c.icon, 'pj-tab__icon')}<span class="pj-tab__count num" data-count></span></span>
-      <span class="pj-tab__label">${esc(t(c.name))}</span>
+      ${tabThumb(c.id)}<span class="pj-tab__label">${esc(t(c.name))}</span><span class="pj-tab__count num" data-count></span>
     </button>`).join('');
   updateTabs();
 }
@@ -390,7 +392,7 @@ function updateTabs() {
     btn.tabIndex = sel ? 0 : -1;
     btn.classList.toggle('is-empty', n === 0);
     const c = $('[data-count]', btn);
-    c.textContent = pad(n);
+    c.textContent = String(n);
     btn.setAttribute('aria-label', `${btn.querySelector('.pj-tab__label').textContent} (${counted(n, 'project')})`);
   });
   E.results.setAttribute('aria-labelledby', `pj-tab-${state.category}`);
@@ -765,7 +767,7 @@ let ring2 = null;
 const ring2CardWidth = () => (innerWidth < 640 ? 150 : innerWidth < 1024 ? 180 : 210);
 function renderRing2(list) {
   const items = list.slice(0, RING_CAP).map((p) => ringItem(p, true));
-  E.ring2Note.textContent = list.length > RING_CAP ? fmt(S.ringCap, { cap: RING_CAP, total: list.length }) : t(S.ringHint);
+  E.ring2Note.textContent = list.length > RING_CAP ? fmt(S.ringCap, { cap: RING_CAP, total: list.length }) : '';
   if (!items.length) { destroyRing2(); return; }
   const opts = {
     items, labels: ringLabels(S.ring2Region), rtl: isAr(), cardWidth: ring2CardWidth(),
@@ -1421,7 +1423,7 @@ function initLinks() {
     const slug = decodeURIComponent(url.hash.replace(/^#/, ''));
     if (!getProject(slug)) return;
     e.preventDefault();
-    try { closeMega(); closeMobileNav({ restoreFocus: false }); } catch { /* header not present */ }
+    try { closeMega(); } catch { /* header not present */ }
     const inExplorer = a.closest('[data-pj-grid], [data-pj-list]');
     openProject(slug, inExplorer ? { list: results(), context: contextLabel(), trigger: a } : { trigger: a });
   }, true);

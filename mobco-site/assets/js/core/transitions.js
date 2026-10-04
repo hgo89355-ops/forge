@@ -1,4 +1,4 @@
-// MOBCO core/transitions.js — page-transition curtain.
+// MOBCO core/transitions.js: page-transition curtain.
 // Leaving: same-origin link clicks drop a navy curtain, then navigate. Entering: the inline <head> script adds
 // html.is-entering when the previous page set the session flag; CSS slides the cover away (no JS needed).
 // Skipped for: modifier clicks, target≠_self, download, hash-only/same-page links, mailto/tel, [data-no-transition],

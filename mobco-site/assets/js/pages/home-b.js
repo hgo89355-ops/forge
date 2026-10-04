@@ -1,6 +1,6 @@
 // assets/js/pages/home-b.js: HOME page, part B (sectors, footprint, featured projects, values).
 // Core modules are singletons initialised by core/main.js; this module only wires page-specific behaviour:
-//   · sectors: cards and the phrases of the client's "delivered iconic projects" sentence light each other up
+//   · sectors: accordion gallery, one real project photo per sector (components/accordion-gallery.js)
 //   · footprint: dot-matrix world map (WORLD) with arcs from Riyadh, markers linked to the region tabs
 //   · projects: slides rendered from PROJECTS (featured === true) + image parallax inside the core carousel
 //   · values: big outlined words fill as they scroll into view
@@ -11,29 +11,16 @@ import { onScroll, refresh } from '../core/motion.js';
 import { $, $$, clamp, esc, rafThrottle, prefersReducedMotion, IMAGES } from '../core/utils.js';
 import { PROJECTS, PROJECT_CATEGORIES } from '../data/site-data.js';
 import { WORLD } from '../data/world-map.js';
+import { initAccordionGallery } from '../components/accordion-gallery.js';
 
 const reduced = prefersReducedMotion();
 const vh = () => window.innerHeight || document.documentElement.clientHeight;
 
 /* ================================================================ 6. Sectors */
 function initSectors() {
-  const grid = $('[data-hb-sectors]');
-  const statement = $('[data-hb-statement]');
-  if (!grid || !statement) return;
-  const light = (id, fromTerm = false) => {
-    statement.classList.toggle('has-lit', !!id);
-    $$('.hb-term', statement).forEach((el) => el.classList.toggle('is-lit', !!id && el.dataset.sector === id));
-    $$('.hb-sector', grid).forEach((el) => el.classList.toggle('is-linked', fromTerm && el.dataset.sector === id));
-  };
-  // card → sentence
-  grid.addEventListener('pointerover', (e) => { const c = e.target.closest('.hb-sector'); if (c) light(c.dataset.sector); });
-  grid.addEventListener('pointerleave', () => light(null));
-  grid.addEventListener('focusin', (e) => { const c = e.target.closest('.hb-sector'); if (c) light(c.dataset.sector); });
-  grid.addEventListener('focusout', (e) => { if (!grid.contains(e.relatedTarget)) light(null); });
-  // sentence → card (delegated: i18n swaps the sentence's innerHTML on language change)
-  statement.addEventListener('pointerover', (e) => { const term = e.target.closest('.hb-term'); if (term) light(term.dataset.sector, true); });
-  statement.addEventListener('pointerout', (e) => { if (!e.relatedTarget?.closest?.('.hb-term')) light(null); });
-  onLang(() => light(null));
+  const gallery = $('[data-hb-sectors]');
+  if (!gallery) return;
+  initAccordionGallery(gallery, { defaultIndex: 0, stackAt: 640, tilt: 6, gray: 0.7, dim: 0.3 });
 }
 
 /* ================================================================ 7. Global footprint */
@@ -160,7 +147,6 @@ function hbSlideHTML(p, i, total, { esc, IMAGES, CATEGORIES }) {
   const typo = p.typology || cat?.name || { en: 'Project', ar: 'مشروع' };
   const split = (v, k) => String(v || '').split(' · ')[k] || '';
   const badge = { en: split(en(typo), 0), ar: split(ar(typo), 0) };
-  const sub = split(en(typo), 1) ? { en: split(en(typo), 1), ar: split(ar(typo), 1) } : null;
   const meta = IMAGES[p.image] || { w: 790, h: 710 };
   // the 4:5 card crops a landscape photo: the rendered image is ~k × the slide width (112% for the parallax overscan)
   const k = Math.max(1.12, (1.25 * meta.w) / meta.h).toFixed(2);
@@ -172,12 +158,8 @@ function hbSlideHTML(p, i, total, { esc, IMAGES, CATEGORIES }) {
     ? `
               <!-- PROJECTS: ${esc(p.slug)} (featured)${p.nameIsDescriptive ? ' · descriptive name' : ''}. TODO(content): ${todo || 'confirm the project name'} -->`
     : '';
-  const n = String(i + 1).padStart(2, '0');
   const pos = HB_CROP[p.slug] || p.pos || '50% 50%';
   const label = { en: `${i + 1} of ${total}`, ar: `${i + 1} من ${total}` };
-  const foot = p.studioModel
-    ? `<a class="hb-slide__3d" href="studio.html?model=${esc(p.studioModel)}" aria-label="${esc(`Explore ${en(p.name)} in the 3D Studio`)}" data-ar-aria-label="${esc(`استكشف ${ar(p.name)} في الاستوديو ثلاثي الأبعاد`)}">${ico('rotate-3d')}<span aria-hidden="true">3D</span></a>`
-    : `<span class="hb-slide__cat" aria-hidden="true">${ico(cat?.icon || 'building-2')}</span>`;
   return `
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="${label.en}" data-ar-aria-label="${label.ar}">${flag}
               <a class="project-card hb-card" href="projects.html#${esc(p.slug)}">
@@ -189,11 +171,6 @@ function hbSlideHTML(p, i, total, { esc, IMAGES, CATEGORIES }) {
                   <p class="project-card__loc">${ico('map-pin')}${txt('span', '', p.location)}</p>` : ''}
                 </div>
               </a>
-              <div class="hb-slide__foot">
-                <span class="hb-slide__num" aria-hidden="true">${n}</span>
-                ${sub ? txt('span', 'hb-slide__type', sub) : '<span class="hb-slide__type"></span>'}
-                ${foot}
-              </div>
             </div>
 `;
 }
