@@ -86,13 +86,7 @@ html[lang='ar'] .sd-hero__pre { letter-spacing: 0; -webkit-text-stroke: 0; color
   text-transform: uppercase;
   color: var(--sd-accent);
 }
-.sd-hero__tagline::before {
-  content: '';
-  inline-size: 48px;
-  block-size: 1px;
-  background: currentColor;
-  margin-inline-end: .75rem;
-}
+.sd-hero__tagline::before { content: none; }
 html[lang='ar'] .sd-hero__tagline { letter-spacing: 0; text-transform: none; font-size: var(--fs-h4); }
 .sd-hero__lead { max-inline-size: 48ch; }
 

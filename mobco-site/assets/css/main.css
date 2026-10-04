@@ -827,13 +827,7 @@ html[lang='ar'] .link-arrow { font-size: .9375rem; font-weight: 600; letter-spac
   color: var(--fg-muted);
 }
 html[lang='ar'] .eyebrow { font-size: .875rem; font-weight: 500; }
-.eyebrow::before {
-  content: '';
-  inline-size: 20px;
-  block-size: 1px;
-  background: var(--accent);
-  flex: none;
-}
+.eyebrow::before { content: none; }
 .eyebrow--plain::before { display: none; }
 .eyebrow--center { justify-content: center; }
 .eyebrow__num { color: var(--fg-muted); letter-spacing: .1em; }
@@ -909,7 +903,7 @@ html[lang='ar'] .badge { font-size: .8125rem; font-weight: 600; }
 html[lang='ar'] .breadcrumb { font-size: .875rem; letter-spacing: 0; }
 .breadcrumb ol { display: flex; flex-wrap: wrap; align-items: center; gap: .625rem; list-style: none; padding: 0; }
 .breadcrumb li { display: inline-flex; align-items: center; gap: .625rem; color: var(--fg-muted); }
-.breadcrumb li + li::before { content: ''; inline-size: 14px; block-size: 1px; background: currentColor; opacity: .6; }
+.breadcrumb li + li::before { content: '/'; opacity: .5; font-weight: 400; }
 .breadcrumb a { color: var(--fg); transition: color var(--dur); }
 .breadcrumb a:hover { color: var(--accent); }
 .breadcrumb [aria-current] { color: var(--accent-text); }
@@ -990,7 +984,7 @@ figure figcaption.caption {
   gap: .75rem;
   align-items: baseline;
 }
-figure figcaption.caption::before { content: ''; inline-size: 20px; block-size: 1px; background: var(--accent); flex: none; transform: translateY(-.3em); }
+figure figcaption.caption::before { content: none; }
 
 /* Ken Burns (slow drift). Played only while visible (motion.js). */
 [data-kenburns] { overflow: hidden; }
