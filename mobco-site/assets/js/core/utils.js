@@ -96,18 +96,18 @@ export function icon(name, cls = '') {
 /** Photo library (BRIEF §1). Intrinsic sizes → width/height attributes (no layout shift). */
 export const IMAGES = {
   'aerial-compound': { w: 1560, h: 849 },
-  'aerial-compound-portrait': { w: 996, h: 912 },
+  'aerial-compound-portrait': { w: 1494, h: 1368 },
   'aerial-panorama': { w: 2000, h: 233 },
-  campus: { w: 999, h: 863 },
-  'ksa-landmark': { w: 790, h: 710 },
-  eastmain: { w: 790, h: 710 },
-  'victoria-101': { w: 790, h: 710 },
+  campus: { w: 1499, h: 1295 },
+  'ksa-landmark': { w: 1185, h: 1065 },
+  eastmain: { w: 1185, h: 1065 },
+  'victoria-101': { w: 1185, h: 1065 },
   // subsidiary pages
   'sub-construction-hero': { w: 1484, h: 702 },
-  'sub-construction-render': { w: 633, h: 492 },
+  'sub-construction-render': { w: 1266, h: 984 },
   'sub-developments-hero': { w: 1421, h: 679 },
   'sub-real-estate-hero': { w: 1477, h: 691 },
-  'sub-real-estate-office': { w: 624, h: 482 },
+  'sub-real-estate-office': { w: 1248, h: 964 },
   // portfolio photos (projects page)
   'cluster-j07': { w: 1022, h: 689 },
   'sofitel-hotel': { w: 1022, h: 688 },
