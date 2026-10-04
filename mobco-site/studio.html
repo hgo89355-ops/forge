@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title data-ar-title="مصمّم المشاريع | مجموعة موبكو">Project Builder | MOBCO Group</title>
-  <meta name="description" content="Explore five MOBCO Group projects in 3D, or sketch your own building and send it to our team." data-ar-content="استكشف خمسة من مشاريع مجموعة موبكو بالأبعاد الثلاثية، أو صمّم مبناك وأرسله إلى فريقنا.">
+  <title data-ar-title="استكشف بتقنية ثلاثية الأبعاد | مجموعة موبكو">Explore in 3D | MOBCO Group</title>
+  <meta name="description" content="Explore five MOBCO Group projects in 3D. Turn them, open up the floors and see them by day and by night." data-ar-content="استكشف خمسة من مشاريع مجموعة موبكو بتقنية ثلاثية الأبعاد. دوّرها، وافصل طوابقها، وشاهدها نهارًا وليلًا.">
   <!-- TODO(deploy): confirm production domain for canonical / og:url / og:image -->
   <link rel="canonical" href="https://mobco-group.com/studio.html">
   <link rel="alternate" hreflang="en" href="https://mobco-group.com/studio.html">
   <link rel="alternate" hreflang="ar" href="https://mobco-group.com/studio.html?lang=ar">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MOBCO Group">
-  <meta property="og:title" content="Project Builder | MOBCO Group" data-ar-content="مصمّم المشاريع | مجموعة موبكو">
-  <meta property="og:description" content="Explore our projects in 3D, or sketch your own." data-ar-content="استكشف مشاريعنا بالأبعاد الثلاثية، أو صمّم مشروعك الخاص.">
+  <meta property="og:title" content="Explore in 3D | MOBCO Group" data-ar-content="استكشف بتقنية ثلاثية الأبعاد | مجموعة موبكو">
+  <meta property="og:description" content="Five MOBCO Group projects in interactive 3D." data-ar-content="خمسة من مشاريع مجموعة موبكو بتقنية ثلاثية الأبعاد التفاعلية.">
   <meta property="og:url" content="https://mobco-group.com/studio.html">
   <meta property="og:image" content="https://mobco-group.com/assets/img/og-default.jpg">
   <meta property="og:image:width" content="1200">
@@ -20,8 +20,8 @@
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="ar_SA">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Project Builder | MOBCO Group" data-ar-content="مصمّم المشاريع | مجموعة موبكو">
-  <meta name="twitter:description" content="Explore our projects in 3D, or sketch your own." data-ar-content="استكشف مشاريعنا بالأبعاد الثلاثية، أو صمّم مشروعك الخاص.">
+  <meta name="twitter:title" content="Explore in 3D | MOBCO Group" data-ar-content="استكشف بتقنية ثلاثية الأبعاد | مجموعة موبكو">
+  <meta name="twitter:description" content="Five MOBCO Group projects in interactive 3D." data-ar-content="خمسة من مشاريع مجموعة موبكو بتقنية ثلاثية الأبعاد التفاعلية.">
   <meta name="twitter:image" content="https://mobco-group.com/assets/img/og-default.jpg">
   <meta name="theme-color" content="#1f1f38">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
@@ -99,11 +99,11 @@
             </ul>
             <div class="nav-menu__foot">
               <a class="nav-menu__more" href="projects.html"><span data-ar="عرض جميع المشاريع (33)">View all 33 projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
-              <a class="nav-menu__more" href="studio.html"><span data-ar="مصمّم المشاريع">Project Builder</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></a>
+              <a class="nav-menu__more" href="studio.html"><span data-ar="تجوّل ثلاثي الأبعاد">Explore in 3D</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></a>
             </div>
           </div>
         </li>
-        <li class="site-nav__item"><a class="site-nav__link" href="studio.html" data-nav="studio" data-ar="مصمّم المشاريع">Project Builder</a></li>
+        <li class="site-nav__item"><a class="site-nav__link" href="studio.html" data-nav="studio" data-ar="تجوّل ثلاثي الأبعاد">Explore in 3D</a></li>
         <li class="site-nav__item"><a class="site-nav__link" href="media.html" data-nav="media" data-ar="الإعلام">Media</a></li>
         <li class="site-nav__item"><a class="site-nav__link" href="careers.html" data-nav="careers" data-ar="الوظائف">Careers</a></li>
         <li class="site-nav__item"><a class="site-nav__link" href="contact.html" data-nav="contact" data-ar="تواصل معنا">Contact</a></li>
@@ -120,7 +120,7 @@
 
   <main id="main" tabindex="-1">
     <!-- ============================================================ 3D viewer (immersive, header overlays it) -->
-    <section class="studio" id="studio" aria-labelledby="studio-title" data-studio data-mode="explore">
+    <section class="studio" id="studio" aria-labelledby="studio-title" data-studio>
       <div class="studio__viewport" data-studio-viewport>
         <!-- Poster: shown while WebGL boots, without JS, and as the no-WebGL fallback -->
         <div class="studio__poster" data-studio-poster>
@@ -140,7 +140,6 @@
           <button class="studio-chipbtn studio-chipbtn--close" type="button" data-level-clear aria-label="Show all floors" data-ar-aria-label="عرض جميع الطوابق"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#x"></use></svg></button>
         </div>
 
-        <p class="studio__badge" data-studio-badge><span data-ar="رسم مبدئي، ليس بمقياس رسم.">Concept sketch, not to scale.</span></p>
 
         <p class="studio__hint is-hidden" data-studio-hint aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#zoom-in"></use></svg><span data-studio-hint-text></span></p>
 
@@ -187,14 +186,14 @@
         <noscript>
           <div class="studio__state studio__state--noscript">
             <div class="studio-card on-dark">
-              <h2 class="studio-card__title">Project Builder needs JavaScript · يتطلّب مصمّم المشاريع تفعيل JavaScript</h2>
+              <h2 class="studio-card__title">The 3D view needs JavaScript · يتطلّب العرض ثلاثي الأبعاد تفعيل JavaScript</h2>
               <p class="studio-card__text">Turn on JavaScript to use the 3D models, or browse the <a class="text-link" href="projects.html">projects</a>.</p>
             </div>
           </div>
         </noscript>
       </div>
 
-      <!-- Model library (explore) -->
+      <!-- Model library -->
       <nav class="studio__rail on-dark" aria-labelledby="studio-rail-title" data-studio-rail>
         <h2 class="visually-hidden" id="studio-rail-title" data-ar="مكتبة النماذج">Model library</h2>
         <ol class="studio-rail" role="list" data-rail-list>
@@ -206,15 +205,11 @@
         </ol>
       </nav>
 
-      <!-- Side column: title, mode switch, model information or the builder -->
+      <!-- Side column: title and model information -->
       <div class="studio__side on-dark" data-studio-side>
         <header class="studio__head">
-          <h1 class="studio__title" id="studio-title"><span data-ar="مصمّم المشاريع">Project Builder</span></h1>
-          <p class="studio__lead" data-ar="استكشف مشاريعنا بالأبعاد الثلاثية، أو صمّم مشروعك الخاص.">Explore our projects in 3D, or sketch your own.</p>
-          <div class="studio-modes" role="group" aria-label="Mode" data-ar-aria-label="الوضع">
-            <button class="studio-modes__btn" type="button" data-studio-mode="explore" aria-pressed="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg><span data-ar="مشاريعنا">Our projects</span></button>
-            <button class="studio-modes__btn" type="button" data-studio-mode="build" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#pencil-ruler"></use></svg><span data-ar="صمّم مشروعك">Build your own</span></button>
-          </div>
+          <h1 class="studio__title" id="studio-title"><span data-ar="استكشف بتقنية ثلاثية الأبعاد">Explore in 3D</span></h1>
+          <p class="studio__lead" data-ar="شاهد خمسة من مشاريعنا من كل الزوايا، نهارًا وليلًا.">Five of our projects, from every side, by day and by night.</p>
         </header>
 
         <!-- Model information (re-rendered by JS from the model meta + site-data.js) -->
@@ -226,100 +221,6 @@
           </div>
         </div>
 
-        <!-- Builder -->
-        <form class="builder" data-builder hidden novalidate aria-labelledby="builder-title">
-          <h2 class="visually-hidden" id="builder-title" data-ar="صمّم مشروعك">Build your own</h2>
-          <div class="builder__top">
-            <div class="builder__steps" role="tablist" aria-label="Steps" data-ar-aria-label="الخطوات">
-              <button class="builder__step-tab" type="button" role="tab" id="btab-1" data-step="1" aria-selected="true" aria-controls="bstep-1"><span class="num-ltr" aria-hidden="true">1</span><span data-ar="النوع">Type</span></button>
-              <button class="builder__step-tab" type="button" role="tab" id="btab-2" data-step="2" aria-selected="false" aria-controls="bstep-2" tabindex="-1"><span class="num-ltr" aria-hidden="true">2</span><span data-ar="الحجم">Size</span></button>
-              <button class="builder__step-tab" type="button" role="tab" id="btab-3" data-step="3" aria-selected="false" aria-controls="bstep-3" tabindex="-1"><span class="num-ltr" aria-hidden="true">3</span><span data-ar="الواجهة">Facade</span></button>
-              <button class="builder__step-tab" type="button" role="tab" id="btab-4" data-step="4" aria-selected="false" aria-controls="bstep-4" tabindex="-1"><span class="num-ltr" aria-hidden="true">4</span><span data-ar="الإضافات">Extras</span></button>
-            </div>
-            <button class="builder__shuffle" type="button" data-builder-shuffle aria-label="Surprise me" data-ar-aria-label="فاجئني" data-tooltip="Surprise me" data-ar-tooltip="فاجئني"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#sparkles"></use></svg></button>
-          </div>
-
-          <div class="builder__panel" role="tabpanel" id="bstep-1" aria-labelledby="btab-1" data-step-panel="1">
-            <fieldset class="builder__group">
-              <legend class="builder__label" data-ar="ماذا تريد أن تبني؟">What would you like to build?</legend>
-              <div class="builder-tiles builder-tiles--type">
-                <label class="builder-tile"><input type="radio" name="type" value="office"><span class="builder-tile__box"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg><span data-ar="مكاتب">Office</span></span></label>
-                <label class="builder-tile"><input type="radio" name="type" value="residential"><span class="builder-tile__box"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building"></use></svg><span data-ar="برج سكني">Residential tower</span></span></label>
-                <label class="builder-tile"><input type="radio" name="type" value="villa"><span class="builder-tile__box"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#house"></use></svg><span data-ar="فيلا">Villa</span></span></label>
-                <label class="builder-tile"><input type="radio" name="type" value="mixed" checked><span class="builder-tile__box"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#store"></use></svg><span data-ar="متعدد الاستخدامات">Mixed-use</span></span></label>
-                <label class="builder-tile"><input type="radio" name="type" value="school"><span class="builder-tile__box"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#school"></use></svg><span data-ar="مدرسة">School</span></span></label>
-              </div>
-            </fieldset>
-          </div>
-
-          <div class="builder__panel" role="tabpanel" id="bstep-2" aria-labelledby="btab-2" data-step-panel="2" hidden>
-            <div class="builder__group range builder-range">
-              <div class="range__head">
-                <label class="builder__label" for="builder-floors" data-ar="عدد الطوابق">Floors</label>
-                <output class="range__value" for="builder-floors" data-builder-floors-out>8 floors</output>
-              </div>
-              <input class="range__input" id="builder-floors" name="floors" type="range" min="3" max="20" step="1" value="8" data-format="none" aria-valuetext="8 floors">
-            </div>
-            <fieldset class="builder__group">
-              <legend class="builder__label" data-ar="مساحة الأرض">Footprint</legend>
-              <div class="builder-seg">
-                <label class="builder-seg__opt"><input type="radio" name="size" value="s"><span data-ar="صغيرة">Small</span></label>
-                <label class="builder-seg__opt"><input type="radio" name="size" value="m" checked><span data-ar="متوسطة">Medium</span></label>
-                <label class="builder-seg__opt"><input type="radio" name="size" value="l"><span data-ar="كبيرة">Large</span></label>
-              </div>
-            </fieldset>
-          </div>
-
-          <div class="builder__panel" role="tabpanel" id="bstep-3" aria-labelledby="btab-3" data-step-panel="3" hidden>
-            <fieldset class="builder__group">
-              <legend class="builder__label" data-ar="المادة">Material</legend>
-              <div class="builder-tiles builder-tiles--facade">
-                <label class="builder-tile"><input type="radio" name="facade" value="glass" checked><span class="builder-tile__box"><span class="builder-tile__mat builder-tile__mat--glass" aria-hidden="true"></span><span data-ar="زجاج">Glass</span></span></label>
-                <label class="builder-tile"><input type="radio" name="facade" value="stone"><span class="builder-tile__box"><span class="builder-tile__mat builder-tile__mat--stone" aria-hidden="true"></span><span data-ar="حجر">Stone</span></span></label>
-                <label class="builder-tile"><input type="radio" name="facade" value="render"><span class="builder-tile__box"><span class="builder-tile__mat builder-tile__mat--render" aria-hidden="true"></span><span data-ar="لياسة بيضاء">White render</span></span></label>
-                <label class="builder-tile"><input type="radio" name="facade" value="brick"><span class="builder-tile__box"><span class="builder-tile__mat builder-tile__mat--brick" aria-hidden="true"></span><span data-ar="طوب">Brick</span></span></label>
-              </div>
-            </fieldset>
-            <fieldset class="builder__group">
-              <legend class="builder__label" data-ar="لون التفاصيل">Detail colour</legend>
-              <div class="builder-swatches">
-                <label class="builder-swatch" style="--sw:#535380"><input type="radio" name="colour" value="indigo"><span class="builder-swatch__dot" aria-hidden="true"></span><span data-ar="نيلي">Indigo</span></label>
-                <label class="builder-swatch" style="--sw:#5FB2B8"><input type="radio" name="colour" value="teal" checked><span class="builder-swatch__dot" aria-hidden="true"></span><span data-ar="فيروزي">Teal</span></label>
-                <label class="builder-swatch" style="--sw:#B2AA8A"><input type="radio" name="colour" value="sand"><span class="builder-swatch__dot" aria-hidden="true"></span><span data-ar="رملي">Sand</span></label>
-                <label class="builder-swatch" style="--sw:#3A3A3E"><input type="radio" name="colour" value="charcoal"><span class="builder-swatch__dot" aria-hidden="true"></span><span data-ar="فحمي">Charcoal</span></label>
-              </div>
-            </fieldset>
-          </div>
-
-          <div class="builder__panel" role="tabpanel" id="bstep-4" aria-labelledby="btab-4" data-step-panel="4" hidden>
-            <fieldset class="builder__group">
-              <legend class="builder__label" data-ar="على السطح">On the roof</legend>
-              <div class="builder-chips">
-                <label class="builder-chip"><input type="checkbox" name="terrace" checked><span><span data-ar="تراس">Terrace</span></span></label>
-                <label class="builder-chip"><input type="checkbox" name="solar"><span><span data-ar="ألواح شمسية">Solar panels</span></span></label>
-              </div>
-            </fieldset>
-            <fieldset class="builder__group">
-              <legend class="builder__label" data-ar="حول المبنى">Around the building</legend>
-              <div class="builder-chips">
-                <label class="builder-chip"><input type="checkbox" name="pool"><span><span data-ar="مسبح">Pool</span></span></label>
-                <label class="builder-chip"><input type="checkbox" name="landscape" checked><span><span data-ar="حدائق">Landscaping</span></span></label>
-                <label class="builder-chip"><input type="checkbox" name="parking" checked><span><span data-ar="مواقف">Parking</span></span></label>
-              </div>
-            </fieldset>
-          </div>
-
-          <button class="builder__next" type="button" data-builder-next><span data-ar="الخطوة التالية">Next step</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
-
-          <div class="builder__out">
-            <p class="builder__summary" data-builder-summary>Mixed-use, 8 floors, medium footprint, glass facade with teal details, terrace, landscaping, parking</p>
-            <div class="builder__actions">
-              <a class="btn btn--primary btn--sm builder__send" href="contact.html?type=construction#inquiry" data-builder-send><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#send"></use></svg><span data-ar="أرسله إلى فريقنا">Send this to our team</span></a>
-              <button class="btn btn--ghost btn--sm builder__save" type="button" data-builder-save><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="حفظ صورة">Save image</span></button>
-            </div>
-            <p class="builder__note" data-ar="رسم مبدئي للنقاش فقط. يعمل فريقنا معك على التصميم الحقيقي.">A concept sketch to start the conversation. Our team works out the real design with you.</p>
-          </div>
-        </form>
       </div>
 
       <!-- View options (compact) -->
@@ -428,7 +329,7 @@
           <li><a href="about.html" data-ar="من نحن">About</a></li>
           <li><a href="subsidiaries.html" data-ar="الشركات التابعة">Subsidiaries</a></li>
           <li><a href="projects.html" data-ar="المشاريع">Projects</a></li>
-          <li><a href="studio.html" data-ar="مصمّم المشاريع">Project Builder</a></li>
+          <li><a href="studio.html" data-ar="تجوّل ثلاثي الأبعاد">Explore in 3D</a></li>
           <li><a href="media.html" data-ar="المركز الإعلامي">Media</a></li>
           <li><a href="careers.html" data-ar="الوظائف">Careers</a></li>
           <li><a href="contact.html" data-ar="تواصل معنا">Contact</a></li>

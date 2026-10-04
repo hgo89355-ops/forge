@@ -23,7 +23,7 @@ $$('[data-sg-toast]').forEach((btn) => btn.addEventListener('click', () => {
   const type = btn.getAttribute('data-sg-toast');
   const msgs = {
     success: { en: 'Your inquiry has been prepared.', ar: 'تم تجهيز استفسارك.' },
-    info: { en: 'Models in the Project Builder are illustrative.', ar: 'النماذج في مصمّم المشاريع توضيحية.' },
+    info: { en: 'Models in the Explore in 3D are illustrative.', ar: 'النماذج ثلاثية الأبعاد توضيحية.' },
     warning: { en: 'Some fields still need your attention.', ar: 'بعض الحقول لا تزال بحاجة إلى مراجعتك.' },
     error: { en: 'Something went wrong. Please try again.', ar: 'حدث خطأ ما، يُرجى المحاولة مرة أخرى.' },
   };

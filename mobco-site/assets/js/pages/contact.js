@@ -415,7 +415,7 @@ const BUDGETS = {
 };
 
 // Deep links: ?company=<subsidiary id> (subsidiaries finder), ?office=ksa|egypt, ?type=<need>,
-// ?brief=<text> (Project Builder summary, prefills the project description)
+// ?brief=<text> (prefills the project description)
 const COMPANY_TYPE = {
   'mobco-construction': 'construction',
   'mobco-developments': 'development',
@@ -750,7 +750,7 @@ function initWizard() {
     if (COMPANY_TYPE[q.company]) { company = q.company; setValue('type', COMPANY_TYPE[q.company]); }
     if (TYPE_ALIAS[q.type]) setValue('type', TYPE_ALIAS[q.type]);
     if (q.office === 'ksa' || q.office === 'egypt') setValue('region', q.office);
-    // ?brief= carries the Project Builder summary into the project description.
+    // ?brief= prefills the project description.
     const brief = String(q.brief || '').replace(/\r\n?/g, '\n').trim().slice(0, message.maxLength > 0 ? message.maxLength : 1500);
     if (brief) setValue('message', brief);
     step = 1;

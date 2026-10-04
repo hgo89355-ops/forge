@@ -7,10 +7,10 @@
 //   plus / minus buttons, double-click / double-tap zooms to a point, a click on the building flies in, mouse-wheel zoom
 //   only after the visitor has pressed inside the viewer (until the pointer leaves it or Esc).
 // · Hotspot pins from each model's meta.hotspots: a pin flies the camera to that part and opens a small card.
-// · Toolbar: zoom, separate floors, day / night, reset, open in Project Builder. Chips switch the building.
+// · Toolbar: zoom, separate floors, day / night, reset, open in Explore in 3D. Chips switch the building.
 // · Keyboard: the canvas is focusable (arrow keys orbit, plus / minus zoom, 0 resets, Esc closes the card).
 // · Reduced motion: no auto-rotate, instant camera moves. Software renderers (SwiftShader / llvmpipe) get the
-//   engine's low-power profile and no auto-rotate. No WebGL2: the still stays, with a link to Project Builder.
+//   engine's low-power profile and no auto-rotate. No WebGL2: the still stays, with a link to Explore in 3D.
 
 import { t, onLang } from '../core/i18n.js';
 import { $, $$, clamp, isQA, isRTL, prefersReducedMotion, rafThrottle } from '../core/utils.js';
@@ -23,7 +23,7 @@ const MODELS = {
 };
 const S = {
   canvas: { en: '{name}, interactive 3D model', ar: '{name}، نموذج تفاعلي ثلاثي الأبعاد' },
-  studio: { en: 'Open {name} in Project Builder', ar: 'افتح {name} في مصمّم المشاريع' },
+  studio: { en: 'Explore {name} in 3D', ar: 'استكشف {name} بتقنية ثلاثية الأبعاد' },
   loading: { en: 'Loading {name}', ar: 'جارٍ تحميل {name}' },
   ready: { en: '{name} is ready', ar: '{name} جاهز' },
   still: { en: '{name}, illustrative 3D model', ar: '{name}، نموذج توضيحي ثلاثي الأبعاد' },

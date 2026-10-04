@@ -1,5 +1,5 @@
 // MOBCO data/site-data.js: single source of truth for bilingual content used by pages,
-// search, the mega menu and the Project Builder. Foundation-owned (request changes in docs/requests/).
+// search, the mega menu and the Explore in 3D. Foundation-owned (request changes in docs/requests/).
 //
 // Every user-facing string is { en, ar } → render with t() from core/i18n.js.
 // HONESTY: only facts from docs/BRIEF.md §2. Anything inferred carries a `todo` note and,
@@ -1287,7 +1287,7 @@ export const NAV = [
   { id: 'about', href: 'about.html', label: { en: 'About', ar: 'من نحن' } },
   { id: 'subsidiaries', href: 'subsidiaries.html', label: { en: 'Subsidiaries', ar: 'الشركات التابعة' } },
   { id: 'projects', href: 'projects.html', label: { en: 'Projects', ar: 'المشاريع' }, mega: true },
-  { id: 'studio', href: 'studio.html', label: { en: 'Project Builder', ar: 'مصمّم المشاريع' } },
+  { id: 'studio', href: 'studio.html', label: { en: 'Explore in 3D', ar: 'تجوّل ثلاثي الأبعاد' } },
   { id: 'media', href: 'media.html', label: { en: 'Media', ar: 'الإعلام' } },
   { id: 'careers', href: 'careers.html', label: { en: 'Careers', ar: 'الوظائف' } },
   { id: 'contact', href: 'contact.html', label: { en: 'Contact', ar: 'تواصل معنا' } },
@@ -1340,9 +1340,9 @@ export const PAGES = [
   },
   {
     id: 'studio', url: 'studio.html', icon: 'rotate-3d',
-    title: { en: 'Project Builder', ar: 'مصمّم المشاريع' },
-    description: { en: 'Build your own project in 3D, or explore models of ours.', ar: 'صمّم مشروعك بالأبعاد الثلاثية، أو استكشف نماذج مشاريعنا.' },
-    keywords: { en: ['project builder', 'builder', 'design', '3d', 'studio', 'viewer', 'model', 'interactive', 'massing'], ar: ['مصمم المشاريع', 'صمم مشروعك', 'ثلاثي الأبعاد', 'استوديو', 'نموذج', 'تفاعلي', 'مجسم'] },
+    title: { en: 'Explore in 3D', ar: 'تجوّل ثلاثي الأبعاد' },
+    description: { en: 'Turn, zoom and take apart 3D models of our work.', ar: 'أدِر نماذج مشاريعنا ثلاثية الأبعاد وقرّبها وافصل طوابقها.' },
+    keywords: { en: ['explore in 3d', '3d tour', '3d', 'studio', 'viewer', 'model', 'interactive', 'massing'], ar: ['استكشف', 'جولة', 'ثلاثي الأبعاد', 'استوديو', 'نموذج', 'تفاعلي', 'مجسم'] },
   },
   {
     id: 'media', url: 'media.html', icon: 'images',
@@ -1367,7 +1367,7 @@ export const PAGES = [
 /** Shortcuts shown in the empty search state. */
 export const QUICK_LINKS = [
   { url: 'contact.html#inquiry', icon: 'send', title: { en: 'Start a project', ar: 'ابدأ مشروعك' }, description: { en: 'Send us an inquiry', ar: 'أرسل لنا استفسارك' } },
-  { url: 'studio.html', icon: 'rotate-3d', title: { en: 'Project Builder', ar: 'مصمّم المشاريع' }, description: { en: 'Build your project in 3D', ar: 'صمّم مشروعك بالأبعاد الثلاثية' } },
+  { url: 'studio.html', icon: 'rotate-3d', title: { en: 'Explore in 3D', ar: 'تجوّل ثلاثي الأبعاد' }, description: { en: 'Our work as 3D models', ar: 'مشاريعنا بنماذج ثلاثية الأبعاد' } },
   { url: 'careers.html', icon: 'briefcase', title: { en: 'Careers', ar: 'الوظائف' }, description: { en: 'Join our teams', ar: 'انضم إلى فرقنا' } },
 ];
 
@@ -1385,5 +1385,5 @@ export function projectsBy({ region, sector, category, featured } = {}) {
 }
 /** URL of a project detail anchor on the projects page. */
 export const projectUrl = (p) => `projects.html#${typeof p === 'string' ? p : p.slug}`;
-/** URL of a project in the Project Builder (studio.html). */
+/** URL of a project in the Explore in 3D (studio.html). */
 export const studioUrl = (p) => `studio.html?model=${typeof p === 'string' ? getProject(p)?.studioModel || p : p.studioModel}`;

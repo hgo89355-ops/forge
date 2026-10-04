@@ -295,7 +295,7 @@ html[lang='ar'] .hx__caption { font-size: .8125rem; }
 html[lang='ar'] .hx-card__text { line-height: 1.8; }
 .hx-card__nav { display: flex; gap: var(--space-1); margin-inline-start: -.5rem; border-block-start: 1px solid var(--hx-line); padding-block-start: var(--space-2); }
 
-/* static state (no WebGL2 / failed): the still with a link to Project Builder */
+/* static state (no WebGL2 / failed): the still with a link to Explore in 3D */
 .hx.is-static .hx__progress { display: none; }
 
 /* tablets: a little narrower copy */

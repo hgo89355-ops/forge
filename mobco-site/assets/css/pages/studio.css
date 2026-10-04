@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MOBCO · studio.css  (Project Builder, page-owned, scoped to the studio)
+   MOBCO · studio.css  (Explore in 3D, page-owned, scoped to the studio)
    Layout: < 1024px  → sticky viewer on top, title / model info or builder / library / view options below
            ≥ 1024px  → full-height viewer; the side card (title, mode switch, info or builder), the compact
                        view options and the library float over the canvas (the engine re-centres the model in
