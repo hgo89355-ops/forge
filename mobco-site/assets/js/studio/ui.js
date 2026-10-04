@@ -1,8 +1,6 @@
-// MOBCO Project Builder · ui.js
-// Binds studio.html to the engine. Two modes share one viewer:
-//   explore · the five project models: library rail with runtime thumbnails, info card, hotspots and their cards
-//   build   · the visitor's own concept sketch (models/builder.js), rebuilt live from the builder form
-// Shared: compact view options (view presets, day / sunset / night, separate floors, line drawing), toolbar
+// MOBCO Explore in 3D · ui.js
+// Binds studio.html to the engine: the five project models with a library rail (runtime thumbnails), an info
+// card, hotspots and their cards, compact view options (view presets, day / sunset / night, separate floors, line drawing), toolbar
 // (save image, full screen, reset, show / hide options), zoom buttons, floor chip, loader, error and
 // no-WebGL states, wheel-zoom engagement, view insets. Fully bilingual through strings.js and t().
 
@@ -14,16 +12,13 @@ import { projectUrl } from '../data/site-data.js';
 import { S, fmt } from './strings.js';
 import { modelIcon, projectFor } from './registry.js';
 import { DEFAULT_HOUR } from './environment.js';
-import { createBuilderUI } from './builder-ui.js';
-import { setConfig as setBuilderConfig } from './models/builder.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 const THUMB_KEY = (id) => `mobco-studio-thumb-v2:${id}`;
-const BUILDER = 'builder';
 const LIGHT = { day: DEFAULT_HOUR, sunset: 18.35, night: 21 };
 const lightOf = (h) => (h < 17.4 ? 'day' : h < 19.2 ? 'sunset' : 'night');
 
-export function createStudioUI({ root, engine, entries, initialId, initialMode = 'explore', deepLinked = false, onModelChange = () => {} }) {
+export function createStudioUI({ root, engine, entries, initialId, deepLinked = false, onModelChange = () => {} }) {
   const viewport = $('[data-studio-viewport]', root);
   const loader = $('[data-studio-loader]', root);
   const errorEl = $('[data-studio-error]', root);
@@ -43,13 +38,11 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
   const toolbar = $('[data-studio-toolbar]', root);
   const zoomBox = $('[data-studio-zoom]', root);
   const poster = $('[data-studio-poster-img]', root);
-  const form = $('[data-builder]', root);
 
   const metas = {};            // id → normalized meta (after a successful load)
   const status = {};           // id → 'ok' | 'error'
-  let mode = initialMode === 'build' ? 'build' : 'explore';
-  let current = initialId;     // explore model id (kept while building, so "Our projects" returns to it)
-  let shown = null;            // id currently displayed by the engine ('builder' while building)
+  let current = initialId;
+  let shown = null;            // id currently displayed by the engine
   let readyFired = false;
   let loadSeq = 0;
   let engineState = engine ? engine.getState() : null;
@@ -60,8 +53,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
   let immersive = false;
   let collapsed = false;
   let engaged = false;
-  let viewTouched = false;     // the visitor moved the camera since the last preset
-  let currentView = 'aerial';
   let lastInsets = { left: 0, right: 0, top: 0, bottom: 0 };
 
   const reduced = prefersReducedMotion() || !!engine?.lowPower;
@@ -71,7 +62,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
   /* ============================================================ helpers */
   const entryOf = (id) => entries.find((e) => e.id === id) || null;
   const nameOf = (id) => {
-    if (id === BUILDER) return t(S.yourProject);
     const e = entryOf(id);
     return t(e?.project ? e.name : metas[id]?.name || e?.name || id);
   };
@@ -82,7 +72,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     if (readyFired) return;
     readyFired = true;
     root.dataset.ready = 'true';
-    window.dispatchEvent(new CustomEvent('studio:ready', { detail: { model: mode === 'build' ? BUILDER : current, mode, ok, webgl: !!engine } }));
+    window.dispatchEvent(new CustomEvent('studio:ready', { detail: { model: current, ok, webgl: !!engine } }));
   }
 
   // brand the engine's floor highlight boxes (hover / selected) without touching engine.js
@@ -101,7 +91,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     railScrolledTo = null;
     railList.innerHTML = entries.map((e) => {
       const thumb = store.get(THUMB_KEY(e.id), 'session');
-      return `<li><button class="studio-rail__item${status[e.id] === 'error' ? ' is-unavailable' : ''}" type="button" data-model="${esc(e.id)}" aria-pressed="${mode === 'explore' && e.id === current}">
+      return `<li><button class="studio-rail__item${status[e.id] === 'error' ? ' is-unavailable' : ''}" type="button" data-model="${esc(e.id)}" aria-pressed="${e.id === current}">
         <span class="studio-rail__thumb${thumb ? ' has-img' : ''}">${modelIcon(e.id)}${thumb ? `<img src="${esc(thumb)}" alt="" width="320" height="200" decoding="async">` : ''}</span>
         <span class="studio-rail__name">${esc(t(e.name))}</span>
       </button></li>`;
@@ -121,9 +111,9 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     requestAnimationFrame(revealActiveRailItem);
     $$('.studio-rail__item', railList).forEach((b) => {
       const id = b.dataset.model;
-      b.setAttribute('aria-pressed', String(mode === 'explore' && id === current));
+      b.setAttribute('aria-pressed', String(id === current));
       b.classList.toggle('is-unavailable', status[id] === 'error');
-      b.classList.toggle('is-loading', mode === 'explore' && id === current && engineState?.loading === true);
+      b.classList.toggle('is-loading', id === current && engineState?.loading === true);
     });
   }
   function setThumb(id, url) {
@@ -139,7 +129,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     if (btn) go(btn.dataset.model);
   });
 
-  /* ============================================================ info card (explore) */
+  /* ============================================================ info card */
   function renderInfo(id, { animate = false } = {}) {
     const entry = entryOf(id);
     if (!entry) return;
@@ -165,7 +155,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     requestAnimationFrame(updateInsets);
   }
   function labelCanvas() {
-    if (engine) engine.canvas.setAttribute('aria-label', fmt(t(S.canvasLabel), { name: mode === 'build' ? t(S.yourProject) : nameOf(current) }));
+    if (engine) engine.canvas.setAttribute('aria-label', fmt(t(S.canvasLabel), { name: nameOf(current) }));
   }
 
   /* ============================================================ loader / states */
@@ -192,41 +182,16 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     root.classList.toggle('has-error', on);
   }
 
-  /* ============================================================ modes */
-  const modeBtns = $$('[data-studio-mode]', root);
-  function renderMode() {
-    root.dataset.mode = mode;
-    modeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.studioMode === mode)));
-    if (form) form.hidden = mode !== 'build';
-    if (rail) rail.hidden = mode === 'build';
-    labelCanvas();
-    syncRail();
-    requestAnimationFrame(updateInsets);
-  }
-  modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.studioMode)));
-
-  function setMode(next, { push = true } = {}) {
-    if (next !== 'build' && next !== 'explore') return;
-    if (next === mode && (shown === (next === 'build' ? BUILDER : current) || engineState?.loading)) return;
-    mode = next;
-    closeHotcard();
-    renderMode();
-    onModelChange(mode === 'build' ? BUILDER : current, { push, mode });
-    if (mode === 'build') loadBuilder();
-    else go(current, { push: false, force: true });
-  }
-
-  /* ============================================================ model switching (explore) */
+  /* ============================================================ model switching */
   function go(id, { push = true, autoFallback = false, force = false } = {}) {
     const entry = entryOf(id);
     if (!entry) return;
-    if (mode === 'build') { mode = 'explore'; renderMode(); force = true; }
     if (!force && id === current && (shown === id || engineState?.loading) && !autoFallback) return;
     current = id;
     closeHotcard();
     renderInfo(id, { animate: true });
     syncRail();
-    onModelChange(id, { push, mode });
+    onModelChange(id, { push });
     updateProjects();
     if (!engine) { showFallbackImage(id); fireReady(false); return; }
     showError(false);
@@ -238,7 +203,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     showLoader(id, { soft: !!shown });
     engineState = { ...engineState, loading: true };
     syncRail();
-    viewTouched = false; currentView = 'aerial';
     engine.load(id, { retry: retry || status[id] === 'error' }).then((meta) => {
       if (seq !== loadSeq || !meta) return;
       metas[id] = meta;
@@ -252,7 +216,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
       reapplyViewOptions();
       announce(fmt(t(S.loaded), { name: nameOf(id) }));
       fireReady(true);
-      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: id, mode } }));
+      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: id } }));
       queueThumbnails();
     }).catch((err) => {
       if (seq !== loadSeq) return;
@@ -277,86 +241,9 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
   }
   $('[data-action="retry"]', errorEl)?.addEventListener('click', () => {
     showError(false);
-    if (mode === 'build') loadBuilder(); else loadModel(current, { retry: true });
+    loadModel(current, { retry: true });
   });
   $('[data-action="next-model"]', errorEl)?.addEventListener('click', () => go(nextModelId(1)));
-
-  /* ============================================================ builder (build mode) */
-  // Every change rebuilds the sketch through engine.load('builder'); the camera, light and floor separation
-  // the visitor chose are carried over, so the model simply changes in place.
-  let building = false, buildQueued = false, rebuilding = false;
-  const builder = form ? createBuilderUI({ form, onChange: (cfg) => { setBuilderConfig(cfg); if (mode === 'build') queueRebuild(); } }) : null;
-  if (builder) setBuilderConfig(builder.config);
-
-  function loadBuilder() {
-    if (!engine) { showFallbackImage(current); fireReady(false); return; }
-    const seq = ++loadSeq;
-    showError(false);
-    showLoader(BUILDER, { soft: !!shown });
-    engineState = { ...engineState, loading: true };
-    viewTouched = false; currentView = 'aerial';
-    building = true;
-    engine.load(BUILDER).then((meta) => {
-      building = false;
-      if (seq !== loadSeq || !meta) return;
-      shown = BUILDER;
-      root.classList.add('is-live');
-      hideLoader();
-      reapplyViewOptions();
-      labelCanvas();
-      fireReady(true);
-      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: BUILDER, mode } }));
-      if (buildQueued) { buildQueued = false; rebuild(); }
-    }).catch((err) => {
-      building = false;
-      if (seq !== loadSeq) return;
-      console.error('[studio] the builder sketch failed', err);
-      hideLoader();
-      showError(true);
-      root.classList.add('is-live');
-      fireReady(false);
-    });
-  }
-  const queueRebuild = debounce(() => rebuild(), engine?.lowPower ? 220 : 90);
-  async function rebuild() {
-    if (!engine || mode !== 'build') return;
-    if (building || shown !== BUILDER) { buildQueued = true; return; }
-    building = true;
-    const seq = ++loadSeq;
-    const st = engine.getState();
-    const cam = engine.camera.position.clone();
-    const target = engine.controls.target.clone();
-    const keepView = viewTouched;
-    const view = currentView;
-    viewport.classList.add('is-updating');
-    try {
-      rebuilding = true;
-      await engine.load(BUILDER, { instantCamera: true });
-      if (seq !== loadSeq) return;
-      engine.setTime(st.hour);
-      if (st.explode > 0) engine.setExplode(st.explode, { instant: true });
-      if (keepView) {
-        engine.camera.position.copy(cam);
-        engine.controls.target.copy(target);
-        engine.controls.update();
-      } else {
-        // the preset was never moved: re-frame it so a taller or wider sketch still fits
-        engine.setView(view, { instant: true });
-      }
-      viewTouched = keepView;
-      engine.invalidate();
-      announce(t(S.updated));
-      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: BUILDER, mode, update: true } }));
-    } catch (err) {
-      console.error('[studio] the builder sketch failed to update', err);
-    } finally {
-      rebuilding = false;
-      building = false;
-      viewport.classList.remove('is-updating');
-      if (buildQueued) { buildQueued = false; rebuild(); }
-    }
-  }
-  $('[data-builder-save]', form || root)?.addEventListener('click', () => screenshot());
 
   /* ============================================================ no-WebGL fallback */
   function showFallbackImage(id) {
@@ -373,7 +260,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     fallbackEl.hidden = false;
     loader.classList.add('is-hidden');
     [toolbar, panel, hint, zoomBox].forEach((el) => { if (el) el.hidden = true; });
-    $('.studio-modes', root)?.setAttribute('hidden', '');
   }
 
   /* ============================================================ view options (compact panel) */
@@ -390,15 +276,13 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     if (!engine) return;
     if (wantLight !== 'day') engine.setTime(LIGHT[wantLight]);
     if (wantLines) engine.setMode('blueprint');
-    if (wantExplode && !rebuilding) engine.setExplode(0.6);
+    if (wantExplode) engine.setExplode(0.6);
     markView('aerial');
   }
   if (engine) {
     viewBtns.forEach((b) => b.addEventListener('click', () => {
-      currentView = b.dataset.view;
-      viewTouched = false;
-      engine.setView(currentView);
-      markView(currentView);
+      engine.setView(b.dataset.view);
+      markView(b.dataset.view);
     }));
     lightBtns.forEach((b) => b.addEventListener('click', () => {
       wantLight = b.dataset.light;
@@ -429,7 +313,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     const b = e.target.closest('[data-zoom]');
     if (!b || !engine) return;
     engine.zoom(b.dataset.zoom === 'in' ? 0.8 : 1.25, { duration: 360 });
-    viewTouched = true;
   });
 
   /* ============================================================ toolbar */
@@ -481,7 +364,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     closeHotcard();
     engine.reset();
     wantExplode = false; wantLines = false; wantLight = 'day';
-    currentView = 'aerial'; viewTouched = false;
     markView('aerial');
   }
 
@@ -503,31 +385,22 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
       ctx.direction = ar ? 'rtl' : 'ltr';
       ctx.textAlign = ar ? 'right' : 'left';
       const x = ar ? W - 32 * s : 32 * s;
-      const build = shown === BUILDER;
       ctx.fillStyle = '#5fb2b8';
       ctx.font = `700 ${Math.round(13 * s)}px ${fam}`;
-      ctx.fillText(t(S.screenshotCaption).toUpperCase(), x, H - (build ? 76 : 56) * s);
+      ctx.fillText(t(S.screenshotCaption).toUpperCase(), x, H - 56 * s);
       ctx.fillStyle = '#ffffff';
       ctx.font = `600 ${Math.round(22 * s)}px ${fam}`;
-      ctx.fillText(nameOf(shown), x, H - (build ? 48 : 28) * s);
-      if (build && builder) {
-        ctx.fillStyle = 'rgba(255,255,255,0.84)';
-        ctx.font = `500 ${Math.round(14 * s)}px ${fam}`;
-        let line = builder.summary();
-        while (ctx.measureText(line).width > W * 0.62 && line.length > 20) line = `${line.slice(0, -2)}`;
-        if (line !== builder.summary()) line = `${line.trim()}…`;
-        ctx.fillText(line, x, H - 24 * s);
-      }
+      ctx.fillText(nameOf(shown), x, H - 28 * s);
       ctx.textAlign = ar ? 'left' : 'right';
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
       ctx.font = `500 ${Math.round(13 * s)}px ${fam}`;
-      ctx.fillText(t(build ? S.concept : S.illustrative), ar ? 32 * s : W - 32 * s, H - 24 * s);
+      ctx.fillText(t(S.illustrative), ar ? 32 * s : W - 32 * s, H - 28 * s);
       const blob = await new Promise((r) => shot.toBlob(r, 'image/png'));
       if (!blob) throw new Error('toBlob failed');
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = build ? 'mobco-project-sketch.png' : `mobco-${shown}.png`;
+      a.download = `mobco-${shown}.png`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -605,7 +478,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     });
   }
 
-  /* ============================================================ hotspots (explore) */
+  /* ============================================================ hotspots */
   function buildHotspots(list) {
     closeHotcard();
     hotLayer.innerHTML = '';
@@ -762,12 +635,12 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
 
   /* ============================================================ engine events */
   if (engine) {
-    engine.on('progress', ({ value }) => { if (!rebuilding) setProgress(value); });
+    engine.on('progress', ({ value }) => setProgress(value));
     engine.on('change', (st) => { engineState = st; syncControls(st); syncRail(); });
     engine.on('load', ({ hotspots: hs }) => {
-      buildHotspots(mode === 'build' ? [] : hs);
+      buildHotspots(hs);
       selectedFloor = null; hoverFloor = null; renderLevel();
-      if (!rebuilding) markView('aerial');
+      markView('aerial');
     });
     engine.on('frame', ({ hotspots: list }) => { if (list.length) positionHotspots(list); });
     engine.on('hover', ({ floor }) => { hoverFloor = floor; renderLevel(); });
@@ -777,7 +650,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
       if (floor) announce(fmt(t(S.levelSelected), { label: floorLabel(floor) }));
     });
     engine.on('interact', () => {
-      viewTouched = true;
       hint?.classList.add('is-hidden');
       markView('');
     });
@@ -800,7 +672,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     const step = () => {
       if (!ids.length || tries > 40) return;
       const id = ids[0];
-      if (status[id] === 'error' || engineState?.loading || building || document.hidden) {
+      if (status[id] === 'error' || engineState?.loading || document.hidden) {
         if (status[id] === 'error') ids.shift();
         tries++;
         idle(step, 1500);
@@ -832,7 +704,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
     labelHotspots();
     labelCanvas();
     if (openHot) { renderHotcard(); placeHotcard(); }
-    if (!loader.classList.contains('is-hidden') && engine) { loaderLabel.textContent = t(S.loading); loaderName.textContent = nameOf(shown || current); }
+    if (!loader.classList.contains('is-hidden') && engine) { loaderLabel.textContent = t(S.loading); loaderName.textContent = nameOf(current); }
     if (!engine) showFallbackImage(current);
     requestAnimationFrame(updateInsets);
   }
@@ -841,26 +713,21 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
   /* ============================================================ boot */
   renderRail();
   renderInfo(current);
-  renderMode();
   renderToolbarLabels();
   renderHint();
   if (engine) {
-    loaderName.textContent = nameOf(mode === 'build' ? BUILDER : current);
-    if (mode === 'build') { onModelChange(BUILDER, { push: false, mode }); loadBuilder(); }
-    else go(current, { push: false, autoFallback: !deepLinked, force: true });
+    loaderName.textContent = nameOf(current);
+    go(current, { push: false, autoFallback: !deepLinked, force: true });
   } else {
     showFallbackImage(current);
-    onModelChange(current, { push: false, mode });
+    onModelChange(current, { push: false });
     fireReady(false);
   }
   requestAnimationFrame(updateInsets);
 
   return {
     go,
-    setMode,
-    get mode() { return mode; },
     get current() { return current; },
-    get builder() { return builder; },
     nextModelId,
     reset,
     toggleFullscreen,

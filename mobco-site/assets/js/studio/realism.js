@@ -1,5 +1,5 @@
-// MOBCO Project Builder · realism.js
-// Physically plausible finishing for every model (the five project models and the builder), applied once per
+// MOBCO Explore in 3D · realism.js
+// Physically plausible finishing for every model (the five project models), applied once per
 // material after the engine has prepared a model (environment.setTime → enhanceScene):
 //   · an outdoor image-based light (sky, warm ground, a soft distant skyline) instead of a studio room, in a
 //     day, golden-hour and night variant, so glass and water reflect a believable surrounding
@@ -256,7 +256,7 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
       add(o.userData.__orig);
       for (const m of list) if (patchMaterial(m)) changed++;
     });
-    // forget disposed materials (models are rebuilt often in the builder)
+    // forget disposed materials (models are swapped on every switch)
     for (const m of envMats) if (!m.userData.__rl) envMats.delete(m);
     return changed;
   }

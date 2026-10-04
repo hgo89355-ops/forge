@@ -1,4 +1,4 @@
-// MOBCO Project Builder · _dev-box.js
+// MOBCO Explore in 3D · _dev-box.js
 // Temporary development model used to build and test the engine before the five real model modules
 // land. It honours the MODEL MODULE CONTRACT exactly (see docs/requests/studio.md). It is NOT listed in
 // the studio UI (only reachable with studio.html?dev=1 or ?model=_dev-box).

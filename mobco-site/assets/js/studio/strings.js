@@ -13,10 +13,6 @@ export const S = {
     en: 'Interactive 3D model of {name}. The arrow keys move the view.',
     ar: 'نموذج تفاعلي ثلاثي الأبعاد لـ{name}. حرّك العرض بمفاتيح الأسهم.',
   },
-  // light
-  day: { en: 'Day', ar: 'نهار' },
-  sunset: { en: 'Sunset', ar: 'غروب' },
-  night: { en: 'Night', ar: 'ليل' },
   // floors chip
   levelN: { en: 'Floor {n}', ar: 'الطابق {n}' },
   levelOf: { en: '{n} of {total}', ar: '{n} من {total}' },
@@ -25,7 +21,6 @@ export const S = {
   nextLevel: { en: 'Next floor', ar: 'الطابق التالي' },
   levelSelected: { en: 'Showing {label}', ar: 'يُعرض الآن: {label}' },
   // toolbar
-  screenshot: { en: 'Save image', ar: 'حفظ صورة' },
   screenshotSaved: { en: 'Image saved', ar: 'تم حفظ الصورة' },
   screenshotCaption: { en: 'MOBCO Group · Explore in 3D', ar: 'مجموعة موبكو · تجوّل ثلاثي الأبعاد' },
   fullscreen: { en: 'Full screen', ar: 'ملء الشاشة' },
@@ -33,8 +28,6 @@ export const S = {
   reset: { en: 'Reset view', ar: 'إعادة ضبط العرض' },
   showControls: { en: 'Show view options', ar: 'إظهار خيارات العرض' },
   hideControls: { en: 'Hide view options', ar: 'إخفاء خيارات العرض' },
-  zoomIn: { en: 'Zoom in', ar: 'تكبير' },
-  zoomOut: { en: 'Zoom out', ar: 'تصغير' },
   // hints
   zoomHint: { en: 'Click the model, then scroll to zoom', ar: 'انقر على النموذج ثم مرّر للتكبير' },
   // states

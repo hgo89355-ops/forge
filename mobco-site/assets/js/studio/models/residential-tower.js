@@ -1,5 +1,5 @@
 /**
- * MOBCO Project Builder · model "residential-tower"
+ * MOBCO Explore in 3D · model "residential-tower"
  * -----------------------------------------------------------------------------
  * ILLUSTRATIVE massing model inspired by the Victoria 101 render (Port Whitby).
  * It is NOT a replica: proportions, level counts and site layout are an

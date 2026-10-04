@@ -1,5 +1,5 @@
 /**
- * MOBCO Project Builder · model: "campus"
+ * MOBCO Explore in 3D · model: "campus"
  * ---------------------------------------------------------------------------
  * An ILLUSTRATIVE massing model inspired by the aerial render of the
  * "Innovation Campus" (assets/img/campus.webp). It is not a replica and carries

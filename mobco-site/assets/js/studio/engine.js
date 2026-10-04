@@ -1,4 +1,4 @@
-// MOBCO Project Builder · engine.js
+// MOBCO Explore in 3D · engine.js
 // The UI-less WebGL engine behind studio.html (and a future compact embed on the home page).
 //
 //   import { createStudio, hasWebGL } from './assets/js/studio/engine.js';

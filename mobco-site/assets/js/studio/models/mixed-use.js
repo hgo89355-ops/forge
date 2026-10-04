@@ -1,5 +1,5 @@
 /**
- * MOBCO Project Builder · model "mixed-use"
+ * MOBCO Explore in 3D · model "mixed-use"
  * ------------------------------------------------------------------
  * An ILLUSTRATIVE massing model inspired by the Eastmain (New Cairo) render:
  * a glazed office block (5 office levels) over a double-height retail podium

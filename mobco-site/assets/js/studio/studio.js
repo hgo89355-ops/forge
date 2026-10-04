@@ -1,6 +1,6 @@
-// MOBCO Project Builder · studio.js (page entry for studio.html)
-// Boots the engine (or the no-WebGL fallback), the UI in "explore" or "build" mode, ?model= / ?mode=build deep
-// links with history sync, a few quiet keyboard shortcuts and the "projects behind the models" list.
+// MOBCO Explore in 3D · studio.js (page entry for studio.html)
+// Boots the engine (or the no-WebGL fallback), the UI, ?model= deep links with history sync, a few quiet
+// keyboard shortcuts and the "projects behind the models" list.
 
 import { t, onLang } from '../core/i18n.js';
 import { scan, scrollTo } from '../core/motion.js';
@@ -21,7 +21,6 @@ function boot() {
   const entries = libraryEntries({ dev });
   const deepLinked = !!requested && entries.some((e) => e.id === requested);
   const initialId = deepLinked ? requested : entries[0].id;
-  const initialMode = getParam('mode') === 'build' || requested === 'builder' ? 'build' : 'explore';
 
   /* ---------------------------------------------------------------- engine (or fallback) */
   let engine = null;
@@ -41,30 +40,24 @@ function boot() {
 
   /* ---------------------------------------------------------------- URL sync */
   let firstSync = true;
-  function onModelChange(id, { push, mode }) {
+  function onModelChange(id, { push }) {
     const url = new URL(location.href);
     const before = url.search;
-    if (mode === 'build') { url.searchParams.set('mode', 'build'); url.searchParams.delete('model'); }
-    else {
-      url.searchParams.delete('mode');
-      if (firstSync && !deepLinked && id === entries[0].id) url.searchParams.delete('model');
-      else url.searchParams.set('model', id);
-    }
+    if (firstSync && !deepLinked && id === entries[0].id) url.searchParams.delete('model');
+    else url.searchParams.set('model', id);
     firstSync = false;
     if (url.search === before) return;
     try {
-      if (push) history.pushState({ studioModel: id, mode }, '', url);
-      else history.replaceState({ studioModel: id, mode }, '', url);
+      if (push) history.pushState({ studioModel: id }, '', url);
+      else history.replaceState({ studioModel: id }, '', url);
     } catch { /* file:// or sandboxed */ }
   }
 
-  const ui = createStudioUI({ root, engine, entries, initialId, initialMode, deepLinked, onModelChange });
+  const ui = createStudioUI({ root, engine, entries, initialId, deepLinked, onModelChange });
 
   window.addEventListener('popstate', () => {
-    const u = new URL(location.href).searchParams;
-    if (u.get('mode') === 'build') { if (ui.mode !== 'build') ui.setMode('build', { push: false }); return; }
-    const id = u.get('model') || entries[0].id;
-    if (entries.some((e) => e.id === id) && (id !== ui.current || ui.mode !== 'explore')) ui.go(id, { push: false });
+    const id = new URL(location.href).searchParams.get('model') || entries[0].id;
+    if (entries.some((e) => e.id === id) && id !== ui.current) ui.go(id, { push: false });
   });
 
   /* ---------------------------------------------------------------- keyboard shortcuts (not advertised) */
@@ -84,8 +77,6 @@ function boot() {
     const html = document.documentElement;
     if (html.classList.contains('is-locked') || html.classList.contains('search-open') || html.classList.contains('nav-open')) return;
     if (!stageVisible && !ui.isImmersive()) return;
-    // inside the builder form, letters and digits belong to the form controls
-    if (el?.closest?.('[data-builder]')) return;
     const k = e.key;
     if (/^[1-9]$/.test(k)) {
       const entry = entries[+k - 1];
@@ -111,7 +102,7 @@ function boot() {
     list.innerHTML = entries.filter((e) => e.project).map((e) => {
       const p = e.project;
       const meta = [t(p.typology), p.location ? t(p.location) : null].filter(Boolean).join(' · ');
-      return `<li class="studio-proj${e.id === ui.current && ui.mode === 'explore' ? ' is-current' : ''}" data-proj="${esc(e.id)}">
+      return `<li class="studio-proj${e.id === ui.current ? ' is-current' : ''}" data-proj="${esc(e.id)}">
         <div class="studio-proj__media">
           ${picture(p.image, { alt: t(p.name), thumb: true, position: p.pos })}
         </div>
@@ -129,7 +120,7 @@ function boot() {
     scan(list);
   }
   function markCurrentProject() {
-    $$('[data-proj]', list).forEach((li) => li.classList.toggle('is-current', ui.mode === 'explore' && li.dataset.proj === ui.current));
+    $$('[data-proj]', list).forEach((li) => li.classList.toggle('is-current', li.dataset.proj === ui.current));
   }
   list?.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-open-model]');

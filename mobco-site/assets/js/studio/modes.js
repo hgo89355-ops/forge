@@ -1,4 +1,4 @@
-// MOBCO Project Builder · modes.js
+// MOBCO Explore in 3D · modes.js
 // Render-mode materials (Realistic / Clay / Blueprint / X-ray), the "ghost" material used when a level
 // is isolated, lazily-built edge overlays (EdgesGeometry, incl. baked InstancedMesh edges), and the
 // section-cut "cap" shader patch (back faces of cut solids render in MOBCO teal).

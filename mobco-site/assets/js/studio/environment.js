@@ -1,4 +1,4 @@
-// MOBCO Project Builder · environment.js
+// MOBCO Explore in 3D · environment.js
 // Sky dome (gradient + sun glow), a natural ground plane (soft earth tones, a fading survey grid only in the
 // Lines style), warm key light with soft shadows, sky / ground fill, haze, and the time-of-day model (sun path
 // derived from each model's meta.sun). Realistic finishing (outdoor reflections, procedural material detail,

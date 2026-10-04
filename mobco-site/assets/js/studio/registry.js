@@ -1,4 +1,4 @@
-// MOBCO Project Builder · registry.js
+// MOBCO Explore in 3D · registry.js
 // The model library (ids/order fixed by the brief), project mapping and the line-art icons shown in the
 // library rail until a runtime thumbnail has been rendered.
 

@@ -1,5 +1,5 @@
 /**
- * MOBCO Project Builder · model: "villa-community"
+ * MOBCO Explore in 3D · model: "villa-community"
  * -------------------------------------------------------------------------
  * An ILLUSTRATIVE massing model of a gated villa community, inspired by the
  * aerial render `assets/img/aerial-compound.webp` (not a replica, not to scale):

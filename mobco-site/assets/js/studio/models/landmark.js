@@ -1,5 +1,5 @@
 /**
- * MOBCO Project Builder · model "landmark"
+ * MOBCO Explore in 3D · model "landmark"
  * ------------------------------------------------------------------
  * An ILLUSTRATIVE massing model of a classical courtyard building, inspired
  * by the "ksa-landmark" render: terracotta brick wings with cream stone trims
