@@ -1,5 +1,5 @@
 /* ==========================================================================
-   assets/css/pages/404.css — "This page is still under construction" (404.html).
+   assets/css/pages/404.css · "This page is still under construction" (404.html).
    Owned by the contact builder. Scoped under body[data-page='404'] / .notfound* / .nf-*.
    The crane is pure SVG + CSS keyframes. Every animation uses fill-mode `both`, so with
    prefers-reduced-motion (main.css collapses durations) or ?qa=1 it renders its final frame:

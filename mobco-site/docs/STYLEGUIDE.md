@@ -21,6 +21,10 @@ Contents
 13. Accessibility checklist
 14. QA commands
 15. Cross-page contracts (anchors, URL params) & content honesty
+16. Shared-file integration pass
+17. Round 2 shared changes (header, cookie bar, copy)
+
+Copy rule (round 2): no em or en dashes in any visible string, EN or AR. See the copy guide used for round 2.
 
 ---
 
@@ -89,7 +93,8 @@ Copy `_template.html`. Required edits:
   <!-- @include footer -->
   <!-- /@include footer -->
   ```
-  The header include contains the skip link, scroll-progress bar, header, mega menu and mobile nav.
+  The header include contains the skip link, the scroll-progress bar and the header (tab bar + the two dropdown menus).
+  There is no burger and no mobile drawer (removed in round 2, see §6.10).
   The footer include contains the footer, newsletter form and the back-to-top ring.
 - Every page needs exactly one `<h1>`.
 
@@ -121,7 +126,19 @@ Tracking `--tracking-display .04em`, `--tracking-heading .05em`, `--tracking-lab
 `-9 64` · `-10 80` · `-11 96` · `-12 128` · `-13 160` · `--section-pad clamp(80px…160px)` · `--section-pad-sm`.
 
 **Layout** `--container 1320px` · `--container-wide 1600px` · `--container-narrow 880px` ·
-`--gutter clamp(16px…48px)` (side padding) · `--grid-gap clamp(16px…32px)` · `--header-h` (72px; 88px ≥1200px).
+`--gutter clamp(16px…48px)` (side padding) · `--grid-gap clamp(16px…32px)` · header height tokens (below).
+
+**Header height** (plain px values, so `parseFloat(getComputedStyle(html).getPropertyValue('--header-h'))` works):
+
+| Width | Layout | `--header-row` | `--header-tabs` | `--header-h` |
+|---|---|---|---|---|
+| < 768px | two rows: logo + tools, then the scrollable tab bar | 56px | 44px | **100px** |
+| 768 to 1099px | two rows | 64px | 48px | **112px** |
+| 1100 to 1279px | one row (compact) | 76px | 0px | **76px** |
+| ≥ 1280px | one row | 88px | 0px | **88px** |
+
+Always offset fixed-header content with `var(--header-h)` (hero padding, `top` of sticky elements, `.pt-header`).
+`html { scroll-padding-block-start }` and `scrollTo()` already use it.
 
 **Shape/elevation** `--radius 2px` (architectural; use everywhere) · `--radius-lg 4px` · `--radius-pill` (toggles only) ·
 `--hairline` (`1px solid var(--line)`) · `--shadow-xs|sm|md|lg` · `--shadow-header`.
@@ -134,7 +151,7 @@ Tracking `--tracking-display .04em`, `--tracking-heading .05em`, `--tracking-lab
 `--z-toast 500` · `--z-tooltip 600` · `--z-cursor 900` · `--z-transition 950` · `--z-preloader 1000`.
 Page content should stay below `--z-sticky` unless it is an overlay.
 
-Breakpoints (min-width): `640` (sm) · `768` (md) · `1024` (lg) · `1200` (desktop nav) · `1360` (header CTA) · `1440`.
+Breakpoints (min-width): `640` (sm) · `768` (md) · `1024` (lg) · `1100` (header: tabs move into the logo row) · `1200` · `1280` (header: full size) · `1440`.
 
 ## 4. Layout
 
@@ -352,8 +369,9 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   (hidden on scroll, Esc and when the trigger is pressed).
 - The lightbox re-renders its caption, alt and button labels when the language changes while it is open.
 - Re-opening a modal/drawer during its 650ms close transition is safe (the pending hide is cancelled).
-- The cookie banner hides while any overlay locks the page (`html.is-locked`: modal, drawer, lightbox, search,
-  mobile nav) and comes back when it closes.
+- The cookie banner is a small bar at the bottom inline-start corner (one sentence, Accept / Decline; full width on
+  phones). It hides while any overlay locks the page (`html.is-locked`: modal, drawer, lightbox, search) and comes
+  back when it closes.
 - **Copy**: `<button data-copy="info.ksa@mobco-group.com">` or `data-copy-target="#selector"` → clipboard + toast.
 - **Consent-gated embed** (contact map):
   ```html
@@ -396,7 +414,7 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   </div>
   ```
   Use `STATS` from site-data (25+, 10,000+, 430+, 600+). Keep the final number as static text (no-JS/SEO).
-- CTA band: `<section class="cta-band"><div class="cta-band__bg"><picture>…</picture></div><div class="container cta-band__inner"><div><p class="eyebrow">…</p><h2 class="cta-band__title">…</h2></div><div class="cta-band__actions">…buttons…</div></div></section>`. The footer already opens with a big CTA ("Let's build what's next") — don't put a CTA band directly above the footer.
+- CTA band: `<section class="cta-band"><div class="cta-band__bg"><picture>…</picture></div><div class="container cta-band__inner"><div><p class="eyebrow">…</p><h2 class="cta-band__title">…</h2></div><div class="cta-band__actions">…buttons…</div></div></section>`. The footer already opens with a big CTA ("Let's talk about your project"), so don't put a CTA band directly above the footer.
 - Page hero (inner pages): see `_template.html`. `.page-hero` (dark, 86vh) / `.page-hero--short` / `.page-hero--light`
   (sand, for `data-hero="light"`). Parts: `.page-hero__bg` (+ `data-kenburns`), `.page-hero__inner`
   (breadcrumb, eyebrow, `.page-hero__title.display`, `.page-hero__lead`, `.page-hero__actions`), `.page-hero__foot`
@@ -407,11 +425,30 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   `.contact-line.contact-line--light` (dark text, 44px touch target).
 
 ### 6.10 Global chrome (automatic — do not re-implement)
-Header (transparent → solid, hide on scroll down / show on up, active link — on the company pages (`body[data-subsidiary]`) "Subsidiaries" is highlighted with `aria-current="true"` and the matching mega card / mobile sub-link gets `aria-current="page"`; the mobile sub-list mirrors the mega menu incl. Elite Education, Subsidiaries mega menu (the three
-company pages + Elite Education), Projects mega menu (five featured projects, "View all 33 projects" — the count is
-static HTML and `tools/build.mjs` fails if it no longer matches `PROJECTS.length`) + "Open 3D Studio", search button, EN | ع toggle, CTA, burger → full-screen mobile nav), footer,
-scroll-progress bar, back-to-top ring, skip link, first-visit preloader, page-transition curtain, custom
-cursor (fine pointers), cookie banner, toasts, search overlay (⌘/Ctrl+K or `/`).
+**Header (round 2).** The eight tabs are always a horizontal bar, like the client's own site. No burger, no drawer.
+- ≥1100px: one row. Logo, the tabs (Home, About, Subsidiaries ▾, Projects ▾, 3D Studio, Media, Careers, Contact),
+  then search, EN | ع and "Start a project". 1100 to 1279px is the compact size (smaller logo, tighter type).
+- <1100px: two rows. Logo + tools on top; the tabs below in a bar that scrolls sideways (44px touch targets, edge
+  fades, the active tab is scrolled into view, RTL aware). On phones the language button shows only the other language.
+- Dropdowns (`[data-mega]` items, panel `.nav-menu[data-mega-panel]`): a compact white card under the tab on desktop
+  (Subsidiaries: the three company pages + Elite Education + "All subsidiaries"; Projects: five featured projects,
+  "View all 33 projects" and "Open 3D Studio"). In the tab bar they open as a sheet attached to the bar (full width on
+  phones). Mouse hover opens on desktop; the chevron button toggles; with touch (and any pointer in the tab bar) the
+  first tap on "Subsidiaries" / "Projects" opens the menu and a second tap follows the link. Keyboard: Enter/Space
+  on the chevron, ArrowDown on the tab or chevron, ArrowUp/ArrowDown/Home/End inside, Escape closes and returns focus,
+  Tab out closes. Tap/click outside closes. The "View all 33 projects" count is static HTML and `tools/build.mjs`
+  fails if it no longer matches `PROJECTS.length`.
+- States on `.site-header`: transparent with white text over dark heroes (`body[data-hero="dark"]`), `.is-solid`
+  after 40px of scroll, `.is-hidden` on scroll down (shown again on scroll up), `.mega-open` while a menu is open
+  (never hides then), `.is-opaque` while a tab-bar sheet is open. In the tab bar a light-hero page gets a solid header
+  from the top.
+- Active tab from `body[data-page]`; on the company pages (`body[data-subsidiary]`) "Subsidiaries" gets
+  `aria-current="true"` and the matching dropdown link `aria-current="page"`.
+- CTA `.site-header__cta` → `contact.html#inquiry`: label + arrow tile. Navy label / teal tile on the white header,
+  teal label / white tile over dark heroes.
+
+Other global chrome: footer, scroll-progress bar, back-to-top ring, skip link, first-visit preloader, page-transition
+curtain, custom cursor (fine pointers), cookie banner, toasts, search overlay (⌘/Ctrl+K or `/`).
 
 ## 7. Data attributes (behaviour reference)
 
@@ -507,7 +544,7 @@ import { WORLD } from '../data/world-map.js';
 ### core/search.js — `openSearch(prefill?)`, `closeSearch()` (index = `PAGES` + `SUBSIDIARIES` (→ their `page`) + `PROJECTS` (incl. category names) + `PROJECT_CATEGORIES` (→ `projects.html?category=<id>`) + `SECTORS`; results de-duplicated by URL).
 ### core/consent.js — `hasConsent()`, `getConsent()` (`'accepted'|'declined'|null`), `setConsent(v)`, `onConsent(cb) → unsubscribe` (fires immediately if already accepted), `openConsent()`; event `consentchange`.
 ### core/preloader.js — `whenLoaded() → Promise` (resolves when the first-visit preloader has lifted; immediately otherwise). Start hero timelines after it: `whenLoaded().then(playHero)`.
-### core/header.js — `openMobileNav()`, `closeMobileNav()`, `closeMega()` (rarely needed).
+### core/header.js: `openMega(item)`, `closeMega(item?)`, `isTabBar()` (rarely needed). `openMobileNav()` / `closeMobileNav()` still exist as no-op shims (there is no drawer); drop them from page code.
 ### core/cursor.js, core/transitions.js — automatic.
 
 ### core/utils.js
@@ -669,3 +706,19 @@ works (none was relied on being broken), so removing them is optional clean-up f
 | projects | consent banner hidden under the viewer, `icon-btn--sm` 44px, modal reopen race | `html.is-locked .consent`, 44px `icon-btn--sm` on coarse pointers, `openPanel` cancels the pending hide; `data-ar-aria-roledescription`; `data-no-scroll` links |
 | subsidiaries | `scrollToEl()`, `COS[].focus` override for Real Estate | `scrollTo(el)`; `SUBSIDIARIES['mobco-real-estate'].focus` updated from the verbatim copy |
 | subsidiary pages | London marker maths, `.sd-lease` contact lines, `handshake`/inline quote icons | `WORLD.markers.uk`, `.contact-line--light`, sprite icons `key`, `key-round`, `door-open`, `quote` |
+
+## 17. Round 2 shared changes (header, cookie bar, copy)
+
+What changed in the shared files, and what page owners may need to adjust:
+
+| Change | What to do in page files |
+|---|---|
+| Burger and full-screen mobile drawer removed (`.burger`, `.mobile-nav`, `html.nav-open`, `[data-nav-toggle]` no longer exist) | Delete any page CSS/JS that targets them (e.g. `contact.js` and `studio.js` still check `html.nav-open`; harmless, never true now). |
+| `openMobileNav()` / `closeMobileNav()` are no-op shims (the latter closes any open dropdown) | `projects.js` imports `closeMobileNav`: it keeps working; replace with `closeMega()` when convenient. |
+| Mega menus replaced by compact dropdowns: `.mega`, `.mega__card`, `.mega__inner` are gone; panels are `.nav-menu[data-mega-panel]` with `.nav-menu__link` | Only matters if a page styled the old classes (none found). `.site-header.mega-open` still exists. |
+| Header height: `--header-h` is now 100px (<768), 112px (768 to 1099), 76px (1100 to 1279), 88px (≥1280). New `--header-row`, `--header-tabs` | Use `var(--header-h)` for hero padding and sticky `top`; never hard-code 72/88px. Re-check heroes and sticky bars on phones and tablets (the header is taller there now). |
+| Header CTA always visible (was hidden below 1360px), class `.site-header__cta` (no longer a `.btn`) | Nothing, unless a page styled `.site-header__cta`. |
+| Cookie banner is a small bar (`.consent__text`, `.consent__btn`; `.consent__title` is gone) | Nothing. The map gate (`data-consent-gate`) works as before. |
+| Copy in `site-data.js` rewritten without dashes (keys and structure unchanged). Four project names now use parentheses instead of a dash: NEOM Bay Airport (International Flight Reconfiguration), Bank AlBilad Head Office (Fit-Out Works), Raffles Hotel & Branded Residence (Main Works Package), TBC Schools (Group 12) | Regenerate any static HTML generated from `PROJECTS` (e.g. `tools/gen-projects-static.mjs` for `projects.html`) so it matches. |
+| Arabic nav label for Media is now «الإعلام» (header and `NAV`) | Nothing. |
+

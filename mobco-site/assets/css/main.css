@@ -2605,8 +2605,8 @@ body[data-hero='dark'] .site-header:not(.is-solid):not(.is-opaque) .site-header_
     border-radius: 0;
     box-shadow: 0 28px 40px -20px rgba(11, 22, 32, .5);
   }
-  .site-header__cta-label { padding-inline: .875rem .75rem; }
-  .site-header__cta-icon { inline-size: 40px; }
+  .site-header__cta-label { padding-inline: .75rem .625rem; }
+  .site-header__cta-icon { inline-size: 38px; }
   .site-header__cta { margin-inline-start: .125rem; }
 }
 /* small phones: the language button shows only the other language */
@@ -2617,7 +2617,8 @@ body[data-hero='dark'] .site-header:not(.is-solid):not(.is-opaque) .site-header_
   .lang-toggle__sep { display: none; }
   html:not([lang='ar']) .lang-toggle__opt[data-lang-opt='en'], html[lang='ar'] .lang-toggle__opt[data-lang-opt='ar'] { display: none; }
   .lang-toggle .lang-toggle__opt { opacity: 1; }
-  .site-header__cta { font-size: .625rem; letter-spacing: .1em; }
+  .site-header__inner { column-gap: .5rem; }
+  .site-header__cta { font-size: .65625rem; letter-spacing: .08em; }
   html[lang='ar'] .site-header__cta { font-size: .8125rem; letter-spacing: 0; }
 }
 

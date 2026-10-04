@@ -324,6 +324,8 @@ export function initHero3D() {
     if (engaged === on) return;
     engaged = on;
     engine?.setWheelZoom(on);
+    // while engaged the wheel belongs to the viewer: keep Lenis from smooth-scrolling the page as well
+    engine?.canvas.toggleAttribute('data-lenis-prevent-wheel', on);
     root.classList.toggle('is-engaged', on);
   }
 
