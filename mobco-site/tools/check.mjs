@@ -146,7 +146,8 @@ const IN_PAGE = (expectedW) => {
   out.overflow = out.overflow.slice(0, 10);
   document.querySelectorAll('[data-reveal]:not(.is-revealed), [data-split]:not(.is-revealed)').forEach((el) => {
     const cs = getComputedStyle(el);
-    if (cs.display === 'none' || el.closest('[hidden]')) return;
+    // not rendered at all (own or ancestor display:none, e.g. body[data-footer-cta=off]) → nothing to reveal
+    if (cs.display === 'none' || el.closest('[hidden]') || !el.getClientRects().length) return;
     if (el.closest('.mobile-nav, .mega, [data-modal], [data-drawer]')) return;
     if (parseFloat(cs.opacity) < 0.05 || (el.hasAttribute('data-split') && !el.classList.contains('is-revealed')) || cs.clipPath !== 'none' && cs.clipPath !== 'inset(0px)') out.hiddenReveal.push(path(el));
   });

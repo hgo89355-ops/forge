@@ -77,7 +77,7 @@ Copy `_template.html`. Required edits:
   - `data-page` = nav id: `home|about|subsidiaries|projects|studio|media|careers|contact` (`404` for 404).
     It drives the active nav link (`aria-current="page"`).
   - Optional `data-footer-cta="off"` hides the footer's "Let's build what's next" block — for pages (home) that
-    end on their own closing CTA.
+    end on their own closing CTA, and contact (its hero already says it and the CTA would link to the same page).
   - `data-hero="dark"` → transparent header with white text over your first (dark/photo) section; it turns
     solid white on scroll. `data-hero="light"` → navy header text from the start. With a light first
     section that is not `.page-hero`, give it `.pt-header` (padding-top = header height + 64px).
@@ -401,12 +401,13 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   (sand, for `data-hero="light"`). Parts: `.page-hero__bg` (+ `data-kenburns`), `.page-hero__inner`
   (breadcrumb, eyebrow, `.page-hero__title.display`, `.page-hero__lead`, `.page-hero__actions`), `.page-hero__foot`
   (`.scroll-cue` + `dl.page-hero__meta`). Home builds its own art-directed hero (page CSS) but should reuse tokens.
+  Below 560px the `.page-hero__actions` buttons stack full-width (same as the home and other art-directed heroes).
 - Glass badges (`.badge--glass`) keep their dark backing inside `.section--dark/--deep/.on-dark` (over photos).
 - `.contact-line` is styled for dark backgrounds (footer); in page content on light backgrounds use
   `.contact-line.contact-line--light` (dark text, 44px touch target).
 
 ### 6.10 Global chrome (automatic — do not re-implement)
-Header (transparent → solid, hide on scroll down / show on up, active link, Subsidiaries mega menu (the three
+Header (transparent → solid, hide on scroll down / show on up, active link — on the company pages (`body[data-subsidiary]`) "Subsidiaries" is highlighted with `aria-current="true"` and the matching mega card / mobile sub-link gets `aria-current="page"`; the mobile sub-list mirrors the mega menu incl. Elite Education, Subsidiaries mega menu (the three
 company pages + Elite Education), Projects mega menu (five featured projects, "View all 33 projects" — the count is
 static HTML and `tools/build.mjs` fails if it no longer matches `PROJECTS.length`) + "Open 3D Studio", search button, EN | ع toggle, CTA, burger → full-screen mobile nav), footer,
 scroll-progress bar, back-to-top ring, skip link, first-visit preloader, page-transition curtain, custom
