@@ -351,19 +351,21 @@ function initStudioEmbed() {
       studio = s;
       s.canvas.style.touchAction = 'auto'; // OrbitControls sets 'none'; the embed must never block page scrolling
       s.on('contextlost', () => { if (studio === s) fail(); });
-      const meta = await s.ready;
-      if (studio !== s) return;
-      if (!meta) { fail(); return; }
-      // optional art direction from the markup: data-studio-time (hours 6–22) · data-studio-mode (realistic|clay|blueprint|xray)
-      const hour = parseFloat(embed.dataset.studioTime);
-      if (Number.isFinite(hour)) s.setTime(hour);
-      if (embed.dataset.studioMode) s.setMode(embed.dataset.studioMode);
-      // crossfade once the first frame of the loaded model is on screen
-      requestAnimationFrame(() => requestAnimationFrame(() => {
+      // crossfade drawing → canvas once the engine reports 'load' (model built, shaders compiled, first frame queued)
+      s.on('load', () => {
         if (studio !== s) return;
-        embed.classList.add('is-live');
-        stage.classList.add('is-live');
-      }));
+        // optional art direction from the markup: data-studio-time (hours 6–22) · data-studio-mode (realistic|clay|blueprint|xray)
+        const hour = parseFloat(embed.dataset.studioTime);
+        if (Number.isFinite(hour)) s.setTime(hour);
+        if (embed.dataset.studioMode) s.setMode(embed.dataset.studioMode);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (studio !== s) return;
+          embed.classList.add('is-live');
+          stage.classList.add('is-live');
+        }));
+      });
+      const meta = await s.ready; // null when the model failed to load → keep the drawing
+      if (studio === s && !meta) fail();
     } catch (err) {
       console.warn('[home-b] live 3D embed unavailable — keeping the drawing', err);
       fail();
