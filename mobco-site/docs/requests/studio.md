@@ -81,6 +81,9 @@ is hidden. `hasWebGL()` → `false` means WebGL2 is unavailable (three r163+ req
   (exploded height included — the campus tower rises ~40 m) stay inside the canvas area not covered by the
   panels: the camera moves back along the preset's direction as far as needed, or in by up to 28 % when the
   authored preset leaves the buildings small, so every model fills the free area alike.
+- **Clay light profile:** in Clay mode the engine trades fill for key light (hemisphere × 0.4, sun × 1.35,
+  exposure × 0.76) and the clay materials take little environment light, so the all-white model keeps its form
+  and cast shadows instead of washing out under ACES. Realistic mode is unchanged.
 - **Thumbnails** build a second, `quality:'low'` instance of each model in idle time; `dispose()` must free it.
 - three r186: `PCFSoftShadowMap` was removed — the engine uses `PCFShadowMap` (soft-filtered) with `shadow.radius`.
 
