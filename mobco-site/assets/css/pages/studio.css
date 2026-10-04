@@ -574,7 +574,6 @@ html.studio-immersive, html.studio-immersive body { overflow: hidden; }
 }
 
 /* ---------------------------------------------------------------- CTA band */
-.studio-cta .cta-band__bg img { object-position: 50% 40%; }
 
 /* ---------------------------------------------------------------- projects list */
 .studio-projects__list { display: grid; gap: var(--grid-gap); grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
