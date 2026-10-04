@@ -1,8 +1,7 @@
 // assets/js/pages/contact.js · Contact page behaviour (owned by the contact builder).
 //
 //   1. Local time in the Riyadh and Cairo offices (Intl, no network)
-//   2. Map: WORLD dot-matrix map zoomed to the selected office (tabs), consent-gated Google Maps iframe
-//   3. "Start a project" wizard (#inquiry): 3 steps, inline validation (core ui.js), sessionStorage,
+//   2. "Start a project" wizard (#inquiry): 3 steps, inline validation (core ui.js), sessionStorage,
 //      deep-link prefill (?company, ?office, ?type, ?brief), region routing, mailto: hand-off, success screen
 //
 // Every visible string is bilingual via t({en, ar}) and re-rendered on 'langchange'.
@@ -13,9 +12,7 @@ import { t, getLang, onLang } from '../core/i18n.js';
 import { scrollTo } from '../core/motion.js';
 import { toast, copyText, validateForm } from '../core/ui.js';
 import { $, $$, esc, prefersReducedMotion, store, getParam, debounce } from '../core/utils.js';
-import { onConsent } from '../core/consent.js';
 import * as DATA from '../data/site-data.js';
-import { WORLD } from '../data/world-map.js';
 
 const fmt = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ''));
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -68,264 +65,7 @@ function initClocks() {
 }
 
 /* =====================================================================
-   2. Map: dot-matrix WORLD map + consent-gated Google Maps
-   ===================================================================== */
-const MAP_S = {
-  showDots: { en: 'Show dot map', ar: 'عرض الخريطة النقطية' },
-  showGoogle: { en: 'Show Google map', ar: 'عرض خريطة Google' },
-  mapLoaded: { en: 'Google map loaded', ar: 'تم تحميل خريطة Google' },
-};
-// d3-geo naturalEarth1 raw projection; scale/translate solved from the WORLD office markers.
-function ne1(lon, lat) {
-  const l = (lon * Math.PI) / 180, p = (lat * Math.PI) / 180;
-  const p2 = p * p, p4 = p2 * p2;
-  return [
-    l * (0.8707 - 0.131979 * p2 + p4 * (-0.013791 + p4 * (0.003971 * p2 - 0.001529 * p4))),
-    p * (1.007226 + p2 * (0.015085 + p4 * (-0.044475 + 0.028874 * p2 - 0.005916 * p4))),
-  ];
-}
-const PROJ = (() => {
-  const a = WORLD.offices.ksa, b = WORLD.offices.canada;
-  const A = ne1(...a.lonlat), B = ne1(...b.lonlat);
-  const kx = (a.xy[0] - b.xy[0]) / (A[0] - B[0]);
-  const ky = (a.xy[1] - b.xy[1]) / (B[1] - A[1]);
-  const k = (kx + ky) / 2;
-  return { k, tx: a.xy[0] - k * A[0], ty: a.xy[1] + k * A[1] };
-})();
-const project = (lon, lat) => { const [x, y] = ne1(lon, lat); return [PROJ.tx + PROJ.k * x, PROJ.ty - PROJ.k * y]; };
-
-// Approximate pin positions (the iframe query is what matters for directions).
-const PLACES = {
-  ksa: {
-    xy: WORLD.offices.ksa.xy, zoom: 92,
-    query: 'Al Ebdaa Tower, King Fahd Road, Olaya, Riyadh',
-    title: { en: 'Map of the Riyadh office', ar: 'خريطة مكتب الرياض' },
-    label: { en: 'Riyadh', ar: 'الرياض' }, sub: { en: 'Headquarters', ar: 'المقر الرئيسي' },
-  },
-  'new-cairo': {
-    xy: project(31.52, 30.013), zoom: 30,
-    query: 'B1 Building, Mivida Compound, New Cairo, Egypt',
-    title: { en: 'Map of the New Cairo office', ar: 'خريطة مكتب القاهرة الجديدة' },
-    label: { en: 'New Cairo', ar: 'القاهرة الجديدة' }, sub: { en: 'Egypt office', ar: 'مكتب مصر' },
-  },
-  'nasr-city': {
-    xy: project(31.34, 30.056), zoom: 24,
-    query: '2 Ahmed Hassan St., Ninth District, Nasr City, Cairo, Egypt',
-    title: { en: 'Map of the Nasr City office', ar: 'خريطة مكتب مدينة نصر' },
-    label: { en: 'Nasr City', ar: 'مدينة نصر' }, sub: { en: 'Egypt office', ar: 'مكتب مصر' }, flip: true,
-  },
-};
-const GEO_LABELS = [
-  { lonlat: [44.2, 22.6], text: { en: 'Saudi Arabia', ar: 'المملكة العربية السعودية' } },
-  { lonlat: [29.2, 26.4], text: { en: 'Egypt', ar: 'مصر' } },
-  { lonlat: [38.6, 20.2], text: { en: 'Red Sea', ar: 'البحر الأحمر' }, water: true },
-  { lonlat: [28.5, 33.6], text: { en: 'Mediterranean Sea', ar: 'البحر الأبيض المتوسط' }, water: true },
-  { lonlat: [36.3, 31.2], text: { en: 'Jordan', ar: 'الأردن' }, small: true },
-];
-const embedUrl = (p) => `https://www.google.com/maps?q=${encodeURIComponent(p.query)}&output=embed&hl=${getLang()}`;
-const searchUrl = (p) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.query)}`;
-
-function initMap() {
-  const root = $('[data-contact-map]');
-  if (!root) return;
-  const stage = $('[data-map-stage]', root);
-  const dotsBox = $('[data-map-dots]', root);
-  const frameBox = $('[data-map-frame]', root);
-  const toggle = $('[data-map-toggle]', root);
-  const ext = $('[data-map-ext]', root);
-  const insetBox = $('[data-map-inset]', root);
-  const ids = Object.keys(PLACES);
-  let current = { ksa: 'ksa', egypt: 'new-cairo', 'new-cairo': 'new-cairo', 'nasr-city': 'nasr-city' }[getParam('office')] || 'ksa';
-
-  /* --- build the SVG dot map */
-  const NS = 'http://www.w3.org/2000/svg';
-  const arcA = PLACES.ksa.xy, arcB = PLACES['new-cairo'].xy;
-  const arcC = [(arcA[0] + arcB[0]) / 2, Math.min(arcA[1], arcB[1]) - 16];
-  dotsBox.innerHTML = `
-    <svg class="contact-map__svg" xmlns="${NS}" preserveAspectRatio="none" viewBox="0 0 1000 520" focusable="false">
-      <defs>
-        <pattern id="cm-dot" patternUnits="userSpaceOnUse" width="1" height="1"><circle cx=".5" cy=".5" r=".2" fill="rgba(255,255,255,.3)"/></pattern>
-        <pattern id="cm-dot-hl" patternUnits="userSpaceOnUse" width="1" height="1"><circle cx=".5" cy=".5" r=".24" fill="#5fb2b8"/></pattern>
-        <clipPath id="cm-land"><path d="${WORLD.land}"/></clipPath>
-      </defs>
-      <path d="${WORLD.land}" fill="rgba(255,255,255,.025)"/>
-      <rect x="0" y="0" width="1000" height="520" fill="url(#cm-dot)" clip-path="url(#cm-land)"/>
-      <path d="${WORLD.highlight.ksa}" fill="url(#cm-dot-hl)" fill-opacity=".72"/>
-      <path d="${WORLD.highlight.egypt}" fill="url(#cm-dot-hl)" fill-opacity=".72"/>
-      <path d="${WORLD.land}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-      <path d="${WORLD.borders}" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>
-      <path d="${WORLD.highlight.ksa}" fill="none" stroke="rgba(95, 178, 184,.55)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-      <path d="${WORLD.highlight.egypt}" fill="none" stroke="rgba(95, 178, 184,.55)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-      <path class="contact-map__arc" d="M${arcA[0]},${arcA[1]} Q${arcC[0]},${arcC[1]} ${arcB[0]},${arcB[1]}" fill="none" stroke="rgba(95, 178, 184,.75)" stroke-width="1.25" stroke-dasharray="5 6" vector-effect="non-scaling-stroke"/>
-    </svg>
-    <div class="contact-map__overlay"></div>`;
-  const svg = $('svg', dotsBox);
-  const overlay = $('.contact-map__overlay', dotsBox);
-  const pat = [$('#cm-dot', svg), $('#cm-dot-hl', svg)];
-  const arc = $('.contact-map__arc', svg);
-
-  // HTML overlay: pins + geographic labels (constant screen size at any zoom)
-  const pins = ids.map((id) => {
-    const p = PLACES[id];
-    const el = document.createElement('div');
-    el.className = `contact-pin${p.flip ? ' contact-pin--flip' : ''}`;
-    el.innerHTML = '<span class="contact-pin__ring"></span><span class="contact-pin__ring contact-pin__ring--2"></span><span class="contact-pin__core"></span><span class="contact-pin__label"><b></b><small></small></span>';
-    overlay.appendChild(el);
-    return { id, el, xy: p.xy };
-  });
-  const geos = GEO_LABELS.map((g) => {
-    const el = document.createElement('span');
-    el.className = `contact-map__geo${g.water ? ' contact-map__geo--water' : ''}`;
-    overlay.appendChild(el);
-    return { el, xy: project(...g.lonlat), g };
-  });
-  const renderLabels = () => {
-    pins.forEach((p) => { $('b', p.el).textContent = t(PLACES[p.id].label); $('small', p.el).textContent = t(PLACES[p.id].sub); });
-    geos.forEach((g) => { g.el.textContent = t(g.g.text); });
-  };
-  renderLabels();
-
-  // mini locator (coarse WORLD.dots): shows the current window on the whole world
-  const dotsMarkup = WORLD.dots.filter((d) => d[1] < 440).map(([x, y, k]) => `<circle cx="${x}" cy="${y}" r="2.3"${k === 'ksa' || k === 'egypt' ? ' fill="#5fb2b8"' : ''}/>`).join('');
-  insetBox.innerHTML = `<svg viewBox="0 0 1000 440" xmlns="${NS}" focusable="false"><g fill="rgba(255,255,255,.28)">${dotsMarkup}</g><rect class="contact-map__window" x="0" y="0" width="10" height="10" fill="rgba(95, 178, 184,.12)" stroke="#5fb2b8" stroke-width="5"/></svg>`;
-  const win = $('.contact-map__window', insetBox);
-
-  /* --- camera: viewBox matched to the stage aspect so pins land exactly at --pin-x/--pin-y */
-  const cam = { x: PLACES[current].xy[0], y: PLACES[current].xy[1], w: PLACES[current].zoom };
-  let size = { w: 1, h: 1 }, focus = { x: 0.6, y: 0.46 };
-  const measure = () => {
-    const r = dotsBox.getBoundingClientRect();
-    size = { w: Math.max(1, r.width), h: Math.max(1, r.height) };
-    const cs = getComputedStyle(stage);
-    focus = { x: parseFloat(cs.getPropertyValue('--pin-x')) || 0.6, y: parseFloat(cs.getPropertyValue('--pin-y')) || 0.46 };
-    dotsBox.style.setProperty('--glow-x', `${focus.x * 100}%`);
-  };
-  const draw = () => {
-    const W = cam.w, H = W * (size.h / size.w);
-    const vx = cam.x - W * focus.x, vy = cam.y - H * focus.y;
-    svg.setAttribute('viewBox', `${vx.toFixed(3)} ${vy.toFixed(3)} ${W.toFixed(3)} ${H.toFixed(3)}`);
-    // LED-style matrix: dot grid fixed in screen space (about 10px pitch), the land slides underneath
-    const pitchPx = size.w < 640 ? 8 : 10;
-    const s = (pitchPx * W) / size.w;
-    pat.forEach((p, i) => {
-      p.setAttribute('x', vx.toFixed(3)); p.setAttribute('y', vy.toFixed(3));
-      p.setAttribute('width', s.toFixed(4)); p.setAttribute('height', s.toFixed(4));
-      const c = p.firstElementChild;
-      c.setAttribute('cx', (s / 2).toFixed(4)); c.setAttribute('cy', (s / 2).toFixed(4));
-      c.setAttribute('r', (s * (i ? 0.25 : 0.19)).toFixed(4));
-    });
-    const k = size.w / W;
-    const toScreen = ([x, y]) => [(x - vx) * k, (y - vy) * k];
-    const active = pins.find((p) => p.id === current);
-    // labels never collide: the active pin is labelled first, others only if they have room
-    const labelled = [];
-    [active, ...pins.filter((p) => p !== active)].forEach((p) => {
-      const [sx, sy] = toScreen(p.xy);
-      p.el.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px)`;
-      p.el.classList.toggle('is-active', p === active);
-      const clash = p !== active && labelled.some(([x, y]) => Math.abs(sx - x) < 170 && Math.abs(sy - y) < 44);
-      p.el.classList.toggle('is-dim', clash);
-      if (!clash) labelled.push([sx, sy]);
-      p.el.style.visibility = sx < -40 || sy < -40 || sx > size.w + 40 || sy > size.h + 40 ? 'hidden' : '';
-    });
-    geos.forEach((g) => {
-      const [sx, sy] = toScreen(g.xy);
-      g.el.style.transform = `translate(${sx.toFixed(1)}px, ${sy.toFixed(1)}px) translate(-50%, -50%)`;
-      const near = pins.some((p) => Math.hypot(...toScreen(p.xy).map((v, i) => v - [sx, sy][i])) < 70);
-      g.el.style.opacity = near || (g.g.small && W > 60) ? '0' : '1';
-    });
-    win.setAttribute('x', vx.toFixed(1)); win.setAttribute('y', vy.toFixed(1));
-    win.setAttribute('width', Math.max(14, W).toFixed(1)); win.setAttribute('height', Math.max(10, H).toFixed(1));
-    arc.style.opacity = W > 60 ? '1' : '0';
-  };
-  let raf = 0;
-  const flyTo = (id, immediate = false) => {
-    const p = PLACES[id];
-    cancelAnimationFrame(raf);
-    const from = { ...cam }, to = { x: p.xy[0], y: p.xy[1], w: p.zoom };
-    if (immediate || prefersReducedMotion()) { Object.assign(cam, to); draw(); return; }
-    const dur = 1300, t0 = performance.now();
-    const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-    // zoom out a little mid-flight when travelling between offices
-    const travel = Math.hypot(to.x - from.x, to.y - from.y);
-    const lift = Math.min(70, travel * 1.1);
-    const tick = (now) => {
-      const k = Math.min(1, (now - t0) / dur), e = ease(k);
-      cam.x = from.x + (to.x - from.x) * e;
-      cam.y = from.y + (to.y - from.y) * e;
-      cam.w = from.w + (to.w - from.w) * e + Math.sin(Math.PI * k) * lift;
-      draw();
-      if (k < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-  };
-  measure();
-  draw();
-  new ResizeObserver(() => { measure(); draw(); }).observe(dotsBox);
-  onLang(() => { renderLabels(); draw(); });
-
-  /* --- Google Maps iframe (consent-gated) */
-  let iframe = null;
-  const setExt = () => { ext.href = searchUrl(PLACES[current]); };
-  const renderToggle = () => {
-    $('[data-map-toggle-label]', toggle).textContent = t(root.classList.contains('is-dotview') ? MAP_S.showGoogle : MAP_S.showDots);
-  };
-  const loadMap = () => {
-    if (iframe) return;
-    iframe = document.createElement('iframe');
-    iframe.title = t(PLACES[current].title);
-    iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.src = embedUrl(PLACES[current]);
-    frameBox.appendChild(iframe);
-    root.classList.add('is-live');
-    root.classList.remove('is-dotview');
-    toggle.hidden = false;
-    renderToggle();
-  };
-  $('[data-map-load]', root)?.addEventListener('click', () => {
-    store.set('mobco-contact-map', '1', 'session'); // explicit, per-session opt-in for this embed only
-    loadMap();
-    toast(MAP_S.mapLoaded, { type: 'info', duration: 2200 });
-    requestAnimationFrame(() => toggle.focus({ preventScroll: true }));
-  });
-  toggle.addEventListener('click', () => {
-    root.classList.toggle('is-dotview');
-    renderToggle();
-    if (root.classList.contains('is-dotview')) { measure(); draw(); }
-  });
-  onConsent(loadMap); // global consent from the cookie banner (core consent.js)
-  if (store.get('mobco-contact-map', 'session') === '1') loadMap();
-  onLang(() => {
-    if (iframe) iframe.title = t(PLACES[current].title);
-    if (!toggle.hidden) renderToggle();
-  });
-
-  /* --- tabs, camera and iframe stay in sync */
-  const select = (id, { immediate = false } = {}) => {
-    if (!PLACES[id]) return;
-    current = id;
-    flyTo(id, immediate);
-    setExt();
-    if (iframe) { iframe.src = embedUrl(PLACES[id]); iframe.title = t(PLACES[id].title); }
-  };
-  root.addEventListener('tabchange', (e) => select(e.detail.id));
-  if (current !== 'ksa') requestAnimationFrame(() => root.__selectTab?.(current)); // after core wired the tabs
-  select(current, { immediate: true });
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('[data-map-show]');
-    if (!a) return;
-    const id = a.getAttribute('data-map-show');
-    if (root.__selectTab) root.__selectTab(id); else select(id);
-    stage.classList.remove('is-flash');
-    void stage.offsetWidth;
-    stage.classList.add('is-flash');
-  });
-}
-
-/* =====================================================================
-   3. Start a project: 3-step inquiry wizard
+   2. Start a project: 3-step inquiry wizard
    ===================================================================== */
 const EMAIL = { ksa: 'info.ksa@mobco-group.com', egypt: 'info.egy@mobco-group.com' };
 const PHONE = {
@@ -764,6 +504,6 @@ function initWizard() {
 }
 
 /* ===================================================================== boot */
-for (const [name, fn] of [['clocks', initClocks], ['map', initMap], ['wizard', initWizard]]) {
+for (const [name, fn] of [['clocks', initClocks], ['wizard', initWizard]]) {
   try { fn(); } catch (err) { console.error(`[contact] ${name} failed`, err); }
 }

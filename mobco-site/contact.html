@@ -441,7 +441,6 @@
                 </address>
                 <div class="contact-office__links">
                   <a class="link-arrow link-arrow--sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=Al%20Ebdaa%20Tower%2C%20King%20Fahd%20Road%2C%20Olaya%2C%20Riyadh" target="_blank" rel="noopener"><span data-ar="الاتجاهات">Directions</span><span class="visually-hidden" data-ar="(تُفتح في علامة تبويب جديدة)">(opens in a new tab)</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span></a>
-                  <a class="contact-office__maplink" href="#map" data-map-show="ksa"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map"></use></svg><span data-ar="عرض على الخريطة">View on map</span></a>
                 </div>
               </div>
               <div class="contact-office__reach">
@@ -487,7 +486,6 @@
                     </address>
                     <div class="contact-office__links">
                       <a class="link-arrow link-arrow--sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=B1%20Building%2C%20Mivida%20Compound%2C%20New%20Cairo%2C%20Egypt" target="_blank" rel="noopener"><span data-ar="الاتجاهات">Directions</span><span class="visually-hidden" data-ar="إلى القاهرة الجديدة (تُفتح في علامة تبويب جديدة)">to New Cairo (opens in a new tab)</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span></a>
-                      <a class="contact-office__maplink" href="#map" data-map-show="new-cairo"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map"></use></svg><span data-ar="الخريطة">Map</span></a>
                     </div>
                   </div>
                   <div class="contact-office__addr">
@@ -498,7 +496,6 @@
                     </address>
                     <div class="contact-office__links">
                       <a class="link-arrow link-arrow--sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=2%20Ahmed%20Hassan%20St.%2C%20Ninth%20District%2C%20Nasr%20City%2C%20Cairo%2C%20Egypt" target="_blank" rel="noopener"><span data-ar="الاتجاهات">Directions</span><span class="visually-hidden" data-ar="إلى مدينة نصر (تُفتح في علامة تبويب جديدة)">to Nasr City (opens in a new tab)</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span></a>
-                      <a class="contact-office__maplink" href="#map" data-map-show="nasr-city"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map"></use></svg><span data-ar="الخريطة">Map</span></a>
                     </div>
                   </div>
                 </div>
@@ -529,73 +526,7 @@
       </div>
     </section>
 
-    <!-- ============================================================ 4. MAP -->
-    <section class="section section--deep contact-map-section" id="map" aria-labelledby="map-title">
-      <div class="container">
-        <header class="section-header section-header--split">
-          <h2 class="h2" id="map-title" data-split data-ar-html="على &lt;em&gt;الخريطة&lt;/em&gt;">On the <em>map</em></h2>
-          <div class="section-header__aside">
-            <p class="lead" data-reveal="up" data-ar="اختر مكتبًا. لا تُحمَّل خريطة Google إلا بعد موافقتك.">Pick an office. The Google map loads only after you allow it.</p>
-          </div>
-        </header>
-
-        <div class="contact-map tabs tabs--pills" data-tabs data-contact-map data-reveal="up">
-          <div class="contact-map__bar">
-            <div class="tabs__list contact-map__tabs" aria-label="Office locations" data-ar-aria-label="مواقع المكاتب">
-              <button class="tabs__tab" type="button" data-tab="ksa" aria-selected="true" data-ar="الرياض">Riyadh</button>
-              <button class="tabs__tab" type="button" data-tab="new-cairo" aria-selected="false" data-ar="القاهرة الجديدة">New Cairo</button>
-              <button class="tabs__tab" type="button" data-tab="nasr-city" aria-selected="false" data-ar="مدينة نصر">Nasr City</button>
-            </div>
-            <a class="contact-map__ext" href="https://www.google.com/maps/search/?api=1&amp;query=Al%20Ebdaa%20Tower%2C%20King%20Fahd%20Road%2C%20Olaya%2C%20Riyadh" target="_blank" rel="noopener" data-map-ext><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#external-link"></use></svg><span data-ar="افتح في خرائط Google">Open in Google Maps</span></a>
-          </div>
-
-          <div class="contact-map__stage" data-map-stage>
-            <!-- Default view: WORLD dot map zoomed to the office (rendered by contact.js) -->
-            <div class="contact-map__dots" data-map-dots aria-hidden="true"></div>
-            <!-- Google Maps iframe is injected here ONLY after consent (core consent.js) or an explicit "Load map" click -->
-            <div class="contact-map__frame" data-map-frame></div>
-
-            <div class="contact-map__consent" data-map-consent>
-              <span class="contact-map__consent-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map"></use></svg></span>
-              <div class="contact-map__consent-copy">
-                <p class="contact-map__consent-title" data-ar="خريطة Google">Google map</p>
-                <p class="contact-map__consent-text" data-ar="يؤدي تحميل الخريطة إلى مشاركة بيانات مع Google، وقد يضع ملفات تعريف ارتباط تابعة لجهات خارجية.">Loading the map shares data with Google and may set third-party cookies.</p>
-              </div>
-              <div class="contact-map__consent-actions">
-                <button class="btn btn--primary btn--sm" type="button" data-map-load><span data-ar="تحميل الخريطة">Load map</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg></button>
-                <button class="contact-map__cookie" type="button" data-consent-open data-ar="إعدادات ملفات تعريف الارتباط">Cookie settings</button>
-              </div>
-            </div>
-            <button class="contact-map__toggle btn btn--light btn--sm" type="button" data-map-toggle hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#layers"></use></svg><span data-map-toggle-label data-ar="عرض الخريطة النقطية">Show dot map</span></button>
-
-            <div class="contact-map__panels">
-              <div class="tabs__panel contact-map__panel" data-tab-panel="ksa">
-                <p class="contact-map__panel-label" data-ar="المقر الرئيسي">Headquarters</p>
-                <p class="contact-map__panel-title" data-ar="برج الإبداع، الرياض">Al Ebdaa Tower, Riyadh</p>
-                <p class="contact-map__panel-addr" data-ar="الطابق 16، طريق الملك فهد، حي العليا">16th floor, King Fahd Road, Olaya District</p>
-                <a class="link-arrow link-arrow--sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=Al%20Ebdaa%20Tower%2C%20King%20Fahd%20Road%2C%20Olaya%2C%20Riyadh" target="_blank" rel="noopener"><span data-ar="الاتجاهات">Directions</span><span class="visually-hidden" data-ar="(تُفتح في علامة تبويب جديدة)">(opens in a new tab)</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span></a>
-              </div>
-              <div class="tabs__panel contact-map__panel" data-tab-panel="new-cairo" hidden>
-                <p class="contact-map__panel-label" data-ar="مكتب مصر">Egypt office</p>
-                <p class="contact-map__panel-title" data-ar="مبنى B1، كمبوند ميفيدا">B1 Building, Mivida Compound</p>
-                <p class="contact-map__panel-addr" data-ar="القاهرة الجديدة، مصر">New Cairo, Egypt</p>
-                <a class="link-arrow link-arrow--sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=B1%20Building%2C%20Mivida%20Compound%2C%20New%20Cairo%2C%20Egypt" target="_blank" rel="noopener"><span data-ar="الاتجاهات">Directions</span><span class="visually-hidden" data-ar="(تُفتح في علامة تبويب جديدة)">(opens in a new tab)</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span></a>
-              </div>
-              <div class="tabs__panel contact-map__panel" data-tab-panel="nasr-city" hidden>
-                <p class="contact-map__panel-label" data-ar="مكتب مصر">Egypt office</p>
-                <p class="contact-map__panel-title" data-ar="2 بلوك C شارع أحمد حسن">2 Block C Ahmed Hassan St.</p>
-                <p class="contact-map__panel-addr" data-ar="الحي التاسع، مدينة نصر، القاهرة">Ninth District, Nasr City, Cairo</p>
-                <a class="link-arrow link-arrow--sm" href="https://www.google.com/maps/dir/?api=1&amp;destination=2%20Ahmed%20Hassan%20St.%2C%20Ninth%20District%2C%20Nasr%20City%2C%20Cairo%2C%20Egypt" target="_blank" rel="noopener"><span data-ar="الاتجاهات">Directions</span><span class="visually-hidden" data-ar="(تُفتح في علامة تبويب جديدة)">(opens in a new tab)</span><span class="link-arrow__icon"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span></a>
-              </div>
-            </div>
-            <div class="contact-map__inset" data-map-inset aria-hidden="true"></div>
-          </div>
-          <p class="contact-map__note"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#info"></use></svg><span data-ar="مواقع الدبابيس تقريبية.">Pin positions are approximate.</span></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================ 5. OTHER ENQUIRIES (directory) -->
+    <!-- ============================================================ 4. OTHER ENQUIRIES (directory) -->
     <section class="section section--sand contact-directory" id="enquiries" aria-labelledby="directory-title">
       <div class="container">
         <header class="section-header section-header--split">
