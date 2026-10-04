@@ -3,14 +3,13 @@
 //   · sectors   — cards ⇄ phrases of the verbatim "delivered iconic projects…" sentence light each other up
 //   · footprint — dot-matrix world map (WORLD) + arcs from Riyadh, markers ⇄ region tabs, coordinate readout
 //   · projects  — slides rendered from PROJECTS (featured === true) + image parallax inside the core drag carousel
-//   · studio    — axonometric drawing draws itself on scroll (+ pointer tilt) inside #studio-embed, and is
-//                 crossfaded to a live, lazily-imported 3D turntable (studio engine) on capable GPUs
+//   · zoom      — Apple-style product zoom: scroll scrubs 120 pre-rendered frames of the Eastmain 3D model
 //   · values    — giant outlined words fill as they scroll into view
 // Everything degrades to static, fully readable content without JS or with reduced motion.
 
 import { t, onLang, localize } from '../core/i18n.js';
 import { onScroll, refresh } from '../core/motion.js';
-import { $, $$, clamp, esc, rafThrottle, prefersReducedMotion, hasFinePointer, isQA, IMAGES } from '../core/utils.js';
+import { $, $$, clamp, esc, rafThrottle, prefersReducedMotion, isQA, IMAGES } from '../core/utils.js';
 import { PROJECTS, PROJECT_CATEGORIES } from '../data/site-data.js';
 import { WORLD } from '../data/world-map.js';
 
@@ -240,150 +239,113 @@ function initProjects() {
   update();
 }
 
-/* ================================================================ 9. 3D Studio teaser */
-function initStudio() {
-  const stage = $('[data-hb-stage]');
-  const embed = $('[data-hb-embed]');
-  if (!stage || !embed) return;
-  const pctEl = $('[data-hb-draw-pct]', stage);
-  let drawn = 0;
-  const setP = (p) => {
-    const axo = $('.hb-axo', embed); // the slot may later be replaced by a live viewer
-    if (!axo) return;
-    axo.style.setProperty('--p', p.toFixed(3));
-    if (pctEl) pctEl.textContent = String(Math.round(p * 100)).padStart(2, '0');
-  };
-  if (reduced) { setP(1); return; }
-  // draws itself on scroll (forward only: once drawn it stays drawn)
-  const update = () => {
-    const r = embed.getBoundingClientRect();
-    if (!r.height) return;
-    const h = vh();
-    const start = h * 0.95, end = h * 0.22;
-    const p = clamp((start - r.top) / (start - end), 0, 1);
-    if (p > drawn) { drawn = p; setP(p); }
-  };
-  setP(0);
-  onScroll(update);
-  window.addEventListener('scroll', rafThrottle(update), { passive: true });
-  window.addEventListener('resize', rafThrottle(update));
-  update();
+/* ================================================================ 9. Product zoom (scroll-scrubbed frame sequence) */
+// 120 pre-rendered frames of the illustrative Eastmain model (camera sweep → close-up → floors separate → dusk).
+// Scroll progress through the tall track picks the frame; it is painted cover-fit onto a canvas in the sticky
+// stage. Frames stream in progressively (every 8th first, then every 4th, 2nd, rest) once the section is near,
+// and the closest already-loaded frame is shown meanwhile, so scrubbing is never blank. Reduced motion, no canvas
+// or ?qa=1 → static poster with every step listed (.is-static).
+function initZoom() {
+  const root = $('[data-hb-zoom]');
+  if (!root) return;
+  const canvas = $('.hb-zoom__canvas', root);
+  const ctx = canvas?.getContext?.('2d');
+  const steps = $$('.hb-zoom__step', root);
+  const ticks = $$('.hb-zoom__tick', root);
+  if (reduced || !ctx || isQA()) { root.classList.add('is-static'); return; }
 
-  // pointer tilt (fine pointers only): a hint of the 3D studio's orbit
-  if (!hasFinePointer()) return;
-  stage.addEventListener('pointermove', (e) => {
-    const r = stage.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    embed.style.setProperty('--hb-ry', `${(x * 10).toFixed(2)}deg`);
-    embed.style.setProperty('--hb-rx', `${(-y * 8).toFixed(2)}deg`);
-  });
-  stage.addEventListener('pointerleave', () => {
-    embed.style.setProperty('--hb-ry', '0deg');
-    embed.style.setProperty('--hb-rx', '0deg');
-  });
-}
+  const N = Number(root.dataset.frames) || 120;
+  const base = root.dataset.src;
+  const frames = new Array(N);
+  const loaded = new Uint8Array(N);
+  let started = false, current = -1, painted = -1, progress = 0;
 
-/* ================================================================ 9b. Live 3D embed (studio engine) */
-// Mounts a compact, non-interactive, slowly auto-rotating model into #studio-embed only when:
-//   WebGL2 is available · the GPU is not a software rasteriser (SwiftShader / llvmpipe) · no reduced motion ·
-//   not ?qa=1 · the section is within ~300px of the viewport.
-// three.js + the engine are dynamic-imported at that moment (the import map lives in index.html's <head>).
-// Disposed when the section is far off-screen, re-created on return. The SVG drawing stays the fallback in every
-// other case (and until the model has loaded, then it crossfades). QA: ?embed=1 bypasses the software-GPU guard,
-// ?embed=0 disables the live embed.
-function probeGL() {
-  // cheap pre-check so that browsers that would fall back anyway never download three.js
-  try {
-    const gl = document.createElement('canvas').getContext('webgl2');
-    if (!gl) return { ok: false, software: false };
-    let name = '';
-    try { const ext = gl.getExtension('WEBGL_debug_renderer_info'); name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : ''; } catch { /* ignore */ }
-    gl.getExtension('WEBGL_lose_context')?.loseContext();
-    return { ok: true, software: /swiftshader|llvmpipe|softpipe|software|microsoft basic render/i.test(name) };
-  } catch { return { ok: false, software: false }; }
-}
-
-function initStudioEmbed() {
-  const embed = $('[data-studio-embed]');
-  if (!embed) return;
-  const stage = embed.closest('[data-hb-stage]') || embed;
-  const q = new URLSearchParams(location.search);
-  const force = q.get('embed') === '1';
-  if (q.get('embed') === '0' || isQA() || reduced || !('IntersectionObserver' in window)) return;
-  const modelId = embed.dataset.studioEmbed || 'mixed-use';
-
-  let engine = null, studio = null, host = null, probe = null;
-  let near = false, mounting = false, failed = false, token = 0;
-
-  const eligible = () => {
-    if (failed) return false;
-    probe ??= probeGL();
-    return probe.ok && (force || !probe.software);
+  // load order: coarse → fine, so any scroll position quickly has a nearby frame
+  const order = [];
+  for (const stride of [8, 4, 2, 1]) for (let i = 0; i < N; i += stride) if (!order.includes(i)) order.push(i);
+  if (!order.includes(N - 1)) order.splice(1, 0, N - 1);
+  const loadAll = () => {
+    if (started) return;
+    started = true;
+    let next = 0, active = 0;
+    const pump = () => {
+      while (active < 6 && next < order.length) {
+        const i = order[next++];
+        const img = new Image();
+        img.decoding = 'async';
+        active++;
+        img.onload = () => { frames[i] = img; loaded[i] = 1; active--; if (i === 0 || Math.abs(i - current) <= 4) draw(true); if (!root.classList.contains('is-ready') && loaded[0]) { root.classList.add('is-ready'); draw(true); } pump(); };
+        img.onerror = () => { active--; pump(); };
+        img.src = `${base}${String(i).padStart(3, '0')}.webp`;
+      }
+    };
+    pump();
   };
 
-  const teardown = () => {
-    token++;
-    embed.classList.remove('is-live');
-    stage.classList.remove('is-live');
-    if (studio) { try { studio.dispose(); } catch { /* already gone */ } }
-    host?.remove();
-    studio = null; host = null;
-  };
-
-  const fail = () => { failed = true; teardown(); };
-
-  async function mount() {
-    if (studio || mounting || !eligible()) return;
-    mounting = true;
-    const my = ++token;
-    try {
-      engine ??= await import('../studio/engine.js');
-      if (my !== token || !near) return; // scrolled away while loading
-      if (!engine.hasWebGL() || (!force && engine.gpu().software)) { failed = true; return; }
-      host = document.createElement('div');
-      host.className = 'hb-studio__live';
-      host.setAttribute('aria-hidden', 'true'); // the SVG keeps the accessible description
-      embed.appendChild(host);
-      const s = engine.createStudio(host, {
-        compact: true, model: modelId, autoRotate: true, controls: false, ui: false, hotspots: false, quality: 'auto',
-      });
-      studio = s;
-      s.canvas.style.touchAction = 'auto'; // OrbitControls sets 'none'; the embed must never block page scrolling
-      s.on('contextlost', () => { if (studio === s) fail(); });
-      // crossfade drawing → canvas once the engine reports 'load' (model built, shaders compiled, first frame queued)
-      s.on('load', () => {
-        if (studio !== s) return;
-        // optional art direction from the markup: data-studio-time (hours 6–22) · data-studio-mode (realistic|clay|blueprint|xray)
-        const hour = parseFloat(embed.dataset.studioTime);
-        if (Number.isFinite(hour)) s.setTime(hour);
-        if (embed.dataset.studioMode) s.setMode(embed.dataset.studioMode);
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          if (studio !== s) return;
-          embed.classList.add('is-live');
-          stage.classList.add('is-live');
-        }));
-      });
-      const meta = await s.ready; // null when the model failed to load → keep the drawing
-      if (studio === s && !meta) fail();
-    } catch (err) {
-      console.warn('[home-b] live 3D embed unavailable — keeping the drawing', err);
-      fail();
-    } finally {
-      mounting = false;
-      // torn down while importing, then scrolled back: try again with the current token
-      if (!studio && near && !failed && my !== token) queueMicrotask(mount);
+  const nearestLoaded = (i) => {
+    if (loaded[i]) return i;
+    for (let d = 1; d < N; d++) {
+      if (i - d >= 0 && loaded[i - d]) return i - d;
+      if (i + d < N && loaded[i + d]) return i + d;
     }
-  }
+    return -1;
+  };
 
-  // near: mount (with ~300px of look-ahead) · far (≥ one viewport away): dispose to free the GPU
-  new IntersectionObserver((entries) => {
-    near = entries.some((e) => e.isIntersecting);
-    if (near) mount();
-  }, { rootMargin: '300px 0px' }).observe(embed);
-  new IntersectionObserver((entries) => {
-    if (!entries.some((e) => e.isIntersecting) && (studio || mounting)) teardown();
-  }, { rootMargin: '100% 0px' }).observe(embed);
+  // canvas sized to the stage × devicePixelRatio (capped) — frames are 1440×810, more is wasted
+  let cw = 0, ch = 0;
+  const size = () => {
+    const r = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
+    if (w !== cw || h !== ch) { cw = canvas.width = w; ch = canvas.height = h; painted = -1; }
+  };
+  const draw = (force = false) => {
+    const i = nearestLoaded(current < 0 ? 0 : current);
+    if (i < 0 || (!force && i === painted)) return;
+    const img = frames[i];
+    // cover-fit, slightly right-of-centre on narrow screens so the building stays in view
+    const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+    const fx = cw < ch ? 0.56 : 0.5;
+    ctx.drawImage(img, (cw - dw) * fx, (ch - dh) / 2, dw, dh);
+    painted = i;
+  };
+
+  const track = $('.hb-zoom__track', root);
+  const setStep = (p) => {
+    steps.forEach((li) => {
+      const on = p >= Number(li.dataset.from) && p < Number(li.dataset.to);
+      li.classList.toggle('is-active', on);
+      li.toggleAttribute('aria-hidden', !on);
+      const cta = $('a', li); if (cta) cta.tabIndex = on ? 0 : -1;
+    });
+    ticks.forEach((tk) => tk.classList.toggle('is-on', p >= parseFloat(tk.style.getPropertyValue('--at')) - 0.001));
+  };
+  const update = () => {
+    const r = track.getBoundingClientRect();
+    const span = r.height - vh();
+    progress = span > 0 ? clamp(-r.top / span, 0, 1) : 0;
+    root.style.setProperty('--p', progress.toFixed(4));
+    root.classList.toggle('is-scrolled', progress > 0.02);
+    const f = Math.round(progress * (N - 1));
+    if (f !== current) { current = f; draw(); }
+    setStep(progress);
+  };
+
+  // keyboard / screen-reader users: every step is reachable — focusing a hidden step's link scrolls to its range
+  steps.forEach((li) => li.addEventListener('focusin', () => {
+    if (li.classList.contains('is-active')) return;
+    const r = track.getBoundingClientRect();
+    const span = r.height - vh();
+    window.scrollTo({ top: window.scrollY + r.top + span * (Number(li.dataset.from) + 0.02), behavior: 'auto' });
+  }));
+
+  const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { loadAll(); io.disconnect(); } }, { rootMargin: '150% 0px' });
+  io.observe(root);
+  size(); update();
+  onScroll(rafThrottle(update));
+  window.addEventListener('resize', rafThrottle(() => { size(); draw(true); update(); }));
+  onLang(() => setStep(progress));
 }
 
 /* ================================================================ 10. Values */
@@ -408,7 +370,7 @@ function initValues() {
 }
 
 /* ================================================================ boot */
-for (const [name, fn] of [['sectors', initSectors], ['footprint', initFootprint], ['projects-data', renderProjects], ['projects', initProjects], ['studio', initStudio], ['studio-embed', initStudioEmbed], ['values', initValues]]) {
+for (const [name, fn] of [['sectors', initSectors], ['footprint', initFootprint], ['projects-data', renderProjects], ['projects', initProjects], ['zoom', initZoom], ['values', initValues]]) {
   try { fn(); } catch (err) { console.error(`[home-b] ${name} failed to initialise`, err); }
 }
 requestAnimationFrame(refresh);

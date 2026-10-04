@@ -1,7 +1,7 @@
 <!-- partials/home-b.html — HOME page, PART B (sections 6–11). Owned by the home-b builder.
      Inlined into index.html between the "include home-b" markers by tools/build.mjs.
      Styles: assets/css/pages/home-b.css (scoped to body[data-page="home"], "hb-" classes).
-     Behaviour: assets/js/pages/home-b.js. Ids are "hb-" prefixed (plus #studio-embed). -->
+     Behaviour: assets/js/pages/home-b.js. Ids are "hb-" prefixed. -->
 
     <!-- ============================================================ 6. SECTORS -->
     <section class="section has-gridlines hb-sectors" id="hb-sectors" aria-labelledby="hb-sectors-title">
@@ -471,186 +471,52 @@
     </section>
 
     <!-- ============================================================ 9. 3D STUDIO TEASER -->
-    <section class="section section--deep hb-studio" id="hb-studio" aria-labelledby="hb-studio-title">
-      <div class="hb-studio__bg" aria-hidden="true"></div>
-      <div class="container hb-studio__layout">
-        <div class="hb-studio__copy">
-          <p class="eyebrow" data-ar="الاستوديو ثلاثي الأبعاد">3D Project Studio</p>
-          <h2 class="h2" id="hb-studio-title" data-split data-ar-html="ادخل إلى &lt;em&gt;مشاريعنا&lt;/em&gt;">Step inside <em>our projects</em></h2>
-          <p class="lead hb-studio__lead" data-reveal="up" data-ar="دوّر النماذج الكتلية التوضيحية لمشاريعنا وقرّبها واستكشفها بالأبعاد الثلاثة — مباشرةً من متصفحك.">Orbit, zoom and explore illustrative 3D massing models of our projects — right in your browser.</p>
-          <ul class="hb-studio__features" role="list" data-reveal-stagger="90">
-            <li><span class="hb-studio__feat-icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></span><span data-ar="دوران وتكبير بزاوية 360°">Orbit &amp; zoom through 360°</span></li>
-            <li><span class="hb-studio__feat-icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#boxes"></use></svg></span><span data-ar="نماذج كتلية توضيحية لمشاريعنا المميّزة">Illustrative massing models of featured projects</span></li>
-            <li><span class="hb-studio__feat-icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mouse-pointer-click"></use></svg></span><span data-ar="يعمل في المتصفح دون أي إضافات">Runs in the browser — no plug-ins</span></li>
-          </ul>
-          <div class="hb-studio__actions" data-reveal="up">
-            <a class="btn btn--primary" href="studio.html" data-magnetic><span data-ar="افتح الاستوديو ثلاثي الأبعاد">Open the 3D Studio</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
-            <a class="link-arrow" href="studio.html?model=mixed-use"><span data-ar="ابدأ بإيست مين">Start with Eastmain</span><span class="link-arrow__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></span></a>
-          </div>
-          <p class="hb-studio__note"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#info"></use></svg><span data-ar="النماذج دراسات كتلية توضيحية، وليست تمثيلًا مطابقًا للتنفيذ.">Models are illustrative massing studies, not as-built representations.</span></p>
-        </div>
+    <section class="hb-zoom" id="hb-studio" aria-labelledby="hb-zoom-title" data-hb-zoom data-frames="120" data-src="assets/img/zoom/eastmain-">
+      <div class="hb-zoom__track">
+        <div class="hb-zoom__sticky">
+          <picture class="hb-zoom__poster">
+            <source type="image/webp" srcset="assets/img/zoom/eastmain-poster.webp">
+            <img src="assets/img/zoom/eastmain-poster.jpg" alt="Illustrative 3D model of Eastmain: a glazed office block over a retail arcade, opening onto a landscaped plaza" data-ar-alt="نموذج توضيحي ثلاثي الأبعاد لمشروع إيست مين: مبنى مكاتب زجاجي فوق رواق تجاري يطلّ على ساحة منسّقة" width="1440" height="810" loading="lazy" decoding="async">
+          </picture>
+          <canvas class="hb-zoom__canvas" aria-hidden="true"></canvas>
+          <div class="hb-zoom__scrim" aria-hidden="true"></div>
 
-        <div class="hb-studio__stage" data-hb-stage>
-          <span class="hb-studio__corner hb-studio__corner--ts" aria-hidden="true"></span>
-          <span class="hb-studio__corner hb-studio__corner--te" aria-hidden="true"></span>
-          <span class="hb-studio__corner hb-studio__corner--bs" aria-hidden="true"></span>
-          <span class="hb-studio__corner hb-studio__corner--be" aria-hidden="true"></span>
-          <div class="hb-studio__hud hb-studio__hud--top" aria-hidden="true">
-            <span><span class="hb-studio__hud-k" data-ar="النموذج">Model</span> <span data-ar="متعدد الاستخدامات">Mixed-use</span></span>
-            <span class="hb-studio__hud-live"><span class="hb-studio__hud-dot"></span><span class="hb-studio__hud-axo" data-ar="مخطط محوري">Axonometric</span><span class="hb-studio__hud-3d" data-ar="نموذج ثلاثي الأبعاد مباشر">Live 3D</span></span>
-          </div>
-          <!-- Studio embed slot (data-studio-embed = studio model id). home-b.js mounts a live, non-interactive 3D turntable
-               (studio engine, lazy-imported) here on capable GPUs and crossfades to it; otherwise this SVG axonometric
-               line drawing (generated, illustrative), which draws itself on scroll, is the fallback. -->
-          <div id="studio-embed" class="hb-studio__embed" data-studio-embed="mixed-use" data-studio-time="20.5" data-hb-embed>
-            <svg class="hb-axo" viewBox="0 0 626 602" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false" aria-label="Illustrative axonometric line drawing of a mixed-use building: retail podium, office tower and clinic wing" data-ar-aria-label="رسم محوري توضيحي لمبنى متعدد الاستخدامات: منصة تجارية وبرج مكاتب وجناح عيادات">
-            <path class="axo-grid" d="M321.5 271.6L92.9 403.6" pathLength="1" style="--s:0.000;--d:0.160"/>
-            <path class="axo-grid" d="M350.1 288.1L121.5 420.1" pathLength="1" style="--s:0.008;--d:0.160"/>
-            <path class="axo-grid" d="M378.7 304.6L150 436.6" pathLength="1" style="--s:0.016;--d:0.160"/>
-            <path class="axo-grid" d="M407.2 321.1L178.6 453.1" pathLength="1" style="--s:0.024;--d:0.160"/>
-            <path class="axo-grid" d="M435.8 337.6L207.2 469.6" pathLength="1" style="--s:0.032;--d:0.160"/>
-            <path class="axo-grid" d="M464.4 354.1L235.8 486.1" pathLength="1" style="--s:0.040;--d:0.160"/>
-            <path class="axo-grid" d="M493 370.6L264.3 502.6" pathLength="1" style="--s:0.048;--d:0.160"/>
-            <path class="axo-grid" d="M521.6 387.1L292.9 519.1" pathLength="1" style="--s:0.056;--d:0.160"/>
-            <path class="axo-grid" d="M550.1 403.6L321.5 535.6" pathLength="1" style="--s:0.064;--d:0.160"/>
-            <path class="axo-grid" d="M264.3 271.6L550.1 436.6" pathLength="1" style="--s:0.020;--d:0.160"/>
-            <path class="axo-grid" d="M235.8 288.1L521.6 453.1" pathLength="1" style="--s:0.028;--d:0.160"/>
-            <path class="axo-grid" d="M207.2 304.6L493 469.6" pathLength="1" style="--s:0.036;--d:0.160"/>
-            <path class="axo-grid" d="M178.6 321.1L464.4 486.1" pathLength="1" style="--s:0.044;--d:0.160"/>
-            <path class="axo-grid" d="M150 337.6L435.8 502.6" pathLength="1" style="--s:0.052;--d:0.160"/>
-            <path class="axo-grid" d="M121.5 354.1L407.2 519.1" pathLength="1" style="--s:0.060;--d:0.160"/>
-            <path class="axo-grid" d="M92.9 370.6L378.7 535.6" pathLength="1" style="--s:0.068;--d:0.160"/>
-            <path class="axo-site" d="M292.9 255.1L578.7 420.1L350.1 552.1L64.3 387.1Z" pathLength="1" style="--s:0.020;--d:0.200"/>
-            <g class="axo-box axo-box--podium">
-            <path class="axo-face axo-face--l" d="M144.3 373.9L344.4 489.4L344.4 443.2L144.3 327.7Z" pathLength="1" style="--s:0.120;--d:0.160"/>
-            <path class="axo-face axo-face--r" d="M493 403.6L344.4 489.4L344.4 443.2L493 357.4Z" pathLength="1" style="--s:0.144;--d:0.160"/>
-            <path class="axo-face axo-face--t" d="M292.9 241.9L493 357.4L344.4 443.2L144.3 327.7Z" pathLength="1" style="--s:0.168;--d:0.160"/>
-            <path class="axo-detail" d="M144.3 350.8L344.4 466.3L493 380.5" pathLength="1" style="--s:0.260;--d:0.120"/>
-            <path class="axo-mullion" d="M158.6 382.2L158.6 359.1" pathLength="1" style="--s:0.280;--d:0.140"/>
-            <path class="axo-mullion" d="M172.9 390.4L172.9 367.3" pathLength="1" style="--s:0.284;--d:0.140"/>
-            <path class="axo-mullion" d="M187.2 398.7L187.2 375.5" pathLength="1" style="--s:0.288;--d:0.140"/>
-            <path class="axo-mullion" d="M201.5 406.9L201.5 383.8" pathLength="1" style="--s:0.292;--d:0.140"/>
-            <path class="axo-mullion" d="M215.8 415.2L215.8 392" pathLength="1" style="--s:0.296;--d:0.140"/>
-            <path class="axo-mullion" d="M230.1 423.4L230.1 400.3" pathLength="1" style="--s:0.300;--d:0.140"/>
-            <path class="axo-mullion" d="M244.3 431.7L244.3 408.5" pathLength="1" style="--s:0.304;--d:0.140"/>
-            <path class="axo-mullion" d="M258.6 439.9L258.6 416.8" pathLength="1" style="--s:0.308;--d:0.140"/>
-            <path class="axo-mullion" d="M272.9 448.2L272.9 425.1" pathLength="1" style="--s:0.312;--d:0.140"/>
-            <path class="axo-mullion" d="M287.2 456.4L287.2 433.3" pathLength="1" style="--s:0.316;--d:0.140"/>
-            <path class="axo-mullion" d="M301.5 464.7L301.5 441.6" pathLength="1" style="--s:0.320;--d:0.140"/>
-            <path class="axo-mullion" d="M315.8 472.9L315.8 449.8" pathLength="1" style="--s:0.324;--d:0.140"/>
-            <path class="axo-mullion" d="M330.1 481.2L330.1 458.1" pathLength="1" style="--s:0.328;--d:0.140"/>
-            <path class="axo-mullion" d="M478.7 411.9L478.7 388.8" pathLength="1" style="--s:0.332;--d:0.140"/>
-            <path class="axo-mullion" d="M464.4 420.1L464.4 397" pathLength="1" style="--s:0.336;--d:0.140"/>
-            <path class="axo-mullion" d="M450.1 428.4L450.1 405.3" pathLength="1" style="--s:0.340;--d:0.140"/>
-            <path class="axo-mullion" d="M435.8 436.6L435.8 413.5" pathLength="1" style="--s:0.344;--d:0.140"/>
-            <path class="axo-mullion" d="M421.5 444.9L421.5 421.8" pathLength="1" style="--s:0.348;--d:0.140"/>
-            <path class="axo-mullion" d="M407.2 453.1L407.2 430" pathLength="1" style="--s:0.352;--d:0.140"/>
-            <path class="axo-mullion" d="M393 461.4L393 438.3" pathLength="1" style="--s:0.356;--d:0.140"/>
-            <path class="axo-mullion" d="M378.7 469.6L378.7 446.5" pathLength="1" style="--s:0.360;--d:0.140"/>
-            <path class="axo-mullion" d="M364.4 477.9L364.4 454.8" pathLength="1" style="--s:0.364;--d:0.140"/>
-            <path class="axo-mullion" d="M350.1 486.1L350.1 463" pathLength="1" style="--s:0.368;--d:0.140"/>
-            </g>
-            <g class="axo-box axo-box--tower">
-            <path class="axo-face axo-face--l" d="M218.6 311.2L315.8 367.3L315.8 169.3L218.6 113.2Z" pathLength="1" style="--s:0.300;--d:0.180"/>
-            <path class="axo-face axo-face--r" d="M395.8 321.1L315.8 367.3L315.8 169.3L395.8 123.1Z" pathLength="1" style="--s:0.327;--d:0.180"/>
-            <path class="axo-face axo-face--t" d="M298.6 67L395.8 123.1L315.8 169.3L218.6 113.2Z" pathLength="1" style="--s:0.354;--d:0.180"/>
-            <path class="axo-detail" d="M218.6 294.7L315.8 350.8L395.8 304.6" pathLength="1" style="--s:0.420;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 278.2L315.8 334.3L395.8 288.1" pathLength="1" style="--s:0.432;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 261.7L315.8 317.8L395.8 271.6" pathLength="1" style="--s:0.444;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 245.2L315.8 301.3L395.8 255.1" pathLength="1" style="--s:0.456;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 228.7L315.8 284.8L395.8 238.6" pathLength="1" style="--s:0.468;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 212.2L315.8 268.3L395.8 222.1" pathLength="1" style="--s:0.480;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 195.7L315.8 251.8L395.8 205.6" pathLength="1" style="--s:0.492;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 179.2L315.8 235.3L395.8 189.1" pathLength="1" style="--s:0.504;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 162.7L315.8 218.8L395.8 172.6" pathLength="1" style="--s:0.516;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 146.2L315.8 202.3L395.8 156.1" pathLength="1" style="--s:0.528;--d:0.120"/>
-            <path class="axo-detail" d="M218.6 129.7L315.8 185.8L395.8 139.6" pathLength="1" style="--s:0.540;--d:0.120"/>
-            <path class="axo-mullion" d="M228.3 316.8L228.3 118.8" pathLength="1" style="--s:0.460;--d:0.140"/>
-            <path class="axo-mullion" d="M238.1 322.4L238.1 124.4" pathLength="1" style="--s:0.466;--d:0.140"/>
-            <path class="axo-mullion" d="M247.8 328L247.8 130" pathLength="1" style="--s:0.472;--d:0.140"/>
-            <path class="axo-mullion" d="M257.5 333.6L257.5 135.6" pathLength="1" style="--s:0.478;--d:0.140"/>
-            <path class="axo-mullion" d="M267.2 339.3L267.2 141.3" pathLength="1" style="--s:0.484;--d:0.140"/>
-            <path class="axo-mullion" d="M276.9 344.9L276.9 146.9" pathLength="1" style="--s:0.490;--d:0.140"/>
-            <path class="axo-mullion" d="M286.6 350.5L286.6 152.5" pathLength="1" style="--s:0.496;--d:0.140"/>
-            <path class="axo-mullion" d="M296.4 356.1L296.4 158.1" pathLength="1" style="--s:0.502;--d:0.140"/>
-            <path class="axo-mullion" d="M306.1 361.7L306.1 163.7" pathLength="1" style="--s:0.508;--d:0.140"/>
-            <path class="axo-mullion" d="M385.8 326.9L385.8 128.9" pathLength="1" style="--s:0.514;--d:0.140"/>
-            <path class="axo-mullion" d="M375.8 332.7L375.8 134.7" pathLength="1" style="--s:0.520;--d:0.140"/>
-            <path class="axo-mullion" d="M365.8 338.4L365.8 140.4" pathLength="1" style="--s:0.526;--d:0.140"/>
-            <path class="axo-mullion" d="M355.8 344.2L355.8 146.2" pathLength="1" style="--s:0.532;--d:0.140"/>
-            <path class="axo-mullion" d="M345.8 350L345.8 152" pathLength="1" style="--s:0.538;--d:0.140"/>
-            <path class="axo-mullion" d="M335.8 355.8L335.8 157.8" pathLength="1" style="--s:0.544;--d:0.140"/>
-            <path class="axo-mullion" d="M325.8 361.5L325.8 163.5" pathLength="1" style="--s:0.550;--d:0.140"/>
-            </g>
-            <g class="axo-box axo-box--crown">
-            <path class="axo-edge" d="M218.6 113.2L218.6 86.8" pathLength="1" style="--s:0.620;--d:0.080"/>
-            <path class="axo-edge" d="M315.8 169.3L315.8 142.9" pathLength="1" style="--s:0.620;--d:0.080"/>
-            <path class="axo-edge" d="M395.8 123.1L395.8 96.7" pathLength="1" style="--s:0.620;--d:0.080"/>
-            <path class="axo-edge" d="M298.6 40.6L395.8 96.7L315.8 142.9L218.6 86.8Z" pathLength="1" style="--s:0.640;--d:0.100"/>
-            </g>
-            <g class="axo-box axo-box--plant">
-            <path class="axo-face axo-face--l" d="M264.3 116.5L304.4 139.6L304.4 126.4L264.3 103.3Z" pathLength="1" style="--s:0.660;--d:0.080"/>
-            <path class="axo-face axo-face--r" d="M344.4 116.5L304.4 139.6L304.4 126.4L344.4 103.3Z" pathLength="1" style="--s:0.672;--d:0.080"/>
-            <path class="axo-face axo-face--t" d="M304.4 80.2L344.4 103.3L304.4 126.4L264.3 103.3Z" pathLength="1" style="--s:0.684;--d:0.080"/>
-            </g>
-            <g class="axo-box axo-box--wing">
-            <path class="axo-face axo-face--l" d="M344.4 370.6L395.8 400.3L395.8 314.5L344.4 284.8Z" pathLength="1" style="--s:0.500;--d:0.140"/>
-            <path class="axo-face axo-face--r" d="M458.7 364L395.8 400.3L395.8 314.5L458.7 278.2Z" pathLength="1" style="--s:0.521;--d:0.140"/>
-            <path class="axo-face axo-face--t" d="M407.2 248.5L458.7 278.2L395.8 314.5L344.4 284.8Z" pathLength="1" style="--s:0.542;--d:0.140"/>
-            <path class="axo-detail" d="M344.4 354.1L395.8 383.8L458.7 347.5" pathLength="1" style="--s:0.600;--d:0.120"/>
-            <path class="axo-detail" d="M344.4 337.6L395.8 367.3L458.7 331" pathLength="1" style="--s:0.615;--d:0.120"/>
-            <path class="axo-detail" d="M344.4 321.1L395.8 350.8L458.7 314.5" pathLength="1" style="--s:0.630;--d:0.120"/>
-            <path class="axo-detail" d="M344.4 304.6L395.8 334.3L458.7 298" pathLength="1" style="--s:0.645;--d:0.120"/>
-            <path class="axo-mullion" d="M352.9 375.5L352.9 289.8" pathLength="1" style="--s:0.620;--d:0.140"/>
-            <path class="axo-mullion" d="M361.5 380.5L361.5 294.7" pathLength="1" style="--s:0.626;--d:0.140"/>
-            <path class="axo-mullion" d="M370.1 385.5L370.1 299.7" pathLength="1" style="--s:0.632;--d:0.140"/>
-            <path class="axo-mullion" d="M378.7 390.4L378.7 304.6" pathLength="1" style="--s:0.638;--d:0.140"/>
-            <path class="axo-mullion" d="M387.2 395.4L387.2 309.5" pathLength="1" style="--s:0.644;--d:0.140"/>
-            <path class="axo-mullion" d="M448.4 369.9L448.4 284.1" pathLength="1" style="--s:0.650;--d:0.140"/>
-            <path class="axo-mullion" d="M438.1 375.9L438.1 290.1" pathLength="1" style="--s:0.656;--d:0.140"/>
-            <path class="axo-mullion" d="M427.8 381.8L427.8 296" pathLength="1" style="--s:0.662;--d:0.140"/>
-            <path class="axo-mullion" d="M417.5 387.8L417.5 302" pathLength="1" style="--s:0.668;--d:0.140"/>
-            <path class="axo-mullion" d="M407.2 393.7L407.2 307.9" pathLength="1" style="--s:0.674;--d:0.140"/>
-            </g>
-            <path class="axo-water" d="M495.8 418.5L527.3 436.6L401.5 509.2L370.1 491.1Z" pathLength="1" style="--s:0.660;--d:0.120"/>
-            <path class="axo-detail" d="M490.1 428.4L387.2 487.8" pathLength="1" style="--s:0.720;--d:0.080"/>
-            <path class="axo-tree" d="M132.9 393.7L132.9 378.5" pathLength="1" style="--s:0.700;--d:0.060"/>
-            <path class="axo-tree" d="M123.9 375.5a9 5.2 0 1 0 18 0a9 5.2 0 1 0 -18 0" pathLength="1" style="--s:0.720;--d:0.080"/>
-            <path class="axo-tree" d="M167.2 413.5L167.2 398.3" pathLength="1" style="--s:0.712;--d:0.060"/>
-            <path class="axo-tree" d="M158.2 395.3a9 5.2 0 1 0 18 0a9 5.2 0 1 0 -18 0" pathLength="1" style="--s:0.732;--d:0.080"/>
-            <path class="axo-tree" d="M201.5 433.3L201.5 418.2" pathLength="1" style="--s:0.724;--d:0.060"/>
-            <path class="axo-tree" d="M192.5 415.2a9 5.2 0 1 0 18 0a9 5.2 0 1 0 -18 0" pathLength="1" style="--s:0.744;--d:0.080"/>
-            <path class="axo-tree" d="M235.8 453.1L235.8 438" pathLength="1" style="--s:0.736;--d:0.060"/>
-            <path class="axo-tree" d="M226.8 435a9 5.2 0 1 0 18 0a9 5.2 0 1 0 -18 0" pathLength="1" style="--s:0.756;--d:0.080"/>
-            <path class="axo-tree" d="M270.1 472.9L270.1 457.8" pathLength="1" style="--s:0.748;--d:0.060"/>
-            <path class="axo-tree" d="M261.1 454.8a9 5.2 0 1 0 18 0a9 5.2 0 1 0 -18 0" pathLength="1" style="--s:0.768;--d:0.080"/>
-            <path class="axo-tree" d="M304.4 492.7L304.4 477.6" pathLength="1" style="--s:0.760;--d:0.060"/>
-            <path class="axo-tree" d="M295.4 474.6a9 5.2 0 1 0 18 0a9 5.2 0 1 0 -18 0" pathLength="1" style="--s:0.780;--d:0.080"/>
-            <path class="axo-dim" d="M70 416.8L270.1 532.3" pathLength="1" style="--s:0.780;--d:0.100"/>
-            <path class="axo-dim" d="M104.3 397L61.4 421.8" pathLength="1" style="--s:0.800;--d:0.060"/>
-            <path class="axo-dim" d="M304.4 512.5L261.5 537.3" pathLength="1" style="--s:0.800;--d:0.060"/>
-            <path class="axo-leader" d="M252.9 192.4L204.9 156.4L178.9 156.4" pathLength="1" style="--s:0.840;--d:0.070"/>
-            <circle class="axo-node" cx="252.9" cy="192.4" r="3" style="--s:0.840"/>
-            <path class="axo-leader" d="M424.4 331L468.4 291L494.4 291" pathLength="1" style="--s:0.860;--d:0.070"/>
-            <circle class="axo-node" cx="424.4" cy="331" r="3" style="--s:0.860"/>
-            <path class="axo-leader" d="M378.7 449.8L418.7 475.8L444.7 475.8" pathLength="1" style="--s:0.880;--d:0.070"/>
-            <circle class="axo-node" cx="378.7" cy="449.8" r="3" style="--s:0.880"/>
-            <path class="axo-gizmo axo-gizmo--x" d="M44 558l22.5 13" pathLength="1" style="--s:0.020;--d:0.080"/>
-            <path class="axo-gizmo axo-gizmo--y" d="M44 558l-22.5 13" pathLength="1" style="--s:0.050;--d:0.080"/>
-            <path class="axo-gizmo axo-gizmo--z" d="M44 558l0 -30" pathLength="1" style="--s:0.080;--d:0.080"/>
-            <circle class="axo-gizmo-o" cx="44" cy="558" r="2.5"/>
-            <text class="axo-label" x="172.9" y="160.4" text-anchor="end" style="--s:0.860" data-ar="مكاتب">Office</text>
-            <text class="axo-label" x="500.4" y="295" text-anchor="start" style="--s:0.880" data-ar="عيادات">Clinic</text>
-            <text class="axo-label" x="450.7" y="479.8" text-anchor="start" style="--s:0.900" data-ar="تجزئة">Retail</text>
-            <text class="axo-axis" x="74.4" y="578.6" text-anchor="middle">X</text>
-            <text class="axo-axis" x="13.6" y="578.6" text-anchor="middle">Y</text>
-            <text class="axo-axis" x="44" y="520.5" text-anchor="middle">Z</text>
-            </svg>
-          </div>
-          <a class="hb-studio__open" href="studio.html?model=mixed-use" data-cursor="explore" aria-label="Open the mixed-use model in the 3D Studio" data-ar-aria-label="افتح النموذج متعدد الاستخدامات في الاستوديو ثلاثي الأبعاد"></a>
-          <div class="hb-studio__hud hb-studio__hud--bottom" aria-hidden="true">
-            <span data-ar="كتلة توضيحية — ليست بمقياس رسم">Illustrative massing — not to scale</span>
-            <span class="hb-studio__hud-k num-ltr"><span data-hb-draw-pct>100</span>%</span>
+          <div class="container hb-zoom__ui">
+            <header class="hb-zoom__head">
+              <p class="eyebrow" data-ar="عن قرب · إيست مين، القاهرة الجديدة">Up close · Eastmain, New Cairo</p>
+              <h2 class="h2 hb-zoom__title" id="hb-zoom-title" data-ar-html="كل تفصيل، &lt;em&gt;مدروس بعناية&lt;/em&gt;">Every detail, <em>engineered</em></h2>
+            </header>
+
+            <ol class="hb-zoom__steps" role="list">
+              <li class="hb-zoom__step is-active" data-from="0" data-to="0.3">
+                <span class="hb-zoom__num num">01</span>
+                <h3 class="hb-zoom__step-title" data-ar="المخطط العام">The masterplan</h3>
+                <p data-ar="مشروع متعدد الاستخدامات يضمّ مساحات تجارية ومكتبية وعيادات حول ساحة منسّقة — في قلب المربع الذهبي بالقاهرة الجديدة.">A mixed-use destination of retail, office and clinic spaces around a landscaped plaza — in the heart of the Golden Square, New Cairo.</p>
+              </li>
+              <li class="hb-zoom__step" data-from="0.3" data-to="0.6">
+                <span class="hb-zoom__num num">02</span>
+                <h3 class="hb-zoom__step-title" data-ar="الواجهة والساحة">Façade &amp; plaza</h3>
+                <p data-ar="طوابق مكتبية زجاجية تعلو رواقًا تجاريًا مزدوج الارتفاع، ينفتح على ساحة تحفّها أشجار النخيل ومسطّح مائي عاكس.">Glazed office floors rise above a double-height retail arcade that opens onto a palm-lined plaza and reflecting pool.</p>
+              </li>
+              <li class="hb-zoom__step" data-from="0.6" data-to="0.84">
+                <span class="hb-zoom__num num">03</span>
+                <h3 class="hb-zoom__step-title" data-ar="طابقًا بعد طابق">Level by level</h3>
+                <p data-ar="افصل الطوابق لترى كيف يتكوّن المبنى — من المنصة التجارية حتى تراسات السطح.">Separate the floors to see how the building stacks — from the retail podium to the rooftop terraces.</p>
+              </li>
+              <li class="hb-zoom__step" data-from="0.84" data-to="1.01">
+                <span class="hb-zoom__num num">04</span>
+                <h3 class="hb-zoom__step-title" data-ar="من النهار إلى الليل">Day into night</h3>
+                <p data-ar="استكشف هذا النموذج وأربعة نماذج أخرى بنفسك: دوّر وقرّب وافصل الطوابق وغيّر وقت اليوم.">Explore this model and four more yourself — orbit, zoom, separate floors and change the time of day.</p>
+                <a class="btn btn--primary hb-zoom__cta" href="studio.html?model=mixed-use" data-magnetic><span data-ar="افتح الاستوديو ثلاثي الأبعاد">Open the 3D Studio</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
+              </li>
+            </ol>
+
+            <div class="hb-zoom__rail" aria-hidden="true">
+              <span class="hb-zoom__rail-fill"></span>
+              <span class="hb-zoom__tick" style="--at:0"></span><span class="hb-zoom__tick" style="--at:.3"></span><span class="hb-zoom__tick" style="--at:.6"></span><span class="hb-zoom__tick" style="--at:.84"></span>
+            </div>
+            <p class="hb-zoom__hint" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mouse-pointer-click"></use></svg><span data-ar="مرّر للاستكشاف">Scroll to explore</span></p>
+            <p class="hb-zoom__note"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#info"></use></svg><span data-ar="نموذج كتلي توضيحي — ليس بمقياس رسم.">Illustrative massing model — not to scale.</span></p>
           </div>
         </div>
       </div>
