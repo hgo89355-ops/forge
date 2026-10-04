@@ -938,7 +938,7 @@ html[lang='ar'] .pj-map__gname { font-size: .8125rem; }
   aspect-ratio: 4 / 3;
   max-block-size: 62vh;
   border-radius: var(--radius);
-  background: #08111a;
+  background: var(--navy-950);
   cursor: zoom-in;
   touch-action: none;
   user-select: none;

@@ -49,6 +49,7 @@
   </script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/gsap/SplitText.min.js" defer></script>
   <script src="assets/vendor/lenis/lenis.min.js" defer></script>
   <script type="module" src="assets/js/core/main.js"></script>
   <script type="module" src="assets/js/pages/careers.js"></script>
@@ -130,7 +131,6 @@
           <img src="assets/img/aerial-compound.jpg" alt="" width="1560" height="849" fetchpriority="high" decoding="async">
         </picture>
       </div>
-      <div class="careers-hero__lines" aria-hidden="true"></div>
 
       <div class="container careers-hero__inner">
         <div class="careers-hero__copy">
@@ -144,7 +144,6 @@
           <p class="lead page-hero__lead" data-reveal="up" data-reveal-delay="350" data-ar="انضم إلى مجموعة مبدعة ومبتكرة تضع الإنسان أولًا، وابنِ مسيرتك في الإنشاءات والتطوير والتعليم وإدارة المرافق.">Join a creative, innovative and people-oriented group. Build your career in construction, development, education and facility management.</p>
           <div class="page-hero__actions" data-reveal="up" data-reveal-delay="500">
             <a class="btn btn--primary" href="#apply" data-magnetic><span data-ar="قدّم الآن">Apply now</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
-            <a class="btn btn--ghost" href="#disciplines"><span data-ar="التخصصات">See disciplines</span></a>
           </div>
         </div>
 
@@ -152,7 +151,7 @@
         <div class="careers-hero__skyline" aria-hidden="true" data-careers-skyline>
           <figure class="careers-tower careers-tower--a" data-reveal="mask-up" data-reveal-delay="250">
             <div class="careers-tower__inner">
-              <span class="careers-tower__label"><span class="careers-tower__num">01</span><span data-ar="نخطّط.">We plan.</span></span>
+              <span class="careers-tower__label"><span data-ar="نخطّط.">We plan.</span></span>
               <div class="careers-tower__media">
                 <picture><source type="image/webp" srcset="assets/img/campus.webp"><img src="assets/img/campus.jpg" alt="" width="999" height="863" decoding="async" style="--pos:52% 30%"></picture>
               </div>
@@ -160,7 +159,7 @@
           </figure>
           <figure class="careers-tower careers-tower--b" data-reveal="mask-up" data-reveal-delay="400">
             <div class="careers-tower__inner">
-              <span class="careers-tower__label"><span class="careers-tower__num">02</span><span data-ar="نبني.">We build.</span></span>
+              <span class="careers-tower__label"><span data-ar="نبني.">We build.</span></span>
               <div class="careers-tower__media">
                 <picture><source type="image/webp" srcset="assets/img/eastmain.webp"><img src="assets/img/eastmain.jpg" alt="" width="790" height="710" decoding="async" style="--pos:58% 50%"></picture>
               </div>
@@ -168,7 +167,7 @@
           </figure>
           <figure class="careers-tower careers-tower--c" data-reveal="mask-up" data-reveal-delay="550">
             <div class="careers-tower__inner">
-              <span class="careers-tower__label"><span class="careers-tower__num">03</span><span data-ar="نُدير.">We manage.</span></span>
+              <span class="careers-tower__label"><span data-ar="نُدير.">We manage.</span></span>
               <div class="careers-tower__media">
                 <picture><source type="image/webp" srcset="assets/img/victoria-101.webp"><img src="assets/img/victoria-101.jpg" alt="" width="790" height="710" decoding="async" style="--pos:46% 40%"></picture>
               </div>
@@ -178,7 +177,6 @@
       </div>
 
       <div class="container page-hero__foot careers-hero__foot">
-        <span class="scroll-cue"><span class="scroll-cue__line" aria-hidden="true"></span><span data-ar="مرّر للأسفل">Scroll</span></span>
         <dl class="careers-hero__stats">
           <div class="careers-hero__stat">
             <dt data-ar="كفاءة مهنية متميّزة">Talented professionals</dt>
@@ -197,23 +195,16 @@
       <div class="container">
         <div class="grid grid--loose careers-why__intro">
           <div class="col-lg-7 careers-why__copy">
-            <p class="eyebrow" data-ar="لماذا موبكو">Why MOBCO</p>
             <h2 class="h2" id="why-title" data-split data-ar-html="مبدعون. مبتكرون. &lt;em&gt;نضع الإنسان أولًا.&lt;/em&gt;">Creative. Innovative. <em>People-oriented.</em></h2>
             <figure class="careers-why__quote" data-reveal="up">
               <blockquote>
                 <p data-ar-html="مجموعة موبكو مؤسسةٌ <em>مبدعة</em> و<em>مبتكرة</em> <em>تضع الإنسان في صميم اهتمامها</em>، وتمنح جميع أعضائها فرصًا فردية ورضًا شخصيًا وتحدياتٍ مُجزية.">MOBCO Group is a <em>creative</em>, <em>innovative</em>, and <em>people-oriented</em> organization providing individual opportunity, personal satisfaction, and rewarding challenges to all members of the firm.</p>
               </blockquote>
-              <figcaption class="caption" data-ar="من رؤية مجموعة موبكو">From the MOBCO Group vision</figcaption>
             </figure>
-            <p class="body-lg muted careers-why__values" data-reveal="up" data-reveal-delay="120" data-ar="تُحدِّد قيمنا الجوهرية في السلامة والنزاهة والتميّز أخلاقيات عملنا، وتوجّه كوادرنا في عالمٍ سريع التغيّر ومليء بالتحديات.">Our core values of safety, integrity and excellence define our work ethic and guide our workforce in today's rapidly changing and challenging world.</p>
           </div>
           <div class="col-lg-5 careers-why__visual">
             <div class="media ratio-4x5 careers-why__media" data-reveal="clip">
               <picture><source type="image/webp" srcset="assets/img/aerial-compound-portrait.webp"><img src="assets/img/aerial-compound-portrait.jpg" alt="Aerial render of a residential community with villas, pools and a tree-lined boulevard" data-ar-alt="تصوّر جوي لمجتمع سكني يضمّ فللًا ومسابح وشارعًا تصطفّ على جانبيه الأشجار" width="996" height="912" loading="lazy" decoding="async" style="--pos:40% 50%"></picture>
-              <div class="careers-why__badge">
-                <span class="careers-why__badge-num num-ltr">25<span>+</span></span>
-                <span class="careers-why__badge-label" data-ar="عامًا من الخبرة">Years of experience</span>
-              </div>
             </div>
           </div>
         </div>
@@ -221,8 +212,7 @@
         <!-- Interactive benefit panels (expand on hover / focus / click on desktop; stacked on mobile) -->
         <div class="careers-benefits" data-benefits>
           <article class="careers-benefit is-active" data-benefit>
-            <span class="careers-benefit__num num" aria-hidden="true">01</span>
-            <span class="icon-tile careers-benefit__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#trending-up"></use></svg></span>
+            <span class="careers-benefit__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/neom-gayal-office-housing.webp 480w, assets/img/neom-gayal-office-housing.webp 1022w" sizes="(min-width: 1200px) 40vw, 100vw"><img src="assets/img/neom-gayal-office-housing.jpg" alt="" width="1022" height="689" loading="lazy" decoding="async" style="--pos:50% 45%"></picture></span>
             <h3 class="careers-benefit__title"><button class="careers-benefit__trigger" type="button" aria-expanded="true" aria-controls="benefit-1"><span data-ar="فرص فردية">Individual opportunity</span></button></h3>
             <div class="careers-benefit__body" id="benefit-1">
               <p class="careers-benefit__short" data-ar="مساحة للنمو داخل مجموعة متكاملة رأسيًا.">Room to grow within a vertically integrated group.</p>
@@ -230,8 +220,7 @@
             </div>
           </article>
           <article class="careers-benefit" data-benefit>
-            <span class="careers-benefit__num num" aria-hidden="true">02</span>
-            <span class="icon-tile careers-benefit__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#building-2"></use></svg></span>
+            <span class="careers-benefit__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/aerial-compound.webp 480w, assets/img/aerial-compound.webp 1560w" sizes="(min-width: 1200px) 40vw, 100vw"><img src="assets/img/aerial-compound.jpg" alt="" width="1560" height="849" loading="lazy" decoding="async" style="--pos:50% 45%"></picture></span>
             <h3 class="careers-benefit__title"><button class="careers-benefit__trigger" type="button" aria-expanded="false" aria-controls="benefit-2"><span data-ar="رضا شخصي">Personal satisfaction</span></button></h3>
             <div class="careers-benefit__body" id="benefit-2">
               <p class="careers-benefit__short" data-ar="عملٌ يترك أثرًا يدوم.">Work that leaves a lasting mark.</p>
@@ -239,8 +228,7 @@
             </div>
           </article>
           <article class="careers-benefit" data-benefit>
-            <span class="careers-benefit__num num" aria-hidden="true">03</span>
-            <span class="icon-tile careers-benefit__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hard-hat"></use></svg></span>
+            <span class="careers-benefit__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/park-inn-olaya-hotel.webp 480w, assets/img/park-inn-olaya-hotel.webp 1022w" sizes="(min-width: 1200px) 40vw, 100vw"><img src="assets/img/park-inn-olaya-hotel.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos:50% 45%"></picture></span>
             <h3 class="careers-benefit__title"><button class="careers-benefit__trigger" type="button" aria-expanded="false" aria-controls="benefit-3"><span data-ar="تحديات مُجزية">Rewarding challenges</span></button></h3>
             <div class="careers-benefit__body" id="benefit-3">
               <p class="careers-benefit__short" data-ar="مشاريع معقّدة تُنفَّذ بأعلى المعايير.">Complex projects, delivered to the highest standards.</p>
@@ -248,8 +236,7 @@
             </div>
           </article>
           <article class="careers-benefit" data-benefit>
-            <span class="careers-benefit__num num" aria-hidden="true">04</span>
-            <span class="icon-tile careers-benefit__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#users"></use></svg></span>
+            <span class="careers-benefit__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/sub-real-estate-office.webp 480w, assets/img/sub-real-estate-office.webp 624w" sizes="(min-width: 1200px) 40vw, 100vw"><img src="assets/img/sub-real-estate-office.jpg" alt="" width="624" height="482" loading="lazy" decoding="async" style="--pos:50% 45%"></picture></span>
             <h3 class="careers-benefit__title"><button class="careers-benefit__trigger" type="button" aria-expanded="false" aria-controls="benefit-4"><span data-ar="ثقافة محورها الإنسان">People-oriented culture</span></button></h3>
             <div class="careers-benefit__body" id="benefit-4">
               <p class="careers-benefit__short" data-ar="السلامة والنزاهة والتميّز توجّه كوادرنا.">Safety, integrity and excellence guide our workforce.</p>
@@ -270,76 +257,54 @@
           </div>
         </header>
 
-        <div class="careers-disc-toolbar" data-reveal="up">
-          <div class="chip-group" data-chip-group="single" data-disc-filter aria-label="Filter disciplines by area" data-ar-aria-label="تصفية التخصصات حسب المجال">
-            <button class="chip" type="button" data-value="all" aria-pressed="true"><span data-ar="الكل">All</span><span class="chip__count">8</span></button>
-            <button class="chip" type="button" data-value="technical" aria-pressed="false"><span data-ar="الفنية">Technical</span><span class="chip__count">3</span></button>
-            <button class="chip" type="button" data-value="management" aria-pressed="false"><span data-ar="الإدارة">Management</span><span class="chip__count">2</span></button>
-            <button class="chip" type="button" data-value="commercial" aria-pressed="false"><span data-ar="التجارية">Commercial</span><span class="chip__count">2</span></button>
-            <button class="chip" type="button" data-value="corporate" aria-pressed="false"><span data-ar="المؤسسية">Corporate</span><span class="chip__count">1</span></button>
-          </div>
-          <div class="careers-search">
-            <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#search"></use></svg>
-            <label class="visually-hidden" for="disc-search" data-ar="ابحث في التخصصات">Search disciplines</label>
-            <input class="careers-search__input" id="disc-search" type="search" placeholder="Search disciplines" data-ar-placeholder="ابحث في التخصصات" autocomplete="off" spellcheck="false">
-          </div>
-        </div>
-        <p class="careers-disc-status" data-disc-status aria-live="polite">8 disciplines</p>
+        <p class="careers-disc-status visually-hidden" data-disc-status aria-live="polite">8 disciplines</p>
 
         <div class="careers-disc-grid" data-disc-grid>
           <article class="careers-disc" data-discipline="engineering" data-cat="technical" data-keywords="engineering civil structural mep site الهندسة مدنية إنشائية كهروميكانيكية" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">01</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#drafting-compass"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/sub-construction-hero.webp 480w, assets/img/sub-construction-hero.webp 1484w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/sub-construction-hero.jpg" alt="" width="1484" height="702" loading="lazy" decoding="async" style="--pos:35% 45%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="الهندسة">Engineering</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="مدنية">Civil</span><span data-ar="إنشائية">Structural</span><span data-ar="كهروميكانيكية">MEP</span></p>
             <p class="careers-disc__text" data-ar="مهندسون مدنيون وإنشائيون وكهروميكانيكيون يحوّلون التصاميم إلى أعمال منسّقة قابلة للتنفيذ.">Civil, structural and MEP engineers who turn designs into coordinated, buildable works.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
           <article class="careers-disc" data-discipline="project-management" data-cat="management" data-keywords="project management controls planning scheduling planner cost إدارة المشاريع ضبط تخطيط جدولة" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">02</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#gauge"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/hq-tower-masjid-museum.webp 480w, assets/img/hq-tower-masjid-museum.webp 1022w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/hq-tower-masjid-museum.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos:70% 40%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="إدارة المشاريع وضبطها">Project management &amp; controls</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="التخطيط">Planning</span><span data-ar="الجدولة">Scheduling</span><span data-ar="ضبط التكاليف">Cost control</span></p>
             <p class="careers-disc__text" data-ar="مديرو مشاريع ومخطّطون ومتخصصون في ضبط المشاريع يحافظون على التسليم في موعده وضمن ميزانيته.">Project managers, planners and controls specialists who keep delivery on time and within budget.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
           <article class="careers-disc" data-discipline="quantity-surveying" data-cat="commercial" data-keywords="quantity surveying qs commercial cost contracts estimating valuations حصر الكميات تجارية عقود تكاليف" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">03</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chart-bar"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/bank-albilad-head-office.webp 480w, assets/img/bank-albilad-head-office.webp 1022w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/bank-albilad-head-office.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos:45% 40%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="حصر الكميات والشؤون التجارية">Quantity surveying &amp; commercial</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="التكاليف">Cost</span><span data-ar="العقود">Contracts</span><span data-ar="التقييمات">Valuations</span></p>
             <p class="careers-disc__text" data-ar="مسّاحو كميات ومديرون تجاريون يحافظون على القيمة في كل عقد.">Quantity surveyors and commercial managers who safeguard value across every contract.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
           <article class="careers-disc" data-discipline="hse" data-cat="technical" data-keywords="hse health safety environment quality qhse الصحة السلامة البيئة الجودة" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">04</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#shield-check"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/park-inn-olaya-hotel.webp 480w, assets/img/park-inn-olaya-hotel.webp 1022w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/park-inn-olaya-hotel.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos:50% 45%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="الصحة والسلامة والبيئة">Health, safety &amp; environment</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="السلامة">HSE</span><span data-ar="الجودة">Quality</span><span data-ar="البيئة">Environment</span></p>
             <p class="careers-disc__text" data-ar="متخصصون يجعلون السلامة ممارسة يومية في كل موقع.">Specialists who make safety an everyday practice on every site.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
           <article class="careers-disc" data-discipline="design-bim" data-cat="technical" data-keywords="design bim architecture modelling revit drawings التصميم نمذجة معلومات البناء عمارة مخططات" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">05</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#layers"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp 480w, assets/img/campus.webp 999w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/campus.jpg" alt="" width="999" height="863" loading="lazy" decoding="async" style="--pos:50% 40%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="التصميم ونمذجة معلومات البناء">Design &amp; BIM</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="العمارة">Architecture</span><span data-ar="BIM">BIM</span><span data-ar="التنسيق">Coordination</span></p>
             <p class="careers-disc__text" data-ar="مصمّمون ومتخصصو BIM ينسّقون النموذج قبل بدء أي تنفيذ.">Designers and BIM specialists who coordinate the model before anything is built.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
           <article class="careers-disc" data-discipline="procurement" data-cat="commercial" data-keywords="procurement purchasing supply chain logistics suppliers buyer المشتريات التوريد الموردون سلاسل الإمداد" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">06</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#boxes"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/neom-truck-service-center.webp 480w, assets/img/neom-truck-service-center.webp 1022w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/neom-truck-service-center.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos:50% 50%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="المشتريات">Procurement</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="التوريد">Sourcing</span><span data-ar="الموردون">Suppliers</span><span data-ar="الخدمات اللوجستية">Logistics</span></p>
             <p class="careers-disc__text" data-ar="مختصّو مشتريات وسلاسل إمداد يوفّرون المواد المناسبة للموقع في الوقت المناسب.">Buyers and supply-chain specialists who get the right materials to site at the right time.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
           <article class="careers-disc" data-discipline="facility-management" data-cat="management" data-keywords="facility management fm operations maintenance إدارة المرافق التشغيل الصيانة" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">07</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#wrench"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/sub-real-estate-office.webp 480w, assets/img/sub-real-estate-office.webp 624w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/sub-real-estate-office.jpg" alt="" width="624" height="482" loading="lazy" decoding="async" style="--pos:50% 50%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="إدارة المرافق">Facility management</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="التشغيل">Operations</span><span data-ar="الصيانة">Maintenance</span><span data-ar="الخدمات">Services</span></p>
             <p class="careers-disc__text" data-ar="فرق تحافظ على كفاءة تشغيل المباني والمجتمعات بعد التسليم بوقت طويل.">Teams who keep buildings and communities running long after handover.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
           <article class="careers-disc" data-discipline="corporate" data-cat="corporate" data-keywords="corporate finance accounting hr human resources legal it administration business development الوظائف المؤسسية المالية الموارد البشرية القانونية تقنية المعلومات" data-cursor="open">
-            <div class="careers-disc__top"><span class="careers-disc__index num" aria-hidden="true">08</span><span class="icon-tile" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#briefcase"></use></svg></span></div>
+            <span class="careers-disc__photo" aria-hidden="true"><picture><source type="image/webp" srcset="assets/img/thumbs/axis-olaya-business-tower.webp 480w, assets/img/axis-olaya-business-tower.webp 1022w" sizes="(min-width: 1024px) 25vw, 50vw"><img src="assets/img/axis-olaya-business-tower.jpg" alt="" width="1022" height="641" loading="lazy" decoding="async" style="--pos:50% 40%"></picture></span>
             <h3 class="careers-disc__title"><button class="careers-disc__btn" type="button" aria-haspopup="dialog" aria-controls="discipline-drawer"><span data-ar="الوظائف المؤسسية">Corporate functions</span></button></h3>
-            <p class="careers-disc__tags"><span data-ar="المالية">Finance</span><span data-ar="الموارد البشرية">HR</span><span data-ar="القانونية">Legal</span><span data-ar="التقنية">IT</span></p>
             <p class="careers-disc__text" data-ar="متخصصون في المالية والموارد البشرية والشؤون القانونية وتقنية المعلومات يدعمون كل مشروع.">Finance, HR, legal, IT and administration professionals who support every project.</p>
             <span class="careers-disc__more" aria-hidden="true"><span data-ar="اكتشف التخصص">Explore</span><svg class="icon icon--sm icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></span>
           </article>
@@ -379,7 +344,6 @@
 
               <div class="tabs__panel careers-office" data-tab-panel="ksa">
                 <div class="careers-office__head">
-                  <span class="badge badge--accent"><span class="badge__dot" aria-hidden="true"></span><span data-ar="المقر الرئيسي">Headquarters</span></span>
                   <h3 class="h3 careers-office__name" data-ar="مكتب المملكة العربية السعودية">KSA Office</h3>
                 </div>
                 <div class="careers-office__grid">
@@ -409,7 +373,6 @@
 
               <div class="tabs__panel careers-office" data-tab-panel="egypt" hidden>
                 <div class="careers-office__head">
-                  <span class="badge badge--accent"><span class="badge__dot" aria-hidden="true"></span><span data-ar="المكتب الإقليمي">Regional office</span></span>
                   <h3 class="h3 careers-office__name" data-ar="مكتب مصر">Egypt Office</h3>
                 </div>
                 <div class="careers-office__grid">
@@ -462,31 +425,26 @@
         <ol class="careers-steps" data-journey style="--progress:0">
           <li class="careers-step" data-step>
             <span class="careers-step__node" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#send"></use></svg></span>
-            <span class="careers-step__num num" aria-hidden="true">01</span>
             <h3 class="careers-step__title" data-ar="قدّم">Apply</h3>
             <p class="careers-step__text" data-ar="أرسل سيرتك الذاتية عبر النموذج أدناه أو بالبريد الإلكتروني إلى فريق التوظيف في السعودية أو مصر.">Send your CV through the form below, or by email to the KSA or Egypt careers team.</p>
           </li>
           <li class="careers-step" data-step>
             <span class="careers-step__node" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#clipboard-check"></use></svg></span>
-            <span class="careers-step__num num" aria-hidden="true">02</span>
             <h3 class="careers-step__title" data-ar="المراجعة">Review</h3>
             <p class="careers-step__text" data-ar="يراجع فريق الموارد البشرية ملفك في ضوء احتياجات المشاريع الحالية والقادمة.">Our HR team reviews your profile against the needs of current and upcoming projects.</p>
           </li>
           <li class="careers-step" data-step>
             <span class="careers-step__node" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#phone"></use></svg></span>
-            <span class="careers-step__num num" aria-hidden="true">03</span>
             <h3 class="careers-step__title" data-ar="التواصل الأول">First conversation</h3>
             <p class="careers-step__text" data-ar="إذا توافق ملفك مع احتياج لدينا، نتواصل معك لمكالمة أولى.">If there’s a match, we contact you for a first call.</p>
           </li>
           <li class="careers-step" data-step>
             <span class="careers-step__node" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#handshake"></use></svg></span>
-            <span class="careers-step__num num" aria-hidden="true">04</span>
             <h3 class="careers-step__title" data-ar="المقابلات">Interviews</h3>
             <p class="careers-step__text" data-ar="التقِ بفريق التوظيف للحديث عن خبراتك والدور.">Meet the hiring team to talk through your experience and the role.</p>
           </li>
           <li class="careers-step" data-step>
             <span class="careers-step__node" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#flag"></use></svg></span>
-            <span class="careers-step__num num" aria-hidden="true">05</span>
             <h3 class="careers-step__title" data-ar="العرض والانضمام">Offer &amp; onboarding</h3>
             <p class="careers-step__text" data-ar="يتلقّى المرشحون المختارون عرضًا وظيفيًا وينضمّون إلى الفريق.">Successful candidates receive an offer and join the team.</p>
           </li>
@@ -509,22 +467,6 @@
                 <p class="label muted" data-ar="سيُرسَل طلبك إلى">Your application goes to</p>
                 <p class="careers-route__email is-empty" data-route-email aria-live="polite">Choose a location</p>
                 <p class="careers-route__office small muted" data-route-office hidden></p>
-                <div class="careers-progress">
-                  <div class="careers-progress__head">
-                    <p class="label" data-ar="قائمة التحقق">Checklist</p>
-                    <p class="careers-progress__text small" data-progress-text>0 of 7 complete</p>
-                  </div>
-                  <div class="careers-progress__track" aria-hidden="true"><span class="careers-progress__bar" data-progress-bar></span></div>
-                  <ul class="careers-checklist" role="list" data-checklist>
-                    <li data-check="name"><span class="careers-checklist__tick" aria-hidden="true"></span><span data-ar="الاسم الكامل">Full name</span></li>
-                    <li data-check="email"><span class="careers-checklist__tick" aria-hidden="true"></span><span data-ar="البريد الإلكتروني">Email</span></li>
-                    <li data-check="phone"><span class="careers-checklist__tick" aria-hidden="true"></span><span data-ar="رقم الهاتف">Phone</span></li>
-                    <li data-check="location"><span class="careers-checklist__tick" aria-hidden="true"></span><span data-ar="الموقع">Location</span></li>
-                    <li data-check="discipline"><span class="careers-checklist__tick" aria-hidden="true"></span><span data-ar="التخصص">Discipline</span></li>
-                    <li data-check="cv"><span class="careers-checklist__tick" aria-hidden="true"></span><span data-ar="السيرة الذاتية">CV</span></li>
-                    <li data-check="consent"><span class="careers-checklist__tick" aria-hidden="true"></span><span data-ar="الموافقة">Consent</span></li>
-                  </ul>
-                </div>
               </div>
               <p class="careers-apply__privacy small muted" data-reveal="up" data-reveal-delay="200">
                 <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#shield-check"></use></svg>

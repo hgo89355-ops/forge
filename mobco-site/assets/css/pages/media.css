@@ -242,7 +242,16 @@ html:not(.js) .mreel__ctrl { display: none; } /* controls need JS */
 .mgal-toolbar__chips { min-inline-size: 0; max-inline-size: 100%; }
 .mgal-chips { gap: .5rem; align-items: center; }
 .mgal-chips .chip { min-block-size: 44px; }
-.mgal-chips__sep { inline-size: 1px; block-size: 24px; background: var(--line-strong); margin-inline: .25rem; }
+.mgal-chips__sep { display: none; }
+/* filter chips: a small round photo of a project in that category */
+.mgal-chips .mgal-chip { gap: .5rem; padding-inline: 4px 1rem; border-radius: var(--radius-pill); }
+[dir='rtl'] .mgal-chips .mgal-chip { padding-inline: 4px 1rem; }
+.mgal-chip__thumb { flex: none; display: block; inline-size: 34px; block-size: 34px; overflow: hidden; border-radius: 50%; background: var(--navy-800); }
+.mgal-chip__thumb img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }
+.mgal-chip__thumb--all { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 8px; background: var(--navy-600); }
+.mgal-chip__thumb--all span { border-radius: 1px; background: rgba(255, 255, 255, .9); }
+.mgal-chip__thumb--all span:nth-child(2) { background: var(--teal-400); }
+.mgal-chip__thumb--all span:nth-child(3) { background: var(--gold-500); }
 .mgal-toolbar__status { font-family: var(--font-display); font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-muted); white-space: nowrap; }
 html[lang='ar'] .mgal-toolbar__status { letter-spacing: 0; text-transform: none; font-size: .875rem; }
 @media (max-width: 767.98px) {
@@ -459,7 +468,7 @@ html[lang='ar'] .mkit-sub__title { letter-spacing: 0; text-transform: none; }
   transition: color var(--dur), border-color var(--dur);
 }
 html[lang='ar'] .mkit-logo__tag { font-size: .75rem; letter-spacing: 0; }
-.mkit-logo__tag--gold { color: #8a6c36; border-color: rgba(178, 170, 138, .45); }
+.mkit-logo__tag--gold { color: var(--sand-700); border-color: rgba(178, 170, 138, .45); }
 .mkit-on-dark { display: none; }
 /* navy preview */
 .mkit-logos[data-tone='navy'] .mkit-logo__stage { background: var(--navy-900); }
@@ -507,11 +516,11 @@ html[lang='ar'] .mkit-dl__link { font-size: .8125rem; letter-spacing: 0; font-we
 @media (min-width: 768px) { .mpal { grid-template-columns: repeat(6, minmax(0, 1fr)); } .mpal__item { grid-column: span 2; } }
 @media (min-width: 1200px) {
   .mpal { grid-template-columns: repeat(12, minmax(0, 1fr)); }
-  .mpal__item { grid-column: span 2; }
+  .mpal__item { grid-column: span 3; }
   .mpal__item--xl { grid-column: span 6; grid-row: span 2; }
   .mpal__item--lg { grid-column: span 3; grid-row: span 2; }
 }
-@media (min-width: 768px) and (max-width: 1199.98px) { .mpal__item--xl { grid-column: span 6; } .mpal__item--lg { grid-column: span 3; } }
+@media (min-width: 768px) and (max-width: 1199.98px) { .mpal__item { grid-column: span 3; } .mpal__item--xl { grid-column: span 6; } }
 @media (max-width: 767.98px) { .mpal__item--xl { grid-column: span 2; } }
 .mpal__item { display: flex; }
 .mpal__swatch {

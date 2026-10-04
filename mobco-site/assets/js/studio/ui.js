@@ -1,24 +1,30 @@
-// MOBCO 3D Studio · ui.js
-// Binds the studio page markup (studio.html) to the engine: model library rail with runtime thumbnails,
-// info panel, controls panel, toolbar (screenshot / full screen / reset / help), projected hotspots and
-// their cards, level chip, loader, error + no-WebGL states, hints, wheel-zoom engagement, view insets.
-// Fully bilingual: every string comes from strings.js through t() and is re-rendered on 'langchange'.
+// MOBCO Project Builder · ui.js
+// Binds studio.html to the engine. Two modes share one viewer:
+//   explore · the five project models: library rail with runtime thumbnails, info card, hotspots and their cards
+//   build   · the visitor's own concept sketch (models/builder.js), rebuilt live from the builder form
+// Shared: compact view options (view presets, day / sunset / night, separate floors, line drawing), toolbar
+// (save image, full screen, reset, show / hide options), zoom buttons, floor chip, loader, error and
+// no-WebGL states, wheel-zoom engagement, view insets. Fully bilingual through strings.js and t().
 
 import { t, getLang, onLang } from '../core/i18n.js';
 import { scan, stopScroll, startScroll } from '../core/motion.js';
-import { toast, openModal } from '../core/ui.js';
+import { toast } from '../core/ui.js';
 import { $, $$, esc, icon, store, isTouch, hasFinePointer, prefersReducedMotion, debounce } from '../core/utils.js';
 import { projectUrl } from '../data/site-data.js';
 import { S, fmt } from './strings.js';
 import { modelIcon, projectFor } from './registry.js';
 import { DEFAULT_HOUR } from './environment.js';
+import { createBuilderUI } from './builder-ui.js';
+import { setConfig as setBuilderConfig } from './models/builder.js';
 
 const pad = (n) => String(n).padStart(2, '0');
-const THUMB_KEY = (id) => `mobco-studio-thumb-v1:${id}`;
+const THUMB_KEY = (id) => `mobco-studio-thumb-v2:${id}`;
+const BUILDER = 'builder';
+const LIGHT = { day: DEFAULT_HOUR, sunset: 18.35, night: 21 };
+const lightOf = (h) => (h < 17.4 ? 'day' : h < 19.2 ? 'sunset' : 'night');
 
-export function createStudioUI({ root, engine, entries, initialId, deepLinked = false, onModelChange = () => {} }) {
+export function createStudioUI({ root, engine, entries, initialId, initialMode = 'explore', deepLinked = false, onModelChange = () => {} }) {
   const viewport = $('[data-studio-viewport]', root);
-  const canvasHost = $('[data-studio-canvas]', root);
   const loader = $('[data-studio-loader]', root);
   const errorEl = $('[data-studio-error]', root);
   const fallbackEl = $('[data-studio-fallback]', root);
@@ -27,39 +33,48 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   const hint = $('[data-studio-hint]', root);
   const hintText = $('[data-studio-hint-text]', root);
   const live = $('[data-studio-live]', root);
+  const side = $('[data-studio-side]', root);
   const infoBody = $('[data-studio-info-body]', root);
   const panel = $('[data-studio-panel]', root);
+  const panelBody = $('[data-panel-body]', root);
+  const panelToggle = $('[data-panel-toggle]', root);
   const railList = $('[data-rail-list]', root);
+  const rail = $('[data-studio-rail]', root);
   const toolbar = $('[data-studio-toolbar]', root);
-  const info = $('[data-studio-info]', root);
+  const zoomBox = $('[data-studio-zoom]', root);
   const poster = $('[data-studio-poster-img]', root);
+  const form = $('[data-builder]', root);
 
   const metas = {};            // id → normalized meta (after a successful load)
   const status = {};           // id → 'ok' | 'error'
-  let current = initialId;
-  let shown = null;            // id currently displayed by the engine
+  let mode = initialMode === 'build' ? 'build' : 'explore';
+  let current = initialId;     // explore model id (kept while building, so "Our projects" returns to it)
+  let shown = null;            // id currently displayed by the engine ('builder' while building)
   let readyFired = false;
   let loadSeq = 0;
   let engineState = engine ? engine.getState() : null;
-  let hotspots = [];           // [{id, title, text, el}]
-  let openHot = null;          // hotspot id with an open card
+  let hotspots = [];
+  let openHot = null;
   let hotcard = null;
-  let lastFrameHot = [];
   let hoverFloor = null, selectedFloor = null;
   let immersive = false;
   let collapsed = false;
   let engaged = false;
-  let syncing = false;
-  let lastInsets = { left: 0, right: 0, top: 0, bottom: 0 }; // canvas px covered by the floating panels
+  let viewTouched = false;     // the visitor moved the camera since the last preset
+  let currentView = 'aerial';
+  let lastInsets = { left: 0, right: 0, top: 0, bottom: 0 };
 
   const reduced = prefersReducedMotion() || !!engine?.lowPower;
-  if (engine?.lowPower) root.classList.add('is-lowpower'); // CPU rasteriser: skip UI fades as well
+  if (engine?.lowPower) root.classList.add('is-lowpower');
   const touchOnly = isTouch() && !hasFinePointer();
 
   /* ============================================================ helpers */
   const entryOf = (id) => entries.find((e) => e.id === id) || null;
-  // The project name (site-data.js) is the public title; the module's own name is used only without a project.
-  const nameOf = (id) => { const e = entryOf(id); return t(e?.project ? e.name : metas[id]?.name || e?.name || id); };
+  const nameOf = (id) => {
+    if (id === BUILDER) return t(S.yourProject);
+    const e = entryOf(id);
+    return t(e?.project ? e.name : metas[id]?.name || e?.name || id);
+  };
   const announce = (msg) => { if (live) { live.textContent = ''; requestAnimationFrame(() => { live.textContent = msg; }); } };
   const isDesktopLayout = () => matchMedia('(min-width: 1024px)').matches;
 
@@ -67,7 +82,18 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     if (readyFired) return;
     readyFired = true;
     root.dataset.ready = 'true';
-    window.dispatchEvent(new CustomEvent('studio:ready', { detail: { model: current, ok, webgl: !!engine } }));
+    window.dispatchEvent(new CustomEvent('studio:ready', { detail: { model: mode === 'build' ? BUILDER : current, mode, ok, webgl: !!engine } }));
+  }
+
+  // brand the engine's floor highlight boxes (hover / selected) without touching engine.js
+  if (engine) {
+    engine.scene.traverse((o) => {
+      const m = o.material;
+      if (!m || !m.color) return;
+      const hex = m.color.getHex();
+      if (hex === 0x9be3da) m.color.set('#a9d8dc');
+      else if (hex === 0x6fd1c5) m.color.set('#5fb2b8');
+    });
   }
 
   /* ============================================================ rail */
@@ -75,10 +101,9 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     railScrolledTo = null;
     railList.innerHTML = entries.map((e) => {
       const thumb = store.get(THUMB_KEY(e.id), 'session');
-      const name = t(e.name);
-      return `<li><button class="studio-rail__item${status[e.id] === 'error' ? ' is-unavailable' : ''}" type="button" data-model="${esc(e.id)}" aria-pressed="${e.id === current}">
+      return `<li><button class="studio-rail__item${status[e.id] === 'error' ? ' is-unavailable' : ''}" type="button" data-model="${esc(e.id)}" aria-pressed="${mode === 'explore' && e.id === current}">
         <span class="studio-rail__thumb${thumb ? ' has-img' : ''}">${modelIcon(e.id)}${thumb ? `<img src="${esc(thumb)}" alt="" width="320" height="200" decoding="async">` : ''}</span>
-        <span class="studio-rail__meta"><span class="studio-rail__num num-ltr">${pad(e.index)}</span><span class="studio-rail__name">${esc(name)}</span></span>
+        <span class="studio-rail__name">${esc(t(e.name))}</span>
       </button></li>`;
     }).join('');
     syncRail();
@@ -90,23 +115,21 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     if (!b) return;
     railScrolledTo = current;
     const lr = railList.getBoundingClientRect(), br = b.parentElement.getBoundingClientRect();
-    const delta = br.left + br.width / 2 - (lr.left + lr.width / 2);
-    railList.scrollBy({ left: delta, behavior: reduced ? 'auto' : 'smooth' }); // horizontal only: never scrolls the page
+    railList.scrollBy({ left: br.left + br.width / 2 - (lr.left + lr.width / 2), behavior: reduced ? 'auto' : 'smooth' });
   }
   function syncRail() {
     requestAnimationFrame(revealActiveRailItem);
     $$('.studio-rail__item', railList).forEach((b) => {
       const id = b.dataset.model;
-      b.setAttribute('aria-pressed', String(id === current));
+      b.setAttribute('aria-pressed', String(mode === 'explore' && id === current));
       b.classList.toggle('is-unavailable', status[id] === 'error');
-      b.classList.toggle('is-loading', id === current && engineState?.loading === true);
+      b.classList.toggle('is-loading', mode === 'explore' && id === current && engineState?.loading === true);
     });
   }
   function setThumb(id, url) {
     if (!url) return;
     store.set(THUMB_KEY(id), url, 'session');
-    const btn = railList.querySelector(`[data-model="${CSS.escape(id)}"]`);
-    const box = btn?.querySelector('.studio-rail__thumb');
+    const box = railList.querySelector(`[data-model="${CSS.escape(id)}"] .studio-rail__thumb`);
     if (!box || box.querySelector('img')) return;
     box.insertAdjacentHTML('beforeend', `<img src="${esc(url)}" alt="" width="320" height="200" decoding="async">`);
     box.classList.add('has-img');
@@ -116,7 +139,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     if (btn) go(btn.dataset.model);
   });
 
-  /* ============================================================ info panel */
+  /* ============================================================ info card (explore) */
   function renderInfo(id, { animate = false } = {}) {
     const entry = entryOf(id);
     if (!entry) return;
@@ -124,34 +147,31 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const project = projectFor(id, meta);
     const name = nameOf(id);
     const tagline = t(meta?.tagline || entry.tagline || '');
-    // the "illustrative" disclaimer has its own line below, so a model's own "Model: illustrative…" row is redundant
-    let desc = (meta?.descriptors || []).filter((d) => d && d.label && d.value && !/^model$/i.test(String(d.label.en || '').trim()));
-    if (!desc.length && project) {
-      desc = [
-        { label: { en: 'Typology', ar: 'النمط' }, value: project.typology },
-        project.location ? { label: { en: 'Location', ar: 'الموقع' }, value: project.location } : null,
-      ].filter(Boolean);
-    }
-    const location = project?.location && meta ? `<p class="studio__loc"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span>${esc(t(project.location))}</span></p>` : '';
+    // two short facts at most: the card stays calm; the "illustrative" line covers the model itself
+    const desc = (meta?.descriptors || [])
+      .filter((d) => d && d.label && d.value && !/^model$/i.test(String(d.label.en || '').trim()))
+      .slice(0, 2);
+    const location = project?.location ? `<p class="studio__loc">${icon('map-pin', 'icon--sm')}<span>${esc(t(project.location))}</span></p>` : '';
     infoBody.innerHTML = `
-      <p class="studio__index num-ltr"><span class="visually-hidden">${esc(fmt(t(S.modelOf), { n: entry.index, total: entries.length }))}</span><span data-info-num aria-hidden="true">${pad(entry.index)}</span><span class="studio__index-sep" aria-hidden="true"></span><span aria-hidden="true">${pad(entries.length)}</span></p>
       <h2 class="studio__name">${esc(name)}</h2>
       ${tagline ? `<p class="studio__tagline">${esc(tagline)}</p>` : ''}
       ${location}
-      <dl class="studio__desc">${desc.map((d) => `<div><dt>${esc(t(d.label))}</dt><dd>${esc(t(d.value))}</dd></div>`).join('')}</dl>
-      <p class="studio__note">${icon('info', 'icon--sm')}<span>${esc(t(S.illustrative))}</span></p>
+      ${desc.length ? `<dl class="studio__desc">${desc.map((d) => `<div><dt>${esc(t(d.label))}</dt><dd>${esc(t(d.value))}</dd></div>`).join('')}</dl>` : ''}
+      <p class="studio__note">${esc(t(S.illustrative))}</p>
       ${project ? `<a class="link-arrow studio__project-link" href="${esc(projectUrl(project))}"><span>${esc(t(S.seeProject))}</span><span class="link-arrow__icon">${icon('arrow-right', 'icon--dir')}</span></a>` : ''}`;
     if (animate && !reduced) { infoBody.classList.remove('is-swapping'); void infoBody.offsetWidth; infoBody.classList.add('is-swapping'); }
     scan(infoBody);
-    if (engine) engine.canvas.setAttribute('aria-label', fmt(t(S.canvasLabel), { name }));
+    labelCanvas();
     requestAnimationFrame(updateInsets);
+  }
+  function labelCanvas() {
+    if (engine) engine.canvas.setAttribute('aria-label', fmt(t(S.canvasLabel), { name: mode === 'build' ? t(S.yourProject) : nameOf(current) }));
   }
 
   /* ============================================================ loader / states */
   const loaderLabel = $('[data-loader-label]', loader);
   const loaderName = $('[data-loader-name]', loader);
   const loaderBar = $('[data-loader-bar]', loader);
-  const loaderPct = $('[data-loader-pct]', loader);
   let loaderTimer = 0;
   function showLoader(id, { soft = false } = {}) {
     clearTimeout(loaderTimer);
@@ -162,30 +182,51 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     loaderName.textContent = nameOf(id);
     setProgress(0.04);
   }
-  function setProgress(v) {
-    loaderBar.style.setProperty('--p', v.toFixed(3));
-    loaderPct.textContent = `${Math.round(v * 100)}%`;
-  }
+  const setProgress = (v) => loaderBar.style.setProperty('--p', v.toFixed(3));
   function hideLoader() {
     setProgress(1);
     loaderTimer = setTimeout(() => loader.classList.add('is-hidden'), reduced ? 0 : 220);
   }
   function showError(on) {
     errorEl.hidden = !on;
-    if (on) { root.classList.add('has-error'); }
-    else root.classList.remove('has-error');
+    root.classList.toggle('has-error', on);
   }
 
-  /* ============================================================ model switching */
-  function go(id, { push = true, autoFallback = false } = {}) {
+  /* ============================================================ modes */
+  const modeBtns = $$('[data-studio-mode]', root);
+  function renderMode() {
+    root.dataset.mode = mode;
+    modeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.studioMode === mode)));
+    if (form) form.hidden = mode !== 'build';
+    if (rail) rail.hidden = mode === 'build';
+    labelCanvas();
+    syncRail();
+    requestAnimationFrame(updateInsets);
+  }
+  modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.studioMode)));
+
+  function setMode(next, { push = true } = {}) {
+    if (next !== 'build' && next !== 'explore') return;
+    if (next === mode && (shown === (next === 'build' ? BUILDER : current) || engineState?.loading)) return;
+    mode = next;
+    closeHotcard();
+    renderMode();
+    onModelChange(mode === 'build' ? BUILDER : current, { push, mode });
+    if (mode === 'build') loadBuilder();
+    else go(current, { push: false, force: true });
+  }
+
+  /* ============================================================ model switching (explore) */
+  function go(id, { push = true, autoFallback = false, force = false } = {}) {
     const entry = entryOf(id);
     if (!entry) return;
-    if (id === current && (shown === id || engineState?.loading) && !autoFallback) return;
+    if (mode === 'build') { mode = 'explore'; renderMode(); force = true; }
+    if (!force && id === current && (shown === id || engineState?.loading) && !autoFallback) return;
     current = id;
     closeHotcard();
     renderInfo(id, { animate: true });
     syncRail();
-    onModelChange(id, { push });
+    onModelChange(id, { push, mode });
     updateProjects();
     if (!engine) { showFallbackImage(id); fireReady(false); return; }
     showError(false);
@@ -197,6 +238,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     showLoader(id, { soft: !!shown });
     engineState = { ...engineState, loading: true };
     syncRail();
+    viewTouched = false; currentView = 'aerial';
     engine.load(id, { retry: retry || status[id] === 'error' }).then((meta) => {
       if (seq !== loadSeq || !meta) return;
       metas[id] = meta;
@@ -207,9 +249,10 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
       showError(false);
       renderInfo(id);
       syncRail();
+      reapplyViewOptions();
       announce(fmt(t(S.loaded), { name: nameOf(id) }));
       fireReady(true);
-      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: id } }));
+      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: id, mode } }));
       queueThumbnails();
     }).catch((err) => {
       if (seq !== loadSeq) return;
@@ -232,9 +275,88 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const i = entries.findIndex((e) => e.id === current);
     return entries[(i + dir + entries.length) % entries.length].id;
   }
-
-  $('[data-action="retry"]', errorEl)?.addEventListener('click', () => { showError(false); loadModel(current, { retry: true }); });
+  $('[data-action="retry"]', errorEl)?.addEventListener('click', () => {
+    showError(false);
+    if (mode === 'build') loadBuilder(); else loadModel(current, { retry: true });
+  });
   $('[data-action="next-model"]', errorEl)?.addEventListener('click', () => go(nextModelId(1)));
+
+  /* ============================================================ builder (build mode) */
+  // Every change rebuilds the sketch through engine.load('builder'); the camera, light and floor separation
+  // the visitor chose are carried over, so the model simply changes in place.
+  let building = false, buildQueued = false;
+  const builder = form ? createBuilderUI({ form, onChange: (cfg) => { setBuilderConfig(cfg); if (mode === 'build') queueRebuild(); } }) : null;
+  if (builder) setBuilderConfig(builder.config);
+
+  function loadBuilder() {
+    if (!engine) { showFallbackImage(current); fireReady(false); return; }
+    const seq = ++loadSeq;
+    showError(false);
+    showLoader(BUILDER, { soft: !!shown });
+    engineState = { ...engineState, loading: true };
+    viewTouched = false; currentView = 'aerial';
+    building = true;
+    engine.load(BUILDER).then((meta) => {
+      building = false;
+      if (seq !== loadSeq || !meta) return;
+      shown = BUILDER;
+      root.classList.add('is-live');
+      hideLoader();
+      reapplyViewOptions();
+      labelCanvas();
+      fireReady(true);
+      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: BUILDER, mode } }));
+      if (buildQueued) { buildQueued = false; rebuild(); }
+    }).catch((err) => {
+      building = false;
+      if (seq !== loadSeq) return;
+      console.error('[studio] the builder sketch failed', err);
+      hideLoader();
+      showError(true);
+      root.classList.add('is-live');
+      fireReady(false);
+    });
+  }
+  const queueRebuild = debounce(() => rebuild(), engine?.lowPower ? 220 : 90);
+  async function rebuild() {
+    if (!engine || mode !== 'build') return;
+    if (building || shown !== BUILDER) { buildQueued = true; return; }
+    building = true;
+    const seq = ++loadSeq;
+    const st = engine.getState();
+    const cam = engine.camera.position.clone();
+    const target = engine.controls.target.clone();
+    const keepView = viewTouched;
+    const view = currentView;
+    viewport.classList.add('is-updating');
+    try {
+      rebuilding = true;
+      await engine.load(BUILDER, { instantCamera: true });
+      if (seq !== loadSeq) return;
+      engine.setTime(st.hour);
+      if (st.explode > 0) engine.setExplode(st.explode, { instant: true });
+      if (keepView) {
+        engine.camera.position.copy(cam);
+        engine.controls.target.copy(target);
+        engine.controls.update();
+      } else {
+        // the preset was never moved: re-frame it so a taller or wider sketch still fits
+        engine.setView(view, { instant: true });
+      }
+      viewTouched = keepView;
+      engine.invalidate();
+      announce(t(S.updated));
+    } catch (err) {
+      console.error('[studio] the builder sketch failed to update', err);
+    } finally {
+      rebuilding = false;
+      building = false;
+      viewport.classList.remove('is-updating');
+      if (buildQueued) { buildQueued = false; rebuild(); }
+    }
+  }
+  let rebuilding = false;
+  $('[data-builder-save]', form || root)?.addEventListener('click', () => screenshot());
 
   /* ============================================================ no-WebGL fallback */
   function showFallbackImage(id) {
@@ -250,90 +372,65 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     root.classList.add('is-fallback');
     fallbackEl.hidden = false;
     loader.classList.add('is-hidden');
-    [toolbar, panel, hint].forEach((el) => { if (el) el.hidden = true; });
+    [toolbar, panel, hint, zoomBox].forEach((el) => { if (el) el.hidden = true; });
+    $('.studio-modes', root)?.setAttribute('hidden', '');
   }
 
-  /* ============================================================ controls panel */
-  const inputs = {
-    explode: $('[data-control="explode"]', panel),
-    section: $('[data-control="section"]', panel),
-    time: $('[data-control="time"]', panel),
-    autorotate: $('[data-control="autorotate"]', panel),
-    hotspots: $('[data-control="hotspots"]', panel),
-  };
-  const outputs = {
-    explode: $('[data-out="explode"]', panel),
-    section: $('[data-out="section"]', panel),
-    time: $('[data-out="time"]', panel),
-  };
-  const timeRange = $('[data-time-range]', panel);
-  const timeNote = $('[data-time-note]', panel);
-  const timeIcon = $('[data-time-icon] use', panel);
-  const isolateBtn = $('[data-action="isolate"]', panel);
+  /* ============================================================ view options (compact panel) */
+  const explodeInput = $('[data-control="explode"]', panel);
+  const linesInput = $('[data-control="lines"]', panel);
+  const viewBtns = $$('[data-view]', panel);
+  const lightBtns = $$('[data-light]', panel);
+  let wantExplode = false, wantLines = false, wantLight = 'day';
 
-  function formatHour(h) {
-    const hh = Math.floor(h), mm = Math.round((h - hh) * 60);
-    const h12 = ((hh + 11) % 12) + 1;
-    return `${h12}:${String(mm).padStart(2, '0')} ${t(hh < 12 ? S.am : S.pm)}`;
-  }
-  function renderOutputs() {
-    const ex = +inputs.explode.value;
-    outputs.explode.textContent = `${ex}%`;
-    const sec = +inputs.section.value;
-    outputs.section.textContent = sec >= 100 ? t(S.sectionOff) : fmt(t(S.sectionAt), { n: sec });
-    const h = +inputs.time.value;
-    outputs.time.textContent = formatHour(h);
-    // the raw values (0 to 100, 6 to 22 in quarter hours) mean little when read aloud: speak the formatted readouts
-    inputs.explode.setAttribute('aria-valuetext', outputs.explode.textContent);
-    inputs.section.setAttribute('aria-valuetext', outputs.section.textContent);
-    inputs.time.setAttribute('aria-valuetext', outputs.time.textContent);
-    // Arabic reads "2:30 م" right-to-left (time first, then the meridiem): no forced LTR run there
-    outputs.time.classList.toggle('num-ltr', getLang() !== 'ar');
-    timeIcon?.setAttribute('href', `assets/icons/sprite.svg#${h >= 19.25 || h < 6.5 ? 'moon' : h >= 17.5 ? 'sunset' : h < 8 ? 'sunrise' : 'sun'}`);
-  }
-  function setInput(input, value) {
-    if (String(input.value) === String(value)) return;
-    syncing = true;
-    input.value = value;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    syncing = false;
+  function markView(name) { viewBtns.forEach((b) => b.classList.toggle('is-current', b.dataset.view === name)); }
+  function markLight(name) { lightBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.light === name))); }
+  /** After a model loads the engine resets to its defaults: re-apply what the visitor picked. */
+  function reapplyViewOptions() {
+    if (!engine) return;
+    if (wantLight !== 'day') engine.setTime(LIGHT[wantLight]);
+    if (wantLines) engine.setMode('blueprint');
+    if (wantExplode && !rebuilding) engine.setExplode(0.6);
+    markView('aerial');
   }
   if (engine) {
-    inputs.explode.addEventListener('input', () => { renderOutputs(); if (!syncing) engine.setExplode(+inputs.explode.value / 100); });
-    inputs.section.addEventListener('input', () => { renderOutputs(); if (!syncing) engine.setSection(+inputs.section.value / 100); });
-    inputs.time.addEventListener('input', () => { renderOutputs(); if (!syncing) engine.setTime(+inputs.time.value); });
-    inputs.autorotate.addEventListener('change', () => engine.setAutoRotate(inputs.autorotate.checked));
-    inputs.hotspots.addEventListener('change', () => { engine.setHotspots(inputs.hotspots.checked); if (!inputs.hotspots.checked) closeHotcard(); renderHotspotVisibility(); });
-    $$('[data-view]', panel).forEach((b) => b.addEventListener('click', () => {
-      engine.setView(b.dataset.view);
-      $$('[data-view]', panel).forEach((x) => x.classList.toggle('is-current', x === b));
+    viewBtns.forEach((b) => b.addEventListener('click', () => {
+      currentView = b.dataset.view;
+      viewTouched = false;
+      engine.setView(currentView);
+      markView(currentView);
     }));
-    $$('[data-mode]', panel).forEach((b) => b.addEventListener('click', () => engine.setMode(b.dataset.mode)));
-    isolateBtn?.addEventListener('click', () => {
-      if (!engineState?.floors) return;
-      if (engineState.selected >= 0) engine.select(-1); else engine.select(0);
-    });
+    lightBtns.forEach((b) => b.addEventListener('click', () => {
+      wantLight = b.dataset.light;
+      engine.setTime(LIGHT[wantLight]);
+      markLight(wantLight);
+    }));
+    explodeInput?.addEventListener('change', () => { wantExplode = explodeInput.checked; engine.setExplode(wantExplode ? 0.6 : 0); });
+    linesInput?.addEventListener('change', () => { wantLines = linesInput.checked; engine.setMode(wantLines ? 'blueprint' : 'realistic'); });
   }
-  renderOutputs();
-
   function syncControls(st) {
     if (!st) return;
-    setInput(inputs.explode, Math.round(st.explode * 100));
-    setInput(inputs.section, Math.round(st.section * 100));
-    setInput(inputs.time, st.hour);
-    inputs.autorotate.checked = !!st.autoRotate;
-    inputs.hotspots.checked = !!st.hotspots;
-    $$('[data-mode]', panel).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === st.mode)));
-    const flat = st.mode === 'blueprint' || st.mode === 'xray';
-    inputs.time.disabled = flat;
-    timeRange.classList.toggle('is-disabled', flat);
-    if (timeNote.hidden !== !flat) { timeNote.hidden = !flat; requestAnimationFrame(syncPanelOverflow); }
-    if (isolateBtn) {
-      isolateBtn.disabled = !st.floors;
-      isolateBtn.setAttribute('aria-pressed', String(st.selected >= 0));
-    }
-    renderOutputs();
+    if (explodeInput) explodeInput.checked = st.explode > 0.02;
+    if (linesInput) linesInput.checked = st.mode === 'blueprint';
+    markLight(lightOf(st.hour));
   }
+
+  // small screens: the options fold away under one button
+  function setPanelOpen(open) {
+    if (!panelToggle || !panelBody) return;
+    panelToggle.setAttribute('aria-expanded', String(open));
+    panelBody.hidden = !open;
+  }
+  panelToggle?.addEventListener('click', () => setPanelOpen(panelToggle.getAttribute('aria-expanded') !== 'true'));
+  setPanelOpen(false);
+
+  /* ============================================================ zoom buttons */
+  zoomBox?.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-zoom]');
+    if (!b || !engine) return;
+    engine.zoom(b.dataset.zoom === 'in' ? 0.8 : 1.25, { duration: 360 });
+    viewTouched = true;
+  });
 
   /* ============================================================ toolbar */
   const fsBtn = $('[data-action="fullscreen"]', toolbar);
@@ -345,11 +442,8 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     if (a === 'screenshot') screenshot();
     else if (a === 'fullscreen') toggleFullscreen();
     else if (a === 'reset') reset();
-    else if (a === 'help') openHelp(b);
     else if (a === 'panel') togglePanel();
   });
-
-  // role="toolbar": arrow keys / Home / End move between the tools (mirrored in RTL)
   toolbar?.addEventListener('keydown', (e) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
     const btns = $$('.studio-tool', toolbar).filter((b) => b.offsetParent !== null && !b.disabled);
@@ -375,7 +469,6 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     labelButton(panelBtn, collapsed ? S.showControls : S.hideControls);
     panelBtn?.setAttribute('aria-expanded', String(!collapsed));
   }
-
   function togglePanel(force) {
     collapsed = force ?? !collapsed;
     root.classList.toggle('is-panel-collapsed', collapsed);
@@ -383,13 +476,13 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     updateInsets();
   }
 
-  function openHelp(trigger) { openModal('studio-help', trigger || document.activeElement); }
-
   function reset() {
     if (!engine) return;
     closeHotcard();
     engine.reset();
-    $$('[data-view]', panel).forEach((x) => x.classList.toggle('is-current', x.dataset.view === 'aerial'));
+    wantExplode = false; wantLines = false; wantLight = 'day';
+    currentView = 'aerial'; viewTouched = false;
+    markView('aerial');
   }
 
   async function screenshot() {
@@ -399,33 +492,42 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
       const ctx = shot.getContext('2d');
       const W = shot.width, H = shot.height;
       const s = Math.max(1, W / 1400);
-      const band = Math.round(86 * s);
-      const grad = ctx.createLinearGradient(0, H - band * 1.6, 0, H);
-      grad.addColorStop(0, 'rgba(11,22,32,0)');
-      grad.addColorStop(1, 'rgba(11,22,32,0.82)');
+      const band = Math.round(96 * s);
+      const grad = ctx.createLinearGradient(0, H - band * 1.7, 0, H);
+      grad.addColorStop(0, 'rgba(22,22,42,0)');
+      grad.addColorStop(1, 'rgba(22,22,42,0.84)');
       ctx.fillStyle = grad;
-      ctx.fillRect(0, H - band * 1.6, W, band * 1.6);
+      ctx.fillRect(0, H - band * 1.7, W, band * 1.7);
       const ar = getLang() === 'ar';
       const fam = ar ? '"IBM Plex Sans Arabic", sans-serif' : 'Manrope, Inter, sans-serif';
       ctx.direction = ar ? 'rtl' : 'ltr';
       ctx.textAlign = ar ? 'right' : 'left';
       const x = ar ? W - 32 * s : 32 * s;
-      ctx.fillStyle = '#6fd1c5';
+      const build = shown === BUILDER;
+      ctx.fillStyle = '#5fb2b8';
       ctx.font = `700 ${Math.round(13 * s)}px ${fam}`;
-      ctx.fillText(t(S.screenshotCaption).toUpperCase(), x, H - 56 * s);
+      ctx.fillText(t(S.screenshotCaption).toUpperCase(), x, H - (build ? 76 : 56) * s);
       ctx.fillStyle = '#ffffff';
       ctx.font = `600 ${Math.round(22 * s)}px ${fam}`;
-      ctx.fillText(nameOf(shown), x, H - 28 * s);
+      ctx.fillText(nameOf(shown), x, H - (build ? 48 : 28) * s);
+      if (build && builder) {
+        ctx.fillStyle = 'rgba(255,255,255,0.84)';
+        ctx.font = `500 ${Math.round(14 * s)}px ${fam}`;
+        let line = builder.summary();
+        while (ctx.measureText(line).width > W * 0.62 && line.length > 20) line = `${line.slice(0, -2)}`;
+        if (line !== builder.summary()) line = `${line.trim()}…`;
+        ctx.fillText(line, x, H - 24 * s);
+      }
       ctx.textAlign = ar ? 'left' : 'right';
       ctx.fillStyle = 'rgba(255,255,255,0.72)';
       ctx.font = `500 ${Math.round(13 * s)}px ${fam}`;
-      ctx.fillText(t(S.illustrative), ar ? 32 * s : W - 32 * s, H - 28 * s);
+      ctx.fillText(t(build ? S.concept : S.illustrative), ar ? 32 * s : W - 32 * s, H - 24 * s);
       const blob = await new Promise((r) => shot.toBlob(r, 'image/png'));
       if (!blob) throw new Error('toBlob failed');
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `mobco-studio-${shown}.png`;
+      a.download = build ? 'mobco-project-sketch.png' : `mobco-${shown}.png`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -459,22 +561,17 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   }
   document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && immersive) setImmersive(false); });
 
-  /* ============================================================ wheel-zoom engagement & hints */
+  /* ============================================================ wheel-zoom engagement & hint */
   function setEngaged(on) {
     engaged = on;
     if (!engine) return;
     engine.setControlsEnabled({ zoom: on || touchOnly });
     engine.canvas.toggleAttribute('data-lenis-prevent-wheel', on);
   }
-  let hintTimer = 0, hintMode = 'intro';
-  function renderHint() {
-    if (!hintText) return;
-    hintText.textContent = t(hintMode === 'zoom' ? S.zoomHint : touchOnly ? S.hintTouch : S.hintMouse);
-    hint?.classList.toggle('is-warn', hintMode === 'zoom');
-  }
-  function showHint(mode, ms) {
+  let hintTimer = 0;
+  function renderHint() { if (hintText) hintText.textContent = t(S.zoomHint); }
+  function showHint(ms) {
     if (!hint || !engine) return;
-    hintMode = mode;
     renderHint();
     hint.classList.remove('is-hidden');
     clearTimeout(hintTimer);
@@ -491,13 +588,12 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
         setTimeout(() => { if (!engaged) engine.setControlsEnabled({ zoom: false }); }, 0);
         return;
       }
-      if (e.target === engine.canvas) showHint('zoom', 2600);
+      if (e.target === engine.canvas) showHint(2600);
     }, { capture: true, passive: true });
     engine.canvas.addEventListener('keydown', (e) => {
       if (e.key === '+' || e.key === '=') { e.preventDefault(); engine.zoom(0.85); }
       else if (e.key === '-' || e.key === '_') { e.preventDefault(); engine.zoom(1.18); }
     });
-    // double-tap to focus on touch screens
     let lastTap = 0, lastTapXY = [0, 0];
     engine.canvas.addEventListener('pointerup', (e) => {
       if (e.pointerType !== 'touch') return;
@@ -509,7 +605,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     });
   }
 
-  /* ============================================================ hotspots */
+  /* ============================================================ hotspots (explore) */
   function buildHotspots(list) {
     closeHotcard();
     hotLayer.innerHTML = '';
@@ -529,12 +625,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   function labelHotspots() {
     hotspots.forEach((h) => h.el.setAttribute('aria-label', fmt(t(S.hotspotLabel), { n: h.index, title: t(h.title) })));
   }
-  function renderHotspotVisibility() {
-    const on = inputs.hotspots.checked;
-    hotLayer.hidden = !on;
-  }
   function positionHotspots(list) {
-    lastFrameHot = list;
     for (const p of list) {
       const h = hotspots.find((x) => x.id === p.id);
       if (!h) continue;
@@ -552,10 +643,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     }
     if (openHot) placeHotcard();
   }
-  function toggleHotcard(id) {
-    if (openHot === id) { closeHotcard(true); return; }
-    openHotcard(id);
-  }
+  function toggleHotcard(id) { if (openHot === id) closeHotcard(true); else openHotcard(id); }
   function openHotcard(id) {
     const h = hotspots.find((x) => x.id === id);
     if (!h) return;
@@ -574,7 +662,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     viewport.appendChild(hotcard);
     h.el.setAttribute('aria-controls', 'studio-hotcard');
     placeHotcard();
-    hotcard.focus({ preventScroll: true }); // synchronous: a rAF can lag seconds behind on slow GPUs
+    hotcard.focus({ preventScroll: true });
   }
   function renderHotcard() {
     const h = hotspots.find((x) => x.id === openHot);
@@ -594,10 +682,9 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const vw = viewport.clientWidth, vh = viewport.clientHeight;
     const cw = hotcard.offsetWidth, ch = hotcard.offsetHeight;
     const rtl = getLang() === 'ar';
-    // keep the card inside the canvas area that the floating panels leave free (they stack above it)
     const ins = lastInsets;
     const minX = Math.max(12, ins.left), maxX = Math.min(vw - 12, vw - ins.right) - cw;
-    const after = p.x + 26, before = p.x - cw - 26; // physical right / left of the dot
+    const after = p.x + 26, before = p.x - cw - 26;
     let x = rtl ? before : after;
     if (x > maxX) x = before;
     if (x < minX) x = after <= maxX ? after : before;
@@ -620,23 +707,18 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     if (openHot && !e.target.closest('.studio-hotcard, .studio-hotspot')) closeHotcard();
   });
 
-  /* ============================================================ level chip */
+  /* ============================================================ floor chip */
   const levelNum = $('[data-level-num]', levelChip);
   const levelLabel = $('[data-level-label]', levelChip);
-  function floorLabel(f) {
-    if (!f) return '';
-    return f.label ? t(f.label) : fmt(t(S.levelN), { n: f.level + 1 });
-  }
+  const floorLabel = (f) => (!f ? '' : f.label ? t(f.label) : fmt(t(S.levelN), { n: f.level + 1 }));
   function renderLevel() {
     const f = selectedFloor || hoverFloor;
     if (!f) { levelChip.hidden = true; return; }
     levelChip.hidden = false;
     const sel = !!selectedFloor;
-    levelChip.classList.toggle('is-hover', !sel);
     $$('button', levelChip).forEach((b) => { b.hidden = !sel; });
     levelNum.textContent = fmt(t(S.levelOf), { n: pad(f.index + 1), total: pad(f.count) });
     levelLabel.textContent = floorLabel(f);
-    // localized aria labels for chip buttons
     labelButton($('[data-level-prev]', levelChip), S.prevLevel);
     labelButton($('[data-level-next]', levelChip), S.nextLevel);
     labelButton($('[data-level-clear]', levelChip), S.showAll);
@@ -655,7 +737,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const headerH = immersive ? 0 : parseFloat(getComputedStyle(root).getPropertyValue('--studio-top')) || 72;
     ins.top = Math.min(vr.height * 0.25, headerH);
     if (isDesktopLayout()) {
-      const els = [info];
+      const els = [side];
       if (!collapsed) els.push(panel);
       els.forEach((el) => {
         if (!el || el.hidden) return;
@@ -665,11 +747,8 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
         if (mid < vr.width / 2) ins.left = Math.max(ins.left, r.right - vr.left + 16);
         else ins.right = Math.max(ins.right, vr.right - r.left + 16);
       });
-      const rail = $('[data-studio-rail]', root);
-      const rr = rail?.getBoundingClientRect();
-      if (rr && rr.height && !immersive) ins.bottom = Math.max(0, vr.bottom - rr.top + 8);
-      else if (immersive && rr && rr.height) ins.bottom = Math.max(0, vr.bottom - rr.top + 8);
-      // never squeeze the free area below 40% of the width
+      const rr = rail && !rail.hidden ? rail.getBoundingClientRect() : null;
+      if (rr && rr.height) ins.bottom = Math.max(0, vr.bottom - rr.top + 8);
       const maxSide = vr.width * 0.3;
       ins.left = Math.min(ins.left, maxSide);
       ins.right = Math.min(ins.right, maxSide);
@@ -677,27 +756,18 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     lastInsets = ins;
     engine.setInsets(ins);
   }
-  // desktop controls panel: fade its lower edge while more controls are hidden below the fold
-  function syncPanelOverflow() {
-    if (!panel) return;
-    const more = isDesktopLayout() && panel.scrollHeight - panel.clientHeight - panel.scrollTop > 4;
-    panel.classList.toggle('has-more', more);
-  }
-  panel?.addEventListener('scroll', syncPanelOverflow, { passive: true });
-  const onResize = debounce(() => { updateInsets(); syncPanelOverflow(); }, 120);
+  const onResize = debounce(updateInsets, 120);
   window.addEventListener('resize', onResize);
   new ResizeObserver(onResize).observe(root);
 
   /* ============================================================ engine events */
   if (engine) {
-    engine.on('progress', ({ value }) => setProgress(value));
+    engine.on('progress', ({ value }) => { if (!rebuilding) setProgress(value); });
     engine.on('change', (st) => { engineState = st; syncControls(st); syncRail(); });
-    engine.on('load', ({ id, hotspots: hs }) => {
-      buildHotspots(hs);
-      renderHotspotVisibility();
+    engine.on('load', ({ hotspots: hs }) => {
+      buildHotspots(mode === 'build' ? [] : hs);
       selectedFloor = null; hoverFloor = null; renderLevel();
-      $$('[data-view]', panel).forEach((x) => x.classList.toggle('is-current', x.dataset.view === 'aerial'));
-      if (!engagedOnce) showHint('intro', 7000);
+      if (!rebuilding) markView('aerial');
     });
     engine.on('frame', ({ hotspots: list }) => { if (list.length) positionHotspots(list); });
     engine.on('hover', ({ floor }) => { hoverFloor = floor; renderLevel(); });
@@ -707,9 +777,9 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
       if (floor) announce(fmt(t(S.levelSelected), { label: floorLabel(floor) }));
     });
     engine.on('interact', () => {
-      engagedOnce = true;
+      viewTouched = true;
       hint?.classList.add('is-hidden');
-      $$('[data-view]', panel).forEach((x) => x.classList.remove('is-current'));
+      markView('');
     });
     engine.on('contextlost', () => {
       const p = $('.studio-card__text', errorEl);
@@ -717,7 +787,6 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
       showError(true);
     });
   }
-  let engagedOnce = false;
 
   /* ============================================================ thumbnails (idle, sequential) */
   let thumbsQueued = false;
@@ -731,7 +800,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const step = () => {
       if (!ids.length || tries > 40) return;
       const id = ids[0];
-      if (status[id] === 'error' || engineState?.loading || document.hidden) {
+      if (status[id] === 'error' || engineState?.loading || building || document.hidden) {
         if (status[id] === 'error') ids.shift();
         tries++;
         idle(step, 1500);
@@ -741,7 +810,6 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
         if (url) { setThumb(id, url); ids.shift(); } else tries++;
         idle(step, 700);
       }).catch(() => {
-        // module missing or failed to build → flag it in the library (a click still retries the load)
         if (status[id] !== 'ok') { status[id] = 'error'; syncRail(); }
         ids.shift();
         idle(step, 700);
@@ -758,40 +826,43 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   function relocalize() {
     renderRail();
     renderInfo(current);
-    renderOutputs();
     renderToolbarLabels();
     renderLevel();
     renderHint();
     labelHotspots();
+    labelCanvas();
     if (openHot) { renderHotcard(); placeHotcard(); }
-    if (!loader.classList.contains('is-hidden') && engine) { loaderLabel.textContent = t(S.loading); loaderName.textContent = nameOf(current); }
+    if (!loader.classList.contains('is-hidden') && engine) { loaderLabel.textContent = t(S.loading); loaderName.textContent = nameOf(shown || current); }
     if (!engine) showFallbackImage(current);
-    requestAnimationFrame(() => { updateInsets(); syncPanelOverflow(); });
+    requestAnimationFrame(updateInsets);
   }
   onLang(relocalize);
 
   /* ============================================================ boot */
   renderRail();
   renderInfo(current);
+  renderMode();
   renderToolbarLabels();
   renderHint();
   if (engine) {
-    loaderName.textContent = nameOf(current);
-    engine.ready?.then?.(() => {});
-    go(current, { push: false, autoFallback: !deepLinked });
+    loaderName.textContent = nameOf(mode === 'build' ? BUILDER : current);
+    if (mode === 'build') { onModelChange(BUILDER, { push: false, mode }); loadBuilder(); }
+    else go(current, { push: false, autoFallback: !deepLinked, force: true });
   } else {
     showFallbackImage(current);
-    onModelChange(current, { push: false });
+    onModelChange(current, { push: false, mode });
     fireReady(false);
   }
-  requestAnimationFrame(() => { updateInsets(); syncPanelOverflow(); });
+  requestAnimationFrame(updateInsets);
 
   return {
     go,
+    setMode,
+    get mode() { return mode; },
     get current() { return current; },
+    get builder() { return builder; },
     nextModelId,
     reset,
-    openHelp,
     toggleFullscreen,
     togglePanel,
     screenshot,

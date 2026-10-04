@@ -876,7 +876,7 @@ html:not(.js) .contact-map__stage { grid-template-areas: 'panel'; }
 
 /* ------------------------------------------------------------------ shared */
 /* Headline accents on light sections: a slightly deeper teal for AA large-text contrast. */
-body[data-page='contact'] .section:is(.section--sand, .section--white) :is(h2, .h2) em { color: var(--teal-650, #349487); }
+body[data-page='contact'] .section:is(.section--sand, .section--white) :is(h2, .h2) em { color: var(--teal-650); }
 
 /* Arabic: never uppercase / letter-space (Latin words such as "Google" or "GMT" keep their case) */
 html[lang='ar'] body[data-page='contact'] :is([class*='contact-'], [class*='inq'], [class*='wiz'], .tabs__tab):not(.wiz-done__ref-code) { text-transform: none; letter-spacing: 0; }

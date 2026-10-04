@@ -15,7 +15,7 @@ import { scan, refresh } from '../core/motion.js';
 import { scanUI, toast, openLightbox } from '../core/ui.js';
 import { $, $$, esc, icon, picture, prefersReducedMotion, isRTL, debounce, clamp, IMAGES } from '../core/utils.js';
 import { whenLoaded } from '../core/preloader.js';
-import { PROJECTS, PROJECT_CATEGORIES, REGIONS, getProject, getCategory, getSubsidiary, projectUrl } from '../data/site-data.js';
+import { PROJECTS, PROJECT_CATEGORIES, getProject, getCategory, getSubsidiary, projectUrl } from '../data/site-data.js';
 
 const reduced = prefersReducedMotion();
 const pad = (n) => String(n).padStart(2, '0');
@@ -444,14 +444,18 @@ function initGallery() {
   const count = (v) => (v === 'all' ? items.length : items.filter((x) => x.cats.includes(v)).length);
   const FILTERS = [{ id: 'all', label: G.all }]
     .concat(PROJECT_CATEGORIES.filter((c) => count(c.id)).sort((a, b) => count(b.id) - count(a.id)).map((c) => ({ id: c.id, label: c.name, icon: c.icon })))
-    .concat(count(COMPANIES.id) ? [COMPANIES] : [])
-    .concat([{ sep: true }])
-    .concat(REGIONS.filter((r) => count(r.id)).map((r) => ({ id: r.id, label: r.name })));
+    .concat(count(COMPANIES.id) ? [COMPANIES] : []);
+  // each chip shows a small photo of a real project in that category (the companies chip: a subsidiary photo)
+  const thumbOf = (id) => {
+    if (id === 'all') return '<span class="mgal-chip__thumb mgal-chip__thumb--all" aria-hidden="true"><span></span><span></span><span></span><span></span></span>';
+    const base = id === COMPANIES.id ? 'sub-construction-hero' : (items.find((x) => x.p.category === id && x.p.image)?.p.image);
+    return base ? `<span class="mgal-chip__thumb" aria-hidden="true"><img src="assets/img/thumbs/${base}.jpg" alt="" width="48" height="48" loading="lazy" decoding="async"></span>` : '';
+  };
   const group = document.createElement('div');
   group.className = 'chip-group mgal-chips';
   group.setAttribute('data-chip-group', 'single');
   group.innerHTML = FILTERS.map((f) => (f.sep ? '<span class="mgal-chips__sep" aria-hidden="true"></span>'
-    : `<button class="chip" type="button" data-value="${f.id}" aria-pressed="${f.id === 'all'}">${f.icon ? icon(f.icon) : ''}<span data-chip-label="${f.id}"></span><span class="chip__count">${count(f.id)}</span></button>`)).join('');
+    : `<button class="chip mgal-chip" type="button" data-value="${f.id}" aria-pressed="${f.id === 'all'}">${thumbOf(f.id)}<span data-chip-label="${f.id}"></span><span class="chip__count">${count(f.id)}</span></button>`)).join('');
   chipMount?.replaceWith(group);
   const labelChips = () => {
     group.setAttribute('aria-label', t(G.filter));
@@ -619,60 +623,18 @@ function initBrandKit() {
     if (grid) grid.setAttribute('data-tone', e.detail.values[0] === 'navy' ? 'navy' : 'light');
   });
 
-  // palette: copy format + localized labels (aria-label is JS-managed, not data-ar-aria-label)
+  // palette: localized copy labels (aria-label is JS-managed, not data-ar-aria-label)
   const swatches = $$('.mpal__swatch');
-  let format = 'hex';
   const C = { copy: { en: 'Copy {name}: {v}', ar: 'نسخ {name}: {v}' } };
   const paint = () => {
     swatches.forEach((b) => {
-      const v = format === 'rgb' ? b.dataset.rgb : b.dataset.hex.toUpperCase();
+      const v = b.dataset.hex.toUpperCase();
       b.setAttribute('data-copy', v);
       b.setAttribute('aria-label', fmt(t(C.copy), { name: getLang() === 'ar' ? b.dataset.nameAr : b.dataset.name, v }));
     });
-    $('[data-palette]')?.setAttribute('data-format', format);
   };
-  $('[data-copy-format]')?.addEventListener('chipchange', (e) => { format = e.detail.values[0] === 'rgb' ? 'rgb' : 'hex'; paint(); });
   paint();
   onLang(paint);
-
-  // type tester
-  const tester = $('[data-type-tester]');
-  const tabs = $('[data-type-tabs]');
-  if (!tester || !tabs) return;
-  const preview = $('[data-type-preview]', tester);
-  const input = $('[data-type-input]', tester);
-  const weight = $('[data-type-weight]', tester);
-  const size = $('[data-type-size]', tester);
-  const FONTS = {
-    manrope: { family: "'Manrope', sans-serif", min: 200, max: 800, upper: true, sample: { en: 'Integrity & Excellence', ar: 'Integrity & Excellence' }, dir: 'ltr' },
-    inter: { family: "'Inter', sans-serif", min: 100, max: 900, upper: false, sample: { en: 'We plan. We build. We manage.', ar: 'We plan. We build. We manage.' }, dir: 'ltr' },
-    plex: { family: "'IBM Plex Sans Arabic', sans-serif", min: 400, max: 700, upper: false, sample: { en: 'النزاهة والتميّز', ar: 'النزاهة والتميّز' }, dir: 'rtl' },
-  };
-  let font = 'manrope';
-  const update = () => {
-    const f = FONTS[font];
-    const custom = input.value.trim();
-    preview.textContent = custom || t(f.sample);
-    preview.style.fontFamily = f.family;
-    preview.style.fontWeight = weight.value;
-    preview.style.setProperty('--size', `${size.value}px`);
-    preview.dir = custom ? 'auto' : f.dir;
-    preview.classList.toggle('is-upper', f.upper && !/[؀-ۿ]/.test(preview.textContent));
-    tester.setAttribute('data-font', font);
-  };
-  const setFont = (id) => {
-    font = FONTS[id] ? id : 'manrope';
-    const f = FONTS[font];
-    weight.min = String(f.min);
-    weight.max = String(f.max);
-    weight.value = String(clamp(parseInt(weight.value, 10), f.min, f.max));
-    weight.dispatchEvent(new Event('input'));
-    update();
-  };
-  tabs.addEventListener('tabchange', (e) => setFont(e.detail.id));
-  [input, weight, size].forEach((el) => el.addEventListener('input', update));
-  onLang(update);
-  setFont('manrope');
 }
 
 /* ======================================================================

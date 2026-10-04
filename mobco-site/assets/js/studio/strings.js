@@ -39,7 +39,6 @@ export const S = {
   zoomIn: { en: 'Zoom in', ar: 'تكبير' },
   zoomOut: { en: 'Zoom out', ar: 'تصغير' },
   // hints
-  hintMouse: { en: 'Drag to rotate', ar: 'اسحب للتدوير' },
   zoomHint: { en: 'Click the model, then scroll to zoom', ar: 'انقر على النموذج ثم مرّر للتكبير' },
   // states
   contextLost: { en: 'The browser paused the 3D view. Reload the page to continue.', ar: 'أوقف المتصفح العرض ثلاثي الأبعاد مؤقتًا. أعد تحميل الصفحة للمتابعة.' },

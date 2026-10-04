@@ -49,6 +49,7 @@
   </script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/gsap/SplitText.min.js" defer></script>
   <script src="assets/vendor/lenis/lenis.min.js" defer></script>
   <script type="module" src="assets/js/core/main.js"></script>
   <script type="module" src="assets/js/pages/media.js"></script>
@@ -122,7 +123,7 @@
          Slides are static markup (first one is the LCP image); scene text, segments and
          kinetic typography are driven by assets/js/pages/media.js.
          ============================================================ -->
-    <section class="mreel theme-dark has-gridlines" id="showreel" aria-labelledby="media-title" data-reel>
+    <section class="mreel theme-dark" id="showreel" aria-labelledby="media-title" data-reel>
       <div class="mreel__slides" data-reel-slides>
         <div class="mreel__slide is-active" data-scene="0">
           <picture><source type="image/webp" srcset="assets/img/aerial-compound.webp"><img src="assets/img/aerial-compound.jpg" alt="Aerial render of a villa community with lagoon pools and a tree-lined boulevard" data-ar-alt="تصوّر جوي لمجتمع فلل يضمّ بحيرات اصطناعية وجادّة مشجّرة" width="1560" height="849" fetchpriority="high" decoding="async"></picture>
@@ -144,21 +145,15 @@
           <p class="mreel__lead" data-ar="صور المشاريع وملفات الهوية وبيانات التواصل الإعلامي من مجموعة موبكو (MOBCO).">Project images, brand files and press contacts from MOBCO Group.</p>
           <div class="mreel__actions">
             <a class="btn btn--primary btn--sm" href="#gallery" data-magnetic><span data-ar="تصفّح المعرض">View gallery</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-down"></use></svg></a>
-            <a class="btn btn--ghost btn--sm" href="#brand-kit"><span data-ar="الحقيبة الصحفية">Brand &amp; press kit</span></a>
           </div>
         </div>
       </div>
 
-      <!-- Kinetic typography (decorative; scene names are announced by the caption below) -->
-      <div class="container mreel__kinetic-wrap" aria-hidden="true">
-        <div class="mreel__kinetic" data-reel-kinetic>
-          <p class="mreel__word is-in"><span class="mreel__line">A legacy</span><span class="mreel__line"><em>of trust</em></span></p>
-        </div>
-      </div>
+      <div class="mreel__kinetic" data-reel-kinetic hidden></div>
 
       <div class="container mreel__bar">
         <div class="mreel__caption" data-reel-caption>
-          <p class="mreel__cap-kicker"><span data-ar="المشهد">Scene</span> <span class="num-ltr" data-reel-num>01</span></p>
+          <span class="mreel__cap-kicker" hidden><span class="num-ltr" data-reel-num>01</span></span>
           <p class="mreel__cap-title" data-reel-title data-ar="مجتمع فلل البحيرات">Lagoon Villa Community</p>
           <p class="mreel__cap-meta" data-reel-meta data-ar="مجتمع سكني">Residential community</p>
         </div>
@@ -168,7 +163,7 @@
             <svg class="icon mreel__ico-play" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#play"></use></svg>
           </button>
           <ol class="mreel__segs" role="list" data-reel-segs></ol>
-          <p class="mreel__count num-ltr" aria-hidden="true"><b data-reel-count>01</b> / <span data-reel-total>10</span></p>
+          <span class="mreel__count" hidden><b data-reel-count>01</b><span data-reel-total>10</span></span>
           <div class="mreel__arrows">
             <button class="icon-btn icon-btn--sm" type="button" data-reel-prev aria-label="Previous scene" data-ar-aria-label="المشهد السابق"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
             <button class="icon-btn icon-btn--sm" type="button" data-reel-next aria-label="Next scene" data-ar-aria-label="المشهد التالي"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
@@ -219,7 +214,7 @@
     </section>
 
     <!-- ============================================================
-         03 · BRAND & PRESS KIT: logos (real downloads) with light/navy preview
+         03 · BRAND & PRESS KIT: logos (real downloads) with light/indigo preview
          ============================================================ -->
     <section class="section section--deep mkit" id="brand-kit" aria-labelledby="kit-title">
       <div class="container">
@@ -234,27 +229,20 @@
         <div class="mkit-sub" data-reveal="up">
           <div class="mkit-sub__head">
             <h3 class="mkit-sub__title"><span data-ar="الشعارات">Logos</span></h3>
-            <div class="mkit-sub__tools">
-              <span class="mkit-sub__label" id="logo-bg-label" data-ar="الخلفية">Background</span>
-              <div class="chip-group mkit-toggle" data-chip-group="single" aria-labelledby="logo-bg-label" data-logo-bg>
-                <button class="chip chip--sm" type="button" data-value="light" aria-pressed="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#sun"></use></svg><span data-ar="فاتح">Light</span></button>
-                <button class="chip chip--sm" type="button" data-value="navy" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#moon"></use></svg><span data-ar="كحلي">Navy</span></button>
-              </div>
-            </div>
           </div>
 
           <ul class="mkit-logos" role="list" data-tone="light" data-logo-grid>
             <!-- Group logo (vector) -->
             <li class="mkit-logo mkit-logo--hero">
               <div class="mkit-logo__stage">
-                <img class="mkit-logo__img mkit-on-light" src="assets/img/logo-mobco-group.svg" alt="MOBCO Group logo, navy" data-ar-alt="شعار مجموعة موبكو باللون الكحلي" width="226" height="166" loading="lazy" decoding="async">
+                <img class="mkit-logo__img mkit-on-light" src="assets/img/logo-mobco-group.svg" alt="MOBCO Group logo, indigo" data-ar-alt="شعار مجموعة موبكو باللون النيلي" width="226" height="166" loading="lazy" decoding="async">
                 <img class="mkit-logo__img mkit-on-dark" src="assets/img/logo-mobco-group-white.svg" alt="MOBCO Group logo, white" data-ar-alt="شعار مجموعة موبكو باللون الأبيض" width="226" height="166" loading="lazy" decoding="async">
               </div>
               <div class="mkit-logo__body">
                 <h4 class="mkit-logo__name" data-ar="شعار مجموعة موبكو">MOBCO Group logo</h4>
                 <p class="mkit-logo__meta" data-ar="ملف SVG متجه">Vector SVG</p>
                 <ul class="mkit-dl" role="list">
-                  <li><a class="mkit-dl__link" href="assets/img/logo-mobco-group.svg" download="mobco-group-logo-navy.svg"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="SVG · كحلي">SVG · Navy</span></a></li>
+                  <li><a class="mkit-dl__link" href="assets/img/logo-mobco-group.svg" download="mobco-group-logo-indigo.svg"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="SVG · نيلي">SVG · Indigo</span></a></li>
                   <li><a class="mkit-dl__link" href="assets/img/logo-mobco-group-white.svg" download="mobco-group-logo-white.svg"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="SVG · أبيض">SVG · White</span></a></li>
                 </ul>
               </div>
@@ -269,7 +257,7 @@
                 <h4 class="mkit-logo__name" data-ar="رمز الشعار وأيقونة التطبيق">Logo mark &amp; app icon</h4>
                 <p class="mkit-logo__meta" data-ar="ملف SVG للأحجام الصغيرة">SVG for small sizes</p>
                 <ul class="mkit-dl" role="list">
-                  <li><a class="mkit-dl__link" href="assets/img/logo-mark.svg" download="mobco-mark-navy.svg"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="الرمز · SVG">Mark · SVG</span></a></li>
+                  <li><a class="mkit-dl__link" href="assets/img/logo-mark.svg" download="mobco-mark-indigo.svg"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="الرمز · SVG">Mark · SVG</span></a></li>
                   <li><a class="mkit-dl__link" href="assets/img/favicon.svg" download="mobco-app-icon.svg"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="الأيقونة · SVG">App icon · SVG</span></a></li>
                 </ul>
               </div>
@@ -283,10 +271,9 @@
               </div>
               <div class="mkit-logo__body">
                 <h4 class="mkit-logo__name" data-ar="موبكو للإنشاءات">MOBCO Construction</h4>
-                <p class="mkit-logo__meta"><span data-ar="PNG بخلفية شفافة">Transparent PNG</span> · <span class="num-ltr">675 × 497 px</span></p>
                 <ul class="mkit-dl" role="list">
                   <li><a class="mkit-dl__link" href="assets/img/logos/mobco-construction.png" download="mobco-construction-logo.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="ملوّن">Colour</span></a></li>
-                  <li><a class="mkit-dl__link" href="assets/img/logos/mobco-construction-navy.png" download="mobco-construction-logo-navy.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="كحلي">Navy</span></a></li>
+                  <li><a class="mkit-dl__link" href="assets/img/logos/mobco-construction-navy.png" download="mobco-construction-logo-dark.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="داكن">Dark</span></a></li>
                   <li><a class="mkit-dl__link" href="assets/img/logos/mobco-construction-white.png" download="mobco-construction-logo-white.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="أبيض">White</span></a></li>
                 </ul>
               </div>
@@ -298,10 +285,9 @@
               </div>
               <div class="mkit-logo__body">
                 <h4 class="mkit-logo__name" data-ar="موبكو للتطوير">MOBCO Developments</h4>
-                <p class="mkit-logo__meta"><span data-ar="PNG بخلفية شفافة">Transparent PNG</span> · <span class="num-ltr">638 × 209 px</span></p>
                 <ul class="mkit-dl" role="list">
                   <li><a class="mkit-dl__link" href="assets/img/logos/mobco-developments.png" download="mobco-developments-logo.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="ملوّن">Colour</span></a></li>
-                  <li><a class="mkit-dl__link" href="assets/img/logos/mobco-developments-navy.png" download="mobco-developments-logo-navy.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="كحلي">Navy</span></a></li>
+                  <li><a class="mkit-dl__link" href="assets/img/logos/mobco-developments-navy.png" download="mobco-developments-logo-dark.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="داكن">Dark</span></a></li>
                   <li><a class="mkit-dl__link" href="assets/img/logos/mobco-developments-white.png" download="mobco-developments-logo-white.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="أبيض">White</span></a></li>
                 </ul>
               </div>
@@ -309,13 +295,11 @@
             <li class="mkit-logo mkit-logo--tile">
               <div class="mkit-logo__stage mkit-logo__stage--sub">
                 <span class="mkit-logo__tile"><img class="mkit-logo__img" src="assets/img/logos/mobco-real-estate.png" alt="MOBCO Real Estate Development logo" data-ar-alt="شعار موبكو للتطوير العقاري" width="652" height="147" loading="lazy" decoding="async"></span>
-                <span class="mkit-logo__tag mkit-logo__tag--gold" data-ar="على الخلفيات الفاتحة فقط">Light backgrounds only</span>
               </div>
               <div class="mkit-logo__body">
                 <h4 class="mkit-logo__name" data-ar="موبكو للتطوير العقاري">MOBCO Real Estate Development</h4>
-                <p class="mkit-logo__meta"><span data-ar="PNG بخلفية شفافة">Transparent PNG</span> · <span class="num-ltr">652 × 147 px</span></p>
                 <ul class="mkit-dl" role="list">
-                  <li><a class="mkit-dl__link" href="assets/img/logos/mobco-real-estate.png" download="mobco-real-estate-development-logo.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="ذهبي وكحلي">Gold &amp; navy</span></a></li>
+                  <li><a class="mkit-dl__link" href="assets/img/logos/mobco-real-estate.png" download="mobco-real-estate-development-logo.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="ملوّن">Colour</span></a></li>
                 </ul>
               </div>
             </li>
@@ -326,10 +310,9 @@
               </div>
               <div class="mkit-logo__body">
                 <h4 class="mkit-logo__name" data-ar="مجموعة النخبة التعليمية">Elite Education Group</h4>
-                <p class="mkit-logo__meta"><span data-ar="PNG بخلفية شفافة">Transparent PNG</span> · <span class="num-ltr">508 × 498 px</span></p>
                 <ul class="mkit-dl" role="list">
                   <li><a class="mkit-dl__link" href="assets/img/logos/elite-education.png" download="elite-education-group-logo.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="ملوّن">Colour</span></a></li>
-                  <li><a class="mkit-dl__link" href="assets/img/logos/elite-education-navy.png" download="elite-education-group-logo-navy.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="كحلي">Navy</span></a></li>
+                  <li><a class="mkit-dl__link" href="assets/img/logos/elite-education-navy.png" download="elite-education-group-logo-dark.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="داكن">Dark</span></a></li>
                   <li><a class="mkit-dl__link" href="assets/img/logos/elite-education-white.png" download="elite-education-group-logo-white.png"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg><span data-ar="أبيض">White</span></a></li>
                 </ul>
               </div>
@@ -347,26 +330,17 @@
         <div class="mkit-sub" data-reveal="up">
           <div class="mkit-sub__head">
             <h3 class="mkit-sub__title" id="palette-title"><span data-ar="لوحة الألوان">Colour palette</span></h3>
-            <div class="mkit-sub__tools">
-              <span class="mkit-sub__label" id="copy-format-label" data-ar="صيغة النسخ">Copy format</span>
-              <div class="chip-group mkit-toggle" data-chip-group="single" aria-labelledby="copy-format-label" data-copy-format>
-                <button class="chip chip--sm" type="button" data-value="hex" aria-pressed="true">HEX</button>
-                <button class="chip chip--sm" type="button" data-value="rgb" aria-pressed="false">RGB</button>
-              </div>
-            </div>
           </div>
-          <p class="mkit-sub__intro muted" data-ar="الكحلي هو لون العلامة الأساسي، والفيروزي لونها المميّز ويُستخدم بقدرٍ محسوب.">Navy carries the brand. Teal is the accent and is used sparingly.</p>
+          <p class="mkit-sub__intro muted" data-ar="البنفسجي النيلي هو لون العلامة الأساسي، والفيروزي والرملي لونان مميّزان يُستخدمان بقدرٍ محسوب.">Indigo carries the brand. Teal and sand are accents, used sparingly.</p>
 
           <ul class="mpal" role="list" data-palette>
-            <li class="mpal__item mpal__item--xl"><button class="mpal__swatch" type="button" style="--sw:#122230" data-copy="#122230" data-hex="#122230" data-rgb="rgb(18, 34, 48)" data-name="Navy 900" data-name-ar="كحلي 900" aria-label="Copy Navy 900, #122230"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="كحلي 900">Navy 900</span><span class="mpal__role" data-ar="الكحلي الأساسي للعلامة">Primary brand navy</span><span class="mpal__values"><span class="mpal__hex">#122230</span><span class="mpal__rgb">RGB 18 · 34 · 48</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item mpal__item--lg"><button class="mpal__swatch mpal__swatch--light-ink" type="button" style="--sw:#6fd1c5" data-copy="#6fd1c5" data-hex="#6fd1c5" data-rgb="rgb(111, 209, 197)" data-name="Teal 400" data-name-ar="فيروزي 400" aria-label="Copy Teal 400, #6fd1c5"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="فيروزي 400">Teal 400</span><span class="mpal__role" data-ar="اللون المميّز للعلامة">Signature accent</span><span class="mpal__values"><span class="mpal__hex">#6FD1C5</span><span class="mpal__rgb">RGB 111 · 209 · 197</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item mpal__item--lg"><button class="mpal__swatch" type="button" style="--sw:#0b1620" data-copy="#0b1620" data-hex="#0b1620" data-rgb="rgb(11, 22, 32)" data-name="Navy 950" data-name-ar="كحلي 950" aria-label="Copy Navy 950, #0b1620"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="كحلي 950">Navy 950</span><span class="mpal__role" data-ar="الخلفيات الأعمق والطبقات">Deepest backgrounds</span><span class="mpal__values"><span class="mpal__hex">#0B1620</span><span class="mpal__rgb">RGB 11 · 22 · 32</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item"><button class="mpal__swatch" type="button" style="--sw:#263a4a" data-copy="#263a4a" data-hex="#263a4a" data-rgb="rgb(38, 58, 74)" data-name="Navy 700" data-name-ar="كحلي 700" aria-label="Copy Navy 700, #263a4a"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="كحلي 700">Navy 700</span><span class="mpal__role" data-ar="اللوحات والأسطح">Panels &amp; surfaces</span><span class="mpal__values"><span class="mpal__hex">#263A4A</span><span class="mpal__rgb">RGB 38 · 58 · 74</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item"><button class="mpal__swatch" type="button" style="--sw:#5b6e7d" data-copy="#5b6e7d" data-hex="#5b6e7d" data-rgb="rgb(91, 110, 125)" data-name="Slate 500" data-name-ar="أردوازي 500" aria-label="Copy Slate 500, #5b6e7d"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="أردوازي 500">Slate 500</span><span class="mpal__role" data-ar="النصوص الثانوية">Secondary text</span><span class="mpal__values"><span class="mpal__hex">#5B6E7D</span><span class="mpal__rgb">RGB 91 · 110 · 125</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item"><button class="mpal__swatch" type="button" style="--sw:#3fa89c" data-copy="#3fa89c" data-hex="#3fa89c" data-rgb="rgb(63, 168, 156)" data-name="Teal 600" data-name-ar="فيروزي 600" aria-label="Copy Teal 600, #3fa89c"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="فيروزي 600">Teal 600</span><span class="mpal__role" data-ar="التمييز على الخلفيات الفاتحة">Accent on light</span><span class="mpal__values"><span class="mpal__hex">#3FA89C</span><span class="mpal__rgb">RGB 63 · 168 · 156</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item"><button class="mpal__swatch mpal__swatch--light-ink mpal__swatch--edge" type="button" style="--sw:#f5f7f8" data-copy="#f5f7f8" data-hex="#f5f7f8" data-rgb="rgb(245, 247, 248)" data-name="Sand 50" data-name-ar="رملي 50" aria-label="Copy Sand 50, #f5f7f8"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="رملي 50">Sand 50</span><span class="mpal__role" data-ar="الأقسام الفاتحة">Light sections</span><span class="mpal__values"><span class="mpal__hex">#F5F7F8</span><span class="mpal__rgb">RGB 245 · 247 · 248</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item"><button class="mpal__swatch mpal__swatch--light-ink mpal__swatch--edge" type="button" style="--sw:#ffffff" data-copy="#ffffff" data-hex="#ffffff" data-rgb="rgb(255, 255, 255)" data-name="White" data-name-ar="أبيض" aria-label="Copy White, #ffffff"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="أبيض">White</span><span class="mpal__role" data-ar="المساحة والوضوح">Space &amp; clarity</span><span class="mpal__values"><span class="mpal__hex">#FFFFFF</span><span class="mpal__rgb">RGB 255 · 255 · 255</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
-            <li class="mpal__item"><button class="mpal__swatch mpal__swatch--light-ink" type="button" style="--sw:#b8975a" data-copy="#b8975a" data-hex="#b8975a" data-rgb="rgb(184, 151, 90)" data-name="Gold 500" data-name-ar="ذهبي 500" aria-label="Copy Gold 500, #b8975a"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="ذهبي 500">Gold 500</span><span class="mpal__role" data-ar="لموبكو للتطوير العقاري فقط">MOBCO Real Estate Development only</span><span class="mpal__values"><span class="mpal__hex">#B8975A</span><span class="mpal__rgb">RGB 184 · 151 · 90</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
+            <li class="mpal__item mpal__item--xl"><button class="mpal__swatch" type="button" style="--sw:#535380" data-copy="#535380" data-hex="#535380" data-rgb="rgb(83, 83, 128)" data-name="Indigo" data-name-ar="نيلي" aria-label="Copy Indigo, #535380"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="نيلي">Indigo</span><span class="mpal__role" data-ar="لون العلامة الأساسي">Primary brand colour</span><span class="mpal__values"><span class="mpal__hex">#535380</span><span class="mpal__rgb">RGB 83 · 83 · 128</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
+            <li class="mpal__item mpal__item--lg"><button class="mpal__swatch mpal__swatch--light-ink" type="button" style="--sw:#5fb2b8" data-copy="#5FB2B8" data-hex="#5fb2b8" data-rgb="rgb(95, 178, 184)" data-name="Teal" data-name-ar="فيروزي" aria-label="Copy Teal, #5FB2B8"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="فيروزي">Teal</span><span class="mpal__role" data-ar="اللون المميّز من اسم العلامة">Accent, from the wordmark</span><span class="mpal__values"><span class="mpal__hex">#5FB2B8</span><span class="mpal__rgb">RGB 95 · 178 · 184</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
+            <li class="mpal__item mpal__item--lg"><button class="mpal__swatch mpal__swatch--light-ink" type="button" style="--sw:#b2aa8a" data-copy="#B2AA8A" data-hex="#b2aa8a" data-rgb="rgb(178, 170, 138)" data-name="Sand" data-name-ar="رملي" aria-label="Copy Sand, #B2AA8A"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="رملي">Sand</span><span class="mpal__role" data-ar="لون مميّز ثانوي يُستخدم باعتدال">Secondary accent, used sparingly</span><span class="mpal__values"><span class="mpal__hex">#B2AA8A</span><span class="mpal__rgb">RGB 178 · 170 · 138</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
+            <li class="mpal__item"><button class="mpal__swatch" type="button" style="--sw:#3a3a3e" data-copy="#3A3A3E" data-hex="#3a3a3e" data-rgb="rgb(58, 58, 62)" data-name="Charcoal" data-name-ar="فحمي" aria-label="Copy Charcoal, #3A3A3E"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="فحمي">Charcoal</span><span class="mpal__role" data-ar="النصوص على الخلفيات الفاتحة">Body text on light</span><span class="mpal__values"><span class="mpal__hex">#3A3A3E</span><span class="mpal__rgb">RGB 58 · 58 · 62</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
+            <li class="mpal__item"><button class="mpal__swatch" type="button" style="--sw:#1f1f38" data-copy="#1F1F38" data-hex="#1f1f38" data-rgb="rgb(31, 31, 56)" data-name="Deep indigo" data-name-ar="نيلي داكن" aria-label="Copy Deep indigo, #1F1F38"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="نيلي داكن">Deep indigo</span><span class="mpal__role" data-ar="الأقسام الداكنة">Dark sections</span><span class="mpal__values"><span class="mpal__hex">#1F1F38</span><span class="mpal__rgb">RGB 31 · 31 · 56</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
+            <li class="mpal__item"><button class="mpal__swatch mpal__swatch--light-ink mpal__swatch--edge" type="button" style="--sw:#f5f5f8" data-copy="#F5F5F8" data-hex="#f5f5f8" data-rgb="rgb(245, 245, 248)" data-name="Light" data-name-ar="فاتح" aria-label="Copy Light, #F5F5F8"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="فاتح">Light</span><span class="mpal__role" data-ar="الأقسام الفاتحة">Light sections</span><span class="mpal__values"><span class="mpal__hex">#F5F5F8</span><span class="mpal__rgb">RGB 245 · 245 · 248</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
+            <li class="mpal__item"><button class="mpal__swatch mpal__swatch--light-ink mpal__swatch--edge" type="button" style="--sw:#ffffff" data-copy="#FFFFFF" data-hex="#ffffff" data-rgb="rgb(255, 255, 255)" data-name="White" data-name-ar="أبيض" aria-label="Copy White, #FFFFFF"><span class="mpal__chip" aria-hidden="true"></span><span class="mpal__info"><span class="mpal__name" data-ar="أبيض">White</span><span class="mpal__role" data-ar="المساحة والوضوح">Space and clarity</span><span class="mpal__values"><span class="mpal__hex">#FFFFFF</span><span class="mpal__rgb">RGB 255 · 255 · 255</span></span></span><span class="mpal__hint" aria-hidden="true"><span class="mpal__hint-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg><span data-ar="نسخ">Copy</span></span><span class="mpal__hint-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="تم النسخ">Copied</span></span></span></button></li>
           </ul>
         </div>
 
@@ -419,25 +393,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Live type tester (uses the selected typeface) -->
-          <div class="mtype-tester" data-type-tester>
-            <div class="mtype-tester__controls">
-              <div class="field mtype-tester__field">
-                <input class="field__input" id="mtype-text" name="sample" type="text" placeholder=" " maxlength="60" autocomplete="off" data-type-input>
-                <label class="field__label" for="mtype-text"><span data-ar="جرّب نصّك">Try your own text</span></label>
-              </div>
-              <div class="range">
-                <div class="range__head"><label class="range__label" for="mtype-weight" data-ar="الوزن">Weight</label><output class="range__value" for="mtype-weight">600</output></div>
-                <input class="range__input" id="mtype-weight" type="range" min="200" max="800" step="100" value="600" data-type-weight>
-              </div>
-              <div class="range">
-                <div class="range__head"><label class="range__label" for="mtype-size" data-ar="الحجم">Size</label><output class="range__value" for="mtype-size">64 px</output></div>
-                <input class="range__input" id="mtype-size" type="range" min="24" max="120" step="4" value="64" data-suffix=" px" data-type-size>
-              </div>
-            </div>
-            <p class="mtype-tester__preview" data-type-preview aria-live="off">Integrity &amp; Excellence</p>
-          </div>
         </div>
       </div>
     </section>
@@ -455,7 +410,7 @@
           <li class="musage__card musage__card--do">
             <div class="musage__art musage__art--light"><img src="assets/img/logo-mobco-group.svg" alt="" width="226" height="166" loading="lazy" decoding="async"></div>
             <p class="musage__verdict"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="افعل">Do</span></p>
-            <p class="musage__text" data-ar="استخدم الشعار الكحلي على الخلفيات البيضاء أو الفاتحة.">Use the navy logo on white or light backgrounds.</p>
+            <p class="musage__text" data-ar="استخدم الشعار النيلي على الخلفيات البيضاء أو الفاتحة.">Use the indigo logo on white or light backgrounds.</p>
           </li>
           <li class="musage__card musage__card--do">
             <div class="musage__art musage__art--photo">
@@ -463,7 +418,7 @@
               <img class="musage__logo" src="assets/img/logo-mobco-group-white.svg" alt="" width="226" height="166" loading="lazy" decoding="async">
             </div>
             <p class="musage__verdict"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#check"></use></svg><span data-ar="افعل">Do</span></p>
-            <p class="musage__text" data-ar="استخدم الشعار الأبيض على الكحلي أو على الصور المعتّمة.">Use the white logo on navy or on darkened photos.</p>
+            <p class="musage__text" data-ar="استخدم الشعار الأبيض على النيلي الداكن أو على الصور المعتّمة.">Use the white logo on deep indigo or on darkened photos.</p>
           </li>
           <li class="musage__card musage__card--do">
             <div class="musage__art musage__art--light musage__art--space"><span class="musage__space"><img src="assets/img/logo-mobco-group.svg" alt="" width="226" height="166" loading="lazy" decoding="async"></span></div>
@@ -504,21 +459,6 @@
           </div>
         </header>
 
-        <!-- Empty state: deliberately no articles until the client supplies real stories. -->
-        <div class="mnews-empty" data-reveal="up">
-          <div class="mnews-empty__ghosts" aria-hidden="true">
-            <div class="mnews-ghost"><span class="mnews-ghost__media"></span><span class="mnews-ghost__line mnews-ghost__line--short"></span><span class="mnews-ghost__line"></span><span class="mnews-ghost__line mnews-ghost__line--mid"></span></div>
-            <div class="mnews-ghost"><span class="mnews-ghost__media"></span><span class="mnews-ghost__line mnews-ghost__line--short"></span><span class="mnews-ghost__line"></span><span class="mnews-ghost__line mnews-ghost__line--mid"></span></div>
-            <div class="mnews-ghost"><span class="mnews-ghost__media"></span><span class="mnews-ghost__line mnews-ghost__line--short"></span><span class="mnews-ghost__line"></span><span class="mnews-ghost__line mnews-ghost__line--mid"></span></div>
-          </div>
-          <div class="mnews-empty__card">
-            <span class="mnews-empty__icon" aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#newspaper"></use></svg></span>
-            <h3 class="mnews-empty__title" data-ar="الأخبار قريبًا">News coming soon</h3>
-            <p class="mnews-empty__text" data-ar="اشترك في النشرة لتصلك أخبارنا أولًا.">Subscribe to the newsletter to hear first.</p>
-            <a class="link-arrow" href="#mnews-form-title"><span data-ar="اشترك">Subscribe</span><span class="link-arrow__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-down"></use></svg></span></a>
-          </div>
-        </div>
-
         <div class="mnews-grid">
           <!-- Newsletter (client-side only; see docs/content-notes/media.md: needs a mailing-list backend) -->
           <div class="mnews-card mnews-card--form" data-reveal="up">
@@ -535,14 +475,6 @@
                   <label class="field__label" for="mn-email"><span data-ar="البريد الإلكتروني">Email address</span><span class="req" aria-hidden="true">*</span></label>
                 </div>
               </div>
-              <fieldset class="form__group mnews-topics">
-                <legend class="mnews-topics__legend" data-ar="المواضيع">Topics</legend>
-                <div class="mnews-topics__list">
-                  <label class="check"><input class="check__input" type="checkbox" name="topics" value="group-news" checked><span class="check__box" aria-hidden="true"></span><span data-ar="أخبار المجموعة">Group news</span></label>
-                  <label class="check"><input class="check__input" type="checkbox" name="topics" value="projects" checked><span class="check__box" aria-hidden="true"></span><span data-ar="مستجدات المشاريع">Project updates</span></label>
-                  <label class="check"><input class="check__input" type="checkbox" name="topics" value="careers"><span class="check__box" aria-hidden="true"></span><span data-ar="فرص العمل">Careers</span></label>
-                </div>
-              </fieldset>
               <label class="check mnews-consent"><input class="check__input" type="checkbox" name="consent" required data-error="Please confirm to subscribe." data-ar-error="يُرجى التأكيد للاشتراك."><span class="check__box" aria-hidden="true"></span><span data-ar="أوافق على تلقّي رسائل بريدية من مجموعة موبكو.">I agree to receive emails from MOBCO Group.</span></label>
               <div class="form__actions">
                 <button class="btn btn--primary" type="submit" data-magnetic="0.2"><span data-ar="اشترك">Subscribe</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
@@ -562,8 +494,7 @@
             <p class="mnews-card__text" data-ar="للمقابلات أو الصور أو التصريحات، تواصل مع مكاتبنا.">For interviews, images or statements, contact our offices.</p>
             <ul class="mnews-contacts" role="list">
               <li class="mnews-contact">
-                <p class="mnews-contact__label"><span data-ar="مكتب المملكة العربية السعودية">KSA Office</span> <span class="badge badge--accent" data-ar="المقر الرئيسي">Headquarters</span></p>
-                <p class="mnews-contact__city" data-ar="الرياض، المملكة العربية السعودية">Riyadh, Saudi Arabia</p>
+                <p class="mnews-contact__label"><span data-ar="مكتب المملكة العربية السعودية">KSA Office</span> </p>
                 <div class="mnews-contact__row">
                   <a class="mnews-contact__mail" href="mailto:info.ksa@mobco-group.com"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mail"></use></svg><span>info.ksa@mobco-group.com</span></a>
                   <button class="icon-btn icon-btn--sm mnews-copy" type="button" data-copy="info.ksa@mobco-group.com" aria-label="Copy email address info.ksa@mobco-group.com" data-ar-aria-label="نسخ البريد الإلكتروني info.ksa@mobco-group.com" data-tooltip="Copy" data-ar-tooltip="نسخ"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg></button>
@@ -572,7 +503,6 @@
               </li>
               <li class="mnews-contact">
                 <p class="mnews-contact__label"><span data-ar="مكتب مصر">Egypt Office</span></p>
-                <p class="mnews-contact__city" data-ar="القاهرة، مصر">Cairo, Egypt</p>
                 <div class="mnews-contact__row">
                   <a class="mnews-contact__mail" href="mailto:info.egy@mobco-group.com"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mail"></use></svg><span>info.egy@mobco-group.com</span></a>
                   <button class="icon-btn icon-btn--sm mnews-copy" type="button" data-copy="info.egy@mobco-group.com" aria-label="Copy email address info.egy@mobco-group.com" data-ar-aria-label="نسخ البريد الإلكتروني info.egy@mobco-group.com" data-tooltip="Copy" data-ar-tooltip="نسخ"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#copy"></use></svg></button>

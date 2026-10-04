@@ -52,6 +52,7 @@
   </script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/gsap/SplitText.min.js" defer></script>
   <script src="assets/vendor/lenis/lenis.min.js" defer></script>
   <script type="module" src="assets/js/core/main.js"></script>
   <script type="module" src="assets/js/pages/subsidiary.js"></script>
@@ -281,9 +282,9 @@
               <button class="icon-btn" type="button" data-carousel-next aria-label="Next slide" data-ar-aria-label="الشريحة التالية"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
             </div>
           </div>
-          <div class="carousel__viewport" data-cursor="drag" data-cursor-label="Drag" data-ar-cursor-label="اسحب" aria-label="Featured projects in Saudi Arabia" data-ar-aria-label="مشاريع مميّزة في المملكة العربية السعودية">
+          <div class="carousel__viewport" data-cursor="drag" aria-label="Featured projects in Saudi Arabia" data-ar-aria-label="مشاريع مميّزة في المملكة العربية السعودية">
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#classical-landmark" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#classical-landmark" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/ksa-landmark.webp"><img src="assets/img/thumbs/ksa-landmark.jpg" alt="" width="480" height="431" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -294,7 +295,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#sofitel-hotel" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#sofitel-hotel" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/sofitel-hotel.webp"><img src="assets/img/thumbs/sofitel-hotel.jpg" alt="" width="480" height="323" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -305,7 +306,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#as-safiyyah-museum-park" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#as-safiyyah-museum-park" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/as-safiyyah-museum-park.webp"><img src="assets/img/thumbs/as-safiyyah-museum-park.jpg" alt="" width="480" height="324" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -316,7 +317,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#red-palace-redevelopment" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#red-palace-redevelopment" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/red-palace-redevelopment.webp"><img src="assets/img/thumbs/red-palace-redevelopment.jpg" alt="" width="480" height="271" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -327,7 +328,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#hq-tower-masjid-museum" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#hq-tower-masjid-museum" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/hq-tower-masjid-museum.webp"><img src="assets/img/thumbs/hq-tower-masjid-museum.jpg" alt="" width="480" height="323" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -338,7 +339,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#neom-bay-airport" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#neom-bay-airport" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/neom-bay-airport.webp"><img src="assets/img/thumbs/neom-bay-airport.jpg" alt="" width="480" height="324" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -349,7 +350,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#taif-municipality-building" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#taif-municipality-building" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/taif-municipality-building.webp"><img src="assets/img/thumbs/taif-municipality-building.jpg" alt="" width="480" height="324" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -360,7 +361,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#al-moosa-specialist-hospital" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#al-moosa-specialist-hospital" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/al-moosa-specialist-hospital.webp"><img src="assets/img/thumbs/al-moosa-specialist-hospital.jpg" alt="" width="480" height="324" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -371,7 +372,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#raffles-hotel-residence" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#raffles-hotel-residence" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/raffles-hotel-residence.webp"><img src="assets/img/thumbs/raffles-hotel-residence.jpg" alt="" width="480" height="312" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
@@ -382,7 +383,7 @@
               </a>
             </div>
             <div class="carousel__slide">
-              <a class="project-card" href="projects.html#sulaiman-fakeeh-hospital" data-cursor="view" data-cursor-label="View" data-ar-cursor-label="عرض">
+              <a class="project-card" href="projects.html#sulaiman-fakeeh-hospital" data-cursor="view">
                 <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/sulaiman-fakeeh-hospital.webp"><img src="assets/img/thumbs/sulaiman-fakeeh-hospital.jpg" alt="" width="480" height="301" loading="lazy" decoding="async" style="object-position:50% 50%"></picture></div>
                 <span class="project-card__arrow"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">

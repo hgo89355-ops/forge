@@ -661,7 +661,7 @@ function cardEl(p) {
   li.dataset.slug = p.slug;
   const loc = locText(p);
   li.innerHTML = `
-    <a class="pj-card" href="projects.html#${esc(p.slug)}" data-slug="${esc(p.slug)}" data-cursor="view" data-cursor-label="${esc(t(S.view))}">
+    <a class="pj-card" href="projects.html#${esc(p.slug)}" data-slug="${esc(p.slug)}" data-cursor="view">
       <span class="pj-card__media">
         ${cardPicture(p, { sizes: '(min-width: 1024px) 420px, (min-width: 640px) 46vw, 92vw' /* alt="": the link text already names the project */ })}
         <span class="pj-card__idx num" aria-hidden="true" data-idx></span>
