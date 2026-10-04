@@ -1,4 +1,4 @@
-// MOBCO 3D Studio — engine.js
+// MOBCO Project Builder · engine.js
 // The UI-less WebGL engine behind studio.html (and a future compact embed on the home page).
 //
 //   import { createStudio, hasWebGL } from './assets/js/studio/engine.js';
@@ -11,7 +11,7 @@
 // isolation, horizontal section cut with teal caps, Realistic / Clay / Blueprint / X-ray modes,
 // time of day (sun path, sky, night glow + lamps), projected hotspots with occlusion, thumbnails,
 // snapshot, pause when hidden/offscreen, full disposal on model switch.
-// Model modules (./models/<id>.js) follow the MODEL MODULE CONTRACT — see docs/requests/studio.md.
+// Model modules (./models/<id>.js) follow the MODEL MODULE CONTRACT, see docs/requests/studio.md.
 //
 // Embed options / methods (optional, added for the home-page hero; defaults keep the studio's behaviour):
 //   touchAction: 'pan-y'          canvas touch-action (one-finger vertical swipes scroll the page)
@@ -95,7 +95,7 @@ export function createStudio(container, options = {}) {
     hotspots: true,
     ...options,
   };
-  // CPU rasterisers (SwiftShader, llvmpipe — e.g. no GPU, blocklisted drivers, headless CI) get a
+  // CPU rasterisers (SwiftShader, llvmpipe, e.g. no GPU, blocklisted drivers, headless CI) get a
   // low-power profile: no MSAA, DPR 1 × 0.75, small shadow map, no ambient animation, no thumbnails.
   const lp = new URLSearchParams(location.search).get('lowpower');
   const lowPower = lp === '1' || (lp !== '0' && (gpu().software || opts.lowPower === true));
@@ -148,7 +148,7 @@ export function createStudio(container, options = {}) {
   const capUniform = { value: new THREE.Vector3(111 / 255, 209 / 255, 197 / 255) };
   const modes = createModeLibrary(THREE, { clipPlanes, capUniform });
 
-  // Section plane visual (teal frame + faint fill) — not clipped
+  // Section plane visual (teal frame + faint fill), not clipped
   const sectionVis = new THREE.Group();
   sectionVis.name = 'studio-section-plane';
   const secFill = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ color: '#6fd1c5', transparent: true, opacity: 0.035, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }));
@@ -607,7 +607,7 @@ export function createStudio(container, options = {}) {
     if (flat) renderer.toneMappingExposure = 1;
     else if (state.mode === 'clay') {
       // white-model light profile: the all-white clay saturates under the realistic fill light, so trade
-      // fill for key light and lower the exposure — form and cast shadows read like a studio maquette
+      // fill for key light and lower the exposure, form and cast shadows read like a studio maquette
       env.hemi.intensity *= 0.4;
       env.sun.intensity *= 1.35;
       renderer.toneMappingExposure *= 0.76;
@@ -1104,7 +1104,7 @@ export function createStudio(container, options = {}) {
 
   /**
    * Render a thumbnail of any model id without disturbing the live view: the thumb model is built,
-   * rendered into a corner viewport, copied to a 2D canvas and removed — all inside one task, then the
+   * rendered into a corner viewport, copied to a 2D canvas and removed, all inside one task, then the
    * live frame is re-rendered, so nothing flickers. Resolves to a JPEG data URL (or null).
    */
   async function renderThumbnail(id, { w = 320, h = 200 } = {}) {

@@ -1,9 +1,9 @@
 /**
- * MOBCO 3D Project Studio — model "residential-tower"
+ * MOBCO Project Builder · model "residential-tower"
  * -----------------------------------------------------------------------------
  * ILLUSTRATIVE massing model inspired by the Victoria 101 render (Port Whitby).
  * It is NOT a replica: proportions, level counts and site layout are an
- * interpretation for presentation purposes only — no specs are implied.
+ * interpretation for presentation purposes only, no specs are implied.
  *
  * Composition (world units = metres, +Z = front / parking court, +X = east):
  *   - "tower": glass residential tower, wraparound glass balconies, white crown
@@ -271,7 +271,7 @@ export function build(THREE, ctx = {}) {
       normalMap: rippleTex, normalScale: new THREE.Vector2(0.35, 0.35), envMapIntensity: 1.2,
       emissive: 0x3fd4e2, emissiveIntensity: 0,
     })),
-    teal: std('mt-accent-teal', { color: 0x6fd1c5, roughness: 0.35, emissive: 0x6fd1c5, emissiveIntensity: 0 }),
+    teal: std('mt-accent-teal', { color: 0x5fb2b8, roughness: 0.35, emissive: 0x5fb2b8, emissiveIntensity: 0 }),
     lampHead: std('mt-lamp-head', { color: 0xf1eee8, roughness: 0.4, emissive: 0xffdcaa, emissiveIntensity: 0 }),
     lightStrip: std('mt-light-strip', { color: 0xf6f4ee, roughness: 0.4, emissive: 0xfff0d6, emissiveIntensity: 0 }),
     metalDark: std('mt-metal-dark', { color: 0x30363b, roughness: 0.5, metalness: 0.6 }),
@@ -490,7 +490,7 @@ export function build(THREE, ctx = {}) {
     // floor slab (projects as balcony / white band)
     addSpan(g, `${tag}-slab`, mat.white, r.x0 - slabExt.w, r.x1 + slabExt.e, y, y + SLAB_T, r.z0 - slabExt.n, r.z1 + slabExt.s);
 
-    // interior volume (carries the window glow) — inset behind the glass
+    // interior volume (carries the window glow), inset behind the glass
     const inset = 0.3, ih = h - SLAB_T;
     const iw = r.x1 - r.x0 - 2 * inset, id = r.z1 - r.z0 - 2 * inset;
     const interior = new THREE.Mesh(o.interiorMat === mat.lobby ? boxGeo(iw, ih, id) : glowBoxGeo(iw, ih, id, o.row ?? n), o.interiorMat || mat.interior);

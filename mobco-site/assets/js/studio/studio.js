@@ -1,6 +1,6 @@
-// MOBCO 3D Studio — studio.js (page entry for studio.html)
-// Boots the engine (or the no-WebGL fallback), the studio UI, ?model= deep links + history sync,
-// global keyboard shortcuts, the "How to use" try-it buttons and the "From model to project" list.
+// MOBCO Project Builder · studio.js (page entry for studio.html)
+// Boots the engine (or the no-WebGL fallback), the UI in "explore" or "build" mode, ?model= / ?mode=build deep
+// links with history sync, a few quiet keyboard shortcuts and the "projects behind the models" list.
 
 import { t, onLang } from '../core/i18n.js';
 import { scan, scrollTo } from '../core/motion.js';
@@ -21,6 +21,7 @@ function boot() {
   const entries = libraryEntries({ dev });
   const deepLinked = !!requested && entries.some((e) => e.id === requested);
   const initialId = deepLinked ? requested : entries[0].id;
+  const initialMode = getParam('mode') === 'build' || requested === 'builder' ? 'build' : 'explore';
 
   /* ---------------------------------------------------------------- engine (or fallback) */
   let engine = null;
@@ -40,27 +41,33 @@ function boot() {
 
   /* ---------------------------------------------------------------- URL sync */
   let firstSync = true;
-  function onModelChange(id, { push }) {
+  function onModelChange(id, { push, mode }) {
     const url = new URL(location.href);
-    const same = url.searchParams.get('model') === id;
-    if (firstSync && !deepLinked) { firstSync = false; if (id === entries[0].id) return; }
+    const before = url.search;
+    if (mode === 'build') { url.searchParams.set('mode', 'build'); url.searchParams.delete('model'); }
+    else {
+      url.searchParams.delete('mode');
+      if (firstSync && !deepLinked && id === entries[0].id) url.searchParams.delete('model');
+      else url.searchParams.set('model', id);
+    }
     firstSync = false;
-    if (same) return;
-    url.searchParams.set('model', id);
+    if (url.search === before) return;
     try {
-      if (push) history.pushState({ studioModel: id }, '', url);
-      else history.replaceState({ studioModel: id }, '', url);
+      if (push) history.pushState({ studioModel: id, mode }, '', url);
+      else history.replaceState({ studioModel: id, mode }, '', url);
     } catch { /* file:// or sandboxed */ }
   }
 
-  const ui = createStudioUI({ root, engine, entries, initialId, deepLinked, onModelChange });
+  const ui = createStudioUI({ root, engine, entries, initialId, initialMode, deepLinked, onModelChange });
 
   window.addEventListener('popstate', () => {
-    const id = new URL(location.href).searchParams.get('model') || entries[0].id;
-    if (entries.some((e) => e.id === id) && id !== ui.current) ui.go(id, { push: false });
+    const u = new URL(location.href).searchParams;
+    if (u.get('mode') === 'build') { if (ui.mode !== 'build') ui.setMode('build', { push: false }); return; }
+    const id = u.get('model') || entries[0].id;
+    if (entries.some((e) => e.id === id) && (id !== ui.current || ui.mode !== 'explore')) ui.go(id, { push: false });
   });
 
-  /* ---------------------------------------------------------------- keyboard shortcuts */
+  /* ---------------------------------------------------------------- keyboard shortcuts (not advertised) */
   let stageVisible = true;
   new IntersectionObserver((es) => { stageVisible = es.some((e) => e.intersectionRatio > 0.25); }, { threshold: [0, 0.25, 0.5] }).observe(root);
   document.addEventListener('keydown', (e) => {
@@ -68,66 +75,47 @@ function boot() {
     const el = e.target;
     const typing = el && (el.isContentEditable || /^(TEXTAREA|SELECT)$/.test(el.tagName) || (el.tagName === 'INPUT' && !/^(range|checkbox|radio|button)$/.test(el.type)));
     if (typing) return;
-    const html = document.documentElement;
     if (e.key === 'Escape') {
       if (ui.hasHotcard()) { ui.closeHotcard(true); return; }
       if (engine && ui.state?.selected >= 0) { engine.select(-1); return; }
       if (ui.isImmersive() && !document.fullscreenElement) { ui.toggleFullscreen(); }
       return;
     }
+    const html = document.documentElement;
     if (html.classList.contains('is-locked') || html.classList.contains('search-open') || html.classList.contains('nav-open')) return;
     if (!stageVisible && !ui.isImmersive()) return;
+    // inside the builder form, letters and digits belong to the form controls
+    if (el?.closest?.('[data-builder]')) return;
     const k = e.key;
     if (/^[1-9]$/.test(k)) {
       const entry = entries[+k - 1];
       if (entry) { e.preventDefault(); ui.go(entry.id); }
       return;
     }
-    if (k === '?') { e.preventDefault(); ui.openHelp(); return; }
     if (!engine) return;
     switch (k.toLowerCase()) {
       case 'r': e.preventDefault(); ui.reset(); break;
-      case 'a': e.preventDefault(); engine.setAutoRotate(!engine.getState().autoRotate); break;
-      case 'e': e.preventDefault(); engine.setExplode(engine.getState().explode > 0.05 ? 0 : 0.65); break;
-      case 'b': e.preventDefault(); engine.setMode(engine.getState().mode === 'blueprint' ? 'realistic' : 'blueprint'); break;
       case 'f': e.preventDefault(); ui.toggleFullscreen(); break;
       default: break;
     }
   });
 
-  /* ---------------------------------------------------------------- help buttons outside the toolbar */
-  $$('[data-action="help"]').forEach((b) => { if (!b.closest('[data-studio-toolbar]')) b.addEventListener('click', () => ui.openHelp(b)); });
-
-  /* ---------------------------------------------------------------- "Try it" (guide cards) */
+  /* ---------------------------------------------------------------- the projects behind the models */
   async function backToStage() {
     scrollTo(root, { offset: 0, immediate: prefersReducedMotion() });
     await wait(prefersReducedMotion() ? 50 : 900);
   }
-  $$('[data-try]').forEach((b) => b.addEventListener('click', async () => {
-    await backToStage();
-    if (!engine) return;
-    const what = b.dataset.try;
-    if (what === 'views') engine.setView('street');
-    else if (what === 'explode') engine.setExplode(0.7);
-    else if (what === 'night') { engine.setMode('realistic'); engine.setTime(20.5); }
-    else if (what === 'blueprint') engine.setMode('blueprint');
-    engine.canvas.focus({ preventScroll: true });
-  }));
-
-  /* ---------------------------------------------------------------- From model to project */
   const list = $('[data-studio-projects]');
   function renderProjects() {
     if (!list) return;
     list.innerHTML = entries.filter((e) => e.project).map((e) => {
       const p = e.project;
       const meta = [t(p.typology), p.location ? t(p.location) : null].filter(Boolean).join(' · ');
-      return `<li class="studio-proj${e.id === ui.current ? ' is-current' : ''}" data-proj="${esc(e.id)}">
+      return `<li class="studio-proj${e.id === ui.current && ui.mode === 'explore' ? ' is-current' : ''}" data-proj="${esc(e.id)}">
         <div class="studio-proj__media">
           ${picture(p.image, { alt: t(p.name), thumb: true, position: p.pos })}
-          <span class="badge badge--glass studio-proj__badge">${esc(t(S.illustrativeShort))}</span>
         </div>
         <div class="studio-proj__body">
-          <span class="studio-proj__num num-ltr">${String(e.index).padStart(2, '0')}</span>
           <h3 class="studio-proj__name">${esc(t(p.name))}</h3>
           <p class="studio-proj__meta">${esc(meta)}</p>
           <div class="studio-proj__actions">
@@ -141,7 +129,7 @@ function boot() {
     scan(list);
   }
   function markCurrentProject() {
-    $$('[data-proj]', list).forEach((li) => li.classList.toggle('is-current', li.dataset.proj === ui.current));
+    $$('[data-proj]', list).forEach((li) => li.classList.toggle('is-current', ui.mode === 'explore' && li.dataset.proj === ui.current));
   }
   list?.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-open-model]');

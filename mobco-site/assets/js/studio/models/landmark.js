@@ -1,5 +1,5 @@
 /**
- * MOBCO 3D Project Studio — model "landmark"
+ * MOBCO Project Builder · model "landmark"
  * ------------------------------------------------------------------
  * An ILLUSTRATIVE massing model of a classical courtyard building, inspired
  * by the "ksa-landmark" render: terracotta brick wings with cream stone trims
@@ -204,7 +204,7 @@ export function build(THREE, ctx = {}) {
     glass: phys('glass', { color: '#4d6b74', roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.42, envMapIntensity: 1.2, depthWrite: false }),
     interiorLit: std('window-interior-lit', { color: '#2a3036', roughness: 0.9, emissive: new THREE.Color('#ffa850').multiplyScalar(1.25), emissiveIntensity: 0 }),
     interiorDark: std('window-interior', { color: '#22292f', roughness: 0.9 }),
-    teal: std('mobco-teal-accent', { color: '#6fd1c5', roughness: 0.35, metalness: 0.25, emissive: '#6fd1c5', emissiveIntensity: 0 }),
+    teal: std('mobco-teal-accent', { color: '#5fb2b8', roughness: 0.35, metalness: 0.25, emissive: '#5fb2b8', emissiveIntensity: 0 }),
     lawn: std('lawn', { color: '#6b8c45', roughness: 1 }),
     hedge: std('hedge', { color: '#4c6a35', roughness: 0.95 }),
     frond: std('palm-frond', { color: '#5a7a34', roughness: 0.85 }), // single-sided: the crown geometry carries both faces
@@ -381,7 +381,7 @@ export function build(THREE, ctx = {}) {
     inst(group, 'window-glass', U.box, M.glass, x, yc, z, w, h, 0.02, ry, 0, 0, false);
     const fname = frameMat === M.bronze ? 'window-frame-bronze' : 'window-frame';
     if (!HIGH) {
-      // low quality: one surround plate behind the pane + a sill (2 boxes instead of 5–7)
+      // low quality: one surround plate behind the pane + a sill (2 boxes instead of 5 to 7)
       [x, z] = along(ox, oz, ry, 0, -0.06);   // spans d −0.15…0.03, i.e. 2 cm behind the backing's face
       inst(group, fname, U.box, frameMat, x, yc + 0.03, z, w + 0.4, h + 0.34, 0.18, ry);
       [x, z] = along(ox, oz, ry, 0, 0.06);
@@ -459,7 +459,7 @@ export function build(THREE, ctx = {}) {
 
   /* ================================================================== BUILDING */
 
-  // Wing rectangles [x0, x1, z0, z1] — they tile the block without overlapping.
+  // Wing rectangles [x0, x1, z0, z1], they tile the block without overlapping.
   const WINGS = [
     { id: 'front', r: [-X_OUT, X_OUT, Z_FRONT_IN, Z_FRONT] },
     { id: 'rear', r: [-X_OUT, X_OUT, Z_REAR, Z_REAR_IN] },
@@ -610,7 +610,7 @@ export function build(THREE, ctx = {}) {
       inst(g, 'drum-column-capital', U.box, M.trim, x, y0 + h - 0.12, z, 0.8, 0.24, 0.8, t);
     }
 
-    // Levels 1–3: curved balconies — slab, terracotta balustrade with motifs, slender columns, recessed wall with French doors
+    // Levels 1 to 3: curved balconies, slab, terracotta balustrade with motifs, slender columns, recessed wall with French doors
     for (let level = 1; level <= 3; level++) {
       const gl = floors[level], L = LEVELS[level], yb = L.y0 + SLAB, bh = 1.05;
       mesh(gl, 'drum-balcony-slab', cylGeo(DX, DZ, R, L.y0, SLAB), M.trim);

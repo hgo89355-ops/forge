@@ -1,5 +1,5 @@
 /**
- * MOBCO 3D Project Studio — model: "villa-community"
+ * MOBCO Project Builder · model: "villa-community"
  * -------------------------------------------------------------------------
  * An ILLUSTRATIVE massing model of a gated villa community, inspired by the
  * aerial render `assets/img/aerial-compound.webp` (not a replica, not to scale):
@@ -91,13 +91,13 @@ export const meta = {
 /* ------------------------------------------------------------------------ */
 const L = {
   half: 70,
-  // Main road (east–west) along the south edge
+  // Main road (east-west) along the south edge
   road: { z0: 57, z1: 69 },
-  // Boulevard (north–south) with a planted median
+  // Boulevard (north-south) with a planted median
   blvd: { x0: 23, x1: 37, medX0: 29, medX1: 31, z0: -68.5, z1: 57 },
   walkW: { x0: 20, x1: 23 }, // west sidewalk of boulevard
   walkE: { x0: 37, x1: 40 }, // east sidewalk
-  // Internal streets (east–west) in the west zone
+  // Internal streets (east-west) in the west zone
   streets: [{ z0: -46, z1: -40 }, { z0: 8, z1: 14 }],
   streetX0: -66,
   wallZ: 34, // southern community wall (behind the commercial strip)
@@ -166,7 +166,7 @@ export function build(THREE, ctx = {}) {
     // Interior panels sit behind the glazing: dark by day, warm glow at night.
     interior: std({ name: 'interior-glow', color: 0x2f353c, roughness: 0.9, metalness: 0, emissive: 0xffc985, emissiveIntensity: 0 }),
     wood: std({ name: 'timber', color: 0x7a5f4b, roughness: 0.75, metalness: 0 }),
-    teal: std({ name: 'mobco-teal-accent', color: 0x6fd1c5, roughness: 0.35, metalness: 0.2, emissive: 0x6fd1c5, emissiveIntensity: 0 }),
+    teal: std({ name: 'mobco-teal-accent', color: 0x5fb2b8, roughness: 0.35, metalness: 0.2, emissive: 0x5fb2b8, emissiveIntensity: 0 }),
     sand: std({ name: 'lagoon-sand-deck', color: 0xe6d6b8, roughness: 0.95, metalness: 0 }),
     coping: std({ name: 'pool-coping', color: 0xf1ede4, roughness: 0.7, metalness: 0 }),
     grass: std({ name: 'lawn', color: 0x91a871, roughness: 1, metalness: 0 }),
@@ -383,7 +383,7 @@ export function build(THREE, ctx = {}) {
   // Local frame: front facade faces +z, footprint ~11 m x 10 m, centred at origin.
   const GF0 = 0.3, GF1 = 3.6, SLAB1 = 3.85, FF1 = 7.0, CAP1 = 7.3;
 
-  /** Type A — L-shaped upper floor with a pergola-shaded terrace. */
+  /** Type A, L-shaped upper floor with a pergola-shaded terrace. */
   function villaTypeA() {
     const b = [new Bin(), new Bin(), new Bin()];
     const [g, f, r] = b;
@@ -419,7 +419,7 @@ export function build(THREE, ctx = {}) {
     return b;
   }
 
-  /** Type B — cubic villa with a framed front loggia. */
+  /** Type B, cubic villa with a framed front loggia. */
   function villaTypeB() {
     const b = [new Bin(), new Bin(), new Bin()];
     const [g, f, r] = b;

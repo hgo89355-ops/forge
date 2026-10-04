@@ -1,5 +1,5 @@
 /**
- * MOBCO 3D Project Studio — model: "campus"
+ * MOBCO Project Builder · model: "campus"
  * ---------------------------------------------------------------------------
  * An ILLUSTRATIVE massing model inspired by the aerial render of the
  * "Innovation Campus" (assets/img/campus.webp). It is not a replica and carries
@@ -8,7 +8,7 @@
  * sweeping pedestrian sky bridge, and a plaza with water and palm groves.
  *
  * Module contract (shared with the Studio engine):
- *   export const meta        — ids, copy, camera presets, hotspots, sun
+ *   export const meta       , ids, copy, camera presets, hotspots, sun
  *   export function build(THREE, ctx) → { root, floors, site, nightMaterials,
  *                                         lamps, update, dispose }
  * The module imports nothing; THREE is injected. World units are metres,
@@ -130,7 +130,7 @@ const COLORS = {
   trunk: 0x9d917f,
   frond: 0x5f8250,
   canopy: 0x6f8a5c,
-  teal: 0x6fd1c5,
+  teal: 0x5fb2b8,
   glowWarm: 0xffc98a,
   lampGlow: 0xffe3b8,
 };
@@ -616,7 +616,7 @@ export function build(THREE, ctx = {}) {
       sliceProfile(prof, y0, y1).forEach((piece, k) => {
         lv[level].add(mesh(latheGeo(piece, Q.lathe, true), mat.shell, `${c.id}-L${level}-shell-${k}`));
       });
-      // interior lining (inset 0.6 m) — what glows through the perforations at night
+      // interior lining (inset 0.6 m), what glows through the perforations at night
       sliceProfile(lining, Math.max(y0, yL2 + 0.35), y1).forEach((piece, k) => {
         lv[level].add(mesh(latheGeo(piece, Q.lathe >> 1, true), mat.interior, `${c.id}-L${level}-lining-${k}`, { cast: false }));
       });
@@ -708,8 +708,8 @@ export function build(THREE, ctx = {}) {
     crown.add(mesh(slabGeo(0.001, R - 0.2, crownTop - 0.4, crownTop), mat.white, 'tower-roof'));
 
     /* Sail fin: a thick curved blade that peels away from the drum like a
-       scroll — tight to the glass at its attached edge, bellying outwards
-       towards its free edge — and curls over the crown at the top. */
+       scroll, tight to the glass at its attached edge, bellying outwards
+       towards its free edge, and curls over the crown at the top. */
     const H = t.finH;
     const crestY = (u) => H - 11 * u * u;                       // crest falls towards the free edge
     const finAt = (u, y) => {
@@ -767,7 +767,7 @@ export function build(THREE, ctx = {}) {
   buildTower(TOWER);
 
   /* ====================================================================== */
-  /* Sky bridge (one floor group, level 1 — it joins the rings' first floor) */
+  /* Sky bridge (one floor group, level 1, it joins the rings' first floor) */
   /* ====================================================================== */
 
   const bridgeGroup = newFloor(1, 'Sky bridge', 'الجسر المعلّق', 'bridge');

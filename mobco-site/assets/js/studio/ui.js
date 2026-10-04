@@ -284,7 +284,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
   /* ============================================================ builder (build mode) */
   // Every change rebuilds the sketch through engine.load('builder'); the camera, light and floor separation
   // the visitor chose are carried over, so the model simply changes in place.
-  let building = false, buildQueued = false;
+  let building = false, buildQueued = false, rebuilding = false;
   const builder = form ? createBuilderUI({ form, onChange: (cfg) => { setBuilderConfig(cfg); if (mode === 'build') queueRebuild(); } }) : null;
   if (builder) setBuilderConfig(builder.config);
 
@@ -346,6 +346,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
       viewTouched = keepView;
       engine.invalidate();
       announce(t(S.updated));
+      window.dispatchEvent(new CustomEvent('studio:modelchange', { detail: { model: BUILDER, mode, update: true } }));
     } catch (err) {
       console.error('[studio] the builder sketch failed to update', err);
     } finally {
@@ -355,7 +356,6 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
       if (buildQueued) { buildQueued = false; rebuild(); }
     }
   }
-  let rebuilding = false;
   $('[data-builder-save]', form || root)?.addEventListener('click', () => screenshot());
 
   /* ============================================================ no-WebGL fallback */
@@ -419,7 +419,7 @@ export function createStudioUI({ root, engine, entries, initialId, initialMode =
   function setPanelOpen(open) {
     if (!panelToggle || !panelBody) return;
     panelToggle.setAttribute('aria-expanded', String(open));
-    panelBody.hidden = !open;
+    panelBody.classList.toggle('is-closed', !open); // CSS folds it on small screens only
   }
   panelToggle?.addEventListener('click', () => setPanelOpen(panelToggle.getAttribute('aria-expanded') !== 'true'));
   setPanelOpen(false);

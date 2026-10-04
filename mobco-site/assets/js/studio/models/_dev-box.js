@@ -1,4 +1,4 @@
-// MOBCO 3D Studio — _dev-box.js
+// MOBCO Project Builder · _dev-box.js
 // Temporary development model used to build and test the engine before the five real model modules
 // land. It honours the MODEL MODULE CONTRACT exactly (see docs/requests/studio.md). It is NOT listed in
 // the studio UI (only reachable with studio.html?dev=1 or ?model=_dev-box).
@@ -42,7 +42,7 @@ export function build(THREE, ctx = {}) {
   }));
   const glow = m(new THREE.MeshStandardMaterial({ name: 'interior-glow', color: 0x2a2f33, emissive: 0xffd9a0, emissiveIntensity: 0, roughness: 1 }));
   const mullion = m(new THREE.MeshStandardMaterial({ name: 'mullion', color: 0x9aa6ad, roughness: 0.4, metalness: 0.6 }));
-  const accent = m(new THREE.MeshStandardMaterial({ name: 'accent', color: 0x6fd1c5, roughness: 0.45 }));
+  const accent = m(new THREE.MeshStandardMaterial({ name: 'accent', color: 0x5fb2b8, roughness: 0.45 }));
   const paving = m(new THREE.MeshStandardMaterial({ name: 'paving', color: 0xd8d3ca, roughness: 0.95 }));
   const grass = m(new THREE.MeshStandardMaterial({ name: 'grass', color: 0xa9b79a, roughness: 1 }));
   const water = m(new THREE.MeshStandardMaterial({ name: 'water', color: 0x5fb3c4, roughness: 0.12, metalness: 0.1, emissive: 0x3fd0d8, emissiveIntensity: 0 }));
@@ -91,7 +91,7 @@ export function build(THREE, ctx = {}) {
     return fg;
   }
 
-  // Podium (building A) — 3 levels, wide
+  // Podium (building A), 3 levels, wide
   const podium = new THREE.Group(); podium.name = 'podium'; podium.position.set(-6, 0, 4); root.add(podium);
   for (let i = 0; i < 3; i++) {
     addFloor(podium, { w: 44, d: 30, y: i * FH, level: i, buildingId: 'podium', label: { en: i === 0 ? 'Podium · ground level' : `Podium · level ${i}`, ar: i === 0 ? 'المنصّة · الطابق الأرضي' : `المنصّة · الطابق ${i}` } });
@@ -100,7 +100,7 @@ export function build(THREE, ctx = {}) {
   podRoof.name = 'podium-roof'; podRoof.position.y = 3 * FH + 0.3; podRoof.castShadow = podRoof.receiveShadow = true;
   floors[2].add(podRoof); podRoof.position.y = FH + 0.3;
 
-  // Tower (building B) — 8 levels on top of the podium
+  // Tower (building B), 8 levels on top of the podium
   const tower = new THREE.Group(); tower.name = 'tower'; tower.position.set(4, 3 * FH + 0.6, -2); root.add(tower);
   for (let i = 0; i < 8; i++) {
     addFloor(tower, { w: 20, d: 18, y: i * FH, level: i, buildingId: 'tower', label: { en: `Tower · level ${i + 1}`, ar: `البرج · الطابق ${i + 1}` } });

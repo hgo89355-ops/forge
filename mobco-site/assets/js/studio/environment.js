@@ -108,7 +108,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     uFlatGrid: { value: new THREE.Vector3(1, 1, 1) },
     uFlatGridOpacity: { value: 0.12 },
   };
-  const groundMat = track(new THREE.MeshStandardMaterial({ name: 'studio-ground', color: '#d8d0c0', roughness: 1, metalness: 0 }));
+  const groundMat = track(new THREE.MeshStandardMaterial({ name: 'studio-ground', color: '#cfc7b6', roughness: 1, metalness: 0 }));
   groundMat.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, groundUniforms, realism.uniforms);
     shader.vertexShader = realism.VERT_DECL + shader.vertexShader.replace(
@@ -206,8 +206,8 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     contact.position.z = (box.min.z + box.max.z) / 2;
     groundUniforms.uFadeNear.value = radius * 1.1;
     groundUniforms.uFadeFar.value = radius * 3.6;
-    fog.near = radius * 2.4;
-    fog.far = radius * 10;
+    fog.near = radius * 3;
+    fog.far = radius * 14;
     aoBox = box.clone();
     aoDirty = true;
     placeLight();
@@ -280,7 +280,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     // fill: sky above, warm bounce from the ground below
     hemi.color.copy(skyUniforms.uTop.value).lerp(tmpB.set('#ffffff'), 0.5);
     hemi.groundColor.copy(tmpA.set(night > 0.5 ? '#16161f' : '#a3967f')).lerp(tmpB.set('#c48a5c'), golden * 0.5);
-    hemi.intensity = 0.06 + 0.4 * day;
+    hemi.intensity = 0.07 + 0.55 * day;
     // very low at night: bright reflections on glass would wash out the lit interiors
     scene.environmentIntensity = 0.035 + 0.785 * day;
     if (renderer) renderer.toneMappingExposure = 0.98 + 0.12 * night;

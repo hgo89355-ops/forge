@@ -6,7 +6,7 @@
 //   3. Disciplines       chip filter + search with FLIP re-layout, live status, drawer with prev/next + "Apply"
 //   4. Locations         dot/land map with office markers synced to the KSA / Egypt tabs
 //   5. Hiring journey    scroll-driven progress line + active steps
-//   6. Application form  routing card, live checklist, dial-code sync, experience label, CV chip,
+//   6. Application form  routing card, dial-code sync, experience label, CV chip,
 //                        note counter, validsubmit → success panel + pre-filled mailto: to the right team
 //   Deep links: careers.html?discipline=<id>&location=ksa|egypt#apply
 import { t, getLang, onLang } from '../core/i18n.js';
@@ -307,6 +307,7 @@ function initDisciplines() {
     else status.innerHTML = fmt(t(shown === total ? S.statusAll : S.status), { n: shown, t: total });
   };
   const renderCounts = (q) => {
+    if (!chips) return;
     $$('.chip', chips).forEach((chip) => {
       const cat = chip.dataset.value;
       const n = tiles.filter((tile) => matches(tile, cat, q)).length;
@@ -359,9 +360,9 @@ function initDisciplines() {
     discState.cat = 'all';
     discState.q = '';
     if (search) search.value = '';
-    $$('.chip', chips).forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.value === 'all')));
+    if (chips) $$('.chip', chips).forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.value === 'all')));
     apply();
-    $('.chip[data-value="all"]', chips)?.focus();
+    if (chips) $('.chip[data-value="all"]', chips)?.focus();
   });
 
   // open drawer
@@ -700,9 +701,9 @@ function initForm() {
     const c = checks();
     const keys = Object.keys(c);
     const done = keys.filter((k) => c[k]).length;
-    keys.forEach((k) => $(`[data-check="${k}"]`, checklist)?.classList.toggle('is-done', c[k]));
-    progText.textContent = fmt(t(S.progress), { n: done, t: keys.length });
-    progBar.style.setProperty('--p', (done / keys.length).toFixed(3));
+    if (checklist) keys.forEach((k) => $(`[data-check="${k}"]`, checklist)?.classList.toggle('is-done', c[k]));
+    if (progText) progText.textContent = fmt(t(S.progress), { n: done, t: keys.length });
+    progBar?.style.setProperty('--p', (done / keys.length).toFixed(3));
   };
   const renderCount = () => {
     const n = note.value.length;

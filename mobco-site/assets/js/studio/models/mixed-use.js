@@ -1,5 +1,5 @@
 /**
- * MOBCO 3D Project Studio — model "mixed-use"
+ * MOBCO Project Builder · model "mixed-use"
  * ------------------------------------------------------------------
  * An ILLUSTRATIVE massing model inspired by the Eastmain (New Cairo) render:
  * a glazed office block (5 office levels) over a double-height retail podium
@@ -64,7 +64,7 @@ export const meta = {
               ar: 'جناح زجاجي خفيف بسقف بارز وجلسات خارجية.' } },
   ],
   // Key-light direction. Convention assumed by this model's harness:
-  // dir = (sin(az)·cos(el), sin(el), cos(az)·cos(el)) — azimuth measured from +Z (model front) towards +X.
+  // dir = (sin(az)·cos(el), sin(el), cos(az)·cos(el)), azimuth measured from +Z (model front) towards +X.
   sun: { azimuth: -38, elevation: 40 },
 };
 
@@ -129,7 +129,7 @@ export function build(THREE, ctx = {}) {
 
   /* ---------- palette & materials ---------------------------------- */
   // White / stone / glass presentation palette; MOBCO teal only as small accents.
-  const TEAL = 0x6fd1c5;
+  const TEAL = 0x5fb2b8;
   const ripple = rippleNormalTexture();
   const paveTex = pavingTexture();
 
@@ -230,7 +230,7 @@ export function build(THREE, ctx = {}) {
   }
 
   /* ================================================================ */
-  /*  INSTANCING KIT — every boxy element is an instance of UNIT_BOX  */
+  /*  INSTANCING KIT, every boxy element is an instance of UNIT_BOX  */
   /* ================================================================ */
   const _m = new THREE.Matrix4(), _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _s = new THREE.Vector3();
   const _e = new THREE.Euler(), Y_AXIS = new THREE.Vector3(0, 1, 0);
@@ -320,8 +320,8 @@ export function build(THREE, ctx = {}) {
 
   /**
    * Office facade for one floor.
-   * style 'framed'  — glazing set back behind the slab edge, slim mullions and proud stone fins.
-   * style 'curtain' — frameless flush curtain wall with dark spandrel bands (corner volume).
+   * style 'framed' , glazing set back behind the slab edge, slim mullions and proud stone fins.
+   * style 'curtain', frameless flush curtain wall with dark spandrel bands (corner volume).
    */
   function officeFacade(kit, r, y0, h, s) {
     const L = r.a1 - r.a0, mid = (r.a0 + r.a1) / 2;

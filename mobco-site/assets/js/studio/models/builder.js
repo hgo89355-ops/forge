@@ -24,7 +24,7 @@ export const DEFAULTS = Object.freeze({
 
 // brand palette (logo colours) used as accents: frames, fins, spandrels, canopies, glass tint
 const ACCENT = { indigo: 0x535380, teal: 0x5fb2b8, sand: 0xb2aa8a, charcoal: 0x3a3a3e };
-const GLASS_TINT = { indigo: 0x6a6e8c, teal: 0x6c9499, sand: 0x8c8878, charcoal: 0x5a6068 };
+const GLASS_TINT = { indigo: 0x737791, teal: 0x7898a0, sand: 0x8f8c80, charcoal: 0x666c74 };
 
 const clampInt = (v, a, b) => Math.max(a, Math.min(b, Math.round(+v || 0)));
 
@@ -93,7 +93,7 @@ export function build(THREE, ctx = {}) {
 
   /* ---------- materials --------------------------------------------- */
   const accent = new THREE.Color(ACCENT[cfg.colour]);
-  const accentDark = accent.clone().multiplyScalar(0.62);
+  const accentDark = accent.clone().lerp(new THREE.Color(0x30343a), 0.55).multiplyScalar(0.8);
   const M = {
     glass: phys('builder-glass', { color: GLASS_TINT[cfg.colour], roughness: 0.04, metalness: 0.08, transparent: true, opacity: 0.5, envMapIntensity: 1.4, depthWrite: false }),
     railGlass: phys('builder-balustrade-glass', { color: 0xbfd6dc, roughness: 0.05, metalness: 0.05, transparent: true, opacity: 0.32, envMapIntensity: 1.2, depthWrite: false, side: THREE.DoubleSide }),
@@ -255,7 +255,7 @@ export function build(THREE, ctx = {}) {
         if (kind === 'retail') { // signage / canopy band
           put(kit, M.spandrel, sd, mid, 0.05, y + h - 0.45, L, 0.3, 0.7);
           put(kit, M.strip, sd, mid, 0.22, y + h - 0.82, L - 1, 0.04, 0.06, false);
-          put(kit, M.metal, sd, mid, 1.0, y + h - 1.2, L - 2, 2.0, 0.18);
+          put(kit, M.spandrel, sd, mid, 1.0, y + h - 1.2, L - 2, 2.0, 0.18);
         }
         if (sd.name === 'front' && kind === 'lobby' && opts.canopy !== false) {
           const cw = Math.min(14, L * 0.45);

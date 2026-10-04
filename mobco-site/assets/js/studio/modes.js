@@ -1,4 +1,4 @@
-// MOBCO 3D Studio — modes.js
+// MOBCO Project Builder · modes.js
 // Render-mode materials (Realistic / Clay / Blueprint / X-ray), the "ghost" material used when a level
 // is isolated, lazily-built edge overlays (EdgesGeometry, incl. baked InstancedMesh edges), and the
 // section-cut "cap" shader patch (back faces of cut solids render in MOBCO teal).
@@ -54,25 +54,25 @@ export function createModeLibrary(THREE, { clipPlanes, capUniform }) {
 
   const M = {
     // Clay reads as a white presentation model: low ambient (env) on the clay so the engine's clay light
-    // profile (stronger sun, weaker fill, lower exposure — engine.applyTime) gives crisp form and shadows.
+    // profile (stronger sun, weaker fill, lower exposure, engine.applyTime) gives crisp form and shadows.
     clay: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay', color: '#f1ede6', roughness: 0.88, metalness: 0, envMapIntensity: 0.22 })),
     claySite: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay-site', color: '#dcd6cc', roughness: 0.95, metalness: 0, envMapIntensity: 0.18 })),
     clayGlass: mk(new THREE.MeshStandardMaterial({ name: 'mode-clay-glass', color: '#cfdde2', roughness: 0.25, metalness: 0, transparent: true, opacity: 0.5, envMapIntensity: 0.8, depthWrite: false })),
-    bpFill: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-fill', color: '#123352', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),
-    bpSite: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-site', color: '#11304e', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),
-    bpGlass: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-glass', color: '#3f6f97', transparent: true, opacity: 0.22, depthWrite: false, toneMapped: false })),
+    bpFill: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-fill', color: '#2b2b4a', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),
+    bpSite: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-site', color: '#26264a', polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, toneMapped: false })),
+    bpGlass: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-glass', color: '#6a6aa0', transparent: true, opacity: 0.22, depthWrite: false, toneMapped: false })),
     // X-ray uses normal (not additive) blending: stacked layers converge on the teal instead of
     // blowing out to white where many surfaces overlap (e.g. the landmark's drum).
-    xray: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray', color: '#4fb8ac', transparent: true, opacity: 0.075, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })),
-    xraySite: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray-site', color: '#6fd1c5', transparent: true, opacity: 0.03, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })),
+    xray: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray', color: '#5fb2b8', transparent: true, opacity: 0.075, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })),
+    xraySite: mk(new THREE.MeshBasicMaterial({ name: 'mode-xray-site', color: '#5fb2b8', transparent: true, opacity: 0.03, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })),
     ghost: mk(new THREE.MeshStandardMaterial({ name: 'mode-ghost', color: '#e9eef1', roughness: 0.6, transparent: true, opacity: 0.13, depthWrite: false })),
-    bpGhost: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-ghost', color: '#2c5a82', transparent: true, opacity: 0.12, depthWrite: false, toneMapped: false })),
-    edge: mk(new THREE.LineBasicMaterial({ name: 'edge-bp', color: '#eaf3fb', transparent: true, opacity: 0.9, toneMapped: false })),
-    edgeSite: mk(new THREE.LineBasicMaterial({ name: 'edge-bp-site', color: '#bcd4ea', transparent: true, opacity: 0.32, toneMapped: false })),
-    edgeGhost: mk(new THREE.LineBasicMaterial({ name: 'edge-ghost', color: '#bcd4ea', transparent: true, opacity: 0.14, toneMapped: false })),
-    xEdge: mk(new THREE.LineBasicMaterial({ name: 'edge-xray', color: '#a8ece3', transparent: true, opacity: 0.42, toneMapped: false, depthWrite: false })),
-    xEdgeSite: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-site', color: '#6fd1c5', transparent: true, opacity: 0.18, toneMapped: false, depthWrite: false })),
-    xEdgeGhost: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-ghost', color: '#6fd1c5', transparent: true, opacity: 0.08, toneMapped: false, depthWrite: false })),
+    bpGhost: mk(new THREE.MeshBasicMaterial({ name: 'mode-bp-ghost', color: '#46467a', transparent: true, opacity: 0.12, depthWrite: false, toneMapped: false })),
+    edge: mk(new THREE.LineBasicMaterial({ name: 'edge-bp', color: '#ecebf7', transparent: true, opacity: 0.9, toneMapped: false })),
+    edgeSite: mk(new THREE.LineBasicMaterial({ name: 'edge-bp-site', color: '#c4c4e0', transparent: true, opacity: 0.32, toneMapped: false })),
+    edgeGhost: mk(new THREE.LineBasicMaterial({ name: 'edge-ghost', color: '#c4c4e0', transparent: true, opacity: 0.14, toneMapped: false })),
+    xEdge: mk(new THREE.LineBasicMaterial({ name: 'edge-xray', color: '#a9d8dc', transparent: true, opacity: 0.42, toneMapped: false, depthWrite: false })),
+    xEdgeSite: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-site', color: '#5fb2b8', transparent: true, opacity: 0.18, toneMapped: false, depthWrite: false })),
+    xEdgeGhost: mk(new THREE.LineBasicMaterial({ name: 'edge-xray-ghost', color: '#5fb2b8', transparent: true, opacity: 0.08, toneMapped: false, depthWrite: false })),
   };
   // Opaque mode materials also show teal caps when cut.
   [M.clay, M.claySite, M.bpFill, M.bpSite].forEach((m) => patchCap(m, capUniform));
