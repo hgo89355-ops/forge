@@ -19,31 +19,31 @@ const SRC = {
   depth: 'assets/img/hero/eastmain-depth.png',
 };
 const OVER = 1.06;   // rest view is slightly larger than cover, so the tilt never shows an edge
-const ZMAX = 6;
+const ZMAX = 4;     // the source photo stays crisp to about 4x
 const TILT = 0.05;   // max tilt in radians (about 3 degrees)
 const PAR = 0.8;     // depth parallax strength (screen half-heights per unit of depth)
 const FOCUS = 0.28;  // depth value that stays put (the building)
-const REST = { desk: { x: 0.47, y: 0.57 }, mob: { x: 0.47, y: 0.5 } };
+const REST = { desk: { cx: 0.47, cy: 0.53 }, mob: { cx: 0.47, cy: 0.5 } };
 
 // image coordinates (0 to 1) of details that are really visible in the photo
 const PINS = [
   {
-    u: 0.455, v: 0.42, z: 2.6,
+    u: 0.455, v: 0.42, z: 2,
     title: { en: 'Glass facade', ar: 'الواجهة الزجاجية' },
     text: { en: 'Office floors sit behind full-height glass, the ceiling lights visible at night.', ar: 'طوابق مكاتب خلف زجاج بكامل الارتفاع، وتظهر أضواء أسقفها ليلًا.' },
   },
   {
-    u: 0.52, v: 0.735, z: 3.2,
+    u: 0.52, v: 0.735, z: 2.3,
     title: { en: 'Shopfronts', ar: 'واجهات المحلات' },
     text: { en: 'Shops and cafés open onto the plaza at ground level.', ar: 'محلات ومقاهٍ تطل على الساحة في الطابق الأرضي.' },
   },
   {
-    u: 0.6, v: 0.85, z: 2.6,
+    u: 0.6, v: 0.82, z: 1.8,
     title: { en: 'Plaza and pool', ar: 'الساحة والبركة' },
     text: { en: 'A shallow pool with small fountains runs through the plaza.', ar: 'بركة ماء ضحلة بنوافير صغيرة تمتد عبر الساحة.' },
   },
   {
-    u: 0.855, v: 0.56, z: 2.8,
+    u: 0.855, v: 0.56, z: 2,
     title: { en: 'Palms and planting', ar: 'النخيل والتشجير' },
     text: { en: 'Palm trees and planting line the edge of the plaza.', ar: 'أشجار النخيل والنباتات على أطراف الساحة.' },
   },
@@ -409,7 +409,7 @@ export function initHero() {
   }
   function uiRects() {
     const s = stage.getBoundingClientRect();
-    const list = [dock.getBoundingClientRect()];
+    const list = [...dock.children].filter((el) => !el.hidden).map((el) => el.getBoundingClientRect());
     if (!zoomed) list.push(copy.getBoundingClientRect());
     list.push({ left: s.left, right: s.right, top: s.top, bottom: s.top + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80) });
     return list.map((r) => ({ x0: r.left - s.left - 16, x1: r.right - s.left + 16, y0: r.top - s.top - 16, y1: r.bottom - s.top + 16 }));
@@ -440,7 +440,7 @@ export function initHero() {
   }
   function pinView(i) {
     const p = PINS[i];
-    const z = mobile() ? p.z * 0.85 : p.z;
+    const z = mobile() ? Math.max(1.3, p.z * 0.7) : p.z;
     // where the detail should land on screen: beside the card (desktop) or above the bottom card (phones)
     const fx = mobile() ? 0.5 : (isRTL() ? 0.6 : 0.4);
     const fy = mobile() ? 0.36 : 0.5;
@@ -628,6 +628,7 @@ export function initHero() {
     const wasMobile = mobile();
     measure();
     ui = uiRects();
+    root.style.setProperty('--hx-dock', `${Math.round(stage.getBoundingClientRect().bottom - dock.getBoundingClientRect().top)}px`);
     if (glr) {
       const canvas = glr.gl.canvas;
       const dpr = Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(4.2e6 / (W * H)));
