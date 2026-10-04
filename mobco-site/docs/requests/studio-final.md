@@ -12,7 +12,8 @@ were not edited in this pass. The one exception is `node tools/build.mjs`, which
 ## Items for the studio owner
 1. **Intermittent reveal (mobile EN, under load).** One full-site run reported
    `still hidden after scroll: section.section.has-gridlines > div.container > ol.studio-guide__grid > li.card.card--hover`.
-   It did not happen again in two separate runs. It looks like a timing race: the WebGL frame on SwiftShader starves the
+   A second full-site run (concurrency 3) flagged `div.studio-keys` and `#studio-cta-title` the same way, again only on mobile EN.
+   Neither happened in four standalone studio runs. It looks like a timing race: the WebGL frame on SwiftShader starves the
    scroll/reveal pass. Suggested fix: make sure the guide cards' reveal does not depend on a ScrollTrigger refresh that only
    runs after the model has loaded, or call `ScrollTrigger.refresh()` once the canvas has its final height.
 2. **Live-region text stays in the old language.** The visually hidden status text (`strings.js` → `loaded`:
