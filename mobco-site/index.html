@@ -29,8 +29,7 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/img/hero/eastmain-wide.webp" as="image" type="image/webp" media="(min-width: 768px)" fetchpriority="high">
-  <link rel="preload" href="assets/img/hero/eastmain-mobile.webp" as="image" type="image/webp" media="(max-width: 767.98px)" fetchpriority="high">
+  <link rel="preload" href="assets/img/hero/eastmain-1920.webp" as="image" type="image/webp" fetchpriority="high">
   <link rel="stylesheet" href="assets/vendor/lenis/lenis.css">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/pages/home.css">
@@ -97,8 +96,6 @@
     ]
   }
   </script>
-  <!-- three.js import map (same as studio.html): the 3D hero lazy-imports the studio engine. Must precede every module script. -->
-  <script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.js","three/addons/":"./assets/vendor/three/addons/"}}</script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
   <script src="assets/vendor/gsap/SplitText.min.js" defer></script>
@@ -171,21 +168,19 @@
 
   <main id="main" tabindex="-1">
     <!-- =====================================================================
-         01 · HERO: an interactive 3D building (assets/js/pages/home-hero.js).
-         A still of the default view shows instantly; the live viewer fades in once the model is ready.
+         01 · HERO: the real Eastmain building, a zoomable photo with depth tilt (assets/js/pages/home-hero.js).
+         The still paints first; a WebGL view with the depth map takes over once ready, the high-res image loads after.
          ===================================================================== -->
     <section class="hx theme-dark" id="ha-hero" aria-labelledby="hx-title" data-hx>
       <div class="hx__stage" data-hx-stage>
         <picture class="hx__poster" data-hx-poster>
-          <source media="(max-width: 767.98px)" type="image/webp" srcset="assets/img/hero/eastmain-mobile.webp">
-          <source media="(max-width: 767.98px)" srcset="assets/img/hero/eastmain-mobile.jpg">
-          <source type="image/webp" srcset="assets/img/hero/eastmain-wide.webp">
-          <img src="assets/img/hero/eastmain-wide.jpg" alt="" width="2800" height="1000" fetchpriority="high" decoding="async">
+          <source type="image/webp" srcset="assets/img/hero/eastmain-1920.webp" data-hx-poster-src>
+          <img src="assets/img/hero/eastmain-1920.jpg" alt="Eastmain at night: a glass office building over shops and a plaza with a pool, New Cairo" data-ar-alt="إيست مين ليلًا: مبنى مكاتب زجاجي فوق محلات وساحة ببركة ماء، القاهرة الجديدة" width="1920" height="1726" fetchpriority="high" decoding="async">
         </picture>
-        <div class="hx__view" data-hx-view></div>
+        <div class="hx__view" data-hx-view data-cursor="zoom"></div>
         <div class="hx__shade" aria-hidden="true"></div>
         <div class="hx__pins" data-hx-pins></div>
-        <span class="hx__progress" aria-hidden="true"><span data-hx-progress></span></span>
+        <p class="hx__hint" data-hx-hint aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mouse"></use></svg><span data-ar="انقر للتكبير بعجلة الفأرة">Click to zoom with the scroll wheel</span></p>
       </div>
 
       <div class="container hx__inner">
@@ -198,25 +193,15 @@
         </div>
 
         <div class="hx__dock" data-hx-dock>
-          <div class="hx__models">
-            <div class="hx__chips" role="group" aria-label="Choose a building" data-ar-aria-label="اختر مبنى">
-              <button class="hx-chip is-active" type="button" data-hx-model="mixed-use" aria-pressed="true"><span data-ar="إيست مين">Eastmain</span></button>
-              <button class="hx-chip" type="button" data-hx-model="residential-tower" aria-pressed="false"><span data-ar="فيكتوريا 101">Victoria 101</span></button>
-              <button class="hx-chip" type="button" data-hx-model="landmark" aria-pressed="false"><span data-ar="المَعلم الكلاسيكي">Classical Landmark</span></button>
-            </div>
-            <p class="hx__caption"><span class="hx__note" data-ar="نموذج توضيحي، ليس بمقياس رسم.">Illustrative model, not to scale.</span></p>
-          </div>
-          <div class="hx__bar" role="group" aria-label="3D view controls" data-ar-aria-label="أدوات العرض ثلاثي الأبعاد" data-hx-bar>
+          <p class="hx__caption"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="إيست مين، القاهرة الجديدة">Eastmain, New Cairo</span></p>
+          <div class="hx__bar" role="group" aria-label="Image controls" data-ar-aria-label="أدوات الصورة" data-hx-bar>
             <button class="hx-tool" type="button" data-hx-zoom="in" aria-label="Zoom in" data-ar-aria-label="تكبير" data-tooltip="Zoom in" data-ar-tooltip="تكبير"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
             <button class="hx-tool" type="button" data-hx-zoom="out" aria-label="Zoom out" data-ar-aria-label="تصغير" data-tooltip="Zoom out" data-ar-tooltip="تصغير"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#minus"></use></svg></button>
-            <span class="hx__sep" aria-hidden="true"></span>
-            <button class="hx-tool" type="button" data-hx-explode aria-pressed="false" aria-label="Separate floors" data-ar-aria-label="فصل الطوابق" data-tooltip="Separate floors" data-ar-tooltip="فصل الطوابق"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#layers"></use></svg></button>
-            <button class="hx-tool" type="button" data-hx-night aria-pressed="false" aria-label="Night view" data-ar-aria-label="العرض الليلي" data-tooltip="Night view" data-ar-tooltip="العرض الليلي"><svg class="icon hx-tool__moon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#moon"></use></svg><svg class="icon hx-tool__sun" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#sun"></use></svg></button>
             <button class="hx-tool" type="button" data-hx-reset aria-label="Reset view" data-ar-aria-label="إعادة ضبط العرض" data-tooltip="Reset view" data-ar-tooltip="إعادة ضبط العرض"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
+            <button class="hx-tool" type="button" data-hx-full hidden aria-pressed="false" aria-label="Full screen" data-ar-aria-label="ملء الشاشة" data-tooltip="Full screen" data-ar-tooltip="ملء الشاشة"><svg class="icon hx-tool__max" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#maximize"></use></svg><svg class="icon hx-tool__min" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#minimize"></use></svg></button>
             <span class="hx__sep" aria-hidden="true"></span>
-            <a class="hx-tool" href="studio.html?model=mixed-use" data-hx-studio aria-label="Explore in 3D" data-ar-aria-label="استكشف بتقنية ثلاثية الأبعاد" data-tooltip="Explore in 3D" data-ar-tooltip="استكشف بتقنية ثلاثية الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#maximize-2"></use></svg></a>
+            <a class="hx-tool" href="studio.html?model=mixed-use" aria-label="Explore in 3D" data-ar-aria-label="استكشف بتقنية ثلاثية الأبعاد" data-tooltip="Explore in 3D" data-ar-tooltip="استكشف بتقنية ثلاثية الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></a>
           </div>
-          <a class="btn btn--light btn--sm hx__fallback" href="studio.html" data-hx-fallback hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span data-ar="استكشف بتقنية ثلاثية الأبعاد">Explore in 3D</span></a>
         </div>
       </div>
 
@@ -230,11 +215,11 @@
           <p class="hx-card__text" data-hx-card-text></p>
         </div>
         <div class="hx-card__nav">
-          <button class="hx-card__step" type="button" data-hx-card-step="-1" aria-label="Previous point" data-ar-aria-label="النقطة السابقة"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
-          <button class="hx-card__step" type="button" data-hx-card-step="1" aria-label="Next point" data-ar-aria-label="النقطة التالية"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
+          <button class="hx-card__step" type="button" data-hx-card-step="-1" aria-label="Previous detail" data-ar-aria-label="التفصيل السابق"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
+          <button class="hx-card__step" type="button" data-hx-card-step="1" aria-label="Next detail" data-ar-aria-label="التفصيل التالي"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
         </div>
       </div>
-      <p class="visually-hidden" id="hx-help" data-ar="مفاتيح الأسهم للتدوير، و + و - للتكبير والتصغير.">Arrow keys rotate. Plus and minus zoom.</p>
+      <p class="visually-hidden" id="hx-help" data-ar="مفاتيح الأسهم للتحريك، و + و - للتكبير والتصغير، و 0 لإعادة الضبط.">Arrow keys move. Plus and minus zoom. 0 resets.</p>
       <p class="visually-hidden" aria-live="polite" data-hx-live></p>
     </section>
 

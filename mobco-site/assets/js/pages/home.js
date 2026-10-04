@@ -1,10 +1,10 @@
 // assets/js/pages/home.js: HOME page, part A behaviours.
-//   initHero3D()  interactive 3D building hero (home-hero.js)
+//   initHero()  zoomable photo of the real Eastmain building, with depth tilt (home-hero.js)
 //   initSteps()   "We plan. We build. We manage.": the three lines are tabs; the photo crossfades with the step
 // Core modules are singletons initialised by core/main.js (loaded first). Part B lives in home-b.js.
 
 import { $, $$, hasFinePointer } from '../core/utils.js';
-import { initHero3D } from './home-hero.js';
+import { initHero } from './home-hero.js';
 
 /* =========================================================================
    04 · WE PLAN. WE BUILD. WE MANAGE.
@@ -72,6 +72,6 @@ function initSteps() {
 }
 
 /* ========================================================================= */
-for (const [name, fn] of [['hero', initHero3D], ['steps', initSteps]]) {
+for (const [name, fn] of [['hero', initHero], ['steps', initSteps]]) {
   try { fn(); } catch (err) { console.error(`[home] ${name} failed to initialise`, err); }
 }
