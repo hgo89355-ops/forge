@@ -811,9 +811,9 @@ export function createStudio(container, options = {}) {
       dirH.normalize();
     }
     const roof = p.y > model.height * 0.82;
-    const el = THREE.MathUtils.degToRad(roof ? 42 : 24);
+    const el = THREE.MathUtils.degToRad(roof ? 38 : 21);
     const dir = new THREE.Vector3(dirH.x * Math.cos(el), Math.sin(el), dirH.z * Math.cos(el));
-    const d = Number.isFinite(distance) ? distance : clamp(Math.max(bsize.x, bsize.z, model.height) * 0.62, 26, 110);
+    const d = Number.isFinite(distance) ? distance : clamp(Math.max(bsize.x, bsize.z, model.height) * 0.95, 40, 160);
     focusPoint(p, { distance: d, direction: dir, duration, instant, detail: { hotspot: h.id } });
     return true;
   }

@@ -123,6 +123,9 @@ export function initHero3D() {
     const d = dock.getBoundingClientRect();
     const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80;
     box = { ...box, w: s.width, h: s.height, left: s.left, right: s.right };
+    // UI areas (stage coordinates) where pins would sit under the copy or the dock
+    const rel = (r, m) => ({ x0: r.left - s.left - m, x1: r.right - s.left + m, y0: r.top - s.top - m, y1: r.bottom - s.top + m });
+    box.ui = [c, ...[...dock.children].filter((el) => !el.hidden).map((el) => el.getBoundingClientRect())].filter((r) => r.width).map((r) => rel(r, 14));
     let ins;
     if (s.width < 768) {
       ins = { left: 0, right: 0, top: Math.max(header, c.bottom - s.top + 8), bottom: Math.max(0, s.bottom - d.top + 8) };
@@ -174,12 +177,13 @@ export function initHero3D() {
     labelPins();
   }
   function labelPins() { hotspots.forEach((h) => pins.get(h.id)?.setAttribute('aria-label', t(h.title))); }
+  const underUI = (x, y) => (box.ui || []).some((r) => x > r.x0 && x < r.x1 && y > r.y0 && y < r.y1);
   function onFrame({ hotspots: list }) {
     lastFrame = list || [];
     for (const p of lastFrame) {
       const el = pins.get(p.id);
       if (!el) continue;
-      const show = ready && p.visible;
+      const show = ready && p.visible && !underUI(p.x, p.y);
       if (el.__show !== show) {
         el.__show = show;
         el.classList.toggle('is-off', !show);

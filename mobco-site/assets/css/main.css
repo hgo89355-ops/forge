@@ -2652,7 +2652,8 @@ body[data-footer-cta='off'] .site-footer__cta { display: none; }
   letter-spacing: .02em;
   text-transform: uppercase;
   color: var(--white);
-  max-inline-size: 14ch;
+  max-inline-size: 16ch;
+  text-wrap: balance;
 }
 html[lang='ar'] .site-footer__cta-title { letter-spacing: 0; text-transform: none; line-height: 1.25; font-weight: 600; }
 .site-footer__cta-title em { font-style: normal; color: var(--teal-400); }
