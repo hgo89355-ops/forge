@@ -1,4 +1,4 @@
-// MOBCO pages/subsidiaries.js — Subsidiaries page behaviour.
+// MOBCO pages/subsidiaries.js: Subsidiaries page behaviour.
 //
 //  1. Hero: logo tiles ↔ background photo strips (hover / focus spotlight)
 //  2. Data hydration: company names, taglines, descriptions and focus areas come from SUBSIDIARIES
@@ -59,13 +59,12 @@ function scrollToEl(el, { immediate = false } = {}) {
 
 /* ------------------------------------------------------------------ strings (finder) */
 const S = {
-  recommendation: { en: 'Our recommendation', ar: 'توصيتنا' },
   match: { en: 'Best match', ar: 'الأنسب لك' },
   yourNeed: { en: 'Your need', ar: 'احتياجك' },
   location: { en: 'Location', ar: 'الموقع' },
-  office: { en: 'Your contact office', ar: 'مكتب التواصل المقترح' },
+  office: { en: 'Contact office', ar: 'مكتب التواصل' },
   inquiry: { en: 'Send an inquiry', ar: 'أرسل استفسارك' },
-  profile: { en: 'View company profile', ar: 'عرض ملف الشركة' },
+  profile: { en: 'Company profile', ar: 'صفحة الشركة' },
   restart: { en: 'Start over', ar: 'ابدأ من جديد' },
   changeLoc: { en: 'Change location', ar: 'تغيير الموقع' },
   call: { en: 'Call', ar: 'اتصل' },
@@ -75,43 +74,40 @@ const S = {
   step1: { en: 'Step 1 of 2: What would you like to do?', ar: 'الخطوة 1 من 2: ماذا تريد أن تفعل؟' },
   more: { en: 'Read more', ar: 'اقرأ المزيد' },
   less: { en: 'Show less', ar: 'عرض أقل' },
-  portfolio: { en: 'From the group portfolio:', ar: 'من محفظة المجموعة:' },
-  // Arabic counted noun: 3–10 take the plural (مشاريع); 11+ take the accusative singular (مشروعًا)
-  hospitalityCount: (n) => ({ en: 'hospitality projects in the group portfolio', ar: `${n >= 3 && n <= 10 ? 'مشاريع' : 'مشروعًا'} في قطاع الضيافة ضمن محفظة المجموعة` }),
-  viewProject: { en: 'View project', ar: 'عرض المشروع' },
-  representative: { en: 'Representative imagery', ar: 'صورة تعبيرية' },
+  // Arabic counted noun: 3 to 10 take the plural (مشاريع); 11+ take the accusative singular (مشروعًا)
+  hospitalityCount: (n) => ({ en: 'hospitality projects in our portfolio', ar: `${n >= 3 && n <= 10 ? 'مشاريع ضيافة' : 'مشروعًا في قطاع الضيافة'} ضمن محفظة أعمالنا` }),
 };
 const NEEDS = {
   build: {
     slug: 'construction',
     label: { en: 'Build', ar: 'البناء' },
     why: {
-      en: 'MOBCO Construction is the construction arm of MOBCO Group — founded in 2001, with tier-one status and projects spanning Saudi Arabia, Canada, the UK and Egypt.',
-      ar: 'موبكو للإنشاءات هي الذراع الإنشائية لمجموعة موبكو — تأسّست عام 2001، وتحظى بتصنيف الفئة الأولى، وتمتد مشاريعها عبر المملكة العربية السعودية وكندا والمملكة المتحدة ومصر.',
+      en: 'The construction arm of MOBCO Group, founded in 2001. It holds tier-one status, with projects in Saudi Arabia, Canada, the UK and Egypt.',
+      ar: 'الذراع الإنشائية لمجموعة موبكو، تأسّست عام 2001. تحظى بتصنيف الفئة الأولى، ولها مشاريع في المملكة العربية السعودية وكندا والمملكة المتحدة ومصر.',
     },
   },
   develop: {
     slug: 'developments',
     label: { en: 'Develop', ar: 'التطوير' },
     why: {
-      en: 'MOBCO Developments is the group’s development arm, focused on transforming prime locations in Canada and Egypt through innovative, high-quality projects.',
-      ar: 'موبكو للتطوير هي ذراع التطوير في المجموعة، وتركّز على تحويل مواقع متميّزة في كندا ومصر من خلال مشاريع مبتكرة عالية الجودة.',
+      en: 'The group’s development arm, transforming prime locations in Canada and Egypt through innovative, high-quality projects.',
+      ar: 'ذراع التطوير في المجموعة، وتعمل على تحويل مواقع متميّزة في كندا ومصر من خلال مشاريع مبتكرة عالية الجودة.',
     },
   },
   invest: {
     slug: 'real-estate',
     label: { en: 'Lease or invest', ar: 'التأجير أو الاستثمار' },
     why: {
-      en: 'MOBCO Real Estate Development specializes in leasing and property management for multi-functional buildings — its flagship is Mivida Business Park, B1, in Cairo.',
-      ar: 'تتخصّص موبكو للتطوير العقاري في تأجير وإدارة العقارات للمباني متعددة الوظائف — ومشروعها الرئيسي مجمّع ميفيدا للأعمال، المبنى B1، في القاهرة.',
+      en: 'Leasing and property management for multi-functional buildings. Its flagship is Mivida Business Park, B1, in New Cairo.',
+      ar: 'تأجير وإدارة العقارات للمباني متعددة الوظائف. ومشروعها الرئيسي مجمّع ميفيدا للأعمال، المبنى B1، في القاهرة الجديدة.',
     },
   },
   educate: {
     slug: 'education',
     label: { en: 'Educate', ar: 'التعليم' },
     why: {
-      en: 'Elite Education Group is the group’s education arm, developing and managing learning environments as part of a vertically integrated group.',
-      ar: 'مجموعة النخبة التعليمية هي الذراع التعليمية للمجموعة، وتُعنى بتطوير البيئات التعليمية وإدارتها ضمن مجموعةٍ متكاملة رأسيًا.',
+      en: 'The group’s education arm. It develops and manages learning environments.',
+      ar: 'الذراع التعليمية للمجموعة، وتُعنى بتطوير البيئات التعليمية وإدارتها.',
     },
   },
 };
@@ -129,7 +125,7 @@ const REGIONS = {
 };
 
 /* ------------------------------------------------------------------ 2. hydration from data */
-// Projects shown under MOBCO Construction ("Selected group projects") — real portfolio entries with photos.
+// Projects shown under MOBCO Construction ("Selected group projects"): real portfolio entries with photos.
 const WORK = ['as-safiyyah-museum-park', 'raffles-hotel-residence', 'al-moosa-specialist-hospital', 'neom-bay-airport'];
 const openAbout = new Set();
 
@@ -149,6 +145,8 @@ function hydrate() {
   $$('[data-sub]').forEach((root) => {
     const s = getSubsidiary(root.getAttribute('data-sub'));
     if (!s) return;
+    const facts = $('[data-sub-facts]', root);
+    if (facts && s.facts) facts.innerHTML = s.facts.map((f) => `<li>${esc(t(f))}</li>`).join('');
     $$('[data-sub-field]', root).forEach((el) => {
       const key = el.getAttribute('data-sub-field');
       let v = s[key] ? t(s[key]) : null;
@@ -156,8 +154,6 @@ function hydrate() {
       if (!v && key === 'tagline' && s.short) v = t(s.short).replace(/[.。۔]\s*$/, '');
       if (v) el.textContent = v;
     });
-    const facts = $('[data-sub-facts]', root);
-    if (facts && s.facts) facts.innerHTML = s.facts.map((f) => `<li>${esc(t(f))}</li>`).join('');
     renderAbout(root, s);
     const focus = $('[data-sub-focus]', root);
     if (focus) {
@@ -484,14 +480,16 @@ function initCaps() {
   const count = $('[data-caps-count]', media);
   const items = $$('[data-caps]', acc);
   const caption = $('[data-caps-caption] span', media);
-  // caption per image: real portfolio projects are named; the office interior is representative
+  // caption per image: portfolio photos carry the project's name; the office interior has none
   const CAPTION = { hospitality: 'raffles-hotel-residence', facility: null, project: 'hq-tower-masjid-museum', integrated: 'as-safiyyah-museum-park' };
+  const figcaption = $('[data-caps-caption]', media);
   let current = 'hospitality';
   const renderCaption = () => {
     if (!caption) return;
     const p = CAPTION[current] ? getProject(CAPTION[current]) : null;
     caption.removeAttribute('data-ar');
-    caption.textContent = p ? `${t(S.portfolio)} ${t(p.name)}` : t(S.representative);
+    caption.textContent = p ? t(p.name) : '';
+    if (figcaption) figcaption.hidden = !p;
   };
   const show = (key) => {
     current = key;
@@ -639,7 +637,6 @@ function initFinder() {
           <span class="badge ${gold ? 'badge--gold' : 'badge--accent'}"><span class="badge__dot"></span>${esc(t(S.match))}</span>
         </div>
         <div class="subs-result__body">
-          <p class="eyebrow">${esc(t(S.recommendation))}</p>
           <h3 class="subs-result__name">${esc(t(s.name))}</h3>
           ${s.tagline ? `<p class="subs-result__tagline">${esc(t(s.tagline))}</p>` : ''}
           <p class="subs-result__why">${esc(t(need.why))}</p>

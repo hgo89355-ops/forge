@@ -1,4 +1,4 @@
-// MOBCO core/ui.js — declarative, accessible UI components.
+// MOBCO core/ui.js: declarative, accessible UI components.
 //
 //   data-tabs                 tabs (roles, arrows/Home/End, RTL aware, animated indicator) → 'tabchange'
 //   data-accordion[="single"] accordion (aria-expanded, animated height)                  → 'accordionchange'
@@ -28,15 +28,15 @@ const S = {
   zoomIn: { en: 'Zoom in', ar: 'تكبير' },
   zoomOut: { en: 'Zoom out', ar: 'تصغير' },
   viewer: { en: 'Image viewer', ar: 'عارض الصور' },
-  lbHint: { en: 'Scroll or double-click to zoom · Drag to pan · ← → to navigate', ar: 'مرّر أو انقر مرتين للتكبير · اسحب للتحريك · ← → للتنقل' },
+  lbHint: { en: 'Scroll or double-click to zoom', ar: 'مرّر أو انقر مرتين للتكبير' },
   copied: { en: 'Copied to clipboard', ar: 'تم النسخ إلى الحافظة' },
-  copyFail: { en: 'Could not copy — please copy manually', ar: 'تعذّر النسخ، يُرجى النسخ يدويًا' },
+  copyFail: { en: 'Could not copy. Please copy it manually.', ar: 'تعذّر النسخ. يُرجى نسخه يدويًا.' },
   required: { en: 'This field is required.', ar: 'هذا الحقل مطلوب.' },
   requiredCheck: { en: 'Please tick this box to continue.', ar: 'يُرجى تحديد هذا الخيار للمتابعة.' },
   requiredFile: { en: 'Please attach a file.', ar: 'يُرجى إرفاق ملف.' },
   requiredSelect: { en: 'Please choose an option.', ar: 'يُرجى اختيار أحد الخيارات.' },
   email: { en: 'Enter a valid email address, e.g. name@company.com.', ar: 'أدخل بريدًا إلكترونيًا صحيحًا، مثل name@company.com.' },
-  phone: { en: 'Enter a valid phone number (7–15 digits, + allowed).', ar: 'أدخل رقم هاتف صحيحًا (من 7 إلى 15 رقمًا، ويمكن استخدام +).' },
+  phone: { en: 'Enter a valid phone number, 7 to 15 digits.', ar: 'أدخل رقم هاتف صحيحًا من 7 إلى 15 رقمًا.' },
   minlength: { en: 'Please enter at least {n} characters.', ar: 'يُرجى إدخال {n} أحرف على الأقل.' },
   pattern: { en: 'Please match the requested format.', ar: 'يُرجى الالتزام بالصيغة المطلوبة.' },
   match: { en: 'The values do not match.', ar: 'القيمتان غير متطابقتين.' },

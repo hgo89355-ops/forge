@@ -1,15 +1,14 @@
-// assets/js/pages/home-b.js — HOME page, PART B (sections 6–11). Owned by the home-b builder.
+// assets/js/pages/home-b.js: HOME page, part B (sectors, footprint, featured projects, values).
 // Core modules are singletons initialised by core/main.js; this module only wires page-specific behaviour:
-//   · sectors   — cards ⇄ phrases of the verbatim "delivered iconic projects…" sentence light each other up
-//   · footprint — dot-matrix world map (WORLD) + arcs from Riyadh, markers ⇄ region tabs, coordinate readout
-//   · projects  — slides rendered from PROJECTS (featured === true) + image parallax inside the core drag carousel
-//   · zoom      — Apple-style product zoom: scroll scrubs 120 pre-rendered frames of the Eastmain 3D model
-//   · values    — giant outlined words fill as they scroll into view
-// Everything degrades to static, fully readable content without JS or with reduced motion.
+//   · sectors: cards and the phrases of the client's "delivered iconic projects" sentence light each other up
+//   · footprint: dot-matrix world map (WORLD) with arcs from Riyadh, markers linked to the region tabs
+//   · projects: slides rendered from PROJECTS (featured === true) + image parallax inside the core carousel
+//   · values: big outlined words fill as they scroll into view
+// Everything degrades to static, readable content without JS or with reduced motion.
 
 import { t, onLang, localize } from '../core/i18n.js';
 import { onScroll, refresh } from '../core/motion.js';
-import { $, $$, clamp, esc, rafThrottle, prefersReducedMotion, isQA, IMAGES } from '../core/utils.js';
+import { $, $$, clamp, esc, rafThrottle, prefersReducedMotion, IMAGES } from '../core/utils.js';
 import { PROJECTS, PROJECT_CATEGORIES } from '../data/site-data.js';
 import { WORLD } from '../data/world-map.js';
 
@@ -39,15 +38,15 @@ function initSectors() {
 
 /* ================================================================ 7. Global footprint */
 const REGION_INFO = {
-  ksa: { name: { en: 'Riyadh · HQ', ar: 'الرياض · المقر الرئيسي' }, lonlat: WORLD.offices?.ksa?.lonlat || [46.6753, 24.7136] },
+  ksa: { name: { en: 'Riyadh, HQ', ar: 'الرياض، المقر الرئيسي' }, lonlat: WORLD.offices?.ksa?.lonlat || [46.6753, 24.7136] },
   egypt: { name: { en: 'New Cairo', ar: 'القاهرة الجديدة' }, lonlat: WORLD.offices?.egypt?.lonlat || [31.47, 30.03] },
   canada: { name: { en: 'Port Whitby', ar: 'بورت ويتبي' }, lonlat: WORLD.offices?.canada?.lonlat || [-78.9429, 43.8975] },
 };
 const fmtCoord = ([lon, lat]) => {
   const la = Math.abs(lat).toFixed(2), lo = Math.abs(lon).toFixed(2);
   return t({
-    en: `≈ ${la}° ${lat >= 0 ? 'N' : 'S'} · ${lo}° ${lon >= 0 ? 'E' : 'W'}`,
-    ar: `${la}° ${lat >= 0 ? 'شمالًا' : 'جنوبًا'} · ${lo}° ${lon >= 0 ? 'شرقًا' : 'غربًا'} تقريبًا`,
+    en: `${la}° ${lat >= 0 ? 'N' : 'S'}, ${lo}° ${lon >= 0 ? 'E' : 'W'}`,
+    ar: `${la}° ${lat >= 0 ? 'شمالًا' : 'جنوبًا'}، ${lo}° ${lon >= 0 ? 'شرقًا' : 'غربًا'}`,
   });
 };
 
@@ -161,14 +160,14 @@ function hbSlideHTML(p, i, total, { esc, IMAGES, CATEGORIES }) {
   const typo = p.typology || cat?.name || { en: 'Project', ar: 'مشروع' };
   const split = (v, k) => String(v || '').split(' · ')[k] || '';
   const badge = { en: split(en(typo), 0), ar: split(ar(typo), 0) };
-  const sub = split(en(typo), 1) ? { en: split(en(typo), 1), ar: split(ar(typo), 1) } : { en: 'From our portfolio', ar: 'من محفظة أعمالنا' };
+  const sub = split(en(typo), 1) ? { en: split(en(typo), 1), ar: split(ar(typo), 1) } : null;
   const meta = IMAGES[p.image] || { w: 790, h: 710 };
   // the 4:5 card crops a landscape photo: the rendered image is ~k × the slide width (112% for the parallax overscan)
   const k = Math.max(1.12, (1.25 * meta.w) / meta.h).toFixed(2);
   const sizes = `(min-width: 1800px) calc(30vw * ${k}), (min-width: 1024px) calc(37vw * ${k}), (min-width: 640px) calc(54vw * ${k}), calc(84vw * ${k})`;
   const note = en(p.imageNote);
-  const alt = note ? { en: `${en(p.name)} — ${note.charAt(0).toLowerCase()}${note.slice(1)}`, ar: `${ar(p.name)} — ${ar(p.imageNote)}` } : { en: '', ar: '' };
-  const todo = (p.todo || []).map((x) => String(x).replace(/--/g, '—')).join(' ');
+  const alt = note ? { en: `${en(p.name)}. ${note}`, ar: `${ar(p.name)}. ${ar(p.imageNote)}` } : { en: '', ar: '' };
+  const todo = (p.todo || []).map((x) => String(x).replace(/--/g, '-').replace(/\s*[\u2014\u2013]\s*/g, ', ')).join(' ');
   const flag = p.nameIsDescriptive || todo
     ? `
               <!-- PROJECTS: ${esc(p.slug)} (featured)${p.nameIsDescriptive ? ' · descriptive name' : ''}. TODO(content): ${todo || 'confirm the project name'} -->`
@@ -192,7 +191,7 @@ function hbSlideHTML(p, i, total, { esc, IMAGES, CATEGORIES }) {
               </a>
               <div class="hb-slide__foot">
                 <span class="hb-slide__num" aria-hidden="true">${n}</span>
-                ${txt('span', 'hb-slide__type', sub)}
+                ${sub ? txt('span', 'hb-slide__type', sub) : '<span class="hb-slide__type"></span>'}
                 ${foot}
               </div>
             </div>
@@ -208,7 +207,7 @@ function renderProjects() {
     vp.innerHTML = featured.map((p, i) => hbSlideHTML(p, i, featured.length, { esc, IMAGES, CATEGORIES: PROJECT_CATEGORIES })).join('');
     localize(vp);
   }
-  // "View all N projects" — the count comes from the data
+  // "View all N projects": the count comes from the data
   const total = $('[data-hb-projects-total]');
   if (total) {
     const n = PROJECTS.length;
@@ -239,116 +238,7 @@ function initProjects() {
   update();
 }
 
-/* ================================================================ 9. Product zoom (scroll-scrubbed frame sequence) */
-// 120 pre-rendered frames of the illustrative Eastmain model (camera sweep → close-up → floors separate → dusk).
-// Scroll progress through the tall track picks the frame; it is painted cover-fit onto a canvas in the sticky
-// stage. Frames stream in progressively (every 8th first, then every 4th, 2nd, rest) once the section is near,
-// and the closest already-loaded frame is shown meanwhile, so scrubbing is never blank. Reduced motion, no canvas
-// or ?qa=1 → static poster with every step listed (.is-static).
-function initZoom() {
-  const root = $('[data-hb-zoom]');
-  if (!root) return;
-  const canvas = $('.hb-zoom__canvas', root);
-  const ctx = canvas?.getContext?.('2d');
-  const steps = $$('.hb-zoom__step', root);
-  const ticks = $$('.hb-zoom__tick', root);
-  if (reduced || !ctx || isQA()) { root.classList.add('is-static'); return; }
-
-  const N = Number(root.dataset.frames) || 120;
-  const base = root.dataset.src;
-  const frames = new Array(N);
-  const loaded = new Uint8Array(N);
-  let started = false, current = -1, painted = -1, progress = 0;
-
-  // load order: coarse → fine, so any scroll position quickly has a nearby frame
-  const order = [];
-  for (const stride of [8, 4, 2, 1]) for (let i = 0; i < N; i += stride) if (!order.includes(i)) order.push(i);
-  if (!order.includes(N - 1)) order.splice(1, 0, N - 1);
-  const loadAll = () => {
-    if (started) return;
-    started = true;
-    let next = 0, active = 0;
-    const pump = () => {
-      while (active < 6 && next < order.length) {
-        const i = order[next++];
-        const img = new Image();
-        img.decoding = 'async';
-        active++;
-        img.onload = () => { frames[i] = img; loaded[i] = 1; active--; if (i === 0 || Math.abs(i - current) <= 4) draw(true); if (!root.classList.contains('is-ready') && loaded[0]) { root.classList.add('is-ready'); draw(true); } pump(); };
-        img.onerror = () => { active--; pump(); };
-        img.src = `${base}${String(i).padStart(3, '0')}.webp`;
-      }
-    };
-    pump();
-  };
-
-  const nearestLoaded = (i) => {
-    if (loaded[i]) return i;
-    for (let d = 1; d < N; d++) {
-      if (i - d >= 0 && loaded[i - d]) return i - d;
-      if (i + d < N && loaded[i + d]) return i + d;
-    }
-    return -1;
-  };
-
-  // canvas sized to the stage × devicePixelRatio (capped) — frames are 1440×810, more is wasted
-  let cw = 0, ch = 0;
-  const size = () => {
-    const r = canvas.getBoundingClientRect();
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
-    if (w !== cw || h !== ch) { cw = canvas.width = w; ch = canvas.height = h; painted = -1; }
-  };
-  const draw = (force = false) => {
-    const i = nearestLoaded(current < 0 ? 0 : current);
-    if (i < 0 || (!force && i === painted)) return;
-    const img = frames[i];
-    // cover-fit, slightly right-of-centre on narrow screens so the building stays in view
-    const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-    const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
-    const fx = cw < ch ? 0.56 : 0.5;
-    ctx.drawImage(img, (cw - dw) * fx, (ch - dh) / 2, dw, dh);
-    painted = i;
-  };
-
-  const track = $('.hb-zoom__track', root);
-  const setStep = (p) => {
-    steps.forEach((li) => {
-      const on = p >= Number(li.dataset.from) && p < Number(li.dataset.to);
-      li.classList.toggle('is-active', on);
-      li.toggleAttribute('aria-hidden', !on);
-      const cta = $('a', li); if (cta) cta.tabIndex = on ? 0 : -1;
-    });
-    ticks.forEach((tk) => tk.classList.toggle('is-on', p >= parseFloat(tk.style.getPropertyValue('--at')) - 0.001));
-  };
-  const update = () => {
-    const r = track.getBoundingClientRect();
-    const span = r.height - vh();
-    progress = span > 0 ? clamp(-r.top / span, 0, 1) : 0;
-    root.style.setProperty('--p', progress.toFixed(4));
-    root.classList.toggle('is-scrolled', progress > 0.02);
-    const f = Math.round(progress * (N - 1));
-    if (f !== current) { current = f; draw(); }
-    setStep(progress);
-  };
-
-  // keyboard / screen-reader users: every step is reachable — focusing a hidden step's link scrolls to its range
-  steps.forEach((li) => li.addEventListener('focusin', () => {
-    if (li.classList.contains('is-active')) return;
-    const r = track.getBoundingClientRect();
-    const span = r.height - vh();
-    window.scrollTo({ top: window.scrollY + r.top + span * (Number(li.dataset.from) + 0.02), behavior: 'auto' });
-  }));
-
-  const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { loadAll(); io.disconnect(); } }, { rootMargin: '150% 0px' });
-  io.observe(root);
-  size(); update();
-  onScroll(rafThrottle(update));
-  window.addEventListener('resize', rafThrottle(() => { size(); draw(true); update(); }));
-  onLang(() => setStep(progress));
-}
-
-/* ================================================================ 10. Values */
+/* ================================================================ 9. Values */
 function initValues() {
   const rows = $$('[data-hb-value]');
   if (!rows.length) return;
@@ -370,7 +260,7 @@ function initValues() {
 }
 
 /* ================================================================ boot */
-for (const [name, fn] of [['sectors', initSectors], ['footprint', initFootprint], ['projects-data', renderProjects], ['projects', initProjects], ['zoom', initZoom], ['values', initValues]]) {
+for (const [name, fn] of [['sectors', initSectors], ['footprint', initFootprint], ['projects-data', renderProjects], ['projects', initProjects], ['values', initValues]]) {
   try { fn(); } catch (err) { console.error(`[home-b] ${name} failed to initialise`, err); }
 }
 requestAnimationFrame(refresh);

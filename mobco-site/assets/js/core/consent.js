@@ -1,5 +1,6 @@
-// MOBCO core/consent.js — cookie / third-party embed consent.
-// Stores 'accepted' | 'declined' in localStorage 'mobco-consent'. Banner appears until a choice is made
+// MOBCO core/consent.js: cookie / third-party embed consent.
+// Stores 'accepted' | 'declined' in localStorage 'mobco-consent'. A small bar (one sentence, Accept / Decline)
+// appears until a choice is made
 // (hidden in ?qa=1 unless &consent=1). Re-open with any [data-consent-open]; accept with [data-consent-accept].
 // Consent-gated embeds: <div class="consent-gate" data-consent-gate data-src="https://…" data-title="Map">placeholder…</div>
 // → the iframe is injected only after consent.
@@ -10,10 +11,9 @@ import { t, onLang } from './i18n.js';
 
 const KEY = 'mobco-consent';
 const S = {
-  title: { en: 'Your privacy', ar: 'خصوصيتك' },
   text: {
-    en: 'We use essential storage to remember your language and preferences. With your consent we also load third-party content such as Google Maps.',
-    ar: 'نستخدم تخزينًا أساسيًا لتذكّر لغتك وتفضيلاتك. وبموافقتك نُحمِّل أيضًا محتوى من جهات خارجية مثل خرائط Google.',
+    en: 'We use cookies for your settings and Google Maps.',
+    ar: 'نستخدم ملفات تعريف الارتباط لحفظ إعداداتك ولعرض خرائط Google.',
   },
   accept: { en: 'Accept', ar: 'موافقة' },
   decline: { en: 'Decline', ar: 'رفض' },
@@ -64,11 +64,11 @@ function loadGates(root = document) {
 function renderBanner() {
   if (!banner) return;
   banner.setAttribute('aria-label', t(S.region));
-  banner.innerHTML = `<p class="consent__title">${icon('cookie')}<span>${esc(t(S.title))}</span></p>
-    <p>${esc(t(S.text))}</p>
+  banner.innerHTML = `${icon('cookie', 'consent__icon')}
+    <p class="consent__text">${esc(t(S.text))}</p>
     <div class="consent__actions">
-      <button type="button" class="btn btn--primary btn--sm" data-consent-choice="accepted">${esc(t(S.accept))}</button>
-      <button type="button" class="btn btn--ghost btn--sm" data-consent-choice="declined">${esc(t(S.decline))}</button>
+      <button type="button" class="consent__btn consent__btn--accept" data-consent-choice="accepted">${esc(t(S.accept))}</button>
+      <button type="button" class="consent__btn" data-consent-choice="declined">${esc(t(S.decline))}</button>
     </div>`;
 }
 

@@ -1,177 +1,80 @@
-// assets/js/pages/contact.js — Contact page behaviour (owned by the contact builder).
+// assets/js/pages/contact.js · Contact page behaviour (owned by the contact builder).
 //
-//   1. Live local time + open/closed status for Riyadh and Cairo (Intl, no network)
+//   1. Local time in the Riyadh and Cairo offices (Intl, no network)
 //   2. Map: WORLD dot-matrix map zoomed to the selected office (tabs), consent-gated Google Maps iframe
-//   3. Project inquiry wizard (#inquiry): 5 steps, per-step validation (core ui.js), sessionStorage,
-//      review, region routing, mailto: hand-off, success screen with a client-generated reference
-//   4. General enquiries quick form → mailto: to the right inbox
+//   3. "Start a project" wizard (#inquiry): 3 steps, inline validation (core ui.js), sessionStorage,
+//      deep-link prefill (?company=…&office=…&type=…), region routing, mailto: hand-off, success screen
 //
-// Everything user-facing is bilingual via t({en, ar}) and re-rendered/patched on 'langchange'.
-// HONESTY: opening hours, budget bands and size bands are assumptions/inputs — see docs/content-notes/contact.md.
+// Every visible string is bilingual via t({en, ar}) and re-rendered on 'langchange'.
+// HONESTY: the site has no backend. The inquiry is handed to the visitor's own mail app (mailto:), and the
+// reference is generated in the browser only. Budget bands are input options, not company claims.
 
 import { t, getLang, onLang } from '../core/i18n.js';
-import { scrollTo, getLenis } from '../core/motion.js';
+import { scrollTo } from '../core/motion.js';
 import { toast, copyText, validateForm } from '../core/ui.js';
-import { $, $$, esc, icon, prefersReducedMotion, store, getParam, debounce } from '../core/utils.js';
+import { $, $$, esc, prefersReducedMotion, store, getParam, debounce } from '../core/utils.js';
 import { onConsent } from '../core/consent.js';
-import { SECTORS } from '../data/site-data.js';
+import * as DATA from '../data/site-data.js';
 import { WORLD } from '../data/world-map.js';
 
-const EMAIL = { ksa: 'info.ksa@mobco-group.com', egypt: 'info.egy@mobco-group.com' };
-const CAREERS_EMAIL = { ksa: 'careers@mobco-group.com', egypt: 'hr.egy@mobco-group.com' };
+const fmt = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ''));
+const pad2 = (n) => String(n).padStart(2, '0');
+const headerH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+
+/* =====================================================================
+   1. Local time in each office
+   ===================================================================== */
+const ZONES = { ksa: 'Asia/Riyadh', egypt: 'Africa/Cairo' };
 const DAYS = {
   en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   ar: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
 };
-const DAYS_SHORT = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ar: DAYS.ar };
-const headerH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
-// Scroll an element to just below the fixed header. Lenis.scrollTo() already subtracts the html scroll-padding
-// and the target's scroll-margin, and core motion.scrollTo() adds the header offset on top of that, so with Lenis
-// every jump landed one header too low (~208px instead of ~104px at 1440). Compensate locally (requests §1).
-function goTo(el, { gap = 16, immediate = false } = {}) {
-  let offset = -(headerH() + gap);
-  if (getLenis()) {
-    offset += (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0)
-      + (parseFloat(getComputedStyle(el).scrollMarginTop) || 0);
-  }
-  scrollTo(el, { offset, immediate });
-}
-const fmt = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ''));
-const pad2 = (n) => String(n).padStart(2, '0');
-
-const S = {
-  open: { en: 'Open now', ar: 'مفتوح الآن' },
-  closing: { en: 'Closes in {n} min', ar: 'يُغلق خلال {n} دقيقة' },
-  closedToday: { en: 'Closed · opens {time}', ar: 'مغلق · يفتح الساعة {time}' },
-  closedTomorrow: { en: 'Closed · opens tomorrow {time}', ar: 'مغلق · يفتح غدًا الساعة {time}' },
-  closedDay: { en: 'Closed · opens {day} {time}', ar: 'مغلق · يفتح {day} الساعة {time}' },
-  localTime: { en: 'Local time', ar: 'التوقيت المحلي' },
-  // map
-  showDots: { en: 'Show dot map', ar: 'عرض الخريطة النقطية' },
-  showGoogle: { en: 'Show Google map', ar: 'عرض خريطة Google' },
-  mapLoaded: { en: 'Google Maps loaded', ar: 'تم تحميل خرائط Google' },
-  // wizard
-  stepOf: { en: 'Step {n} of {total}', ar: 'الخطوة {n} من {total}' },
-  continue: { en: 'Continue', ar: 'متابعة' },
-  toReview: { en: 'Back to review', ar: 'العودة إلى المراجعة' },
-  send: { en: 'Send inquiry', ar: 'إرسال الطلب' },
-  fixStep: { en: 'Please complete the highlighted fields to continue.', ar: 'يُرجى إكمال الحقول المظللة للمتابعة.' },
-  edit: { en: 'Edit', ar: 'تعديل' },
-  notProvided: { en: 'Not provided', ar: 'لم يُذكر' },
-  chooseRange: { en: 'Choose a range…', ar: 'اختر نطاقًا…' },
-  route: {
-    en: 'Your inquiry will be addressed to our <strong>{office}</strong> — <strong>{email}</strong>.',
-    ar: 'سيُوجَّه طلبك إلى <strong>{office}</strong> — <strong>{email}</strong>.',
-  },
-  routeOther: {
-    en: 'Projects outside Saudi Arabia and Egypt are handled by our <strong>headquarters in Riyadh</strong> — <strong>{email}</strong>.',
-    ar: 'تتولّى <strong>المقر الرئيسي في الرياض</strong> المشاريع خارج السعودية ومصر — <strong>{email}</strong>.',
-  },
-  officeKsa: { en: 'KSA office in Riyadh', ar: 'مكتبنا في الرياض' },
-  officeEgypt: { en: 'Egypt office in Cairo', ar: 'مكتبنا في القاهرة' },
-  successText: {
-    en: 'Your email app should now open with the inquiry addressed to <strong>{email}</strong> — just press send. Please keep this reference for your records.',
-    ar: 'يُفترض أن يُفتح تطبيق البريد لديك الآن وقد وُجّه الطلب إلى <strong>{email}</strong> — ما عليك سوى الضغط على «إرسال». يُرجى الاحتفاظ بهذا الرقم المرجعي.',
-  },
-  successAlt: {
-    en: 'No email app? Copy the inquiry text and send it to {email} from any mail service.',
-    ar: 'لا يوجد تطبيق بريد؟ انسخ نص الطلب وأرسله إلى {email} من أي خدمة بريد.',
-  },
-  truncated: {
-    en: 'Your description was long, so the full inquiry text has also been copied to your clipboard — paste it into the email.',
-    ar: 'كان الوصف طويلًا، لذا نُسخ نص الطلب كاملًا إلى الحافظة أيضًا — الصقه في رسالة البريد.',
-  },
-  copiedInquiry: { en: 'Inquiry text copied', ar: 'تم نسخ نص الطلب' },
-  copiedRef: { en: 'Reference copied', ar: 'تم نسخ الرقم المرجعي' },
-  ready: { en: 'Inquiry {ref} is ready to send', ar: 'الطلب {ref} جاهز للإرسال' },
-  restored: { en: 'We restored your unfinished inquiry.', ar: 'استعدنا طلبك غير المكتمل.' },
-  // quick form
-  quickNote: { en: 'Opens your email app, addressed to: {email}', ar: 'سيُفتح تطبيق البريد لديك وقد وُجّهت الرسالة إلى: {email}' },
-  quickDone: {
-    en: 'Your email app should open with your message addressed to {email}. If nothing happens, write to us directly at that address.',
-    ar: 'يُفترض أن يُفتح تطبيق البريد لديك وقد وُجّهت رسالتك إلى {email}. إذا لم يحدث ذلك، راسلنا مباشرةً على هذا العنوان.',
-  },
-  quickToast: { en: 'Message ready in your email app', ar: 'رسالتك جاهزة في تطبيق البريد' },
-};
-
-/* =====================================================================
-   1. Live clocks + open / closed status
-   ===================================================================== */
-// TODO(content): opening hours are assumptions (Sun–Thu) — confirm with the client (content notes).
-const HOURS = {
-  ksa: { tz: 'Asia/Riyadh', open: 8 * 60, close: 17 * 60, days: [0, 1, 2, 3, 4] },
-  egypt: { tz: 'Africa/Cairo', open: 9 * 60, close: 17 * 60, days: [0, 1, 2, 3, 4] },
-};
+const SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const fmtCache = new Map();
-function zoned(tz, date = new Date()) {
+function zoned(tz) {
   if (!fmtCache.has(tz)) {
     fmtCache.set(tz, new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' }));
   }
-  const parts = fmtCache.get(tz).formatToParts(date);
+  const parts = fmtCache.get(tz).formatToParts(new Date());
   const get = (type) => parts.find((p) => p.type === type)?.value;
-  return { h: parseInt(get('hour'), 10) % 24, m: parseInt(get('minute'), 10), wd: DAYS_SHORT.en.indexOf(get('weekday')) };
+  return { h: parseInt(get('hour'), 10) % 24, m: parseInt(get('minute'), 10), wd: SHORT.indexOf(get('weekday')) };
 }
 function gmtOffset(tz) {
   try {
     return new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' }).formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value || '';
   } catch { return ''; }
 }
-const hhmm = (mins) => `${pad2(Math.floor(mins / 60))}:${pad2(mins % 60)}`;
-function officeStatus(id) {
-  const H = HOURS[id];
-  const z = zoned(H.tz);
-  const mins = z.h * 60 + z.m;
-  const workday = H.days.includes(z.wd);
-  if (workday && mins >= H.open && mins < H.close) {
-    const left = H.close - mins;
-    return left <= 60 ? { state: 'closing', text: fmt(t(S.closing), { n: left }) } : { state: 'open', text: t(S.open) };
-  }
-  const time = hhmm(H.open);
-  if (workday && mins < H.open) return { state: 'closed', text: fmt(t(S.closedToday), { time }) };
-  let wd = z.wd, d = 0;
-  do { wd = (wd + 1) % 7; d++; } while (!H.days.includes(wd) && d < 8);
-  if (d === 1) return { state: 'closed', text: fmt(t(S.closedTomorrow), { time }) };
-  return { state: 'closed', text: fmt(t(S.closedDay), { day: (getLang() === 'ar' ? DAYS.ar : DAYS_SHORT.en)[wd], time }) };
-}
-let lastClockKey = '';
-function renderClocks(force = false) {
-  const key = `${getLang()}|${new Date().getMinutes()}|${new Date().getHours()}`;
-  if (!force && key === lastClockKey) return;
-  lastClockKey = key;
-  for (const id of Object.keys(HOURS)) {
-    const H = HOURS[id];
-    const z = zoned(H.tz);
-    const time = `${pad2(z.h)}<span class="contact-colon">:</span>${pad2(z.m)}`;
-    $$(`[data-clock-time="${id}"]`).forEach((el) => {
-      el.innerHTML = el.closest('.contact-clocks') ? time : `${pad2(z.h)}:${pad2(z.m)}`;
-    });
-    const st = officeStatus(id);
-    $$(`[data-clock-status="${id}"]`).forEach((el) => {
-      el.classList.remove('is-open', 'is-closed', 'is-closing');
-      el.classList.add(`is-${st.state}`);
-      const txt = el.querySelector('.contact-status__text');
-      if (txt) txt.textContent = st.text;
-    });
-    const day = (getLang() === 'ar' ? DAYS.ar : DAYS.en)[z.wd] || '';
-    $$(`[data-clock-meta="${id}"]`).forEach((el) => {
-      el.innerHTML = `<bdi dir="ltr">${esc(gmtOffset(H.tz))}</bdi> · ${esc(day)}`;
-    });
-  }
-}
 function initClocks() {
   if (!$('[data-clock-time]')) return;
-  renderClocks(true);
-  let timer = setInterval(() => renderClocks(), 1000);
+  let last = '';
+  const render = (force = false) => {
+    const key = `${getLang()}|${new Date().getHours()}:${new Date().getMinutes()}`;
+    if (!force && key === last) return;
+    last = key;
+    for (const [id, tz] of Object.entries(ZONES)) {
+      const z = zoned(tz);
+      $$(`[data-clock-time="${id}"]`).forEach((el) => { el.textContent = `${pad2(z.h)}:${pad2(z.m)}`; });
+      const day = (getLang() === 'ar' ? DAYS.ar : DAYS.en)[z.wd] || '';
+      $$(`[data-clock-meta="${id}"]`).forEach((el) => { el.innerHTML = `${esc(day)} · <bdi dir="ltr">${esc(gmtOffset(tz))}</bdi>`; });
+    }
+  };
+  render(true);
+  let timer = setInterval(render, 1000);
   document.addEventListener('visibilitychange', () => {
     clearInterval(timer);
-    if (!document.hidden) { renderClocks(true); timer = setInterval(() => renderClocks(), 1000); }
+    if (!document.hidden) { render(true); timer = setInterval(render, 1000); }
   });
-  onLang(() => renderClocks(true));
+  onLang(() => render(true));
 }
 
 /* =====================================================================
-   2. Map — dot-matrix WORLD map + consent-gated Google Maps
+   2. Map: dot-matrix WORLD map + consent-gated Google Maps
    ===================================================================== */
+const MAP_S = {
+  showDots: { en: 'Show dot map', ar: 'عرض الخريطة النقطية' },
+  showGoogle: { en: 'Show Google map', ar: 'عرض خريطة Google' },
+  mapLoaded: { en: 'Google map loaded', ar: 'تم تحميل خريطة Google' },
+};
 // d3-geo naturalEarth1 raw projection; scale/translate solved from the WORLD office markers.
 function ne1(lon, lat) {
   const l = (lon * Math.PI) / 180, p = (lat * Math.PI) / 180;
@@ -191,25 +94,25 @@ const PROJ = (() => {
 })();
 const project = (lon, lat) => { const [x, y] = ne1(lon, lat); return [PROJ.tx + PROJ.k * x, PROJ.ty - PROJ.k * y]; };
 
-// Approximate pin positions (geo approx — the iframe query is what matters for directions).
+// Approximate pin positions (the iframe query is what matters for directions).
 const PLACES = {
   ksa: {
     xy: WORLD.offices.ksa.xy, zoom: 92,
     query: 'Al Ebdaa Tower, King Fahd Road, Olaya, Riyadh',
-    title: { en: 'Map: KSA Office (Riyadh)', ar: 'خريطة: مكتب السعودية (الرياض)' },
+    title: { en: 'Map of the Riyadh office', ar: 'خريطة مكتب الرياض' },
     label: { en: 'Riyadh', ar: 'الرياض' }, sub: { en: 'Headquarters', ar: 'المقر الرئيسي' },
   },
   'new-cairo': {
     xy: project(31.52, 30.013), zoom: 30,
     query: 'B1 Building, Mivida Compound, New Cairo, Egypt',
-    title: { en: 'Map: Egypt Office (New Cairo)', ar: 'خريطة: مكتب مصر (القاهرة الجديدة)' },
-    label: { en: 'New Cairo', ar: 'القاهرة الجديدة' }, sub: { en: 'Egypt Office', ar: 'مكتب مصر' },
+    title: { en: 'Map of the New Cairo office', ar: 'خريطة مكتب القاهرة الجديدة' },
+    label: { en: 'New Cairo', ar: 'القاهرة الجديدة' }, sub: { en: 'Egypt office', ar: 'مكتب مصر' },
   },
   'nasr-city': {
     xy: project(31.34, 30.056), zoom: 24,
     query: '2 Ahmed Hassan St., Ninth District, Nasr City, Cairo, Egypt',
-    title: { en: 'Map: Egypt Office (Nasr City)', ar: 'خريطة: مكتب مصر (مدينة نصر)' },
-    label: { en: 'Nasr City', ar: 'مدينة نصر' }, sub: { en: 'Egypt Office', ar: 'مكتب مصر' }, flip: true,
+    title: { en: 'Map of the Nasr City office', ar: 'خريطة مكتب مدينة نصر' },
+    label: { en: 'Nasr City', ar: 'مدينة نصر' }, sub: { en: 'Egypt office', ar: 'مكتب مصر' }, flip: true,
   },
 };
 const GEO_LABELS = [
@@ -232,8 +135,7 @@ function initMap() {
   const ext = $('[data-map-ext]', root);
   const insetBox = $('[data-map-inset]', root);
   const ids = Object.keys(PLACES);
-  const initialParam = getParam('office');
-  let current = { ksa: 'ksa', egypt: 'new-cairo', 'new-cairo': 'new-cairo', 'nasr-city': 'nasr-city' }[initialParam] || 'ksa';
+  let current = { ksa: 'ksa', egypt: 'new-cairo', 'new-cairo': 'new-cairo', 'nasr-city': 'nasr-city' }[getParam('office')] || 'ksa';
 
   /* --- build the SVG dot map */
   const NS = 'http://www.w3.org/2000/svg';
@@ -267,7 +169,7 @@ function initMap() {
     const p = PLACES[id];
     const el = document.createElement('div');
     el.className = `contact-pin${p.flip ? ' contact-pin--flip' : ''}`;
-    el.innerHTML = `<span class="contact-pin__ring"></span><span class="contact-pin__ring contact-pin__ring--2"></span><span class="contact-pin__core"></span><span class="contact-pin__label"><b></b><small></small></span>`;
+    el.innerHTML = '<span class="contact-pin__ring"></span><span class="contact-pin__ring contact-pin__ring--2"></span><span class="contact-pin__core"></span><span class="contact-pin__label"><b></b><small></small></span>';
     overlay.appendChild(el);
     return { id, el, xy: p.xy };
   });
@@ -283,7 +185,7 @@ function initMap() {
   };
   renderLabels();
 
-  // mini locator (coarse WORLD.dots) — shows the current window on the whole world
+  // mini locator (coarse WORLD.dots): shows the current window on the whole world
   const dotsMarkup = WORLD.dots.filter((d) => d[1] < 440).map(([x, y, k]) => `<circle cx="${x}" cy="${y}" r="2.3"${k === 'ksa' || k === 'egypt' ? ' fill="#6fd1c5"' : ''}/>`).join('');
   insetBox.innerHTML = `<svg viewBox="0 0 1000 440" xmlns="${NS}" focusable="false"><g fill="rgba(255,255,255,.28)">${dotsMarkup}</g><rect class="contact-map__window" x="0" y="0" width="10" height="10" fill="rgba(111,209,197,.12)" stroke="#6fd1c5" stroke-width="5"/></svg>`;
   const win = $('.contact-map__window', insetBox);
@@ -302,7 +204,7 @@ function initMap() {
     const W = cam.w, H = W * (size.h / size.w);
     const vx = cam.x - W * focus.x, vy = cam.y - H * focus.y;
     svg.setAttribute('viewBox', `${vx.toFixed(3)} ${vy.toFixed(3)} ${W.toFixed(3)} ${H.toFixed(3)}`);
-    // LED-style matrix: dot grid fixed in screen space (≈10px pitch), the land slides underneath
+    // LED-style matrix: dot grid fixed in screen space (about 10px pitch), the land slides underneath
     const pitchPx = size.w < 640 ? 8 : 10;
     const s = (pitchPx * W) / size.w;
     pat.forEach((p, i) => {
@@ -344,7 +246,7 @@ function initMap() {
     if (immediate || prefersReducedMotion()) { Object.assign(cam, to); draw(); return; }
     const dur = 1300, t0 = performance.now();
     const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-    // zoom out a little mid-flight when travelling between offices ("fly" feel)
+    // zoom out a little mid-flight when travelling between offices
     const travel = Math.hypot(to.x - from.x, to.y - from.y);
     const lift = Math.min(70, travel * 1.1);
     const tick = (now) => {
@@ -365,6 +267,9 @@ function initMap() {
   /* --- Google Maps iframe (consent-gated) */
   let iframe = null;
   const setExt = () => { ext.href = searchUrl(PLACES[current]); };
+  const renderToggle = () => {
+    $('[data-map-toggle-label]', toggle).textContent = t(root.classList.contains('is-dotview') ? MAP_S.showGoogle : MAP_S.showDots);
+  };
   const loadMap = () => {
     if (iframe) return;
     iframe = document.createElement('iframe');
@@ -379,14 +284,10 @@ function initMap() {
     toggle.hidden = false;
     renderToggle();
   };
-  const renderToggle = () => {
-    const label = $('[data-map-toggle-label]', toggle);
-    label.textContent = t(root.classList.contains('is-dotview') ? S.showGoogle : S.showDots);
-  };
   $('[data-map-load]', root)?.addEventListener('click', () => {
     store.set('mobco-contact-map', '1', 'session'); // explicit, per-session opt-in for this embed only
     loadMap();
-    toast(S.mapLoaded, { type: 'info', duration: 2200 });
+    toast(MAP_S.mapLoaded, { type: 'info', duration: 2200 });
     requestAnimationFrame(() => toggle.focus({ preventScroll: true }));
   });
   toggle.addEventListener('click', () => {
@@ -401,7 +302,7 @@ function initMap() {
     if (!toggle.hidden) renderToggle();
   });
 
-  /* --- tabs ↔ camera ↔ iframe */
+  /* --- tabs, camera and iframe stay in sync */
   const select = (id, { immediate = false } = {}) => {
     if (!PLACES[id]) return;
     current = id;
@@ -410,126 +311,174 @@ function initMap() {
     if (iframe) { iframe.src = embedUrl(PLACES[id]); iframe.title = t(PLACES[id].title); }
   };
   root.addEventListener('tabchange', (e) => select(e.detail.id));
-  if (current !== 'ksa') {
-    // wait for core/ui.js to wire the tabs, then select without animation
-    requestAnimationFrame(() => root.__selectTab?.(current));
-  }
+  if (current !== 'ksa') requestAnimationFrame(() => root.__selectTab?.(current)); // after core wired the tabs
   select(current, { immediate: true });
   document.addEventListener('click', (e) => {
     const a = e.target.closest('[data-map-show]');
     if (!a) return;
     const id = a.getAttribute('data-map-show');
     if (root.__selectTab) root.__selectTab(id); else select(id);
+    stage.classList.remove('is-flash');
+    void stage.offsetWidth;
+    stage.classList.add('is-flash');
   });
 }
 
 /* =====================================================================
-   3. Project inquiry wizard
+   3. Start a project: 3-step inquiry wizard
    ===================================================================== */
-const STEP_NAMES = [
-  { en: 'Project type', ar: 'نوع المشروع' },
-  { en: 'Sector', ar: 'القطاع' },
-  { en: 'Location & scope', ar: 'الموقع والنطاق' },
-  { en: 'Your details', ar: 'بياناتك' },
-  { en: 'Review & send', ar: 'المراجعة والإرسال' },
-];
-const SIZES = [
-  { en: 'Not sure yet', ar: 'غير محدّدة بعد' },
-  { en: 'Under 5,000 m²', ar: 'أقل من 5,000 م²' },
-  { en: '5,000 – 20,000 m²', ar: '5,000 – 20,000 م²' },
-  { en: '20,000 – 100,000 m²', ar: '20,000 – 100,000 م²' },
-  { en: 'Over 100,000 m²', ar: 'أكثر من 100,000 م²' },
-];
-const SIZE_TICKS = [
-  { en: 'Not sure', ar: 'غير محدد' },
-  { en: '< 5k m²', ar: '< 5 آلاف م²' },
-  { en: '5k – 20k', ar: '5 – 20 ألفًا' },
-  { en: '20k – 100k', ar: '20 – 100 ألف' },
-  { en: '100k+ m²', ar: '+100 ألف م²' },
-];
-// Indicative budget bands — client-side input options only (no company claim). SAR for KSA, USD elsewhere.
-const BUDGETS = {
-  sar: [
-    { v: 'sar-1', en: 'Under SAR 10 million', ar: 'أقل من 10 ملايين ريال' },
-    { v: 'sar-2', en: 'SAR 10 – 50 million', ar: '10 – 50 مليون ريال' },
-    { v: 'sar-3', en: 'SAR 50 – 250 million', ar: '50 – 250 مليون ريال' },
-    { v: 'sar-4', en: 'Over SAR 250 million', ar: 'أكثر من 250 مليون ريال' },
-  ],
-  usd: [
-    { v: 'usd-1', en: 'Under USD 3 million', ar: 'أقل من 3 ملايين دولار' },
-    { v: 'usd-2', en: 'USD 3 – 15 million', ar: '3 – 15 مليون دولار' },
-    { v: 'usd-3', en: 'USD 15 – 70 million', ar: '15 – 70 مليون دولار' },
-    { v: 'usd-4', en: 'Over USD 70 million', ar: 'أكثر من 70 مليون دولار' },
-  ],
-  common: [
-    { v: 'tbd', en: 'Not defined yet', ar: 'لم تُحدَّد بعد' },
-    { v: 'undisclosed', en: 'Prefer not to say', ar: 'أفضّل عدم الإفصاح' },
-  ],
+const EMAIL = { ksa: 'info.ksa@mobco-group.com', egypt: 'info.egy@mobco-group.com' };
+const PHONE = {
+  ksa: { display: '+966 11 293 5966', href: 'tel:+966112935966' },
+  egypt: { display: '02-23866591', href: 'tel:+20223866591' },
 };
-const OTHER_SECTOR = { id: 'other', icon: 'ellipsis', name: { en: 'Other sector', ar: 'قطاع آخر' } };
-const STORE_KEY = 'mobco-inquiry';
-const TOTAL = 5;
+const TOTAL = 3;
+const STORE_KEY = 'mobco-inquiry-v2';
+const FIELDS = ['type', 'region', 'city', 'budget', 'timeline', 'message', 'name', 'company', 'email', 'phone'];
+
+const S = {
+  steps: [
+    { en: 'Your need', ar: 'احتياجك' },
+    { en: 'Project', ar: 'المشروع' },
+    { en: 'Your details', ar: 'بياناتك' },
+  ],
+  stepOf: { en: 'Step {n} of {total}: {name}', ar: 'الخطوة {n} من {total}: {name}' },
+  continue: { en: 'Continue', ar: 'متابعة' },
+  toSummary: { en: 'Back to summary', ar: 'العودة إلى الملخص' },
+  send: { en: 'Send inquiry', ar: 'إرسال الطلب' },
+  fixStep: { en: 'Please complete the highlighted fields.', ar: 'يُرجى إكمال الحقول المحددة.' },
+  restored: { en: 'Your answers are still here.', ar: 'إجاباتك السابقة محفوظة.' },
+  forCompany: { en: 'Inquiry for {name}', ar: 'طلب موجّه إلى {name}' },
+  // summary
+  summary: { en: 'Your inquiry', ar: 'ملخص طلبك' },
+  edit: { en: 'Edit', ar: 'تعديل' },
+  notGiven: { en: 'Not given', ar: 'لم يُحدَّد' },
+  rows: {
+    type: { en: 'Need', ar: 'الاحتياج' },
+    location: { en: 'Location', ar: 'الموقع' },
+    budget: { en: 'Budget', ar: 'الميزانية' },
+    timeline: { en: 'Start', ar: 'البدء' },
+    message: { en: 'Brief', ar: 'الوصف' },
+  },
+  route: { en: 'Goes to our {office} at {email}.', ar: 'يصل طلبك إلى {office} على {email}.' },
+  office: {
+    ksa: { en: 'Riyadh headquarters', ar: 'المقر الرئيسي في الرياض' },
+    egypt: { en: 'Cairo office', ar: 'مكتبنا في القاهرة' },
+  },
+  // success
+  thanks: { en: 'Thank you, {name}', ar: 'شكرًا لك، {name}' },
+  thanksAnon: { en: 'Thank you', ar: 'شكرًا لك' },
+  doneText: {
+    en: 'We opened your email app with the inquiry addressed to {email}. Press send to deliver it.',
+    ar: 'فتحنا تطبيق البريد لديك وفيه طلبك موجّهًا إلى {email}. اضغط «إرسال» لإيصاله.',
+  },
+  doneAlt: {
+    en: 'If no email app opened, copy the text and send it to {email}.',
+    ar: 'إن لم يُفتح تطبيق البريد، انسخ النص وأرسله إلى {email}.',
+  },
+  doneCall: { en: 'To talk sooner, call {office} on {phone}.', ar: 'للتحدث معنا الآن، اتصل بـ{office} على {phone}.' },
+  truncated: {
+    en: 'Your description was long, so the full text is also on your clipboard. Paste it into the email.',
+    ar: 'كان الوصف طويلًا، لذا نسخنا النص كاملًا إلى الحافظة أيضًا. الصقه في الرسالة.',
+  },
+  copiedInquiry: { en: 'Inquiry text copied', ar: 'تم نسخ نص الطلب' },
+  copiedRef: { en: 'Reference copied', ar: 'تم نسخ الرقم المرجعي' },
+  copyFail: { en: 'Could not copy. Please copy it by hand.', ar: 'تعذّر النسخ. يُرجى نسخه يدويًا.' },
+  ready: { en: 'Inquiry {ref} is ready in your email app.', ar: 'الطلب {ref} جاهز في تطبيق البريد لديك.' },
+  // mail
+  mailSubject: { en: 'Project inquiry', ar: 'طلب مشروع' },
+  mailRef: { en: 'Reference', ar: 'الرقم المرجعي' },
+  mailFor: { en: 'For', ar: 'موجّه إلى' },
+  mailName: { en: 'Name', ar: 'الاسم' },
+  mailCompany: { en: 'Company', ar: 'الشركة' },
+  mailEmail: { en: 'Email', ar: 'البريد الإلكتروني' },
+  mailPhone: { en: 'Phone', ar: 'الهاتف' },
+  mailBrief: { en: 'Project description', ar: 'وصف المشروع' },
+  mailClip: { en: 'full text on your clipboard, please paste it here', ar: 'النص الكامل في الحافظة، يُرجى لصقه هنا' },
+};
+
+// Budget bands: SAR for projects in Saudi Arabia, USD elsewhere (input options only, see content notes).
+const BUDGETS = {
+  sar: {
+    b1: { en: 'Under SAR 10M', ar: 'أقل من 10 ملايين ريال' },
+    b2: { en: 'SAR 10M to 50M', ar: 'من 10 إلى 50 مليون ريال' },
+    b3: { en: 'SAR 50M to 250M', ar: 'من 50 إلى 250 مليون ريال' },
+    b4: { en: 'Over SAR 250M', ar: 'أكثر من 250 مليون ريال' },
+  },
+  usd: {
+    b1: { en: 'Under USD 3M', ar: 'أقل من 3 ملايين دولار' },
+    b2: { en: 'USD 3M to 15M', ar: 'من 3 إلى 15 مليون دولار' },
+    b3: { en: 'USD 15M to 70M', ar: 'من 15 إلى 70 مليون دولار' },
+    b4: { en: 'Over USD 70M', ar: 'أكثر من 70 مليون دولار' },
+  },
+  unsure: { en: 'Not sure yet', ar: 'لم أحدد بعد' },
+};
+
+// Deep links: ?company=<subsidiary id> (subsidiaries finder), ?office=ksa|egypt, ?type=<need>
+const COMPANY_TYPE = {
+  'mobco-construction': 'construction',
+  'mobco-developments': 'development',
+  'mobco-real-estate': 'property',
+  'elite-education': 'other',
+};
+const COMPANY_NAME = {
+  'mobco-construction': { en: 'MOBCO Construction', ar: 'موبكو للإنشاءات' },
+  'mobco-developments': { en: 'MOBCO Developments', ar: 'موبكو للتطوير' },
+  'mobco-real-estate': { en: 'MOBCO Real Estate Development', ar: 'موبكو للتطوير العقاري' },
+  'elite-education': { en: 'Elite Education Group', ar: 'مجموعة إيليت التعليمية' },
+};
+const TYPE_ALIAS = {
+  construction: 'construction', build: 'construction', contracting: 'construction',
+  development: 'development', developments: 'development',
+  management: 'management', 'project-management': 'management', 'pre-construction': 'management',
+  property: 'property', leasing: 'property', 'real-estate': 'property', 'facility-management': 'property',
+  other: 'other', education: 'other',
+};
+const companyName = (id) => {
+  try { const s = DATA.getSubsidiary?.(id); if (s?.name?.en) return s.name; } catch { /* data module changed */ }
+  return COMPANY_NAME[id] || null;
+};
 
 function initWizard() {
   const wizard = $('[data-wizard]');
   if (!wizard) return;
   const form = $('[data-wizard-form]', wizard);
-  const steps = $$('[data-step]', form);
+  const panels = $$('[data-step]', form);
   const nextBtn = $('[data-wizard-next]', form);
   const nextLabel = $('[data-wizard-next-label]', nextBtn);
   const backBtn = $('[data-wizard-back]', form);
-  const bar = $('[data-wizard-bar]', wizard);
-  const count = $('[data-wizard-count]', wizard);
-  const name = $('[data-wizard-name]', wizard);
+  const note = $('[data-wizard-note]', form);
   const live = $('[data-wizard-live]', wizard);
-  const stepper = $$('[data-goto]');
+  const stepBtns = $$('[data-goto]', wizard);
+  const forBox = $('[data-wizard-for]', wizard);
   const success = $('[data-wizard-success]', wizard);
-  const progress = $('.contact-wizard__progress', wizard);
-  const budget = $('[data-wizard-budget]', form);
-  const size = $('[data-wizard-size]', form);
-  const sizeOut = $('[data-wizard-size-out]', form);
-  const ticks = $('[data-size-ticks]', form);
-  const message = $('#inq-message', form);
+  const stepsNav = $('[data-wizard-steps]', wizard);
+  const review = $('[data-wizard-review]', form);
+  const message = form.elements.message;
   const counter = $('[data-wizard-counter]', form);
-  let step = 1, maxReached = 1, last = null;
-  let toReview = false; // set by a review "Edit" button: the next valid Continue returns straight to the review
+  const anchor = wizard.closest('.inq') || wizard;
 
-  /* sector tiles from SECTORS (data-driven) */
-  const sectorBox = $('[data-sector-tiles]', form);
-  const sectors = [...SECTORS, OTHER_SECTOR];
-  sectorBox.insertAdjacentHTML('beforeend', sectors.map((s) => `
-    <label class="contact-tile">
-      <input class="contact-tile__input" type="radio" name="sector" value="${esc(s.id)}" required data-error="Please choose a sector." data-ar-error="يُرجى اختيار القطاع.">
-      <span class="contact-tile__box">
-        <span class="contact-tile__icon">${icon(s.icon)}</span>
-        <span class="contact-tile__title" data-sector-name="${esc(s.id)}">${esc(t(s.name))}</span>
-        <span class="contact-tile__check" aria-hidden="true">${icon('check')}</span>
-      </span>
-    </label>`).join(''));
-  const renderSectorNames = () => sectors.forEach((s) => { const el = $(`[data-sector-name="${s.id}"]`, sectorBox); if (el) el.textContent = t(s.name); });
+  let step = 1, maxReached = 1, toSummary = false, company = null, last = null;
 
-  /* budget options depend on region (currency) */
-  const currency = () => (form.elements.region?.value === 'ksa' ? 'sar' : 'usd');
-  const renderBudget = () => {
-    const prev = budget.value;
+  /* ---------------------------------------------------------------- helpers */
+  const val = (name) => (form.elements[name]?.value || '').trim(); // RadioNodeList.value = the checked radio
+  const labelOf = (name) => {
+    const input = form.querySelector(`input[name="${name}"]:checked`);
+    if (!input) return '';
+    const box = input.closest('label').querySelector('.wiz-opt__title, .wiz-pill__box');
+    return (box?.textContent || '').replace(/\s+/g, ' ').trim();
+  };
+  const routeOf = (region) => (region === 'egypt' ? 'egypt' : 'ksa');
+  const currency = () => (val('region') === 'ksa' ? 'sar' : 'usd');
+  const budgetText = (v, cur = currency()) => (v === 'unsure' ? t(BUDGETS.unsure) : BUDGETS[cur][v] ? t(BUDGETS[cur][v]) : '');
+
+  /* ---------------------------------------------------------------- budgets follow the region's currency */
+  const renderBudgets = () => {
     const cur = currency();
-    let keep = prev;
-    const m = /^(sar|usd)-(\d)$/.exec(prev);
-    if (m && m[1] !== cur) keep = `${cur}-${m[2]}`; // same tier in the other currency
-    const opts = [{ v: '', en: S.chooseRange.en, ar: S.chooseRange.ar }, ...BUDGETS[cur], ...BUDGETS.common];
-    budget.innerHTML = opts.map((o) => `<option value="${o.v}">${esc(t(o))}</option>`).join('');
-    budget.value = opts.some((o) => o.v === keep) ? keep : '';
+    $$('[data-budget-label]', form).forEach((el) => { el.textContent = budgetText(el.dataset.budgetLabel, cur); });
   };
 
-  /* size range: band label in the output + aria-valuetext */
-  const renderSize = () => {
-    const i = parseInt(size.value, 10) || 0;
-    sizeOut.textContent = t(SIZES[i]);
-    size.setAttribute('aria-valuetext', t(SIZES[i]));
-    ticks.innerHTML = SIZE_TICKS.map((tk, j) => `<span class="${j === i ? 'is-on' : ''}">${esc(t(tk))}</span>`).join('');
-  };
-  size.addEventListener('input', renderSize);
-
+  /* ---------------------------------------------------------------- counter */
   const renderCounter = () => {
     const n = message.value.length, max = parseInt(message.getAttribute('maxlength'), 10) || 1500;
     counter.textContent = `${n} / ${max}`;
@@ -537,129 +486,94 @@ function initWizard() {
   };
   message.addEventListener('input', renderCounter);
 
-  /* persistence (sessionStorage) */
-  const snapshot = () => {
-    const values = {};
-    for (const el of form.elements) {
-      if (!el.name) continue;
-      if (el.type === 'radio') { if (el.checked) values[el.name] = el.value; }
-      else if (el.type === 'checkbox') values[el.name] = el.checked;
-      else values[el.name] = el.value;
-    }
-    return values;
+  /* ---------------------------------------------------------------- company chip (prefilled from a subsidiary) */
+  const renderFor = () => {
+    const name = company ? companyName(company) : null;
+    forBox.hidden = !name;
+    if (name) $('[data-wizard-for-text]', forBox).textContent = fmt(t(S.forCompany), { name: t(name) });
+  };
+  $('[data-wizard-for-clear]', forBox).addEventListener('click', () => {
+    company = null;
+    renderFor();
+    save();
+    $('.wiz__title', panels[step - 1])?.focus({ preventScroll: true });
+  });
+
+  /* ---------------------------------------------------------------- persistence (sessionStorage) */
+  const snapshot = () => Object.fromEntries(FIELDS.map((k) => [k, val(k)]));
+  const setValue = (name, v) => {
+    const el = form.elements[name];
+    if (!el || v == null) return;
+    if (el instanceof RadioNodeList) { $$(`input[name="${name}"]`, form).forEach((r) => { r.checked = r.value === v; }); }
+    else el.value = v;
   };
   const save = debounce(() => {
     if (!success.hidden) return;
-    store.set(STORE_KEY, JSON.stringify({ step, maxReached, values: snapshot() }), 'session');
+    store.set(STORE_KEY, JSON.stringify({ step, maxReached, company, sig: prefillSig, values: snapshot() }), 'session');
   }, 120);
-  const restore = () => {
-    let data = null;
-    try { data = JSON.parse(store.get(STORE_KEY, 'session') || 'null'); } catch { data = null; }
-    if (!data?.values) return false;
-    const v = data.values;
-    for (const el of form.elements) {
-      if (!el.name || !(el.name in v)) continue;
-      if (el.type === 'radio') el.checked = el.value === v[el.name];
-      else if (el.type === 'checkbox') el.checked = !!v[el.name];
-      else if (el.tagName !== 'SELECT') el.value = v[el.name];
-    }
-    renderBudget();
-    if (v.budget) budget.value = v.budget;
-    maxReached = Math.min(TOTAL, Math.max(1, parseInt(data.maxReached, 10) || 1));
-    step = Math.min(maxReached, Math.max(1, parseInt(data.step, 10) || 1));
-    return Object.keys(v).some((k) => v[k] && !['reply', 'size'].includes(k) && v[k] !== '0');
+  const readSaved = () => {
+    try { return JSON.parse(store.get(STORE_KEY, 'session') || 'null'); } catch { return null; }
   };
 
-  /* labels of the current selections (read from the DOM so they follow the language) */
-  const checkedText = (nm, sel) => {
-    const input = form.querySelector(`input[name="${nm}"]:checked`);
-    return input ? (input.closest('label').querySelector(sel)?.textContent || '').trim() : '';
-  };
-  const values = () => {
-    const f = form.elements;
-    return {
-      type: checkedText('type', '.contact-tile__title'),
-      sector: checkedText('sector', '.contact-tile__title'),
-      region: f.region?.value || '',
-      regionText: checkedText('region', '.contact-pill__box'),
-      city: f.city.value.trim(),
-      size: t(SIZES[parseInt(size.value, 10) || 0]),
-      budget: budget.value ? budget.options[budget.selectedIndex].textContent : '',
-      timeline: checkedText('timeline', '.contact-pill__box'),
-      name: f.name.value.trim(),
-      company: f.company.value.trim(),
-      email: f.email.value.trim(),
-      phone: f.phone.value.trim(),
-      reply: checkedText('reply', '.contact-pill__box'),
-      message: f.message.value.trim(),
-    };
-  };
-  const routeOf = (region) => (region === 'egypt' ? 'egypt' : 'ksa');
-
-  const FIELDS = [
-    { k: 'type', step: 1, label: { en: 'Project type', ar: 'نوع المشروع' } },
-    { k: 'sector', step: 2, label: { en: 'Sector', ar: 'القطاع' } },
-    { k: 'location', step: 3, label: { en: 'Location', ar: 'الموقع' } },
-    { k: 'size', step: 3, label: { en: 'Built-up area', ar: 'المساحة المبنية' } },
-    { k: 'budget', step: 3, label: { en: 'Indicative budget', ar: 'الميزانية التقديرية' } },
-    { k: 'timeline', step: 3, label: { en: 'Timeline', ar: 'الإطار الزمني' } },
-    { k: 'name', step: 4, label: { en: 'Name', ar: 'الاسم' } },
-    { k: 'company', step: 4, label: { en: 'Company', ar: 'الشركة' } },
-    { k: 'email', step: 4, label: { en: 'Email', ar: 'البريد الإلكتروني' } },
-    { k: 'phone', step: 4, label: { en: 'Phone', ar: 'الهاتف' } },
-    { k: 'reply', step: 4, label: { en: 'Preferred contact', ar: 'وسيلة التواصل المفضّلة' } },
-    { k: 'message', step: 4, label: { en: 'Project description', ar: 'وصف المشروع' } },
-  ];
-  const fieldValue = (v, k) => (k === 'location' ? [v.regionText, v.city].filter(Boolean).join(' — ') : v[k]);
-
+  /* ---------------------------------------------------------------- summary on step 3 */
   const renderReview = () => {
-    const v = values();
-    $('[data-wizard-review]', form).innerHTML = FIELDS.map((f) => {
-      const val = fieldValue(v, f.k);
-      const ltr = ['email', 'phone'].includes(f.k) ? ' dir="ltr"' : '';
-      return `<div class="contact-review__row"><dt>${esc(t(f.label))}</dt>` +
-        `<dd class="${val ? '' : 'is-empty'}"${ltr}>${esc(val || t(S.notProvided))}</dd>` +
-        `<button class="contact-review__edit" type="button" data-edit="${f.step}" aria-label="${esc(`${t(S.edit)}: ${t(f.label)}`)}"><span>${esc(t(S.edit))}</span></button></div>`;
-    }).join('');
-    const r = routeOf(v.region);
-    const tpl = v.region === 'other' ? S.routeOther : S.route;
-    $('[data-wizard-route-text]', form).innerHTML = fmt(t(tpl), { office: esc(t(r === 'egypt' ? S.officeEgypt : S.officeKsa)), email: `<bdi dir="ltr">${esc(EMAIL[r])}</bdi>` });
+    const r = routeOf(val('region'));
+    const location = [labelOf('region'), val('city')].filter(Boolean).join(', ');
+    const brief = val('message');
+    const rows = [
+      ['type', 1, labelOf('type')],
+      ['location', 2, location],
+      ['budget', 2, budgetText(val('budget'))],
+      ['timeline', 2, labelOf('timeline')],
+      ['message', 2, brief.length > 160 ? `${brief.slice(0, 157).trim()}…` : brief],
+    ];
+    review.innerHTML = `
+      <p class="wiz-review__head">${esc(t(S.summary))}</p>
+      <dl class="wiz-review__list">${rows.map(([k, n, v]) => `
+        <div class="wiz-review__row">
+          <dt>${esc(t(S.rows[k]))}</dt>
+          <dd class="${v ? '' : 'is-empty'}">${esc(v || t(S.notGiven))}</dd>
+          <button class="wiz-review__edit" type="button" data-edit="${n}" aria-label="${esc(`${t(S.edit)}: ${t(S.rows[k])}`)}">${esc(t(S.edit))}</button>
+        </div>`).join('')}
+      </dl>
+      <p class="wiz-review__route"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#route"></use></svg><span>${fmt(esc(t(S.route)), { office: `<strong>${esc(t(S.office[r]))}</strong>`, email: `<bdi dir="ltr">${esc(EMAIL[r])}</bdi>` })}</span></p>`;
   };
 
-  /* step navigation */
+  /* ---------------------------------------------------------------- render the current step */
+  const announce = (msg) => { live.textContent = ''; requestAnimationFrame(() => { live.textContent = msg; }); };
+  const stepText = () => fmt(t(S.stepOf), { n: step, total: TOTAL, name: t(S.steps[step - 1]) });
   const render = ({ focus = false, dir = 0 } = {}) => {
-    steps.forEach((s) => {
-      const on = parseInt(s.dataset.step, 10) === step;
-      s.hidden = !on;
-      s.classList.remove('is-entering', 'is-back');
-      if (on && dir && !prefersReducedMotion()) { void s.offsetWidth; s.classList.add('is-entering'); if (dir < 0) s.classList.add('is-back'); }
+    panels.forEach((p) => {
+      const on = parseInt(p.dataset.step, 10) === step;
+      p.hidden = !on;
+      p.classList.remove('is-entering', 'is-back');
+      if (on && dir && !prefersReducedMotion()) { void p.offsetWidth; p.classList.add('is-entering'); if (dir < 0) p.classList.add('is-back'); }
     });
-    bar.querySelector('span').style.setProperty('--progress', String(step / TOTAL));
-    bar.setAttribute('aria-valuenow', String(step));
-    bar.setAttribute('aria-valuetext', `${fmt(t(S.stepOf), { n: step, total: TOTAL })}: ${t(STEP_NAMES[step - 1])}`);
-    count.textContent = `${pad2(step)} / ${pad2(TOTAL)}`;
-    name.textContent = t(STEP_NAMES[step - 1]);
-    backBtn.hidden = step === 1;
-    if (step === TOTAL) toReview = false;
-    nextLabel.textContent = t(step === TOTAL ? S.send : toReview ? S.toReview : S.continue);
-    $('use', nextBtn)?.setAttribute('href', `assets/icons/sprite.svg#${step === TOTAL ? 'send' : 'arrow-right'}`);
-    stepper.forEach((b) => {
+    stepBtns.forEach((b) => {
       const n = parseInt(b.dataset.goto, 10);
       b.disabled = n > maxReached;
-      b.classList.toggle('is-done', n < step || (n <= maxReached && n !== step));
+      b.classList.toggle('is-done', n < step || (n !== step && n < maxReached));
       if (n === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
     });
-    if (step === TOTAL) renderReview();
+    stepsNav.style.setProperty('--progress', String((step - 1) / (TOTAL - 1)));
+    backBtn.hidden = step === 1;
+    const final = step === TOTAL;
+    if (final) toSummary = false;
+    nextLabel.textContent = t(final ? S.send : toSummary ? S.toSummary : S.continue);
+    nextBtn.classList.toggle('btn--primary', final);
+    nextBtn.classList.toggle('btn--dark', !final);
+    $('use', nextBtn)?.setAttribute('href', `assets/icons/sprite.svg#${final ? 'send' : 'arrow-right'}`);
+    note.hidden = !final;
+    if (final) renderReview();
     if (focus) {
-      const title = $('.contact-step__title', steps[step - 1]);
-      const top = wizard.getBoundingClientRect().top;
-      if (top < headerH() || top > window.innerHeight * 0.6) goTo(wizard, { gap: 24 });
-      title?.focus({ preventScroll: true });
-      live.textContent = `${fmt(t(S.stepOf), { n: step, total: TOTAL })}: ${t(STEP_NAMES[step - 1])}`;
+      const top = anchor.getBoundingClientRect().top;
+      const wtop = wizard.getBoundingClientRect().top;
+      if (wtop < headerH() + 8 || top > window.innerHeight * 0.55) scrollTo(wizard, { gap: 24, immediate: prefersReducedMotion() });
+      $('.wiz__title', panels[step - 1])?.focus({ preventScroll: true });
+      announce(stepText());
     }
     save();
   };
-  const stepEl = (n) => steps[n - 1];
   const go = (n, opts = {}) => {
     const target = Math.max(1, Math.min(TOTAL, n));
     const dir = target > step ? 1 : target < step ? -1 : 0;
@@ -667,51 +581,42 @@ function initWizard() {
     maxReached = Math.max(maxReached, step);
     render({ focus: true, dir, ...opts });
   };
-  const validateStep = (n) => validateForm(stepEl(n));
-  const advance = () => go(toReview ? TOTAL : step + 1);
+  const validateStep = (n) => validateForm(panels[n - 1]);
+  const advance = () => go(toSummary ? TOTAL : step + 1);
   const next = () => {
-    if (!validateStep(step)) {
-      live.textContent = t(S.fixStep);
-      return;
-    }
+    if (!validateStep(step)) { announce(t(S.fixStep)); return; }
     advance();
   };
 
-  // Intercept submit before core/ui.js (capture phase): Enter / Continue advance one step at a time.
+  // data-validate="manual": core keeps inline validation, the page drives the steps.
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    e.stopImmediatePropagation();
-    if (step < TOTAL) next();
-    else submit();
-  }, true);
+    if (step < TOTAL) next(); else submit();
+  });
   backBtn.addEventListener('click', () => go(step - 1));
-  stepper.forEach((b) => b.addEventListener('click', () => {
+  stepBtns.forEach((b) => b.addEventListener('click', () => {
     const n = parseInt(b.dataset.goto, 10);
-    if (n <= maxReached && success.hidden) go(n);
+    if (n <= maxReached && success.hidden && n !== step) go(n);
   }));
   form.addEventListener('click', (e) => {
     const ed = e.target.closest('[data-edit]');
-    if (ed) { toReview = true; go(parseInt(ed.dataset.edit, 10)); }
+    if (ed) { toSummary = true; go(parseInt(ed.dataset.edit, 10)); }
   });
-  // Radio groups: core validates the changed radio only → clear stale state on its siblings.
   form.addEventListener('change', (e) => {
-    const el = e.target;
-    if (el.type === 'radio') {
-      $$(`input[name="${CSS.escape(el.name)}"]`, form).forEach((r) => { if (r !== el) { r.__rule = null; r.removeAttribute('aria-invalid'); } });
-      if (el.name === 'region') renderBudget();
-    }
+    if (e.target.name === 'region') renderBudgets();
     save();
   });
   form.addEventListener('input', save);
-  // Selecting a tile with the mouse on steps 1–2 moves on automatically (keyboard users press Enter).
+  // Picking a card on step 1 with the mouse or touch moves on by itself (keyboard users press Enter).
   form.addEventListener('click', (e) => {
-    const tile = e.target.closest('.contact-tile');
-    if (!tile || e.detail === 0) return; // e.detail 0 = keyboard-generated click
-    const at = step;
-    if (at <= 2) setTimeout(() => { if (step === at && success.hidden && form.querySelector(`[data-step="${at}"] input:checked`)) advance(); }, prefersReducedMotion() ? 0 : 280);
+    const opt = e.target.closest('.wiz-opt');
+    if (!opt || e.detail === 0 || step !== 1) return;
+    setTimeout(() => {
+      if (step === 1 && success.hidden && form.querySelector('input[name="type"]:checked')) advance();
+    }, prefersReducedMotion() ? 0 : 320);
   });
 
-  /* submit → mailto + success */
+  /* ---------------------------------------------------------------- submit: mailto + success */
   const makeRef = (r) => {
     const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     const rnd = new Uint8Array(4);
@@ -720,18 +625,26 @@ function initWizard() {
     const d = new Date();
     return `MOB-${r === 'egypt' ? 'EGY' : 'KSA'}-${String(d.getFullYear()).slice(2)}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}-${code}`;
   };
-  const buildText = (v, ref, msgOverride) => {
-    const L = (en, ar) => t({ en, ar });
-    const d = new Date();
+  const buildText = (ref, msgOverride) => {
+    // The subject already names the inquiry and the email carries its date. Optional answers left empty are
+    // left out (shorter mailto: URLs matter in Arabic, where every letter is percent-encoded to 6 characters).
+    const line = (label, v) => (v ? [`${t(label)}: ${v}`] : []);
     const lines = [
-      L('MOBCO Group — Project inquiry', 'مجموعة موبكو — طلب مشروع'),
-      `${L('Reference', 'الرقم المرجعي')}: ${ref}`,
-      `${L('Date', 'التاريخ')}: ${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
+      ...line(S.mailRef, ref),
       '',
-      ...FIELDS.filter((f) => f.k !== 'message').map((f) => `${t(f.label)}: ${fieldValue(v, f.k) || '—'}`),
+      ...line(S.rows.type, labelOf('type')),
+      ...line(S.mailFor, company && companyName(company) ? t(companyName(company)) : ''),
+      ...line(S.rows.location, [labelOf('region'), val('city')].filter(Boolean).join(', ')),
+      ...line(S.rows.budget, budgetText(val('budget'))),
+      ...line(S.rows.timeline, labelOf('timeline')),
       '',
-      `${L('Project description', 'وصف المشروع')}:`,
-      msgOverride ?? v.message,
+      ...line(S.mailName, val('name')),
+      ...line(S.mailCompany, val('company')),
+      ...line(S.mailEmail, val('email')),
+      ...line(S.mailPhone, val('phone')),
+      '',
+      `${t(S.mailBrief)}:`,
+      msgOverride ?? val('message'),
     ];
     return lines.join('\n');
   };
@@ -745,186 +658,108 @@ function initWizard() {
     a.remove();
   };
   const submit = async () => {
-    for (let n = 1; n < TOTAL; n++) {
-      if (!validateStep(n)) { go(n); validateStep(n); live.textContent = t(S.fixStep); return; }
+    for (let n = 1; n <= TOTAL; n++) {
+      if (!validateStep(n)) {
+        if (n !== step) { go(n); validateStep(n); }
+        announce(t(S.fixStep));
+        return;
+      }
     }
-    const v = values();
-    const r = routeOf(v.region);
+    const r = routeOf(val('region'));
     const ref = makeRef(r);
     const to = EMAIL[r];
-    const subject = `${t({ en: 'Project inquiry', ar: 'طلب مشروع' })} ${ref} — ${v.type}${v.company ? ` / ${v.company}` : ''}`;
-    const full = buildText(v, ref);
-    let body = full, truncated = false;
-    const MAX = 1800; // conservative mailto: length for desktop mail clients
-    const mk = (b) => `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(b)}`;
-    if (mk(body).length > MAX) {
+    const subject = [`${t(S.mailSubject)} ${ref}`, labelOf('type'), company && companyName(company) ? t(companyName(company)) : val('company')].filter(Boolean).join(' · ');
+    const full = buildText(ref);
+    const mk = (body) => `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    let href = mk(full), truncated = false;
+    const MAX = 2000; // conservative mailto: length (Windows mail handlers stop around 2,048 characters)
+    if (href.length > MAX) {
       truncated = true;
-      let msg = v.message;
-      while (msg.length > 40 && mk(buildText(v, ref, `${msg}…`)).length > MAX) msg = msg.slice(0, Math.floor(msg.length * 0.85));
-      body = buildText(v, ref, `${msg}… [${t({ en: 'full text on your clipboard — please paste', ar: 'النص الكامل في الحافظة — يُرجى لصقه' })}]`);
+      let msg = val('message');
+      while (msg.length > 40 && mk(buildText(ref, `${msg}… [${t(S.mailClip)}]`)).length > MAX) msg = msg.slice(0, Math.floor(msg.length * 0.85));
+      href = mk(buildText(ref, `${msg}… [${t(S.mailClip)}]`));
       await copyText(full);
     }
-    last = { ref, to, href: mk(body), text: full, region: r };
-    openMail(last.href);
-    showSuccess(truncated);
+    last = { ref, to, href, text: full, region: r, name: val('name'), truncated };
+    openMail(href);
+    showSuccess();
   };
-  const renderSuccess = (truncated = false) => {
+  const renderSuccess = () => {
     if (!last) return;
-    $('[data-success-text]', success).innerHTML = fmt(t(S.successText), { email: `<bdi dir="ltr">${esc(last.to)}</bdi>` }) + (truncated ? ` ${esc(t(S.truncated))}` : '');
+    const first = last.name.split(/\s+/)[0] || '';
+    $('[data-success-title]', success).textContent = first ? fmt(t(S.thanks), { name: first }) : t(S.thanksAnon);
+    $('[data-success-text]', success).innerHTML = fmt(esc(t(S.doneText)), { email: `<bdi dir="ltr">${esc(last.to)}</bdi>` }) + (last.truncated ? ` ${esc(t(S.truncated))}` : '');
     $('[data-success-ref]', success).textContent = last.ref;
-    $('[data-success-alt]', success).textContent = fmt(t(S.successAlt), { email: last.to });
+    $('[data-success-alt]', success).innerHTML = fmt(esc(t(S.doneAlt)), { email: `<bdi dir="ltr">${esc(last.to)}</bdi>` });
+    const ph = PHONE[last.region];
+    $('[data-success-call]', success).innerHTML = fmt(esc(t(S.doneCall)), { office: esc(t(S.office[last.region])), phone: `<a class="text-link" href="${ph.href}"><bdi dir="ltr">${esc(ph.display)}</bdi></a>` });
+    $('[data-success-mail]', success).setAttribute('href', last.href);
   };
-  const showSuccess = (truncated) => {
-    renderSuccess(truncated);
+  const showSuccess = () => {
+    renderSuccess();
     form.hidden = true;
-    progress.hidden = true;
+    stepsNav.hidden = true;
+    forBox.hidden = true;
     success.hidden = false;
-    stepper.forEach((b) => { b.disabled = true; b.classList.add('is-done'); b.removeAttribute('aria-current'); });
     store.remove(STORE_KEY, 'session');
-    live.textContent = fmt(t(S.ready), { ref: last.ref });
-    goTo(wizard, { gap: 24 });
+    announce(fmt(t(S.ready), { ref: last.ref }));
+    const top = wizard.getBoundingClientRect().top;
+    if (top < headerH() || top > window.innerHeight * 0.5) scrollTo(wizard, { gap: 24, immediate: prefersReducedMotion() });
     success.focus({ preventScroll: true });
   };
-  $('[data-success-mail]', success).addEventListener('click', () => last && openMail(last.href));
-  $('[data-success-copy]', success).addEventListener('click', async (e) => {
-    if (!last) return;
-    const ok = await copyText(last.text);
-    toast(ok ? S.copiedInquiry : { en: 'Could not copy — please copy manually', ar: 'تعذّر النسخ، يُرجى النسخ يدويًا' }, { type: ok ? 'success' : 'error', duration: 2600 });
-    e.currentTarget?.classList?.add('is-copied');
-  });
-  $('[data-success-copy-ref]', success).addEventListener('click', async (e) => {
-    if (!last) return;
-    const btn = e.currentTarget;
-    const ok = await copyText(last.ref);
-    toast(ok ? S.copiedRef : { en: 'Could not copy — please copy manually', ar: 'تعذّر النسخ، يُرجى النسخ يدويًا' }, { type: ok ? 'success' : 'error', duration: 2600 });
-    btn.classList.add('is-copied');
-    setTimeout(() => btn.classList.remove('is-copied'), 1600);
-  });
+  const copyWith = async (text, okMsg, btn) => {
+    const ok = await copyText(text);
+    toast(ok ? okMsg : S.copyFail, { type: ok ? 'success' : 'error', duration: 2600 });
+    if (btn && ok) { btn.classList.add('is-copied'); setTimeout(() => btn.classList.remove('is-copied'), 1600); }
+  };
+  $('[data-success-copy]', success).addEventListener('click', (e) => last && copyWith(last.text, S.copiedInquiry, e.currentTarget));
+  $('[data-success-copy-ref]', success).addEventListener('click', (e) => last && copyWith(last.ref, S.copiedRef, e.currentTarget));
   $('[data-success-reset]', success).addEventListener('click', () => {
     form.reset();
     last = null;
+    company = null;
     success.hidden = true;
     form.hidden = false;
-    progress.hidden = false;
-    step = 1; maxReached = 1; toReview = false;
-    setTimeout(() => { renderBudget(); renderSize(); renderCounter(); render({ focus: true }); });
+    stepsNav.hidden = false;
+    step = 1; maxReached = 1; toSummary = false;
+    setTimeout(() => { renderFor(); renderBudgets(); renderCounter(); render({ focus: true }); });
   });
 
   onLang(() => {
-    renderSectorNames();
-    renderBudget();
-    renderSize();
+    renderBudgets();
+    renderFor();
     if (last && !success.hidden) renderSuccess();
-    if (success.hidden) render();
+    else render();
   });
 
-  // init
-  renderBudget();
-  const restored = restore();
-  renderSize();
+  /* ---------------------------------------------------------------- boot: restore, then deep-link prefill */
+  const q = { company: getParam('company'), office: getParam('office'), type: getParam('type') };
+  const prefillSig = [q.company, q.office, q.type].map((v) => v || '').join('|');
+  const saved = readSaved();
+  let restored = false;
+  if (saved?.values) {
+    FIELDS.forEach((k) => setValue(k, saved.values[k]));
+    maxReached = Math.min(TOTAL, Math.max(1, parseInt(saved.maxReached, 10) || 1));
+    step = Math.min(maxReached, Math.max(1, parseInt(saved.step, 10) || 1));
+    company = COMPANY_TYPE[saved.company] ? saved.company : null;
+    restored = FIELDS.some((k) => saved.values[k]);
+  }
+  if (prefillSig !== '||' && saved?.sig !== prefillSig) {
+    // A fresh deep link (not a reload of the same one) wins over older answers for the fields it carries.
+    if (COMPANY_TYPE[q.company]) { company = q.company; setValue('type', COMPANY_TYPE[q.company]); }
+    if (TYPE_ALIAS[q.type]) setValue('type', TYPE_ALIAS[q.type]);
+    if (q.office === 'ksa' || q.office === 'egypt') setValue('region', q.office);
+    step = 1;
+    restored = false;
+  }
+  renderFor();
+  renderBudgets();
   renderCounter();
   render();
   if (restored) toast(S.restored, { type: 'info', duration: 3000 });
 }
 
-/* =====================================================================
-   4. General enquiries — quick form → mailto
-   ===================================================================== */
-function initQuickForm() {
-  const form = $('[data-quickform]');
-  if (!form) return;
-  const note = $('[data-quickform-note]', form);
-  const done = $('[data-quickform-success]');
-  const doneText = $('[data-quickform-success-text]', done);
-  let lastTo = '';
-  const target = () => {
-    const office = form.elements.office.value === 'egypt' ? 'egypt' : 'ksa';
-    return form.elements.topic.value === 'careers' ? CAREERS_EMAIL[office] : EMAIL[office];
-  };
-  const renderNote = () => { note.textContent = fmt(t(S.quickNote), { email: target() }); };
-  form.addEventListener('change', (e) => { if (['topic', 'office'].includes(e.target.name)) renderNote(); });
-  form.addEventListener('validsubmit', (e) => {
-    e.preventDefault(); // keep core from toasting/resetting — we hand off to the mail app instead
-    const { data } = e.detail;
-    const to = target();
-    lastTo = to;
-    const topic = form.elements.topic.options[form.elements.topic.selectedIndex].textContent.trim();
-    const subject = `${topic} — ${t({ en: 'Website enquiry', ar: 'استفسار عبر الموقع' })} — ${data.name}`;
-    const body = `${data.message}\n\n— ${data.name}\n${data.email}`;
-    const a = document.createElement('a');
-    a.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.slice(0, 1400))}`;
-    document.body.appendChild(a); a.click(); a.remove();
-    doneText.textContent = fmt(t(S.quickDone), { email: to });
-    form.hidden = true;
-    done.hidden = false;
-    done.focus({ preventScroll: true });
-    toast(S.quickToast, { type: 'success', duration: 3200 });
-  });
-  $('[data-quickform-reset]', done).addEventListener('click', () => {
-    form.reset();
-    done.hidden = true;
-    form.hidden = false;
-    setTimeout(renderNote);
-    form.elements.name.focus();
-  });
-  onLang(() => { renderNote(); if (!done.hidden) doneText.textContent = fmt(t(S.quickDone), { email: lastTo }); });
-  renderNote();
-}
-
-/* =====================================================================
-   5. Office card "View on map" flash + hero chip to the wizard
-   ===================================================================== */
-function initMisc() {
-  document.addEventListener('click', (e) => {
-    const toMap = e.target.closest('[data-map-show]');
-    if (toMap) {
-      const stage = $('[data-map-stage]');
-      stage?.classList.remove('is-flash');
-      void stage?.offsetWidth;
-      stage?.classList.add('is-flash');
-    }
-  });
-}
-
-/* =====================================================================
-   6. Deep links (#inquiry, #map…): re-align once fonts/layout have settled
-   ===================================================================== */
-// core/motion.js jumps to the hash ~60ms after init; web fonts can still shift the layout afterwards.
-function initDeepLink() {
-  if (!location.hash || location.hash.length < 2) return;
-  let target = null;
-  try { target = document.querySelector(decodeURIComponent(location.hash)); } catch { return; }
-  if (!target) return;
-  let touched = false;
-  const mark = () => { touched = true; };
-  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => window.addEventListener(ev, mark, { once: true, passive: true }));
-  const realign = () => { if (!touched) goTo(target, { immediate: true }); };
-  setTimeout(realign, 140); // right after core's own hash jump (~60ms), which lands one header too low with Lenis
-  window.addEventListener('load', () => (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(realign, 120)), { once: true });
-}
-
-/* Same-page anchors (#inquiry, #map, contact.html#inquiry in the header): handled here in the capture phase
-   so the header offset is applied once (see goTo). Core motion.js skips clicks that are already handled. */
-function initAnchors() {
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest?.('a[href*="#"]');
-    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    if (a.target && a.target !== '_self') return;
-    const url = new URL(a.href, location.href);
-    if (url.origin !== location.origin || url.pathname !== location.pathname || !url.hash || url.hash === '#') return;
-    let target = null;
-    try { target = document.querySelector(decodeURIComponent(url.hash)); } catch { return; }
-    if (!target) return;
-    e.preventDefault();
-    // from the mobile drawer: let header.js close it (and unlock scrolling) first
-    if (document.documentElement.classList.contains('nav-open')) setTimeout(() => goTo(target)); else goTo(target);
-    if (location.hash !== url.hash) history.pushState(null, '', url.hash);
-    if (!target.matches('a,button,input,select,textarea,[tabindex]')) target.setAttribute('tabindex', '-1');
-    target.focus({ preventScroll: true });
-  }, true);
-}
-
 /* ===================================================================== boot */
-for (const [name, fn] of [['clocks', initClocks], ['map', initMap], ['wizard', initWizard], ['quickform', initQuickForm], ['misc', initMisc], ['anchors', initAnchors], ['deeplink', initDeepLink]]) {
+for (const [name, fn] of [['clocks', initClocks], ['map', initMap], ['wizard', initWizard]]) {
   try { fn(); } catch (err) { console.error(`[contact] ${name} failed`, err); }
 }

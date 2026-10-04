@@ -1,4 +1,4 @@
-// MOBCO pages/projects.js — "Project Explorer"
+// MOBCO pages/projects.js: "Project Explorer"
 //
 //  1. Hero ring ............ 3D CircularCarousel of the FEATURED projects (shared component, not edited here)
 //  2. Category tabs ........ role=tablist over PROJECT_CATEGORIES (+ All), counts, arrows/Home/End, RTL-mirrored
@@ -7,8 +7,8 @@
 //     Ring view ............ second CircularCarousel (preset 'orbit') of the filtered set, capped at RING_CAP
 //     Map view ............. dot world map, region pins (KSA clustered → zoom to KSA city pins), TBC side list
 //     List view ............ FLIP rows + pointer-following preview (fine pointers)
-//  4. Project viewer ....... full-screen overlay: pan/zoom stage, crop thumbnails, Image|Compare|Blueprint
-//                            slider, facts, 3D link, prev/next in context, copy link, keyboard, deep links (#slug)
+//  4. Project viewer ....... full-screen overlay: pan/zoom stage, crop thumbnails, facts, 3D link,
+//                            prev/next in context, copy link, keyboard, deep links (#slug)
 //  URL sync: ?category=&region=&view=&q=&sort=  (+ legacy ?sector=<SECTORS id> → category) and #<slug>.
 //  Everything user-facing is bilingual via t() and re-rendered on langchange.
 
@@ -39,48 +39,46 @@ const S = {
   all: { en: 'All', ar: 'الكل' },
   allProjects: { en: 'All projects', ar: 'جميع المشاريع' },
   featured: { en: 'Featured projects', ar: 'المشاريع المميّزة' },
-  pause: { en: 'Pause rotation', ar: 'إيقاف الدوران مؤقتًا' },
-  play: { en: 'Resume rotation', ar: 'استئناف الدوران' },
+  pause: { en: 'Pause', ar: 'إيقاف مؤقت' },
+  play: { en: 'Play', ar: 'تشغيل' },
   view: { en: 'View', ar: 'عرض' },
   open: { en: 'Open project', ar: 'افتح المشروع' },
-  tbc: { en: 'Location to be confirmed', ar: 'الموقع قيد التأكيد' },
-  cityNotStated: { en: 'City not stated', ar: 'المدينة غير محددة' },
-  showing: { en: 'Showing {shown} of {total}', ar: 'عرض {shown} من أصل {total}' },
-  loadMore: { en: 'Load more projects', ar: 'عرض المزيد من المشاريع' },
-  remaining: { en: '{n} more', ar: '{n} إضافية' },
+  otherProjects: { en: 'Other projects', ar: 'مشاريع أخرى' },
+  noProjects: { en: 'No projects', ar: 'لا توجد مشاريع' },
+  acrossKsa: { en: 'Across the Kingdom', ar: 'في أنحاء المملكة' },
+  showing: { en: '{shown} of {total}', ar: '{shown} من {total}' },
+  loadMore: { en: 'Show more', ar: 'عرض المزيد' },
   ringCap: {
-    en: 'The ring shows the first {cap} of {total} projects — refine the filters or switch to Grid to see them all.',
-    ar: 'تعرض الحلقة أول {cap} من أصل {total} مشروعًا — استخدم المرشّحات أو انتقل إلى عرض الشبكة لرؤيتها جميعًا.',
+    en: 'The ring holds {cap} projects. Switch to Grid to see all {total}.',
+    ar: 'تتّسع الحلقة لـ{cap} مشروعًا. انتقل إلى الشبكة لعرض المشاريع كلها ({total}).',
   },
-  ringHint: { en: 'Drag or use the arrow keys to spin · select a project to open it', ar: 'اسحب أو استخدم مفاتيح الأسهم للتدوير · اختر مشروعًا لفتحه' },
+  ringHint: { en: 'Drag to spin', ar: 'اسحب للتدوير' },
   whereWeBuild: { en: 'Where we build', ar: 'أين نبني' },
-  mapIntro: { en: 'Select a pin or a country to list its projects.', ar: 'اختر دبوسًا أو دولةً لعرض مشاريعها.' },
   showAllKsa: { en: 'All of Saudi Arabia', ar: 'كل المملكة العربية السعودية' },
-  noneHere: { en: 'No projects here with the current filters.', ar: 'لا توجد مشاريع هنا ضمن المرشّحات الحالية.' },
+  noneHere: { en: 'No projects match these filters.', ar: 'لا توجد مشاريع تطابق هذه المرشّحات.' },
   search: { en: 'Search', ar: 'البحث' },
   category: { en: 'Category', ar: 'الفئة' },
   country: { en: 'Country', ar: 'الدولة' },
   type: { en: 'Type', ar: 'النوع' },
   highlights: { en: 'Highlights', ar: 'أبرز الملامح' },
   explore3d: { en: 'Explore in 3D', ar: 'استكشف بالأبعاد الثلاثية' },
-  illustrative: { en: 'Illustrative massing model', ar: 'نموذج كتلي توضيحي' },
-  enquire: { en: 'Enquire about a similar project', ar: 'استفسر عن مشروع مماثل' },
+  illustrative: { en: 'Illustrative model, not to scale.', ar: 'نموذج توضيحي، ليس بمقياس رسم.' },
+  enquire: { en: 'Discuss a similar project', ar: 'ناقش معنا مشروعًا مماثلًا' },
   prev: { en: 'Previous', ar: 'السابق' },
   next: { en: 'Next', ar: 'التالي' },
   prevProject: { en: 'Previous project', ar: 'المشروع السابق' },
   nextProject: { en: 'Next project', ar: 'المشروع التالي' },
   copied: { en: 'Project link copied', ar: 'تم نسخ رابط المشروع' },
-  copyFail: { en: 'Could not copy the link', ar: 'تعذّر نسخ الرابط' },
+  copyFail: { en: 'Couldn’t copy the link', ar: 'تعذّر نسخ الرابط' },
   fullView: { en: 'Full view', ar: 'المنظر الكامل' },
-  detail: { en: 'detail', ar: 'تفصيل' },
+  detail: { en: 'Detail', ar: 'تفصيل' },
   viewer: { en: 'image viewer', ar: 'عارض الصور' },
-  ringRegion: { en: 'Featured projects — 3D ring', ar: 'المشاريع المميّزة — حلقة ثلاثية الأبعاد' },
-  ring2Region: { en: 'Filtered projects — 3D ring', ar: 'المشاريع المُرشَّحة — حلقة ثلاثية الأبعاد' },
-  blueprintPct: { en: '{n}% blueprint', ar: '{n}٪ مخطط أزرق' },
+  ringRegion: { en: 'Featured projects', ar: 'المشاريع المميّزة' },
+  ring2Region: { en: 'Projects', ar: 'المشاريع' },
 };
 const fmt = (obj, vars) => t(obj).replace(/\{(\w+)\}/g, (_, k) => (k in vars ? vars[k] : ''));
 
-/* Bilingual counted nouns (Arabic: 1 / 2 / 3–10 / 11+). */
+/* Bilingual counted nouns (Arabic: 1 / 2 / 3 to 10 / 11+). */
 const NOUN = {
   project: { en: ['project', 'projects'], ar: ['مشروع واحد', 'مشروعان', 'مشاريع', 'مشروعًا'] },
   sector: { en: ['sector', 'sectors'], ar: ['قطاع واحد', 'قطاعان', 'قطاعات', 'قطاعًا'] },
@@ -88,6 +86,7 @@ const NOUN = {
 };
 function counted(n, noun) {
   const f = NOUN[noun];
+  if (n === 0 && noun === 'project') return t(S.noProjects);
   if (!isAr()) return `${n} ${n === 1 ? f.en[0] : f.en[1]}`;
   if (n === 1) return f.ar[0];
   if (n === 2) return f.ar[1];
@@ -114,7 +113,7 @@ const catIcon = (p) => catOf(p)?.icon || 'landmark';
 const regionName = (p) => (p.region ? t(getRegion(p.region)?.name) : '');
 const locText = (p) => (p.location ? t(p.location) : '');
 
-/** Known cities (approximate coordinates — map pins only). Matched against the English location. */
+/** Known cities (approximate coordinates, map pins only). Matched against the English location. */
 const CITIES = [
   { id: 'riyadh', region: 'ksa', re: /riyadh/i, lonlat: [46.6753, 24.7136], name: { en: 'Riyadh', ar: 'الرياض' } },
   { id: 'jeddah', region: 'ksa', re: /jeddah/i, lonlat: [39.1925, 21.4858], name: { en: 'Jeddah', ar: 'جدة' } },
@@ -290,7 +289,7 @@ const ringItem = (p, thumb) => ({
   data: { slug: p.slug },
 });
 const heroCardWidth = () => (innerWidth < 640 ? 172 : innerWidth < 1024 ? 220 : innerWidth < 1800 ? 264 : 300);
-/** 480px thumbs are sharp enough while the card needs ≤ ~560 device pixels (most screens) — ~3× lighter than full size. */
+/** 480px thumbs are sharp enough while the card needs ≤ ~560 device pixels (most screens), ~3× lighter than full size. */
 const heroThumbs = () => heroCardWidth() * (window.devicePixelRatio || 1) <= 560;
 const heroItems = () => FEATURED.map((p) => ringItem(p, heroThumbs()));
 
@@ -331,7 +330,7 @@ function initHeroRing() {
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) E.ringToggle.hidden = true;
       updateRingToggle();
     } catch (err) {
-      console.error('[projects] hero ring failed — showing the static fallback', err);
+      console.error('[projects] hero ring failed, showing the static fallback', err);
       E.hero.setAttribute('data-ring-state', 'failed');
     }
   });
@@ -541,7 +540,7 @@ function resetFilters() {
   update();
 }
 function localizeSortOptions() {
-  const labels = { featured: { en: 'Featured first', ar: 'المميّزة أولًا' }, az: { en: 'A–Z', ar: 'أبجديًا' }, category: { en: 'By category', ar: 'حسب الفئة' } };
+  const labels = { featured: { en: 'Featured first', ar: 'المميّزة أولًا' }, az: { en: 'A to Z', ar: 'أبجديًا' }, category: { en: 'By category', ar: 'حسب الفئة' } };
   $$('option', E.sort).forEach((o) => { o.textContent = t(labels[o.value]); });
 }
 
@@ -566,7 +565,7 @@ function renderStatus(list) {
   if (state.view === 'grid' && total > state.limit) text = `${fmt(S.showing, { shown: state.limit, total })} ${nounFor(total, 'project')}`;
   else if (state.view === 'ring' && total > RING_CAP) text = `${fmt(S.showing, { shown: RING_CAP, total })} ${nounFor(total, 'project')}`;
   else text = counted(total, 'project');
-  if (isFiltered()) text += ` — ${contextLabel()}`;
+  if (isFiltered()) text += ` · ${contextLabel()}`;
   E.status.textContent = text;
 }
 
@@ -593,7 +592,7 @@ function renderView(list, animate) {
 }
 
 /* ======================================================================
-   FLIP (First, Last, Invert, Play) — own implementation, Web Animations API
+   FLIP (First, Last, Invert, Play): own implementation, Web Animations API
    ====================================================================== */
 function flip(container, nextEls, animate) {
   const doAnim = animate && !reduced() && typeof Element.prototype.animate === 'function';
@@ -658,9 +657,9 @@ function cardEl(p) {
   li.className = 'pj-item';
   li.id = p.slug;
   li.dataset.slug = p.slug;
-  const loc = locText(p) || t(S.tbc);
+  const loc = locText(p);
   li.innerHTML = `
-    <a class="pj-card${p.location ? '' : ' is-tbc'}" href="projects.html#${esc(p.slug)}" data-slug="${esc(p.slug)}" data-cursor="view" data-cursor-label="${esc(t(S.view))}">
+    <a class="pj-card" href="projects.html#${esc(p.slug)}" data-slug="${esc(p.slug)}" data-cursor="view" data-cursor-label="${esc(t(S.view))}">
       <span class="pj-card__media">
         ${cardPicture(p, { sizes: '(min-width: 1024px) 420px, (min-width: 640px) 46vw, 92vw' /* alt="": the link text already names the project */ })}
         <span class="pj-card__idx num" aria-hidden="true" data-idx></span>
@@ -669,7 +668,7 @@ function cardEl(p) {
       <span class="pj-card__body">
         <span class="pj-card__cat">${icon(catIcon(p), 'icon--sm')}<span>${esc(catName(p))}</span></span>
         <span class="pj-card__title" role="heading" aria-level="3">${esc(t(p.name))}</span>
-        <span class="pj-card__loc">${icon('map-pin', 'icon--sm')}<span>${esc(loc)}</span></span>
+        ${loc ? `<span class="pj-card__loc">${icon('map-pin', 'icon--sm')}<span>${esc(loc)}</span></span>` : ''}
       </span>
     </a>`;
   cardCache.set(p.slug, li);
@@ -688,7 +687,7 @@ function renderGrid(list, animate) {
   const rest = list.length - shown.length;
   E.more.hidden = rest <= 0;
   if (rest > 0) {
-    E.moreLabel.textContent = `${t(S.loadMore)} · ${fmt(S.remaining, { n: rest })}`;
+    E.moreLabel.textContent = t(S.loadMore);
     E.moreProgress.style.transform = `scaleX(${shown.length / list.length})`;
   }
   scan(E.grid);
@@ -721,7 +720,7 @@ function rowEl(p) {
       <span class="pj-row__thumb"><img src="${imgSrc(p.image, true, 'jpg')}" alt="" width="96" height="64" loading="lazy" decoding="async" style="object-position:${esc(p.pos || '50% 50%')}"></span>
       <span class="pj-row__name"><span class="pj-row__title">${esc(t(p.name))}</span><span class="pj-row__sub">${esc(catName(p))}${p.location ? ` · ${esc(locText(p))}` : ''}</span></span>
       <span class="pj-row__cat">${icon(catIcon(p), 'icon--sm')}<span>${esc(catName(p))}</span></span>
-      <span class="pj-row__loc${p.location ? '' : ' is-tbc'}">${esc(locText(p) || t(S.tbc))}</span>
+      <span class="pj-row__loc">${esc(locText(p))}</span>
       <span class="pj-row__arrow" aria-hidden="true">${icon('arrow-right', 'icon--dir')}</span>
     </a>`;
   rowCache.set(p.slug, li);
@@ -1001,7 +1000,7 @@ function renderMap(list) {
         if (g.length) groups.push({ id: c.id, name: t(c.name), items: g });
       });
       const none = items.filter((p) => !cityOf(p));
-      if (none.length) groups.push({ id: 'none', name: t(S.cityNotStated), items: none });
+      if (none.length) groups.push({ id: 'none', name: t(S.acrossKsa), items: none });
       const shown = MAP.city ? groups.filter((g) => g.id === MAP.city) : groups;
       if (MAP.city) html += `<button class="pj-map__all" type="button" data-map-city="${esc(MAP.city)}">${icon('x', 'icon--sm')}<span>${esc(t(S.showAllKsa))}</span></button>`;
       html += shown.map((g) => `<div class="pj-map__group"><p class="pj-map__gname">${icon('map-pin', 'icon--sm')}<span>${esc(g.name)}</span><span class="num">${g.items.length}</span></p>
@@ -1010,8 +1009,7 @@ function renderMap(list) {
       html += `<ul class="pj-map__rows" role="list">${items.map((p) => mapRow(p, t(r.name))).join('')}</ul>`;
     }
   } else {
-    html += `<div class="pj-map__phead"><p class="eyebrow eyebrow--plain">${esc(t(S.whereWeBuild))}</p>
-      <p class="pj-map__intro">${esc(t(S.mapIntro))}</p></div>
+    html += `<div class="pj-map__phead"><p class="eyebrow eyebrow--plain">${esc(t(S.whereWeBuild))}</p></div>
       <ul class="pj-map__regions" role="list">${REGIONS.map((r) => {
         const n = byRegion(r.id).length;
         return `<li><button class="pj-map__region" type="button" data-map-region="${r.id}"${n ? '' : ' disabled'}>
@@ -1020,15 +1018,15 @@ function renderMap(list) {
     if (!list.some((p) => p.region)) html += `<p class="pj-map__none">${esc(t(S.noneHere))}</p>`;
   }
   if (tbc.length && !MAP.region) {
-    html += `<div class="pj-map__group pj-map__group--tbc"><p class="pj-map__gname">${icon('circle-help', 'icon--sm')}<span>${esc(t(S.tbc))}</span><span class="num">${tbc.length}</span></p>
-      <ul class="pj-map__rows" role="list">${tbc.map((p) => mapRow(p, t(S.tbc))).join('')}</ul></div>`;
+    html += `<div class="pj-map__group pj-map__group--tbc"><p class="pj-map__gname">${icon('layout-grid', 'icon--sm')}<span>${esc(t(S.otherProjects))}</span><span class="num">${tbc.length}</span></p>
+      <ul class="pj-map__rows" role="list">${tbc.map((p) => mapRow(p, t(S.otherProjects))).join('')}</ul></div>`;
   }
   E.mapPanel.innerHTML = html;
   scan(E.mapPanel);
 }
 
 function pinHtml({ x, y, n, label, side, attr, pressed, city = false }) {
-  const aria = `${label} — ${counted(n, 'project')}`;
+  const aria = `${label}, ${counted(n, 'project')}`;
   return `<button class="pj-pin pj-pin--${side}${city ? ' pj-pin--city' : ''}" type="button" ${attr} data-x="${x.toFixed(2)}" data-y="${y.toFixed(2)}" aria-pressed="${pressed}" aria-label="${esc(aria)}">
     <span class="pj-pin__dot"><span class="num">${n}</span></span><span class="pj-pin__label" aria-hidden="true">${esc(label)}</span></button>`;
 }
@@ -1047,8 +1045,6 @@ const V = {
   crop: 0,
   s: 1, tx: 0, ty: 0,
   fw: 0, fh: 0, sw: 0, sh: 0,
-  mode: 'image',
-  split: 50,
   pointers: new Map(),
   gesture: null,
   token: 0,
@@ -1060,11 +1056,6 @@ const VE = V.el ? {
   context: $('[data-pjv-context]', V.el),
   stage: $('[data-pjv-stage]', V.el),
   frames: $$('[data-pjv-frame]', V.el),
-  layerBp: $('[data-pjv-layer="blueprint"]', V.el),
-  split: $('[data-pjv-split]', V.el),
-  handle: $('[data-pjv-split-handle]', V.el),
-  tagBp: $('[data-pjv-tag-bp]', V.el),
-  tagImg: $('[data-pjv-tag-img]', V.el),
   zoomValue: $('[data-pjv-zoom-value]', V.el),
   loader: $('[data-pjv-loader]', V.el),
   thumbs: $('[data-pjv-thumbs]', V.el),
@@ -1080,17 +1071,28 @@ const VE = V.el ? {
   pager: $('[data-pjv-pager]', V.el),
 } : null;
 
-function cropsOf(p) {
+/** Crop caption without a leading "Name, " the panel already shows ("Eastmain, evening render" → "Evening render").
+ *  Captions that use the name inside a phrase ("Victoria 101 at dusk, aerial render") are kept whole. */
+const CAP_SEP = /^\s*[,\u060c:.·|\u2013\u2014-]\s*/;
+function cropCaption(p, g) {
   const name = t(p.name);
+  const cap = (g?.caption && t(g.caption)) || '';
+  if (!cap || cap === name) return '';
+  if (!cap.startsWith(name) || !CAP_SEP.test(cap.slice(name.length))) return cap;
+  const rest = cap.slice(name.length).replace(CAP_SEP, '');
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
+}
+
+function cropsOf(p) {
   const crops = p.gallery.map((g, i) => {
     const detail = i > 0 && g.base === p.image && g.pos && g.pos !== '50% 50%';
-    return { base: g.base, focus: detail ? g.pos : '50% 50%', scale: detail ? 2.2 : 1, caption: t(g.caption) };
+    return { base: g.base, focus: detail ? g.pos : '50% 50%', scale: detail ? 2.2 : 1, caption: cropCaption(p, g) };
   });
   const extra = [['30% 58%', 2], ['70% 42%', 2]];
   for (let i = 0; crops.length < 3 && i < extra.length; i++) {
-    crops.push({ base: p.image, focus: extra[i][0], scale: extra[i][1], caption: `${name} — ${t(S.detail)}` });
+    crops.push({ base: p.image, focus: extra[i][0], scale: extra[i][1], caption: t(S.detail) });
   }
-  if (crops[0] && crops[0].scale === 1 && !p.gallery[0]?.caption) crops[0].caption = t(S.fullView);
+  if (crops[0] && !crops[0].caption) crops[0].caption = t(S.fullView);
   return crops;
 }
 
@@ -1172,13 +1174,11 @@ function renderPanel(p) {
   const c = catOf(p);
   VE.eyebrow.innerHTML = `${icon(catIcon(p), 'icon--sm')}<span>${esc(catName(p))}</span>`;
   VE.title.textContent = t(p.name);
-  VE.loc.innerHTML = p.location
-    ? `${icon('map-pin', 'icon--sm')}<span>${esc(locText(p))}</span>`
-    : `${icon('circle-help', 'icon--sm')}<span>${esc(t(S.tbc))}</span>`;
-  VE.loc.classList.toggle('is-tbc', !p.location);
+  VE.loc.innerHTML = p.location ? `${icon('map-pin', 'icon--sm')}<span>${esc(locText(p))}</span>` : '';
+  VE.loc.hidden = !p.location;
   VE.summary.textContent = t(p.summary);
 
-  // Facts — unknown fields are omitted (status, dates, sizes are never shown: not in the brief).
+  // Facts: unknown fields are omitted (status, dates, sizes are never shown: not in the brief).
   const facts = [];
   facts.push([S.category, catName(p)]);
   if (p.region) facts.push([S.country, regionName(p)]);
@@ -1227,7 +1227,7 @@ function loadImage(base) {
   const token = ++V.token;
   VE.stage.classList.add('is-loading');
   VE.frames.forEach((f, i) => {
-    f.innerHTML = `<picture><source type="image/webp" srcset="assets/img/${base}.webp"><img src="assets/img/${base}.jpg" alt="${i === 0 ? esc(t(V.p.name)) : ''}" width="${w}" height="${h}" decoding="async" draggable="false"></picture>${i === 1 ? '<span class="pjv-grid" aria-hidden="true"></span>' : ''}`;
+    f.innerHTML = `<picture><source type="image/webp" srcset="assets/img/${base}.webp"><img src="assets/img/${base}.jpg" alt="${i === 0 ? esc(t(V.p.name)) : ''}" width="${w}" height="${h}" decoding="async" draggable="false"></picture>`;
   });
   const img = $('img', VE.frames[0]);
   const done = () => { if (token === V.token) VE.stage.classList.remove('is-loading'); };
@@ -1279,22 +1279,7 @@ function applyCrop(i, animate = true) {
   V.ty = -(fy - 0.5) * V.fh * V.s;
   applyTransform(animate);
   $$('.pjv-thumb', VE.thumbs).forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.crop === i)));
-  VE.caption.textContent = c.caption + (i === 0 && V.p.imageNote ? ` — ${t(V.p.imageNote)}` : '');
-}
-
-/* Image | Compare | Blueprint */
-function setMode(mode) {
-  V.mode = mode;
-  $$('[data-pjv-mode]', V.el).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.pjvMode === mode)));
-  VE.split.hidden = mode !== 'compare';
-  VE.stage.dataset.mode = mode;
-  setSplit(mode === 'image' ? 0 : mode === 'blueprint' ? 100 : 50);
-}
-function setSplit(v) {
-  V.split = clamp(v, 0, 100);
-  VE.stage.style.setProperty('--split', `${V.split}%`);
-  VE.handle.setAttribute('aria-valuenow', String(Math.round(V.split)));
-  VE.handle.setAttribute('aria-valuetext', fmt(S.blueprintPct, { n: Math.round(V.split) }));
+  VE.caption.textContent = c.caption;
 }
 
 function stagePoint(e) {
@@ -1329,14 +1314,12 @@ function initViewer() {
     const b = e.target.closest('.pjv-thumb');
     if (b) applyCrop(+b.dataset.crop, true);
   });
-  $$('[data-pjv-mode]', V.el).forEach((b) => b.addEventListener('click', () => setMode(b.dataset.pjvMode)));
-  setMode('image');
 
   // Keyboard
   VE.dialog.addEventListener('keydown', (e) => {
     if (!V.open || e.altKey || e.ctrlKey || e.metaKey) return;
     const tag = e.target.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target === VE.handle) return;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     const next = isAr() ? 'ArrowLeft' : 'ArrowRight';
     const prev = isAr() ? 'ArrowRight' : 'ArrowLeft';
     if (e.key === next) step(1);
@@ -1346,37 +1329,6 @@ function initViewer() {
     else if (e.key === '0') { V.s = 1; V.tx = 0; V.ty = 0; applyTransform(true); }
     else return;
     e.preventDefault();
-  });
-
-  // Compare handle (pointer + keyboard; RTL aware: the blueprint sits on the inline-start side)
-  const fromX = (clientX) => {
-    const r = VE.stage.getBoundingClientRect();
-    const x = isAr() ? r.right - clientX : clientX - r.left;
-    return (x / r.width) * 100;
-  };
-  VE.handle.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    VE.handle.setPointerCapture(e.pointerId);
-    VE.stage.classList.add('is-splitting');
-    const move = (ev) => setSplit(fromX(ev.clientX));
-    const up = () => {
-      VE.stage.classList.remove('is-splitting');
-      VE.handle.removeEventListener('pointermove', move);
-      VE.handle.removeEventListener('pointerup', up);
-      VE.handle.removeEventListener('pointercancel', up);
-    };
-    VE.handle.addEventListener('pointermove', move);
-    VE.handle.addEventListener('pointerup', up);
-    VE.handle.addEventListener('pointercancel', up);
-  });
-  VE.handle.addEventListener('keydown', (e) => {
-    const st = e.shiftKey ? 10 : 2;
-    const right = isAr() ? -st : st;
-    const map = { ArrowRight: right, ArrowLeft: -right, ArrowUp: st, ArrowDown: -st, PageUp: 10, PageDown: -10 };
-    if (e.key in map) { e.preventDefault(); e.stopPropagation(); setSplit(V.split + map[e.key]); }
-    else if (e.key === 'Home') { e.preventDefault(); setSplit(0); }
-    else if (e.key === 'End') { e.preventDefault(); setSplit(100); }
   });
 
   // Pan / pinch / swipe / wheel / double-click on the stage
@@ -1511,10 +1463,9 @@ function onLanguage() {
     renderThumbs();
     $$('.pjv-thumb', VE.thumbs).forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.crop === keep.crop)));
     const c = V.crops[keep.crop];
-    if (c) VE.caption.textContent = c.caption + (keep.crop === 0 && V.p.imageNote ? ` — ${t(V.p.imageNote)}` : '');
+    if (c) VE.caption.textContent = c.caption;
     const im = $('img', VE.frames[0]);
     if (im) im.alt = t(V.p.name);
-    setSplit(V.split);
   }
   VE?.stage.setAttribute('aria-roledescription', t(S.viewer));
 }

@@ -1,14 +1,11 @@
-// MOBCO pages/subsidiary.js — shared by mobco-construction.html, mobco-developments.html, mobco-real-estate.html.
+// MOBCO pages/subsidiary.js: shared by mobco-construction.html, mobco-developments.html, mobco-real-estate.html.
 // Copy is static in the HTML (EN + data-ar*); this module only adds interactions:
 //   · hero: scroll drift of the photo (motion-safe)
 //   · Construction: interactive footprint dot map (WORLD) + country tabs (ARIA tabs, arrows/Home/End)
-//   · Developments: Egypt & Canada split showcase — blueprint → render lens (pointer), reveal toggle, touch auto-reveal
-//   · Real Estate: illustrative common-core floor plate — parts highlight (hover/tap/legend) + tenancy layouts
-// Every widget re-renders its JS-generated strings on `langchange` via t().
+// The Developments showcase and the Real Estate flagship are CSS only (real photos, hover zoom).
 
-import { t, onLang } from '../core/i18n.js';
 import { scan, onScroll, refresh } from '../core/motion.js';
-import { $, $$, prefersReducedMotion, hasFinePointer, rafThrottle, clamp } from '../core/utils.js';
+import { $, $$, prefersReducedMotion, clamp } from '../core/utils.js';
 import { WORLD } from '../data/world-map.js';
 
 const reduced = prefersReducedMotion();
@@ -21,7 +18,7 @@ const svgEl = (tag, attrs = {}) => {
 const safe = (name, fn) => { try { fn(); } catch (err) { console.error(`[subsidiary] ${name} failed`, err); } };
 
 /* ======================================================================
-   Hero — slow drift of the photo while the hero scrolls away
+   Hero: slow drift of the photo while the hero scrolls away
    ====================================================================== */
 function initHero() {
   const bg = $('[data-sd-hero-bg]');
@@ -39,7 +36,7 @@ function initHero() {
 }
 
 /* ======================================================================
-   Construction — footprint map
+   Construction: footprint map
    ====================================================================== */
 // London ≈ lon -0.13, lat 51.5, projected with the same naturalEarth1 projection as WORLD
 // (scale/translate fitted to WORLD.offices: Riyadh, New Cairo, Whitby → x 499.7, y 94.8).
@@ -171,182 +168,7 @@ function initFootprint() {
   });
 }
 
-/* ======================================================================
-   Developments — split showcase (blueprint → render)
-   ====================================================================== */
-const SPLIT = {
-  show: { en: 'Show render', ar: 'أظهِر التصوّر' },
-  hide: { en: 'Show blueprint', ar: 'أظهِر المخطط' },
-};
-function initSplit() {
-  const root = $('[data-sd-split]');
-  if (!root) return;
-  const panels = $$('[data-sd-split-panel]', root);
-  const fine = hasFinePointer();
-
-  const setLabel = (btn) => {
-    const on = btn.getAttribute('aria-pressed') === 'true';
-    const lab = $('[data-sd-reveal-label]', btn);
-    if (lab) lab.textContent = t(on ? SPLIT.hide : SPLIT.show);
-  };
-
-  panels.forEach((panel) => {
-    const btn = $('[data-sd-reveal]', panel);
-    let raf = 0;
-    let tx = 0, ty = 0, cx = null, cy = null;
-    const tick = () => {
-      raf = 0;
-      if (cx === null) { cx = tx; cy = ty; }
-      cx += (tx - cx) * (reduced ? 1 : 0.22);
-      cy += (ty - cy) * (reduced ? 1 : 0.22);
-      panel.style.setProperty('--sd-x', `${cx.toFixed(1)}px`);
-      panel.style.setProperty('--sd-y', `${cy.toFixed(1)}px`);
-      if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) raf = requestAnimationFrame(tick);
-    };
-    panel.addEventListener('pointermove', (e) => {
-      if (e.pointerType !== 'mouse') return;
-      const r = panel.getBoundingClientRect();
-      tx = e.clientX - r.left;
-      ty = e.clientY - r.top;
-      if (!raf) raf = requestAnimationFrame(tick);
-    });
-    panel.addEventListener('pointerenter', (e) => {
-      if (e.pointerType !== 'mouse') return;
-      const r = panel.getBoundingClientRect();
-      tx = e.clientX - r.left; ty = e.clientY - r.top; cx = tx; cy = ty;
-      tick();
-      panel.classList.add('is-lens');
-    });
-    panel.addEventListener('pointerleave', () => panel.classList.remove('is-lens'));
-
-    btn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const on = btn.getAttribute('aria-pressed') !== 'true';
-      btn.setAttribute('aria-pressed', String(on));
-      panel.classList.toggle('is-revealed', on);
-      panel.dataset.manual = '1';
-      setLabel(btn);
-    });
-    if (btn) setLabel(btn);
-  });
-
-  // Touch / no-hover devices: reveal each render as it scrolls into the middle of the screen.
-  if (!fine && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      for (const en of entries) {
-        const panel = en.target;
-        if (panel.dataset.manual) continue;
-        const on = en.isIntersecting;
-        panel.classList.toggle('is-revealed', on);
-        const btn = $('[data-sd-reveal]', panel);
-        if (btn) { btn.setAttribute('aria-pressed', String(on)); setLabel(btn); }
-      }
-    }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
-    panels.forEach((p) => io.observe(p));
-  }
-
-  onLang(() => panels.forEach((p) => { const b = $('[data-sd-reveal]', p); if (b) setLabel(b); }));
-}
-
-/* ======================================================================
-   Real Estate — illustrative common-core diagram
-   ====================================================================== */
-const CORE = {
-  idle: { en: 'Hover or tap the plan to explore the common core.', ar: 'مرّر المؤشر فوق المخطط أو المسه لاستكشاف النواة المشتركة.' },
-  lifts: { en: 'Lifts — vertical circulation grouped in the core, serving every floor.', ar: 'المصاعد — حركة رأسية مجمّعة في النواة تخدم جميع الطوابق.' },
-  stairs: { en: 'Stairs — protected stair cores for everyday circulation and safe evacuation.', ar: 'السلالم — سلالم محمية داخل النواة للتنقّل اليومي والإخلاء الآمن.' },
-  mep: { en: 'MEP & services — shared risers keep essential services central and easy to maintain.', ar: 'الخدمات الكهروميكانيكية — مسارات خدمات مشتركة تُبقي الخدمات الأساسية في المركز وتُسهّل صيانتها.' },
-  wc: { en: 'Washrooms — shared facilities in the core free the perimeter for workspace.', ar: 'دورات المياه — مرافق مشتركة في النواة تُتيح المحيط بالكامل لمساحات العمل.' },
-  wings: { en: 'Office wings — flexible space around the core, configurable for each tenant.', ar: 'الأجنحة المكتبية — مساحات مرنة حول النواة يمكن تهيئتها لكل مستأجر.' },
-  t1: { en: 'One tenant — the whole floor as a single, open workplace around the core.', ar: 'مستأجر واحد — الطابق بأكمله مساحة عمل واحدة مفتوحة حول النواة.' },
-  t2: { en: 'Two tenants — the floor splits into two suites (A and B), both served by the same core.', ar: 'مستأجران — يُقسَم الطابق إلى جناحين (A وB) تخدمهما النواة ذاتها.' },
-  t4: { en: 'Four tenants — four suites (A–D), each with direct access to the shared core.', ar: 'أربعة مستأجرين — أربعة أجنحة (A–D) يصل كلٌّ منها مباشرةً إلى النواة المشتركة.' },
-};
-function initCore() {
-  const root = $('[data-sd-core]');
-  if (!root) return;
-  const plan = $('[data-sd-plan]', root);
-  const readout = $('[data-sd-readout]', root);
-  const buttons = $$('[data-sd-part]', root);
-  const radios = $$('[data-sd-tenancy]', root);
-  if (!plan || !readout) return;
-
-  // tenant labels: wings share A/B in the two-tenant layout
-  const T2 = { nw: 'A', sw: 'A', ne: 'B', se: 'B' };
-  const T4 = { nw: 'A', ne: 'B', se: 'C', sw: 'D' };
-
-  let pinned = null;       // part chosen by click / legend
-  let hover = null;        // part under the pointer
-  let base = 'idle';       // message shown when nothing is hovered (idle or the current tenancy)
-  let lastMsg = 'idle';
-
-  const say = (key) => {
-    lastMsg = key;
-    const txt = t(CORE[key]);
-    if (readout.textContent !== txt) readout.textContent = txt;
-  };
-
-  function render() {
-    const part = hover || pinned;
-    plan.setAttribute('data-active', part || '');
-    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sdPart === pinned)));
-  }
-  function setTenancy(v, { announce = true } = {}) {
-    plan.setAttribute('data-tenancy', v);
-    const map = v === '2' ? T2 : T4;
-    $$('.sd-plan__tlabel', plan).forEach((el) => { el.textContent = map[el.dataset.t]; });
-    if (announce) { pinned = null; render(); say(`t${v}`); }
-  }
-
-  // legend buttons: toggle pin
-  buttons.forEach((b) => {
-    b.addEventListener('click', () => {
-      const p = b.dataset.sdPart;
-      pinned = pinned === p ? null : p;
-      render();
-      say(pinned || base);
-    });
-    if (hasFinePointer()) {
-      b.addEventListener('pointerenter', () => { hover = b.dataset.sdPart; render(); say(hover); });
-      b.addEventListener('pointerleave', () => { hover = null; render(); say(pinned || base); });
-    }
-  });
-  // plan: hover previews, tap/click pins
-  const partOf = (el) => el?.closest?.('[data-part]')?.getAttribute('data-part') || null;
-  plan.addEventListener('pointerover', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    const p = partOf(e.target);
-    if (p && p !== hover) { hover = p; render(); say(p); }
-  });
-  plan.addEventListener('pointerout', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    if (partOf(e.relatedTarget)) return;
-    hover = null; render(); say(pinned || base);
-  });
-  plan.addEventListener('click', (e) => {
-    const p = partOf(e.target);
-    if (!p) return;
-    pinned = pinned === p ? null : p;
-    hover = null;
-    render();
-    say(pinned || base);
-  });
-
-  radios.forEach((r) => r.addEventListener('change', () => {
-    if (!r.checked) return;
-    setTenancy(r.value);
-    base = `t${r.value}`;
-  }));
-  setTenancy(radios.find((r) => r.checked)?.value || '1', { announce: false });
-  render();
-
-  onLang(() => { readout.textContent = t(CORE[lastMsg] || CORE.idle); });
-}
-
 /* ====================================================================== */
 safe('hero', initHero);
 safe('footprint', initFootprint);
-safe('split', initSplit);
-safe('core', initCore);
 requestAnimationFrame(() => refresh());

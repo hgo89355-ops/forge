@@ -20,11 +20,11 @@
 
 export const meta = {
   id: 'mixed-use',
-  name: { en: 'Mixed-use Office & Retail', ar: 'مبنى متعدد الاستخدامات — مكاتب وتجزئة' },
+  name: { en: 'Mixed-use Office & Retail', ar: 'مبنى مكاتب وتجزئة متعدد الاستخدامات' },
   projectSlug: 'eastmain',
   tagline: {
-    en: 'A glazed office block over a retail arcade, opening onto a landscaped plaza.',
-    ar: 'كتلة مكتبية زجاجية فوق رواق تجاري، تنفتح على ساحة منسّقة بالمسطحات الخضراء.',
+    en: 'Glass offices over a retail arcade, facing a landscaped plaza.',
+    ar: 'مكاتب زجاجية فوق رواق تجاري، تطل على ساحة خضراء.',
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النوع' },
@@ -33,8 +33,6 @@ export const meta = {
       value: { en: 'Glazed office floors over a double-height podium', ar: 'طوابق مكتبية زجاجية فوق منصة مزدوجة الارتفاع' } },
     { label: { en: 'Public realm', ar: 'الفضاء العام' },
       value: { en: 'Plaza, reflecting pool, palms & café terraces', ar: 'ساحة وحوض عاكس ونخيل وجلسات مقاهٍ' } },
-    { label: { en: 'Model', ar: 'النموذج' },
-      value: { en: 'Illustrative massing — not to specification', ar: 'نموذج كتلي توضيحي — ليس وفق المواصفات' } },
   ],
   camera: {
     target: [-2, 9, -8],

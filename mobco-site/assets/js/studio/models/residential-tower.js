@@ -21,7 +21,7 @@
 
 export const meta = {
   id: 'residential-tower',
-  name: { en: 'Victoria 101 — Residential', ar: 'فيكتوريا 101 — سكني' },
+  name: { en: 'Victoria 101', ar: 'فيكتوريا 101' },
   projectSlug: 'victoria-101',
   tagline: {
     en: 'A glass residential tower and a mid-rise wing, set among mature trees.',
@@ -29,7 +29,7 @@ export const meta = {
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النوع' }, value: { en: 'Multi-residential', ar: 'سكني متعدد الوحدات' } },
-    { label: { en: 'Massing', ar: 'الكتلة' }, value: { en: 'Tower + mid-rise wing', ar: 'برج + جناح متوسط الارتفاع' } },
+    { label: { en: 'Massing', ar: 'الكتلة' }, value: { en: 'Tower and mid-rise wing', ar: 'برج وجناح متوسط الارتفاع' } },
     { label: { en: 'Facade', ar: 'الواجهة' }, value: { en: 'Glass with wraparound balconies', ar: 'زجاج مع شرفات محيطية' } },
     { label: { en: 'Amenity', ar: 'المرافق' }, value: { en: 'Rooftop pool & green roof', ar: 'مسبح على السطح وسطح أخضر' } },
   ],

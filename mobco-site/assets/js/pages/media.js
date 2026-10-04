@@ -1,7 +1,7 @@
-// assets/js/pages/media.js — Media centre (media.html).
+// assets/js/pages/media.js: Media centre (media.html).
 //
 //  1. Showreel hero: cinematic image stage (Ken Burns + crossfades + kinetic typography), play/pause,
-//     segmented progress, prev/next, keyboard (←/→, mirrored in RTL), swipe, pauses off-screen/hidden tab.
+//     segmented progress, prev/next, keyboard (arrows, mirrored in RTL), swipe, pauses off-screen/hidden tab.
 //  2. Gallery: justified rows computed from each image's aspect ratio, filter chips (sector/region),
 //     hover captions, opens the core lightbox with the filtered set; re-renders on language change.
 //  3. Brand kit: logo preview background toggle, palette copy format (HEX/RGB), type tester.
@@ -30,7 +30,7 @@ const S = {
   pause: { en: 'Pause showreel', ar: 'إيقاف العرض المرئي مؤقتًا' },
   play: { en: 'Play showreel', ar: 'تشغيل العرض المرئي' },
   scene: { en: 'Scene', ar: 'المشهد' },
-  goTo: { en: 'Go to scene {n}: {name}', ar: 'الانتقال إلى المشهد {n}: {name}' },
+  goTo: { en: 'Scene {n}, {name}', ar: 'المشهد {n}، {name}' },
   of: { en: '{n} of {total}', ar: '{n} من {total}' },
   view: { en: 'View project', ar: 'عرض المشروع' },
 };
@@ -79,7 +79,8 @@ function sceneMeta(s) {
   const meta = s.gallery != null ? t(p.gallery[s.gallery].caption) : t(p.location || p.typology);
   return { p, name, meta };
 }
-const sceneAlt = (s) => { const { name, meta } = sceneMeta(s); return meta && !meta.startsWith(name) ? `${name} — ${meta}` : name; };
+const comma = () => (getLang() === 'ar' ? '، ' : ', ');
+const sceneAlt = (s) => { const { name, meta } = sceneMeta(s); return meta && !meta.startsWith(name) ? `${name}${comma()}${meta}` : name; };
 
 function initReel() {
   const root = $('[data-reel]');
@@ -156,7 +157,7 @@ function initReel() {
     slides.forEach((sl, i) => {
       if (!SCENES[i]) return;
       sl.setAttribute('aria-roledescription', t(S.slide));
-      sl.setAttribute('aria-label', `${fmt(t(S.of), { n: i + 1, total })}: ${sceneMeta(SCENES[i]).name}`);
+      sl.setAttribute('aria-label', `${fmt(t(S.of), { n: i + 1, total })}${comma()}${sceneMeta(SCENES[i]).name}`);
     });
     segs.forEach((b, i) => b.setAttribute('aria-label', fmt(t(S.goTo), { n: i + 1, name: sceneMeta(SCENES[i]).name })));
     toggle.setAttribute('aria-label', t(playing ? S.pause : S.play));
@@ -288,7 +289,7 @@ function initReel() {
     const fwd = isRTL() ? 'ArrowLeft' : 'ArrowRight';
     show(index + (e.key === fwd ? 1 : -1), { user: true });
   });
-  // swipe on the stage (touch / pen / mouse drag) — vertical scrolling stays native (touch-action: pan-y)
+  // swipe on the stage (touch / pen / mouse drag); vertical scrolling stays native (touch-action: pan-y)
   let sx = null, sy = 0, st = 0;
   root.addEventListener('pointerdown', (e) => {
     if (e.target.closest('a, button, input, label')) return;
@@ -338,17 +339,15 @@ function initReel() {
    2 · GALLERY
    ====================================================================== */
 const G = {
-  open: { en: 'Open image: {c}', ar: 'فتح الصورة: {c}' },
-  dl: { en: 'Download image (JPG): {c}', ar: 'تنزيل الصورة (JPG): {c}' },
-  status: { en: 'Showing {n} of {total} images', ar: 'عرض {n} من أصل {total} صورة' },
+  open: { en: 'Enlarge {c}', ar: 'تكبير {c}' },
+  dl: { en: 'Download {c} (JPG)', ar: 'تنزيل {c} (JPG)' },
+  status: { en: '{n} of {total} images', ar: '{n} من {total} صورة' },
   more: { en: 'Show {n} more', ar: 'عرض {n} صورة إضافية' },
-  descriptive: { en: 'descriptive name', ar: 'اسم وصفي' },
   filter: { en: 'Filter images', ar: 'تصفية الصور' },
   all: { en: 'All', ar: 'الكل' },
-  ksa: { en: 'KSA portfolio', ar: 'محفظة السعودية' },
 };
 const PAGE = 16;
-// natural aspect ratios (utils IMAGES) — art-directed crops for the detail views
+// natural aspect ratios (utils IMAGES); art-directed crops for the detail views
 const CROP_AR = {
   'eastmain:1': 0.8, 'eastmain:2': 1,
   'victoria-101:1': 0.78, 'victoria-101:2': 1.6,
@@ -367,7 +366,7 @@ const EXTRA = [
   { base: 'sub-construction-hero', sub: 'mobco-construction', pos: '40% 50%',
     caption: { en: 'A tower under construction above the city', ar: 'برج قيد الإنشاء يطلّ على المدينة' } },
   { base: 'sub-developments-hero', project: 'victoria-101', pos: '50% 40%',
-    caption: { en: 'Victoria 101 — façade close-up', ar: 'فيكتوريا 101 — لقطة قريبة للواجهة' } },
+    caption: { en: 'Façade close-up', ar: 'لقطة قريبة للواجهة' } },
   { base: 'sub-construction-render', sub: 'mobco-construction', pos: '50% 55%',
     caption: { en: 'Night render of a timber-clad low-rise building', ar: 'تصوّر ليلي لمبنى منخفض بواجهات خشبية' } },
   { base: 'sub-real-estate-hero', sub: 'mobco-real-estate', pos: '50% 45%',
@@ -405,13 +404,13 @@ function buildItems() {
     else if (gi > 0) crops.push(x);
     else (p.featured ? prim : primRest).push(x);
   }));
-  // first detail of every project, then the second ones — so consecutive crops come from different projects
+  // first detail of every project, then the second ones, so consecutive crops come from different projects
   crops.sort((a, b) => a.gi - b.gi);
   const extras = extraItems();
   // companies' photos are woven into the second half of the full views
   const primaries = prim.concat(primRest);
   extras.forEach((x, i) => primaries.splice(Math.min(primaries.length, prim.length + 2 + i * 4), 0, x));
-  // rhythm: three full views, then an art-directed detail — never one from a project seen in the last 8 items
+  // rhythm: three full views, then an art-directed detail, never one from a project seen in the last 8 items
   const out = [];
   const recent = () => out.slice(-8).map((x) => x.p.id);
   // a detail only follows once its full view has been shown, and not right after it
@@ -447,7 +446,7 @@ function initGallery() {
     .concat(PROJECT_CATEGORIES.filter((c) => count(c.id)).sort((a, b) => count(b.id) - count(a.id)).map((c) => ({ id: c.id, label: c.name, icon: c.icon })))
     .concat(count(COMPANIES.id) ? [COMPANIES] : [])
     .concat([{ sep: true }])
-    .concat(REGIONS.filter((r) => count(r.id)).map((r) => ({ id: r.id, label: r.id === 'ksa' ? G.ksa : r.name })));
+    .concat(REGIONS.filter((r) => count(r.id)).map((r) => ({ id: r.id, label: r.name })));
   const group = document.createElement('div');
   group.className = 'chip-group mgal-chips';
   group.setAttribute('data-chip-group', 'single');
@@ -464,11 +463,23 @@ function initGallery() {
   // pages of 16; a small remainder (≤ 4) joins the last page instead of leaving a lone "Show 1 more"
   const nextStep = (rest) => (rest - PAGE <= 4 ? rest : PAGE);
   const filtered = () => items.filter((x) => filter === 'all' || x.cats.includes(filter));
-  // "Name — caption" (captions that already start with the project name are kept as they are)
-  const caption = (x, lang = getLang()) => {
+  // Caption text without a leading "Name, " ("Eastmain, evening render" → "Evening render"). Captions that use the
+  // name inside a phrase ("Eastmain plaza and shopfronts") are kept whole.
+  const SEP = /^\s*[,\u060c:.·|\u2013\u2014-]\s*/;
+  const detailOf = (x, lang = getLang()) => {
     const name = t(x.p.name, lang);
     const cap = t(x.g.caption, lang);
-    return cap.startsWith(name) ? cap : `${name} — ${cap}`;
+    if (!cap || cap === name) return '';
+    if (!cap.startsWith(name) || !SEP.test(cap.slice(name.length))) return cap;
+    const d = cap.slice(name.length).replace(SEP, '');
+    return d.charAt(0).toUpperCase() + d.slice(1);
+  };
+  // "Name. Detail" for alt text and labels; "Name · Detail" in the lightbox caption line
+  const caption = (x, lang = getLang(), sep = '. ') => {
+    const name = t(x.p.name, lang);
+    const d = detailOf(x, lang);
+    if (!d) return name;
+    return d.includes(name) ? d : `${name}${sep}${d}`;
   };
 
   const tile = (x, i, narrow) => {
@@ -476,19 +487,18 @@ function initGallery() {
     const loc = x.p.location ? t(x.p.location) : t(x.p.typology);
     const cap = caption(x);
     const name = t(x.p.name);
-    const detail = cap.startsWith(name) ? cap.slice(name.length).replace(/^\s*—\s*/, '') : t(x.g.caption);
-    const label = `${cap}${x.p.nameIsDescriptive ? ` (${t(G.descriptive)})` : ''}`;
+    const detail = detailOf(x);
     const cat = getCategory(x.p.category);
     const catName = x.catLabel ? t(COMPANIES.label) : cat ? t(cat.name) : '';
     const detailCls = x.zoom > 1 ? ' mgal__item--detail' : '';
     return `
       <div class="mgal__item${isPano ? ' mgal__item--pano' : ''}${detailCls}" role="listitem" style="--ar:${(isPano && narrow ? 3 : x.ar).toFixed(4)}${x.zoom > 1 ? `;--zoom:${x.zoom};--focal:${esc(x.pos)}` : ''}">
-        <button class="mgal__open" type="button" data-open="${i}" data-cursor="zoom" aria-label="${esc(fmt(t(G.open), { c: label }))}">
+        <button class="mgal__open" type="button" data-open="${i}" data-cursor="zoom" aria-label="${esc(fmt(t(G.open), { c: cap }))}">
           ${picture(x.base, { alt: '', position: x.pos })}
           <span class="mgal__shade" aria-hidden="true"></span>
           <span class="mgal__cap" aria-hidden="true">
             ${catName ? `<span class="mgal__cap-cat">${esc(catName)}</span>` : ''}
-            <span class="mgal__cap-name">${esc(name)}${x.p.nameIsDescriptive ? '<span class="mgal__mark">◇</span>' : ''}</span>
+            <span class="mgal__cap-name">${esc(name)}</span>
             ${detail ? `<span class="mgal__cap-text">${esc(detail)}</span>` : ''}
             <span class="mgal__cap-loc">${icon('map-pin', 'icon--xs')}<span>${esc(loc)}</span></span>
           </span>
@@ -585,7 +595,7 @@ function initGallery() {
     const b = e.target.closest('[data-open]');
     if (!b) return;
     const all = mount.__all || [];
-    const full = (x, lang) => `${caption(x, lang)}${x.p.location ? ` · ${t(x.p.location, lang)}` : ''}`;
+    const full = (x, lang) => `${caption(x, lang, ' · ')}${x.p.location ? ` · ${t(x.p.location, lang)}` : ''}`;
     openLightbox(all.map((x) => ({
       src: `assets/img/${x.base}.jpg`,
       srcWebp: `assets/img/${x.base}.webp`,
@@ -683,7 +693,7 @@ function initNewsletter() {
       form.hidden = true;
       success.hidden = false;
       success.querySelector('[tabindex="-1"]')?.focus({ preventScroll: true });
-      toast({ en: 'Thank you — you’re subscribed to MOBCO news.', ar: 'شكرًا لك — تم اشتراكك في أخبار موبكو.' });
+      toast({ en: 'You’re subscribed to MOBCO news.', ar: 'تم اشتراكك في أخبار موبكو.' });
       refresh();
     }, reduced ? 0 : 900);
   });

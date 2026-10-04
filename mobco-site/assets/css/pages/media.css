@@ -1,4 +1,4 @@
-/* assets/css/pages/media.css — Media centre (media.html). Owned by the media page builder.
+/* assets/css/pages/media.css: Media centre (media.html). Owned by the media page builder.
    Every rule is scoped to body[data-page='media'] or a media-prefixed class (.mreel, .mgal, .mkit, .mpal,
    .mtype, .musage, .mnews). Tokens from main.css only; logical properties throughout (RTL-ready). */
 
@@ -300,7 +300,6 @@ html[lang='ar'] .mgal-toolbar__status { letter-spacing: 0; text-transform: none;
 }
 .mgal__cap-name { font-family: var(--font-display); font-size: var(--fs-h6); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; line-height: 1.25; }
 html[lang='ar'] .mgal__cap-name { letter-spacing: 0; text-transform: none; }
-.mgal__mark { color: var(--teal-400); margin-inline-start: .3em; font-size: .8em; }
 .mgal__cap-text { font-size: var(--fs-sm); color: rgba(255, 255, 255, .82); line-height: 1.45; }
 .mgal__cap-loc { display: inline-flex; align-items: center; gap: .35rem; margin-block-start: .25rem; font-size: var(--fs-xs); color: rgba(255, 255, 255, .62); }
 .mgal__cap-loc .icon { color: var(--teal-400); }
@@ -370,8 +369,7 @@ html[lang='ar'] .mgal__cap-cat { font-size: .75rem; letter-spacing: 0; }
 .mgal-more { display: flex; justify-content: center; margin-block-start: var(--space-8); }
 .mgal-noscript { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
 .mgal-noscript img { inline-size: 100%; block-size: auto; border-radius: var(--radius); }
-.mgal-note { display: flex; gap: .5rem; margin-block-start: var(--space-6); max-inline-size: 90ch; font-size: var(--fs-sm); color: var(--fg-muted); }
-.mgal-note__mark { color: var(--teal-600); flex: none; }
+.mgal-note { margin-block-start: var(--space-6); max-inline-size: 90ch; font-size: var(--fs-sm); color: var(--fg-muted); }
 
 /* ==========================================================================
    03 · BRAND KIT
@@ -464,7 +462,7 @@ html[lang='ar'] .mkit-logo__tag { font-size: .75rem; letter-spacing: 0; }
 .mkit-logo__tag--gold { color: #8a6c36; border-color: rgba(184, 151, 90, .45); }
 .mkit-on-dark { display: none; }
 /* navy preview */
-.mkit-logos[data-tone='navy'] .mkit-logo__stage { background: var(--navy-900); background-image: linear-gradient(rgba(111, 209, 197, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(111, 209, 197, .07) 1px, transparent 1px); background-size: 24px 24px; }
+.mkit-logos[data-tone='navy'] .mkit-logo__stage { background: var(--navy-900); }
 .mkit-logos[data-tone='navy'] .mkit-on-light { display: none; }
 .mkit-logos[data-tone='navy'] .mkit-on-dark { display: block; }
 .mkit-logos[data-tone='navy'] .mkit-mark { filter: brightness(0) invert(1); }
@@ -592,16 +590,6 @@ html[lang='ar'] .mpal__hint { font-size: .75rem; letter-spacing: 0; }
 .mpal[data-format] .mpal__item--lg .mpal__swatch--light-ink :is(.mpal__hex, .mpal__rgb) { color: rgba(11, 22, 32, .74); }
 .mpal[data-format='hex'] .mpal__item--lg .mpal__swatch--light-ink .mpal__hex,
 .mpal[data-format='rgb'] .mpal__item--lg .mpal__swatch--light-ink .mpal__rgb { color: var(--navy-950); }
-.mpal__item--xl .mpal__swatch::after {
-  /* architectural grid hint on the hero swatch */
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: linear-gradient(rgba(111, 209, 197, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(111, 209, 197, .08) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: linear-gradient(180deg, #000, transparent 75%);
-}
 
 /* typography */
 .mtype .tabs__list { flex-wrap: wrap; }
@@ -720,15 +708,6 @@ html[lang='ar'] .musage__verdict { font-size: .9375rem; letter-spacing: 0; }
   background:
     radial-gradient(60% 70% at 50% 50%, rgba(111, 209, 197, .08), transparent 70%),
     var(--navy-950);
-}
-.mnews-empty::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(80% 80% at 50% 50%, #000 30%, transparent 80%);
 }
 .mnews-empty__ghosts {
   position: absolute;

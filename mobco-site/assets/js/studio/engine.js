@@ -12,6 +12,13 @@
 // time of day (sun path, sky, night glow + lamps), projected hotspots with occlusion, thumbnails,
 // snapshot, pause when hidden/offscreen, full disposal on model switch.
 // Model modules (./models/<id>.js) follow the MODEL MODULE CONTRACT — see docs/requests/studio.md.
+//
+// Embed options / methods (optional, added for the home-page hero; defaults keep the studio's behaviour):
+//   touchAction: 'pan-y'          canvas touch-action (one-finger vertical swipes scroll the page)
+//   wheelZoom: false              mouse-wheel does not zoom until setWheelZoom(true) (pinch still zooms)
+//   clickAction: 'focus'          click on the building flies in (emits 'pick'); 'select' (default) | 'none'
+//   focusPoint(p, {factor, distance, direction, duration, instant}) · focusHotspot(id, {distance, duration})
+//   rotate(leftRad, upRad) · zoom(factor, {duration}) · setWheelZoom(bool)
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
@@ -187,6 +194,23 @@ export function createStudio(container, options = {}) {
   controls.enableZoom = opts.controls !== false;
   controls.listenToKeyEvents(canvas);
   controls.keyPanSpeed = 14;
+
+  // Optional (embeds): `touchAction` overrides OrbitControls' `touch-action: none` on the canvas, e.g. 'pan-y'
+  // so a one-finger vertical swipe keeps scrolling the page while horizontal drags and pinches reach the viewer.
+  if (typeof opts.touchAction === 'string' && opts.touchAction) canvas.style.touchAction = opts.touchAction;
+
+  // Optional (embeds): `wheelZoom: false` ignores mouse-wheel zoom (the page scrolls instead) while pinch and the
+  // zoom() method keep working; toggle with setWheelZoom(). Capture listeners at the target run before
+  // OrbitControls' own wheel listener, the bubbling one after it.
+  let wheelZoom = opts.wheelZoom !== false;
+  let wheelGated = false;
+  canvas.addEventListener('wheel', () => {
+    if (!wheelZoom && controls.enableZoom) { wheelGated = true; controls.enableZoom = false; }
+  }, { capture: true, passive: true });
+  canvas.addEventListener('wheel', () => {
+    if (wheelGated) { wheelGated = false; controls.enableZoom = true; }
+  }, { passive: true });
+  function setWheelZoom(on) { wheelZoom = !!on; }
 
   /* -------------------------------------------------------------- state */
   const state = {
@@ -670,9 +694,17 @@ export function createStudio(container, options = {}) {
     return { index: i, level: f.level, label: f.label, buildingId: f.buildingId, count: model.floors.length };
   }
 
-  /* pointer: hover / click-select / double-click focus */
+  /* pointer: hover / click-select / double-click focus
+     opts.clickAction: 'select' (default: click a level to isolate it) · 'focus' (embeds: a click on the building
+     flies the camera towards that point, emits 'pick'; no level boxes) · 'none' */
+  const clickAction = opts.clickAction === 'focus' || opts.clickAction === 'none' ? opts.clickAction : 'select';
   let downAt = null;
   let hoverQueued = false, lastPointer = null;
+  let lastFocusClick = -1e9, lastTap = null, tapFocusAt = -1e9;
+  function buildingAt(clientX, clientY) {
+    if (!model) return null;
+    return pick(clientX, clientY, [...model.solids, ...model.siteSolids]);
+  }
   function onPointerMove(e) {
     if (e.pointerType === 'touch' || !model || opts.controls === false) return;
     lastPointer = e;
@@ -681,7 +713,12 @@ export function createStudio(container, options = {}) {
     hoverQueued = true;
     requestAnimationFrame(() => {
       hoverQueued = false;
-      if (!lastPointer) return;
+      if (!lastPointer || !model) return;
+      if (clickAction === 'focus') {
+        canvas.style.cursor = pick(lastPointer.clientX, lastPointer.clientY, model.solids) ? 'zoom-in' : '';
+        return;
+      }
+      if (clickAction === 'none') return;
       setHover(floorAt(lastPointer.clientX, lastPointer.clientY));
       canvas.style.cursor = state.hover >= 0 ? 'pointer' : '';
     });
@@ -693,13 +730,34 @@ export function createStudio(container, options = {}) {
     const quick = e.timeStamp - downAt.t < 600; // event timestamps: robust when the main thread is busy
     downAt = null;
     if (moved > 6 || !quick || e.button > 0) return;
+    if (clickAction === 'focus') { focusClick(e); return; }
+    if (clickAction === 'none') return;
     const i = floorAt(e.clientX, e.clientY);
     if (i >= 0) select(i === state.selected ? -1 : i);
     else if (state.selected >= 0) select(-1);
   }
+  // 'focus' mode: a click/tap on the building flies in towards the hit point; a double-click / double-tap on
+  // anything else (ground, sky edge) zooms towards the point under it too.
+  function focusClick(e) {
+    const t = e.timeStamp;
+    const hit = buildingAt(e.clientX, e.clientY);
+    if (hit) {
+      lastFocusClick = t;
+      focusPoint(hit.point);
+      emit('pick', { point: hit.point.toArray(), floor: hit.object.userData.__floor ?? -1 });
+    } else emit('pick', { point: null, floor: -1 });
+    if (e.pointerType === 'touch') {
+      if (!hit && lastTap && t - lastTap.t < 340 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) {
+        lastTap = null;
+        tapFocusAt = t;
+        focusAt(e.clientX, e.clientY);
+      } else lastTap = { t, x: e.clientX, y: e.clientY };
+    }
+  }
   function onPointerLeave() { lastPointer = null; setHover(-1); canvas.style.cursor = ''; }
   function onDblClick(e) {
     if (!model) return;
+    if (clickAction === 'focus' && (e.timeStamp - lastFocusClick < 600 || e.timeStamp - tapFocusAt < 600)) return; // the clicks already zoomed
     focusAt(e.clientX, e.clientY);
   }
   if (opts.controls !== false) {
@@ -710,15 +768,64 @@ export function createStudio(container, options = {}) {
     canvas.addEventListener('dblclick', onDblClick);
   }
 
-  function focusPoint(point) {
+  /**
+   * Fly the camera towards a world point. Optional settings (all backward compatible):
+   * `factor` (distance × current, default 0.6), `distance` (absolute, metres), `direction` ([x,y,z] from the
+   * point towards the camera; default = current view direction), `duration` (ms), `instant`.
+   */
+  function focusPoint(point, { factor = 0.6, distance, direction, duration = 1000, instant = false, detail } = {}) {
     const p = point.clone ? point.clone() : new THREE.Vector3().fromArray(point);
     p.y = clamp(p.y, 0, (model?.height || 60) + 10);
-    const dir = camera.position.clone().sub(controls.target);
-    const dist = clamp(dir.length() * 0.6, controls.minDistance * 2.2, controls.maxDistance);
+    const cur = camera.position.clone().sub(controls.target);
+    const dir = direction ? new THREE.Vector3().fromArray(direction.toArray ? direction.toArray() : direction) : cur.clone();
+    if (dir.lengthSq() < 1e-8) dir.copy(cur);
+    const want = Number.isFinite(distance) ? distance : cur.length() * factor;
+    const dist = clamp(want, controls.minDistance * 2.2, controls.maxDistance);
     const to = p.clone().add(dir.normalize().multiplyScalar(dist));
     to.y = Math.max(to.y, 1.6);
-    tweenCamera(to, p, { duration: 1000 });
-    emit('focus', { point: p.toArray() });
+    tweenCamera(to, p, { duration, instant });
+    emit('focus', { point: p.toArray(), ...(detail || {}) });
+  }
+
+  /**
+   * Fly to a hotspot (meta.hotspots[].id), seen from outside the building: the camera looks at the hotspot
+   * from the side it sits on (blended with the current view) at a pleasant elevation. Returns false when the
+   * id is unknown. Options: `distance` (metres), `duration` (ms), `instant`.
+   */
+  function focusHotspot(id, { distance, duration = 1250, instant = false } = {}) {
+    if (!model) return false;
+    const h = model.hotspots.find((x) => x.id === id);
+    if (!h) return false;
+    const p = h.world.clone();
+    const c = model.buildingBounds.getCenter(new THREE.Vector3());
+    const cur = camera.position.clone().sub(controls.target); cur.y = 0;
+    if (cur.lengthSq() < 1e-6) cur.set(0, 0, 1);
+    cur.normalize();
+    const out = p.clone().sub(c); out.y = 0;
+    const bsize = model.buildingBounds.getSize(new THREE.Vector3());
+    let dirH = cur;
+    if (out.length() > Math.max(bsize.x, bsize.z) * 0.12) {
+      out.normalize();
+      dirH = cur.clone().lerp(out, 0.72);
+      if (dirH.lengthSq() < 0.05) dirH = out;
+      dirH.normalize();
+    }
+    const roof = p.y > model.height * 0.82;
+    const el = THREE.MathUtils.degToRad(roof ? 42 : 24);
+    const dir = new THREE.Vector3(dirH.x * Math.cos(el), Math.sin(el), dirH.z * Math.cos(el));
+    const d = Number.isFinite(distance) ? distance : clamp(Math.max(bsize.x, bsize.z, model.height) * 0.62, 26, 110);
+    focusPoint(p, { distance: d, direction: dir, duration, instant, detail: { hotspot: h.id } });
+    return true;
+  }
+
+  /** Orbit by angles (radians): positive `left` turns the view to the left, positive `up` tilts it up. */
+  function rotate(left = 0, up = 0) {
+    if (tween && !tween.locked) tween = null;
+    if (left) controls.rotateLeft(left);
+    if (up) controls.rotateUp(up);
+    controls.update(0);
+    invalidate();
+    emit('interact', { source: 'api' });
   }
 
   /** Focus the point under a screen position (double-tap on touch). Returns true when something was hit. */
@@ -729,7 +836,14 @@ export function createStudio(container, options = {}) {
     return !!hit;
   }
 
-  function zoom(factor) {
+  function zoom(factor, { duration = 0 } = {}) {
+    // optional eased dolly (embeds' +/− buttons); instant under reduced motion / low power
+    if (duration > 0 && !still()) {
+      const dir = camera.position.clone().sub(controls.target);
+      const d = clamp(dir.length() * factor, controls.minDistance, controls.maxDistance);
+      tweenCamera(controls.target.clone().add(dir.normalize().multiplyScalar(d)), controls.target.clone(), { duration });
+      return;
+    }
     // factor < 1 → closer. OrbitControls: dollyIn(s<1) shrinks the distance, dollyOut(s<1) grows it.
     if (factor < 1) controls.dollyIn(factor); else controls.dollyOut(1 / factor);
     controls.update(0);
@@ -1106,6 +1220,7 @@ export function createStudio(container, options = {}) {
     THREE, renderer, scene, camera, controls, canvas, quality, lowPower,
     on, load, setView, setExplode, setSection, setMode, setTime, setAutoRotate, setHotspots, setInsets,
     select, selectStep, focusPoint, focusAt, floorAt, zoom, reset, snapshot, renderThumbnail, getState, invalidate, dispose, setControlsEnabled,
+    focusHotspot, rotate, setWheelZoom,
     get model() { return model ? { id: model.id, meta: model.meta, floors: model.floors.map((f, i) => floorInfo(i)) } : null; },
   };
   if (opts.model) api.ready = load(opts.model).catch(() => null);

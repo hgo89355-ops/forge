@@ -1,5 +1,5 @@
 /* ==========================================================================
-   assets/css/pages/about.css — About page (owned by the About builder).
+   assets/css/pages/about.css: About page (owned by the About builder).
    Everything is scoped with the `about-` prefix or body[data-page='about'].
    Tokens only (main.css); logical properties throughout (RTL-safe).
    Sections: 01 hero · 02 story · 03 marquee · 04 figures · 05 vision/mission ·
@@ -21,7 +21,7 @@ body[data-page='about'] .about-hero { min-block-size: clamp(620px, 94vh, 1000px)
   }
 }
 @media (min-width: 1800px) {
-  /* very wide screens: keep the 790px render from over-stretching — frame it inside the wide container */
+  /* very wide screens: keep the 790px render from over-stretching: frame it inside the wide container */
   .about-hero__bg {
     inset-inline-start: calc(50% - 80px);
     inset-inline-end: calc((100% - var(--container-wide)) / 2);
@@ -126,53 +126,6 @@ html[lang='ar'] .about-story__badge-text { font-size: .875rem; text-transform: n
 .about-story__prose > * + * { margin-block-start: 1.25em; }
 .about-story__prose p:not(.lead) { color: var(--slate-500); font-size: var(--fs-md); }
 .about-story__lead { color: var(--fg-strong); }
-
-/* pull quote */
-.about-quote {
-  position: relative;
-  margin-block: var(--space-9);
-  padding-block: var(--space-8) var(--space-7);
-  border-block: var(--hairline);
-}
-.about-quote__mark {
-  position: absolute;
-  inset-block-start: -.08em;
-  inset-inline-start: -.04em;
-  font-family: 'Manrope', serif;
-  font-size: clamp(7rem, 5rem + 6vw, 11rem);
-  font-weight: 700;
-  line-height: 1;
-  color: var(--teal-400);
-  opacity: .22;
-  pointer-events: none;
-}
-[dir='rtl'] .about-quote__mark { transform: scaleX(-1); }
-.about-quote__text p {
-  position: relative;
-  font-family: var(--font-display);
-  font-size: clamp(1.625rem, 1.15rem + 1.9vw, 2.75rem);
-  line-height: 1.2;
-  font-weight: 500;
-  letter-spacing: -.012em;
-  color: var(--fg-strong);
-  text-wrap: balance;
-}
-html[lang='ar'] .about-quote__text p { letter-spacing: 0; line-height: 1.45; }
-.about-quote__text em { font-style: normal; color: #2f9488; } /* ≥ 3:1 on white (teal-600 is 2.88:1) */
-.about-quote__cite {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-block-start: var(--space-6);
-  font-family: var(--font-display);
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--fg-muted);
-}
-html[lang='ar'] .about-quote__cite { font-size: .9375rem; text-transform: none; }
-.about-quote__rule { inline-size: 40px; block-size: 1px; background: var(--teal-400); }
 
 /* motto row */
 .about-story__motto {
@@ -298,7 +251,6 @@ html[lang='ar'] .about-fig__kicker { font-size: .9375rem; text-transform: none; 
   max-inline-size: 30ch;
 }
 html[lang='ar'] .about-fig__label { font-size: 1.0625rem; font-weight: 600; }
-.about-fig__note { max-inline-size: 46ch; color: rgba(255, 255, 255, .66); font-size: var(--fs-sm); padding-block-start: var(--space-4); margin-block-start: var(--space-2); border-block-start: 1px solid rgba(255, 255, 255, .14); }
 .about-fig--founded { background: linear-gradient(160deg, var(--navy-800), var(--navy-900)); }
 .about-fig__ring {
   position: absolute;
@@ -473,19 +425,7 @@ html[lang='ar'] .about-vm__tab-title { letter-spacing: 0; text-transform: none; 
   line-height: 1.35;
   color: var(--navy-950);
 }
-.about-vm__chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-block-start: var(--space-7); list-style: none; padding: 0; }
-.about-vm__chips .badge { padding: .5rem .75rem; }
-.about-vm__chips .icon { color: var(--teal-700); }
-
 /* 06. Values (flip cards) ================================================ */
-.about-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--fs-sm);
-  color: var(--fg-muted);
-}
-.about-hint .icon { color: var(--accent-text); }
 .about-values__grid {
   display: grid;
   gap: var(--grid-gap);
@@ -525,22 +465,6 @@ html[lang='ar'] .about-vm__tab-title { letter-spacing: 0; text-transform: none; 
 .about-value__face--back { transform: rotateY(180deg); background: var(--navy-900); color: rgba(255, 255, 255, .82); border-color: transparent; }
 .about-value--core .about-value__face--front { background: var(--navy-900); color: rgba(255, 255, 255, .8); border-color: transparent; }
 .about-value--core .about-value__face--back { background: var(--teal-400); color: var(--navy-950); }
-.about-value__face--front::after {
-  /* faint architectural grid in the corner */
-  content: '';
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
-  inline-size: 60%;
-  block-size: 60%;
-  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 24px 24px;
-  -webkit-mask-image: radial-gradient(circle at 100% 0, #000, transparent 70%);
-  mask-image: radial-gradient(circle at 100% 0, #000, transparent 70%);
-  pointer-events: none;
-}
-[dir='rtl'] .about-value__face--front::after { -webkit-mask-image: radial-gradient(circle at 0 0, #000, transparent 70%); mask-image: radial-gradient(circle at 0 0, #000, transparent 70%); }
-.about-value--core .about-value__face--front::after { background-image: linear-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .07) 1px, transparent 1px); }
 .about-value__index {
   font-family: 'Manrope', var(--font-display);
   font-size: .75rem;
@@ -967,27 +891,6 @@ html[lang='ar'] .about-hse__seal-ring text { letter-spacing: 0; font-size: 17px;
 .about-hse__seal-icon { --icon-size: 34%; stroke-width: 1.4; }
 .about-hse__header { margin-block-end: var(--space-7); }
 .about-hse__list .accordion__label { font-family: var(--font-display); font-weight: 600; }
-.about-hse__pillars {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-7);
-  margin-block-start: var(--space-8);
-  list-style: none;
-  padding: 0;
-}
-.about-hse__pillars li {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-display);
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--fg-strong);
-}
-html[lang='ar'] .about-hse__pillars li { font-size: .9375rem; text-transform: none; }
-.about-hse__pillars .icon { --icon-size: 22px; color: var(--teal-700); }
 
 /* 10. CTA cards =========================================================== */
 .about-cta__grid { display: grid; gap: var(--grid-gap); }
@@ -1077,8 +980,6 @@ html[lang='ar'] .about-cta__go { font-size: .9375rem; text-transform: none; }
 /* list margins: beat the base `ul[role='list'] { margin: 0 }` reset */
 body[data-page='about'] .about-story__motto { margin-block-start: var(--space-9); }
 body[data-page='about'] .about-fig__places { margin-block-start: var(--space-2); }
-body[data-page='about'] .about-vm__chips { margin-block-start: var(--space-7); }
-body[data-page='about'] .about-hse__pillars { margin-block-start: var(--space-8); }
 @media (max-width: 639.98px) {
   .about-story__motto li { font-size: .875rem; letter-spacing: .04em; }
   .about-value { min-block-size: 260px; }

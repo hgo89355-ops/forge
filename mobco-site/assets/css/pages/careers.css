@@ -1,9 +1,9 @@
-/* assets/css/pages/careers.css — Careers page (careers.html). Owned by the careers builder.
+/* assets/css/pages/careers.css: Careers page (careers.html). Owned by the careers builder.
    Everything is namespaced: .careers-* classes or body[data-page="careers"]. Tokens from main.css only;
    logical properties throughout (RTL), transforms/opacity for motion, reduced-motion safe. */
 
 /* ==========================================================================
-   1. HERO — art-directed "skyline" of photo towers over a moody aerial
+   1. HERO: art-directed "skyline" of photo towers over a moody aerial
    ========================================================================== */
 body[data-page='careers'] .careers-hero {
   min-block-size: clamp(680px, 100svh, 1200px);
@@ -149,7 +149,7 @@ html[lang='ar'] .careers-hero__stat dt { font-size: .875rem; font-weight: 600; l
 }
 
 /* ==========================================================================
-   2. WHY MOBCO — statement + expanding benefit panels
+   2. WHY MOBCO: statement + expanding benefit panels
    ========================================================================== */
 .careers-why__copy { display: grid; gap: var(--space-6); align-content: start; }
 .careers-why__copy .h2 { max-inline-size: 20ch; }
@@ -303,7 +303,7 @@ html[lang='ar'] .careers-why__badge-label { font-size: .875rem; font-weight: 600
 }
 
 /* ==========================================================================
-   3. DISCIPLINES — filter toolbar + grid + drawer
+   3. DISCIPLINES: filter toolbar + grid + drawer
    ========================================================================== */
 .careers-disc-toolbar {
   display: flex;
@@ -451,8 +451,9 @@ html[lang='ar'] .careers-disc__more { font-size: .875rem; font-weight: 600; }
 .careers-drawer .drawer__panel { --bg: var(--white); }
 .careers-drawer__count { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
 .careers-drawer__body { display: grid; align-content: start; gap: var(--space-6); padding: 0; }
-.careers-drawer__hero { position: relative; block-size: 180px; }
-.careers-drawer__hero .media { position: absolute; inset: 0; border-radius: 0; }
+.careers-drawer__hero { position: relative; block-size: 200px; }
+.careers-drawer__hero .media { position: absolute; inset: 0; border-radius: 0; background: var(--navy-900); }
+.careers-drawer__media picture, .careers-drawer__media img { inline-size: 100%; block-size: 100%; object-fit: cover; }
 .careers-drawer__hero .icon-tile {
   position: absolute;
   z-index: 2;
@@ -474,8 +475,6 @@ html[lang='ar'] .careers-disc__more { font-size: .875rem; font-weight: 600; }
 .careers-drawer__teams { display: grid; gap: .5rem; }
 .careers-drawer__team { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; padding: .75rem 1rem; background: var(--sand-50); border-radius: var(--radius); font-size: var(--fs-sm); }
 .careers-drawer__team a { font-weight: 600; color: var(--fg-strong); text-decoration: underline; text-decoration-color: var(--teal-400); text-underline-offset: .25em; overflow-wrap: anywhere; }
-.careers-drawer__note { display: flex; gap: .625rem; align-items: flex-start; font-size: var(--fs-xs); color: var(--fg-muted); }
-.careers-drawer__note .icon { color: var(--teal-700); }
 .careers-drawer__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
 .careers-drawer__nav { display: flex; gap: .5rem; }
 .careers-drawer__body.is-swapping { animation: careers-fade var(--dur-slow) var(--ease-out); }
@@ -488,7 +487,7 @@ html[lang='ar'] .careers-disc__more { font-size: .875rem; font-weight: 600; }
 }
 
 /* ==========================================================================
-   4. LOCATIONS — dot-matrix map + office tabs
+   4. LOCATIONS: dot-matrix map + office tabs
    ========================================================================== */
 .careers-loc { align-items: stretch; }
 .careers-map {
@@ -558,7 +557,7 @@ html[lang='ar'] .careers-map__role { font-size: .75rem; }
 @media (hover: hover) { .careers-map__marker:not(.is-active):hover .careers-map__tag { border-color: var(--teal-400); } }
 .careers-map__marker:focus-visible { outline: none; }
 .careers-map__marker:focus-visible .careers-map__tag { outline: 2px solid var(--teal-400); outline-offset: 3px; }
-.careers-map__note, .careers-map__coords {
+.careers-map__coords {
   position: absolute;
   z-index: 2;
   inset-block-end: var(--space-5);
@@ -569,10 +568,8 @@ html[lang='ar'] .careers-map__role { font-size: .75rem; }
   text-transform: uppercase;
   color: rgba(255, 255, 255, .5);
 }
-.careers-map__note { inset-inline-start: var(--space-5); }
 .careers-map__coords { inset-inline-end: var(--space-5); font-variant-numeric: tabular-nums; letter-spacing: .14em; }
 @media (max-width: 479.98px) { .careers-map__coords { display: none; } }
-html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-transform: none; }
 .careers-map__head { position: absolute; z-index: 2; inset-block-start: var(--space-5); inset-inline: var(--space-5); display: flex; justify-content: space-between; gap: 1rem; }
 .careers-map__head .eyebrow { color: var(--teal-400); }
 
@@ -614,12 +611,12 @@ html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-
 .careers-office > .btn { justify-self: start; }
 
 /* ==========================================================================
-   5. HIRING JOURNEY — scroll-driven progress line
+   5. HIRING JOURNEY: scroll-driven progress line
    ========================================================================== */
 .careers-journey { overflow: hidden; isolation: isolate; }
 .careers-journey__bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; mask-image: linear-gradient(180deg, transparent 0%, #000 40%, #000 70%, transparent 100%); }
 .careers-journey__bg picture, .careers-journey__bg img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 50% 30%; }
-.careers-journey__bg img { opacity: .1; filter: grayscale(1) contrast(1.2); }
+.careers-journey__bg img { opacity: .14; }
 .careers-steps {
   --node: 56px;
   --progress: 0;
@@ -721,7 +718,7 @@ html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-
   transition: color var(--dur) var(--ease-soft);
 }
 [dir='rtl'] .careers-route__email { text-align: end; }
-.careers-route__email.is-empty { color: var(--slate-300); }
+.careers-route__email.is-empty { direction: inherit; text-align: start; font-size: var(--fs-md); font-weight: 600; color: var(--fg-muted); }
 .careers-route__email.is-flash { animation: careers-flash 900ms var(--ease-out); }
 @keyframes careers-flash { 0% { color: var(--teal-600); transform: translateY(6px); opacity: .2; } 100% { transform: none; opacity: 1; } }
 .careers-progress { display: grid; gap: .75rem; margin-block-start: var(--space-4); padding-block-start: var(--space-5); border-block-start: var(--hairline); }
@@ -788,7 +785,7 @@ html[lang='ar'] .careers-map__note { letter-spacing: 0; font-size: .75rem; text-
 .careers-form .form__row { grid-template-columns: minmax(0, 1fr); }
 .careers-form .field { grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 768px) { .careers-form .form__row--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-/* phone (code + number) + LinkedIn share a row only when the card itself is wide enough (not on the 1024–1199 split) */
+/* phone (code + number) + LinkedIn share a row only when the card itself is wide enough (not on the 1024 to 1199 split) */
 .careers-form-card { container-type: inline-size; container-name: careers-form; }
 .careers-form .careers-form__contact { grid-template-columns: minmax(0, 1fr); }
 @container careers-form (min-width: 700px) { .careers-form .careers-form__contact { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

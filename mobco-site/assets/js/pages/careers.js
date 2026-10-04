@@ -1,8 +1,8 @@
-// assets/js/pages/careers.js — Careers page behaviours (careers.html). Owned by the careers builder.
+// assets/js/pages/careers.js: Careers page behaviours (careers.html). Owned by the careers builder.
 // Core modules are singletons already initialised by core/main.js (loaded first).
 //
 //   1. Hero skyline      pointer parallax on the three photo towers (fine pointers, motion-safe)
-//   2. Benefit panels    expanding panels (hover intent / focus / click; arrow keys) — desktop only
+//   2. Benefit panels    expanding panels (hover intent / focus / click; arrow keys), desktop only
 //   3. Disciplines       chip filter + search with FLIP re-layout, live status, drawer with prev/next + "Apply"
 //   4. Locations         dot/land map with office markers synced to the KSA / Egypt tabs
 //   5. Hiring journey    scroll-driven progress line + active steps
@@ -18,37 +18,37 @@ import { WORLD } from '../data/world-map.js';
 
 const fmt = (s, vars) => s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] ?? ''));
 const pad = (n) => String(n).padStart(2, '0');
+const comma = () => (getLang() === 'ar' ? '، ' : ', ');
 const EASE = 'cubic-bezier(.16, 1, .3, 1)';
 
 /* ------------------------------------------------------------------ strings */
 const S = {
-  statusAll: { en: 'Showing all <strong>{t}</strong> disciplines', ar: 'عرض جميع التخصصات (<strong>{t}</strong>)' },
-  status: { en: 'Showing <strong>{n}</strong> of {t} disciplines', ar: 'عرض <strong>{n}</strong> من {t} تخصصات' },
-  statusNone: { en: 'No disciplines match your search', ar: 'لا توجد تخصصات مطابقة لبحثك' },
-  areas: { en: 'Typical areas of work', ar: 'مجالات العمل المعتادة' },
+  statusAll: { en: '<strong>{t}</strong> disciplines', ar: '<strong>{t}</strong> تخصصات' },
+  status: { en: '<strong>{n}</strong> of {t} disciplines', ar: '<strong>{n}</strong> من {t} تخصصات' },
+  statusNone: { en: 'No matches', ar: 'لا توجد نتائج' },
+  areas: { en: 'Areas of work', ar: 'مجالات العمل' },
   where: { en: 'Where to apply', ar: 'جهة التقديم' },
-  notVacancy: { en: 'This is an overview of a discipline, not a specific vacancy.', ar: 'هذه نظرة عامة على تخصص، وليست وظيفة شاغرة محددة.' },
   teamKsa: { en: 'KSA careers team', ar: 'فريق التوظيف في السعودية' },
   teamEgypt: { en: 'Egypt careers team', ar: 'فريق التوظيف في مصر' },
-  selectedDisc: { en: 'Discipline selected: {d}', ar: 'تم اختيار التخصص: {d}' },
-  selectedLoc: { en: 'Location selected: {l}', ar: 'تم اختيار الموقع: {l}' },
-  routeEmpty: { en: 'Choose a location to see the right team.', ar: 'اختر الموقع لمعرفة فريق التوظيف المناسب.' },
+  selectedDisc: { en: '{d} selected', ar: 'تم اختيار {d}' },
+  selectedLoc: { en: '{l} selected', ar: 'تم اختيار {l}' },
+  routeEmpty: { en: 'Choose a location', ar: 'اختر الموقع' },
   progress: { en: '{n} of {t} complete', ar: '{n} من {t} مكتملة' },
   mapHead: { en: 'Our hiring teams', ar: 'فرق التوظيف لدينا' },
   mapShow: { en: 'Show the {o}', ar: 'عرض {o}' },
   // success
   okTitle: { en: 'Almost there, {name}', ar: 'اقتربت من الانتهاء يا {name}' },
   okLead: { en: 'Your email app should now open with a pre-filled message to <strong>{email}</strong>.', ar: 'من المفترض أن يُفتح تطبيق البريد الآن برسالة مُعبّأة مسبقًا إلى <strong>{email}</strong>.' },
-  okStep1: { en: 'Attach your CV — <strong>{file}</strong>. Browsers can’t attach files automatically.', ar: 'أرفق سيرتك الذاتية — <strong>{file}</strong>؛ إذ لا تستطيع المتصفحات إرفاق الملفات تلقائيًا.' },
-  okStep2: { en: 'Review the pre-filled details.', ar: 'راجع البيانات المعبّأة مسبقًا.' },
-  okStep3: { en: 'Press send — that’s it.', ar: 'اضغط «إرسال»، وهذا كل ما في الأمر.' },
+  okStep1: { en: 'Attach your CV (<strong>{file}</strong>).', ar: 'أرفق سيرتك الذاتية (<strong>{file}</strong>).' },
+  okStep2: { en: 'Check the details.', ar: 'راجع البيانات.' },
+  okStep3: { en: 'Press send.', ar: 'اضغط «إرسال».' },
   okOpen: { en: 'Open email again', ar: 'افتح البريد مجددًا' },
   okCopy: { en: 'Copy email address', ar: 'نسخ عنوان البريد' },
   okNew: { en: 'Start a new application', ar: 'ابدأ طلبًا جديدًا' },
-  okNote: { en: 'Email app didn’t open? Send your CV and details directly to {link}.', ar: 'لم يُفتح تطبيق البريد؟ أرسل سيرتك الذاتية وبياناتك مباشرةً إلى {link}.' },
+  okNote: { en: 'If your email app didn’t open, send your CV to {link}.', ar: 'إذا لم يُفتح تطبيق البريد، أرسل سيرتك الذاتية إلى {link}.' },
   okSummary: { en: 'Application summary', ar: 'ملخّص الطلب' },
   // mail
-  mSubject: { en: 'Job application – {disc} – {name}', ar: 'طلب توظيف – {disc} – {name}' },
+  mSubject: { en: 'Job application | {disc} | {name}', ar: 'طلب توظيف | {disc} | {name}' },
   mHello: { en: 'Dear MOBCO careers team,', ar: 'فريق التوظيف في مجموعة موبكو المحترم،' },
   mIntro: { en: 'Please find my application details below. My CV is attached to this email.', ar: 'أرجو الاطلاع على بيانات طلبي أدناه، وتجدون سيرتي الذاتية مرفقة بهذه الرسالة.' },
   mName: { en: 'Name', ar: 'الاسم' },
@@ -61,9 +61,9 @@ const S = {
   mCv: { en: 'CV file', ar: 'ملف السيرة الذاتية' },
   mCvAttach: { en: '{file} (attached)', ar: '{file} (مرفق)' },
   mNote: { en: 'Cover note', ar: 'الرسالة التعريفية' },
-  mTrim: { en: '[…shortened — full note available on request]', ar: '[…تم اختصار الرسالة — النص الكامل متاح عند الطلب]' },
+  mTrim: { en: '[Shortened. Full note available on request.]', ar: '[تم اختصار الرسالة. النص الكامل متاح عند الطلب.]' },
   mFooter: { en: 'Sent via the MOBCO Group careers page.', ar: 'أُرسلت عبر صفحة الوظائف في موقع مجموعة موبكو.' },
-  mNone: { en: '—', ar: '—' },
+  mNone: { en: 'Not provided', ar: 'غير متوفر' },
 };
 
 const LOC = {
@@ -86,8 +86,8 @@ const DISCIPLINES = [
     title: { en: 'Engineering', ar: 'الهندسة' },
     tags: [{ en: 'Civil', ar: 'مدنية' }, { en: 'Structural', ar: 'إنشائية' }, { en: 'MEP', ar: 'كهروميكانيكية' }],
     long: {
-      en: 'Engineering sits at the heart of how we build. Site and office engineers across civil, structural and MEP disciplines plan construction methods, coordinate drawings and trades, and supervise works so that every element is built safely and to specification.',
-      ar: 'تقع الهندسة في صميم طريقة بنائنا؛ إذ يتولّى المهندسون الميدانيون والمكتبيون في التخصصات المدنية والإنشائية والكهروميكانيكية تخطيط أساليب التنفيذ، وتنسيق المخططات والأعمال، والإشراف على التنفيذ لضمان إنجاز كل عنصر بأمان ووفق المواصفات.',
+      en: 'Civil, structural and MEP engineers plan construction methods, coordinate drawings and trades, and supervise the works so every element is built safely and to specification.',
+      ar: 'يخطّط المهندسون المدنيون والإنشائيون والكهروميكانيكيون أساليب التنفيذ، وينسّقون المخططات والأعمال، ويشرفون على التنفيذ ليُنجز كل عنصر بأمان ووفق المواصفات.',
     },
     focus: [
       { en: 'Structural & civil works', ar: 'الأعمال الإنشائية والمدنية' },
@@ -101,8 +101,8 @@ const DISCIPLINES = [
     title: { en: 'Project management & controls', ar: 'إدارة المشاريع وضبطها' },
     tags: [{ en: 'Planning', ar: 'التخطيط' }, { en: 'Scheduling', ar: 'الجدولة' }, { en: 'Cost control', ar: 'ضبط التكاليف' }],
     long: {
-      en: 'Project teams lead delivery from pre-construction to handover, while planning and controls specialists track programme, cost and risk — so that decisions are made early and with clear information.',
-      ar: 'تقود فرق المشاريع عملية التنفيذ من مرحلة ما قبل الإنشاء حتى التسليم، فيما يتابع متخصصو التخطيط وضبط المشاريع البرامج الزمنية والتكاليف والمخاطر، لتُتّخذ القرارات مبكرًا وبمعلومات واضحة.',
+      en: 'Project teams lead delivery through to handover. Planning and controls specialists track programme, cost and risk so decisions are made early.',
+      ar: 'تقود فرق المشاريع التنفيذ حتى التسليم، ويتابع متخصصو التخطيط وضبط المشاريع البرامج الزمنية والتكاليف والمخاطر لتُتّخذ القرارات مبكرًا.',
     },
     focus: [
       { en: 'Project management & controls', ar: 'إدارة المشاريع وضبطها' },
@@ -116,8 +116,8 @@ const DISCIPLINES = [
     title: { en: 'Quantity surveying & commercial', ar: 'حصر الكميات والشؤون التجارية' },
     tags: [{ en: 'Cost', ar: 'التكاليف' }, { en: 'Contracts', ar: 'العقود' }, { en: 'Valuations', ar: 'التقييمات' }],
     long: {
-      en: 'Commercial teams estimate, measure and value works, manage variations and subcontract accounts, and give project leaders a clear view of cost — from tender to final account.',
-      ar: 'تتولّى الفرق التجارية التقدير وحصر الأعمال وتقييمها، وإدارة الأوامر التغييرية وحسابات مقاولي الباطن، وتمنح قادة المشاريع رؤية واضحة للتكاليف من مرحلة المناقصة حتى الحساب الختامي.',
+      en: 'Commercial teams estimate, measure and value the works, manage variations and subcontract accounts, and keep project leaders clear on cost through to the final account.',
+      ar: 'تتولّى الفرق التجارية تقدير الأعمال وحصرها وتقييمها، وإدارة الأوامر التغييرية وحسابات مقاولي الباطن، وتُطلع قادة المشاريع على التكاليف حتى الحساب الختامي.',
     },
     focus: [
       { en: 'Estimating & tendering', ar: 'التقدير وإعداد المناقصات' },
@@ -131,8 +131,8 @@ const DISCIPLINES = [
     title: { en: 'Health, safety & environment', ar: 'الصحة والسلامة والبيئة' },
     tags: [{ en: 'HSE', ar: 'السلامة' }, { en: 'Quality', ar: 'الجودة' }, { en: 'Environment', ar: 'البيئة' }],
     long: {
-      en: 'Safety is one of our core values. HSE professionals plan safe systems of work, lead inductions and inspections, and work alongside site teams to protect our people, partners and the public.',
-      ar: 'السلامة إحدى قيمنا الجوهرية؛ إذ يخطّط متخصصو الصحة والسلامة والبيئة أنظمة عمل آمنة، ويقودون برامج التعريف والتفتيش، ويعملون جنبًا إلى جنب مع فرق المواقع لحماية أفرادنا وشركائنا والمجتمع.',
+      en: 'Safety is one of our core values. HSE professionals plan safe ways of working, run inductions and inspections, and work with site teams to protect our people, partners and the public.',
+      ar: 'السلامة إحدى قيمنا الجوهرية. يخطّط متخصصو الصحة والسلامة والبيئة أساليب عمل آمنة، ويديرون برامج التعريف والتفتيش، ويعملون مع فرق المواقع لحماية أفرادنا وشركائنا والمجتمع.',
     },
     focus: [
       { en: 'Quality, health, safety & environment', ar: 'الجودة والصحة والسلامة والبيئة' },
@@ -146,8 +146,8 @@ const DISCIPLINES = [
     title: { en: 'Design & BIM', ar: 'التصميم ونمذجة معلومات البناء' },
     tags: [{ en: 'Architecture', ar: 'العمارة' }, { en: 'BIM', ar: 'BIM' }, { en: 'Coordination', ar: 'التنسيق' }],
     long: {
-      en: 'Design and BIM teams develop and coordinate drawings and digital models across disciplines, resolve clashes early and support value engineering — so that sites build from clear, reliable information.',
-      ar: 'تُطوّر فرق التصميم ونمذجة معلومات البناء (BIM) المخططات والنماذج الرقمية وتنسّقها بين التخصصات، وتعالج التعارضات مبكرًا، وتدعم الهندسة القيمية، لتعمل المواقع وفق معلومات واضحة وموثوقة.',
+      en: 'Design and BIM teams coordinate drawings and models across disciplines and resolve clashes early, so sites build from clear, reliable information.',
+      ar: 'تنسّق فرق التصميم ونمذجة معلومات البناء (BIM) المخططات والنماذج بين التخصصات وتعالج التعارضات مبكرًا، لتعمل المواقع وفق معلومات واضحة وموثوقة.',
     },
     focus: [
       { en: 'Design coordination & value engineering', ar: 'تنسيق التصاميم والهندسة القيمية' },
@@ -161,8 +161,8 @@ const DISCIPLINES = [
     title: { en: 'Procurement', ar: 'المشتريات' },
     tags: [{ en: 'Sourcing', ar: 'التوريد' }, { en: 'Suppliers', ar: 'الموردون' }, { en: 'Logistics', ar: 'الخدمات اللوجستية' }],
     long: {
-      en: 'Procurement teams shape procurement strategy, source and evaluate suppliers and subcontractors, and coordinate logistics so that materials and services reach site when the programme needs them.',
-      ar: 'تضع فرق المشتريات استراتيجية الشراء، وتستقطب الموردين ومقاولي الباطن وتقيّمهم، وتنسّق الخدمات اللوجستية لتصل المواد والخدمات إلى الموقع حين يتطلّبها البرنامج الزمني.',
+      en: 'Procurement teams source and evaluate suppliers and subcontractors and coordinate logistics, so materials reach site when the programme needs them.',
+      ar: 'تستقطب فرق المشتريات الموردين ومقاولي الباطن وتقيّمهم، وتنسّق الخدمات اللوجستية لتصل المواد إلى الموقع في الوقت الذي يتطلّبه البرنامج الزمني.',
     },
     focus: [
       { en: 'Procurement strategy', ar: 'استراتيجية المشتريات' },
@@ -176,8 +176,8 @@ const DISCIPLINES = [
     title: { en: 'Facility management', ar: 'إدارة المرافق' },
     tags: [{ en: 'Operations', ar: 'التشغيل' }, { en: 'Maintenance', ar: 'الصيانة' }, { en: 'Services', ar: 'الخدمات' }],
     long: {
-      en: 'Facility management is part of our story. Operations and maintenance professionals look after buildings, systems and services so that the communities and facilities we deliver perform for years to come.',
-      ar: 'إدارة المرافق جزء من مسيرتنا؛ إذ يعتني متخصصو التشغيل والصيانة بالمباني والأنظمة والخدمات، لتواصل المجتمعات والمنشآت التي ننفّذها أداءها لسنوات قادمة.',
+      en: 'Operations and maintenance teams look after buildings, systems and services, so the communities and facilities we deliver keep performing for years.',
+      ar: 'تعتني فرق التشغيل والصيانة بالمباني والأنظمة والخدمات، لتواصل المجتمعات والمنشآت التي ننفّذها أداءها لسنوات.',
     },
     focus: [
       { en: 'Facility management', ar: 'إدارة المرافق' },
@@ -191,8 +191,8 @@ const DISCIPLINES = [
     title: { en: 'Corporate functions', ar: 'الوظائف المؤسسية' },
     tags: [{ en: 'Finance', ar: 'المالية' }, { en: 'HR', ar: 'الموارد البشرية' }, { en: 'Legal', ar: 'الشؤون القانونية' }, { en: 'IT', ar: 'تقنية المعلومات' }],
     long: {
-      en: 'Behind every site is a group-wide team. Corporate professionals in finance, human resources, legal, IT, business development and administration provide the systems and support our projects depend on.',
-      ar: 'خلف كل موقع فريقٌ يعمل على مستوى المجموعة؛ إذ يوفّر المتخصصون في المالية والموارد البشرية والشؤون القانونية وتقنية المعلومات وتطوير الأعمال والإدارة الأنظمة والدعم اللذين تعتمد عليهما مشاريعنا.',
+      en: 'Finance, HR, legal, IT, business development and administration teams provide the systems and support our projects depend on.',
+      ar: 'توفّر فرق المالية والموارد البشرية والشؤون القانونية وتقنية المعلومات وتطوير الأعمال والإدارة الأنظمة والدعم اللذين تعتمد عليهما مشاريعنا.',
     },
     focus: [
       { en: 'Finance & accounting', ar: 'المالية والمحاسبة' },
@@ -203,11 +203,11 @@ const DISCIPLINES = [
   },
 ];
 const getDisc = (id) => DISCIPLINES.find((d) => d.id === id);
-const OTHER_DISC = { en: 'Other / not listed', ar: 'أخرى / غير مدرج' };
+const OTHER_DISC = { en: 'Other', ar: 'أخرى' };
 const discLabel = (id) => (id === 'other' ? t(OTHER_DISC) : t(getDisc(id)?.title || ''));
 
 /* ==================================================================
-   1. Hero skyline — pointer parallax
+   1. Hero skyline: pointer parallax
    ================================================================== */
 function initHero() {
   const hero = $('.careers-hero');
@@ -281,7 +281,7 @@ function initBenefits() {
 }
 
 /* ==================================================================
-   3. Disciplines — filter + search + drawer
+   3. Disciplines: filter + search + drawer
    ================================================================== */
 const discState = { cat: 'all', q: '' };
 let ddIndex = 0;
@@ -391,7 +391,7 @@ function renderDrawer(swap = false) {
   const teams = [['ksa', S.teamKsa], ['egypt', S.teamEgypt]];
   body.innerHTML = `
     <div class="careers-drawer__hero">
-      <div class="media media--blueprint">${picture(d.image, { position: d.pos, loading: 'eager' })}</div>
+      <div class="media careers-drawer__media">${picture(d.image, { position: d.pos, loading: 'eager' })}</div>
       <span class="icon-tile icon-tile--lg" aria-hidden="true">${icon(d.icon)}</span>
     </div>
     <div class="careers-drawer__content">
@@ -407,11 +407,10 @@ function renderDrawer(swap = false) {
         <p class="label muted">${esc(t(S.where))}</p>
         <div class="careers-drawer__teams">${teams.map(([id, label]) => `<p class="careers-drawer__team"><span>${esc(t(label))}</span><a href="mailto:${careersEmail(id)}" dir="ltr">${careersEmail(id)}</a></p>`).join('')}</div>
       </div>
-      <p class="careers-drawer__note">${icon('info', 'icon--sm')}<span>${esc(t(S.notVacancy))}</span></p>
     </div>`;
   // prev/next swaps the content in place: announce the new discipline to screen readers
   const live = $('[data-dd-live]', drawer);
-  if (live) live.textContent = swap ? `${t(d.title)} — ${ddIndex + 1} / ${DISCIPLINES.length}` : '';
+  if (live) live.textContent = swap ? `${t(d.title)}${comma()}${ddIndex + 1} / ${DISCIPLINES.length}` : '';
   if (swap && !prefersReducedMotion()) {
     body.classList.remove('is-swapping');
     void body.offsetWidth;
@@ -445,7 +444,7 @@ function initDrawer() {
 }
 
 /* ==================================================================
-   4. Locations — map + tabs
+   4. Locations: map + tabs
    ================================================================== */
 const VB = { x: 518, y: 104, w: 176, h: 136 };
 let mapApi = null;
@@ -558,7 +557,7 @@ function buildMap(root, onPick) {
 }
 
 /* ==================================================================
-   5. Hiring journey — progress driven by scroll
+   5. Hiring journey: progress driven by scroll
    ================================================================== */
 function initJourney() {
   const list = $('[data-journey]');
@@ -670,19 +669,21 @@ function initForm() {
   const renderExp = () => {
     const txt = formatExp(range.value);
     out.textContent = txt;
-    range.setAttribute('aria-valuetext', `${txt} — ${t(stageOf(range.value))}`);
+    range.setAttribute('aria-valuetext', `${txt}${comma()}${t(stageOf(range.value))}`);
     stage.textContent = t(stageOf(range.value));
   };
   const renderRoute = (flash = false) => {
     const loc = el.location.value;
     if (!loc) {
-      routeEmail.textContent = '—';
+      routeEmail.textContent = t(S.routeEmpty);
       routeEmail.classList.add('is-empty');
-      routeOffice.textContent = t(S.routeEmpty);
+      routeOffice.textContent = '';
+      routeOffice.hidden = true;
       return;
     }
     routeEmail.textContent = careersEmail(loc);
     routeEmail.classList.remove('is-empty');
+    routeOffice.hidden = false;
     routeOffice.textContent = `${t(LOC[loc].team)} · ${t(LOC[loc].city)}`;
     if (flash && !prefersReducedMotion()) { routeEmail.classList.remove('is-flash'); void routeEmail.offsetWidth; routeEmail.classList.add('is-flash'); }
   };
@@ -777,7 +778,7 @@ function mailtoFor(sub, lang = getLang()) {
     `${L(S.mCv)}: ${fmt(L(S.mCvAttach), { file: sub.cv })}`,
   ];
   if (note) lines.push('', `${L(S.mNote)}:`, note);
-  lines.push('', '—', L(S.mFooter));
+  lines.push('', L(S.mFooter));
   const subject = fmt(L(S.mSubject), { disc, name: sub.name });
   return `mailto:${careersEmail(sub.location)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\r\n'))}`;
 }

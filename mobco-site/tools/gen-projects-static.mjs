@@ -17,7 +17,6 @@ const dims = (b) => IMAGES[b] || { w: 1022, h: 688 };
 const catOf = (p) => getCategory(p.category);
 const catName = (p) => (catOf(p) ? catOf(p).name : p.typology);
 const catIcon = (p) => catOf(p)?.icon || 'landmark';
-const TBC = { en: 'Location to be confirmed', ar: 'الموقع قيد التأكيد' };
 
 const thumbPic = (p, { alt, sizes, srcset = true }) => {
   const { w, h } = dims(p.image);
@@ -38,8 +37,9 @@ ${featured.map((p) => {
         </ul>`;
 
 const grid = featuredFirst.map((p, i) => {
-  const loc = p.location || TBC;
-  return `              <li class="pj-item" id="${p.slug}" data-slug="${p.slug}"><a class="pj-card${p.location ? '' : ' is-tbc'}" href="projects.html#${p.slug}" data-slug="${p.slug}" data-cursor="view"><span class="pj-card__media">${thumbPic(p, { alt: p.name, sizes: '(min-width: 1024px) 420px, (min-width: 640px) 46vw, 92vw' })}<span class="pj-card__idx num">${pad(i + 1)}</span></span><span class="pj-card__body"><span class="pj-card__cat">${icon(catIcon(p), 'icon--sm')}<span${ar(catName(p))}>${esc(catName(p).en)}</span></span><span class="pj-card__title" role="heading" aria-level="3"${ar(p.name)}>${esc(p.name.en)}</span><span class="pj-card__loc">${icon('map-pin', 'icon--sm')}<span${ar(loc)}>${esc(loc.en)}</span></span></span></a></li>`;
+  const loc = p.location;
+  const locHtml = loc ? `<span class="pj-card__loc">${icon('map-pin', 'icon--sm')}<span${ar(loc)}>${esc(loc.en)}</span></span>` : '';
+  return `              <li class="pj-item" id="${p.slug}" data-slug="${p.slug}"><a class="pj-card" href="projects.html#${p.slug}" data-slug="${p.slug}" data-cursor="view"><span class="pj-card__media">${thumbPic(p, { alt: p.name, sizes: '(min-width: 1024px) 420px, (min-width: 640px) 46vw, 92vw' })}<span class="pj-card__idx num">${pad(i + 1)}</span></span><span class="pj-card__body"><span class="pj-card__cat">${icon(catIcon(p), 'icon--sm')}<span${ar(catName(p))}>${esc(catName(p).en)}</span></span><span class="pj-card__title" role="heading" aria-level="3"${ar(p.name)}>${esc(p.name.en)}</span>${locHtml}</span></a></li>`;
 }).join('\n');
 
 const PROJECT_WORD = (n) => ({ en: `${n} ${n === 1 ? 'project' : 'projects'}`, ar: n === 1 ? 'مشروع واحد' : n === 2 ? 'مشروعان' : n <= 10 ? `${n} مشاريع` : `${n} مشروعًا` });

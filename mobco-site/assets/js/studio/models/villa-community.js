@@ -31,7 +31,6 @@ export const meta = {
     { label: { en: 'Massing', ar: 'الكتلة' }, value: { en: 'Low-rise villas with roof terraces', ar: 'فلل منخفضة الارتفاع مع أسطح مفتوحة' } },
     { label: { en: 'Landscape', ar: 'تنسيق الموقع' }, value: { en: 'Lagoon pools and a tree-lined boulevard', ar: 'بحيرات اصطناعية وجادّة مشجّرة' } },
     { label: { en: 'Amenities', ar: 'المرافق' }, value: { en: 'Commercial strip along the main road', ar: 'شريط تجاري على امتداد الطريق الرئيسي' } },
-    { label: { en: 'Model', ar: 'النموذج' }, value: { en: 'Illustrative massing — not to scale', ar: 'نموذج كتلي توضيحي — ليس بمقياس رسم' } },
   ],
   camera: {
     target: [0, 1, 2],
@@ -45,8 +44,8 @@ export const meta = {
       id: 'lagoons', position: [-4, 2.5, -6],
       title: { en: 'Lagoon pools', ar: 'البحيرات الاصطناعية' },
       text: {
-        en: 'Free-form lagoon pools with sandy decks form the green heart of the community, as shown in the render.',
-        ar: 'بحيرات اصطناعية حرّة التشكيل بأرصفة رملية تشكّل القلب الأخضر للمجتمع، كما يظهر في التصوّر.',
+        en: 'Free-form lagoon pools with sandy decks form the green heart of the community.',
+        ar: 'بحيرات اصطناعية حرّة التشكيل بأرصفة رملية تشكّل القلب الأخضر للمجتمع.',
       },
     },
     {
@@ -362,17 +361,17 @@ export function build(THREE, ctx = {}) {
     return g;
   };
   const villaFloors = [
-    mkFloor('villas', 0, 'Villas — ground floor', 'الفلل — الطابق الأرضي'),
-    mkFloor('villas', 1, 'Villas — first floor', 'الفلل — الطابق الأول'),
-    mkFloor('villas', 2, 'Villas — roof terraces', 'الفلل — الأسطح'),
+    mkFloor('villas', 0, 'Villas · ground floor', 'الفلل · الطابق الأرضي'),
+    mkFloor('villas', 1, 'Villas · first floor', 'الفلل · الطابق الأول'),
+    mkFloor('villas', 2, 'Villas · roof terraces', 'الفلل · الأسطح'),
   ];
   const shopFloors = {};
   for (const s of L.shops) {
     const nm = s.id === 'retail-west' ? ['West', 'الغربي'] : ['East', 'الشرقي'];
     shopFloors[s.id] = [
-      mkFloor(s.id, 0, `Commercial ${nm[0]} — retail arcade`, `المبنى التجاري ${nm[1]} — رواق المتاجر`),
-      mkFloor(s.id, 1, `Commercial ${nm[0]} — upper level`, `المبنى التجاري ${nm[1]} — المستوى العلوي`),
-      mkFloor(s.id, 2, `Commercial ${nm[0]} — roof terrace`, `المبنى التجاري ${nm[1]} — السطح`),
+      mkFloor(s.id, 0, `${nm[0]} shops · arcade`, `المبنى التجاري ${nm[1]} · رواق المتاجر`),
+      mkFloor(s.id, 1, `${nm[0]} shops · upper floor`, `المبنى التجاري ${nm[1]} · الطابق العلوي`),
+      mkFloor(s.id, 2, `${nm[0]} shops · roof terrace`, `المبنى التجاري ${nm[1]} · السطح`),
     ];
   }
   // Contract: ordered bottom -> top

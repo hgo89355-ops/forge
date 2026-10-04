@@ -1,4 +1,4 @@
-// MOBCO 3D Studio — ui.js
+// MOBCO 3D Studio · ui.js
 // Binds the studio page markup (studio.html) to the engine: model library rail with runtime thumbnails,
 // info panel, controls panel, toolbar (screenshot / full screen / reset / help), projected hotspots and
 // their cards, level chip, loader, error + no-WebGL states, hints, wheel-zoom engagement, view insets.
@@ -283,7 +283,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     outputs.section.textContent = sec >= 100 ? t(S.sectionOff) : fmt(t(S.sectionAt), { n: sec });
     const h = +inputs.time.value;
     outputs.time.textContent = formatHour(h);
-    // the raw values (0–100, 6–22 in quarter hours) mean little when read aloud: speak the formatted readouts
+    // the raw values (0 to 100, 6 to 22 in quarter hours) mean little when read aloud: speak the formatted readouts
     inputs.explode.setAttribute('aria-valuetext', outputs.explode.textContent);
     inputs.section.setAttribute('aria-valuetext', outputs.section.textContent);
     inputs.time.setAttribute('aria-valuetext', outputs.time.textContent);
@@ -580,7 +580,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const h = hotspots.find((x) => x.id === openHot);
     if (!h || !hotcard) return;
     hotcard.innerHTML = `
-      <span class="studio-hotcard__num">${esc(fmt(t({ en: 'Point {n}', ar: 'النقطة {n}' }), { n: pad(h.index) }))}</span>
+      <span class="studio-hotcard__num">${esc(fmt(t(S.hotspotNum), { n: pad(h.index) }))}</span>
       <h3 class="studio-hotcard__title" id="studio-hotcard-title">${esc(t(h.title))}</h3>
       <p class="studio-hotcard__text">${esc(t(h.text))}</p>
       <button class="studio-hotcard__close" type="button" data-hot-close aria-label="${esc(t(S.close))}">${icon('x')}</button>`;

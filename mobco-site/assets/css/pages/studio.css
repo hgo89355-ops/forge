@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MOBCO — studio.css  (3D Project Studio · page-owned, scoped to the studio)
+   MOBCO · studio.css  (3D Project Studio, page-owned, scoped to the studio)
    Layout: < 1024px  → sticky viewer on top, library / info / controls flow below
            ≥ 1024px  → immersive full-height viewer; info, controls and library
                        float over the canvas (the engine re-centres the model in
@@ -708,7 +708,7 @@ html[lang='ar'] .studio-rail__name { font-family: var(--font-arabic); font-size:
   animation: studio-spin .9s linear infinite;
 }
 .studio-rail__item.is-unavailable .studio-rail__thumb { opacity: .5; }
-.studio-rail__item.is-unavailable .studio-rail__num::after { content: ' ·  —'; color: rgba(255, 255, 255, .4); }
+.studio-rail__item.is-unavailable .studio-rail__name { opacity: .55; }
 @media (min-width: 1024px) {
   .studio-rail__thumb { inline-size: 112px; block-size: 76px; }
   /* long descriptive names ("Lagoon Villa Community") get a third line instead of an ellipsis */
@@ -767,6 +767,7 @@ html[lang='ar'] .studio-keys__title { font-size: .9375rem; letter-spacing: 0; fo
 .studio-keys__list { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); }
 .studio-keys__list li { display: inline-flex; align-items: center; gap: .55rem; font-size: var(--fs-sm); color: var(--fg-muted); }
 .studio-keys__k { display: inline-flex; align-items: center; gap: .2rem; color: var(--fg-strong); }
+.studio-keys__to { padding-inline: .2rem; font-size: var(--fs-xs); font-weight: 500; color: var(--fg-muted); }
 .studio-keys__k kbd, .studio-help kbd {
   display: inline-grid;
   place-items: center;
@@ -808,7 +809,7 @@ html[lang='ar'] .studio-keys__title { font-size: .9375rem; letter-spacing: 0; fo
 .studio-proj__media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--navy-900); }
 .studio-proj__media picture, .studio-proj__media img { inline-size: 100%; block-size: 100%; object-fit: cover; }
 .studio-proj__media img { transition: transform 1.2s var(--ease-out); }
-.studio-proj__badge { position: absolute; inset-block-start: .75rem; inset-inline-start: .75rem; }
+.studio-proj__badge { display: none; } /* every card here is a 3D model: the label only repeated the section title */
 .studio-proj__body { display: flex; flex-direction: column; gap: .5rem; flex: 1; padding: var(--space-5); }
 .studio-proj__num { font-family: 'Manrope', var(--font-display); font-size: .6875rem; font-weight: 800; letter-spacing: .18em; color: var(--accent-text); }
 .studio-proj__name { font-family: var(--font-display); font-size: var(--fs-h6); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-strong); line-height: 1.3; }

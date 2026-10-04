@@ -24,7 +24,7 @@ export const meta = {
     ar: 'مبانٍ حلقية وبرج بعنصر شراعي وجسر معلّق انسيابي، وسط مساحات خضراء منسّقة.',
   },
   descriptors: [
-    { label: { en: 'Typology', ar: 'النمط' }, value: { en: 'Campus (illustrative)', ar: 'حرم تعليمي (توضيحي)' } },
+    { label: { en: 'Typology', ar: 'النمط' }, value: { en: 'Campus', ar: 'حرم تعليمي' } },
     { label: { en: 'Massing', ar: 'التكوين الكتلي' }, value: { en: 'Two ring buildings around garden courtyards', ar: 'مبنيان حلقيان حول فناءين مزروعين' } },
     { label: { en: 'Landmark', ar: 'العنصر المميّز' }, value: { en: 'Central tower with a sail-like fin', ar: 'برج مركزي بعنصر شراعي منحنٍ' } },
     { label: { en: 'Connection', ar: 'الربط' }, value: { en: 'Curved pedestrian sky bridge', ar: 'جسر مشاة معلّق منحنٍ' } },
@@ -74,8 +74,8 @@ export const meta = {
       id: 'courtyard', position: [36, 4, 30],
       title: { en: 'Garden courtyard', ar: 'الفناء المزروع' },
       text: {
-        en: 'Each ring encloses a shaded garden courtyard planted with palms — a calm outdoor room at the heart of the building.',
-        ar: 'يحتضن كل مبنى حلقي فناءً مظللاً مزروعاً بالنخيل — مساحة خارجية هادئة في قلب المبنى.',
+        en: 'Each ring wraps around a shaded garden courtyard planted with palms.',
+        ar: 'يحيط كل مبنى حلقي بفناء مظلّل مزروع بالنخيل.',
       },
     },
   ],

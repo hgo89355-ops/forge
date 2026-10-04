@@ -1,4 +1,4 @@
-// assets/js/pages/about.js — About page behaviours (owned by the About builder).
+// assets/js/pages/about.js: About page behaviours (owned by the About builder).
 // Core modules are singletons initialised by core/main.js (loaded first).
 //
 //  1. Key figures: STATS counters (site-data) + dot-matrix "three continents" map (world-map data)
@@ -84,7 +84,7 @@ function initVisionMission() {
 }
 
 /* ======================================================================
-   3. Core values — flip cards
+   3. Core values: flip cards
    ====================================================================== */
 function initValues() {
   const cards = $$('.about-value');
@@ -140,8 +140,8 @@ const NODES = [
     id: 'construction', a: -90, icon: 'hard-hat',
     name: { en: 'Construction', ar: 'الإنشاءات' },
     text: {
-      en: 'Contracting and construction delivery for projects ranging from skyscrapers and commercial malls to residential compounds, governmental and educational institutions, and luxury hotels.',
-      ar: 'المقاولات وتنفيذ الإنشاءات لمشاريع تتنوّع بين ناطحات السحاب والمراكز التجارية والمجمّعات السكنية والمؤسسات الحكومية والتعليمية والفنادق الفاخرة.',
+      en: 'Contracting for skyscrapers, commercial malls, residential compounds, government and educational buildings, and luxury hotels.',
+      ar: 'مقاولات وتنفيذ لناطحات السحاب والمراكز التجارية والمجمّعات السكنية والمباني الحكومية والتعليمية والفنادق الفاخرة.',
     },
     verb: { en: 'We build', ar: 'نبني' },
     subs: ['mobco-construction'],
@@ -163,8 +163,8 @@ const NODES = [
     id: 'fm', a: 30, icon: 'cog',
     name: { en: 'Facility Management', ar: 'إدارة المرافق' },
     text: {
-      en: 'Keeping communities and buildings performing long after handover — part of more than 25 years of premium projects in Saudi Arabia.',
-      ar: 'الحفاظ على أداء المجتمعات والمباني لما بعد التسليم بوقتٍ طويل — ضمن أكثر من 25 عامًا من المشاريع المتميّزة في المملكة العربية السعودية.',
+      en: 'Keeping communities and buildings running well long after handover.',
+      ar: 'نحافظ على كفاءة المجتمعات والمباني لسنواتٍ بعد التسليم.',
     },
     verb: { en: 'We manage', ar: 'نُدير' },
     subs: [],
@@ -175,7 +175,7 @@ const NODES = [
     name: { en: 'Hospitality', ar: 'الضيافة' },
     text: {
       en: 'Luxury hotels and hospitality projects, where finish quality and detailing matter most.',
-      ar: 'الفنادق الفاخرة ومشاريع الضيافة، حيث تتصدّر جودة التشطيب ودقّة التفاصيل.',
+      ar: 'فنادق فاخرة ومشاريع ضيافة تتصدّر فيها جودة التشطيب ودقّة التفاصيل.',
     },
     subs: [],
     image: { base: 'raffles-hotel-residence', pos: '50% 45%', project: 'raffles-hotel-residence' },
@@ -185,8 +185,8 @@ const NODES = [
     id: 'pm', a: 150, icon: 'gauge',
     name: { en: 'Project Management', ar: 'إدارة المشاريع' },
     text: {
-      en: 'Planning, controls and coordination that deliver projects on time, within budget and to the highest quality standards.',
-      ar: 'تخطيطٌ وضبطٌ وتنسيق يضمن تسليم المشاريع في مواعيدها وضمن ميزانياتها وبأعلى معايير الجودة.',
+      en: 'Planning, cost control and coordination that keep projects on time, within budget and to the highest quality standards.',
+      ar: 'تخطيط وضبط للتكاليف وتنسيق يُبقي المشاريع في مواعيدها وضمن ميزانياتها وبأعلى معايير الجودة.',
     },
     verb: { en: 'We plan', ar: 'نخطّط' },
     subs: [],
@@ -196,8 +196,8 @@ const NODES = [
     id: 'education', a: 210, icon: 'graduation-cap',
     name: { en: 'Education', ar: 'التعليم' },
     text: {
-      en: 'One of the group’s three specialisms alongside construction and real estate development — developing and managing educational facilities.',
-      ar: 'أحد تخصصات المجموعة الثلاثة إلى جانب الإنشاءات والتطوير العقاري — عبر تطوير المنشآت التعليمية وإدارتها.',
+      en: 'Developing and managing educational facilities, one of the group’s three specialisms.',
+      ar: 'تطوير المنشآت التعليمية وإدارتها، وهو أحد تخصصات المجموعة الثلاثة.',
     },
     subs: ['elite-education'],
     image: { base: 'tbc-schools-group-12', pos: '50% 45%', project: 'tbc-schools-group-12' },
@@ -211,9 +211,8 @@ const LINKS = [
   ['pm', 'construction', 'tri'], ['construction', 'fm', 'tri'], ['fm', 'pm', 'tri'],
 ];
 const L = {
-  connects: { en: 'Connects with', ar: 'يرتبط بـ' },
+  connects: { en: 'Works with', ar: 'يعمل مع' },
   projects: { en: 'Selected projects', ar: 'مشاريع مختارة' },
-  pictured: { en: 'Pictured', ar: 'في الصورة' },
   companies: { en: 'Group companies', ar: 'شركات المجموعة' },
   select: { en: 'Show', ar: 'عرض' },
 };
@@ -278,7 +277,7 @@ function initModel() {
     card.innerHTML = `
       ${n.image ? `<div class="about-model__card-media" aria-hidden="true">
         ${picture(n.image.base, { position: n.image.pos, loading: animate ? 'eager' : 'lazy' })}
-        ${shown ? `<span class="about-model__card-pictured">${esc(t(L.pictured))}: ${esc(t(shown.name))}</span>` : ''}
+        ${shown ? `<span class="about-model__card-pictured">${esc(t(shown.name))}</span>` : ''}
       </div>` : ''}
       <div class="about-model__card-head">
         <span class="about-model__card-icon">${icon(n.icon)}</span>
@@ -296,7 +295,7 @@ function initModel() {
       <div class="about-model__card-sub">
         <p class="about-model__card-sub-title">${esc(t(L.connects))}</p>
         <ul class="about-model__chips" role="list">
-          ${near.map((m) => `<li><button class="chip chip--sm" type="button" data-goto-node="${m.id}" aria-label="${esc(`${t(L.select)}: ${t(m.name)}`)}">${icon(m.icon, 'icon--sm')}<span>${esc(t(m.name))}</span></button></li>`).join('')}
+          ${near.map((m) => `<li><button class="chip chip--sm" type="button" data-goto-node="${m.id}" aria-label="${esc(`${t(L.select)} ${t(m.name)}`)}">${icon(m.icon, 'icon--sm')}<span>${esc(t(m.name))}</span></button></li>`).join('')}
         </ul>
       </div>
       ${subs.length ? `<div class="about-model__card-sub">
