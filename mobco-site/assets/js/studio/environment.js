@@ -241,7 +241,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     try {
       realism.enhanceScene(scene);
       realism.setEnvironment(scene, renderer, elevation, scene.environmentIntensity);
-      if (aoDirty && theme === 'sky' && !/noao=1/.test(location.search)) { aoDirty = false; realism.bakeAO(renderer, scene, aoBox, envObjects); }
+      if (aoDirty && theme === 'sky') { aoDirty = false; realism.bakeAO(renderer, scene, aoBox, envObjects); }
     } catch (e) { console.warn('[studio] realism pass failed', e); }
   }
 
