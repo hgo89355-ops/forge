@@ -50,6 +50,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
   let collapsed = false;
   let engaged = false;
   let syncing = false;
+  let lastInsets = { left: 0, right: 0, top: 0, bottom: 0 }; // canvas px covered by the floating panels
 
   const reduced = prefersReducedMotion() || !!engine?.lowPower;
   if (engine?.lowPower) root.classList.add('is-lowpower'); // CPU rasteriser: skip UI fades as well
@@ -573,7 +574,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     viewport.appendChild(hotcard);
     h.el.setAttribute('aria-controls', 'studio-hotcard');
     placeHotcard();
-    requestAnimationFrame(() => hotcard?.focus({ preventScroll: true }));
+    hotcard.focus({ preventScroll: true }); // synchronous: a rAF can lag seconds behind on slow GPUs
   }
   function renderHotcard() {
     const h = hotspots.find((x) => x.id === openHot);
@@ -593,11 +594,16 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
     const vw = viewport.clientWidth, vh = viewport.clientHeight;
     const cw = hotcard.offsetWidth, ch = hotcard.offsetHeight;
     const rtl = getLang() === 'ar';
-    let x = rtl ? p.x - cw - 26 : p.x + 26;
-    if (x + cw > vw - 12) x = p.x - cw - 26;
-    if (x < 12) x = Math.min(vw - cw - 12, p.x + 26);
+    // keep the card inside the canvas area that the floating panels leave free (they stack above it)
+    const ins = lastInsets;
+    const minX = Math.max(12, ins.left), maxX = Math.min(vw - 12, vw - ins.right) - cw;
+    const after = p.x + 26, before = p.x - cw - 26; // physical right / left of the dot
+    let x = rtl ? before : after;
+    if (x > maxX) x = before;
+    if (x < minX) x = after <= maxX ? after : before;
+    x = Math.max(minX, Math.min(maxX, x));
     let y = p.y - ch / 2;
-    y = Math.max(12 + (isDesktopLayout() ? 80 : 60), Math.min(vh - ch - 12, y));
+    y = Math.max(12 + Math.max(ins.top, isDesktopLayout() ? 80 : 60), Math.min(vh - Math.max(12, ins.bottom) - ch, y));
     hotcard.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
   }
   function closeHotcard(returnFocus = false) {
@@ -668,6 +674,7 @@ export function createStudioUI({ root, engine, entries, initialId, deepLinked = 
       ins.left = Math.min(ins.left, maxSide);
       ins.right = Math.min(ins.right, maxSide);
     }
+    lastInsets = ins;
     engine.setInsets(ins);
   }
   // desktop controls panel: fade its lower edge while more controls are hidden below the fold

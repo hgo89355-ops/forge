@@ -2073,6 +2073,8 @@ html[lang='ar'] .stat__label { font-size: .9375rem; font-weight: 600; letter-spa
 .page-hero__title { max-inline-size: 15ch; color: var(--white); }
 .page-hero__lead { max-inline-size: 56ch; color: rgba(255, 255, 255, .8); }
 .page-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-3); }
+/* Phones: hero CTAs stack full-width (same pattern as the home hero and the art-directed heroes). */
+@media (max-width: 559.98px) { .page-hero__actions .btn { flex: 1 1 100%; } }
 .page-hero__foot {
   display: flex;
   align-items: center;
@@ -2322,6 +2324,8 @@ html[lang='ar'] .mega__title { text-transform: none; letter-spacing: 0; }
 .mega__name { font-family: var(--font-display); font-size: .875rem; font-weight: 700; line-height: 1.3; color: var(--navy-950); }
 .mega__loc { font-size: var(--fs-xs); color: var(--slate-500); margin-block-start: -.5rem; }
 .mega__card:focus-visible { outline-offset: 4px; }
+.mega__card[aria-current='page'] .mega__name { color: var(--teal-700); }
+.mega__card[aria-current='page'] .mega__thumb::after { content: ''; position: absolute; inset-inline: 0; inset-block-end: 0; block-size: 3px; background: var(--teal-400); }
 
 /* Mobile navigation (full-screen) */
 .mobile-nav {
@@ -2378,7 +2382,7 @@ html.nav-open .mobile-nav__link { transform: none; transition: transform 0.9s va
 html.nav-open .mobile-nav__sub { opacity: 1; transform: none; transition-delay: calc(320ms + var(--i, 0) * 55ms); }
 .mobile-nav .mobile-nav__sub { margin-inline-start: calc(2ch + 1rem + .2rem); }
 .mobile-nav__sub a {
-  display: inline-flex; align-items: center; gap: .6rem; min-block-size: 40px;
+  display: inline-flex; align-items: center; gap: .6rem; min-block-size: 44px;
   font-size: .9375rem; letter-spacing: .04em; color: rgba(255, 255, 255, .72);
 }
 .mobile-nav__sub a::before { content: ''; inline-size: 14px; block-size: 1px; background: var(--teal-400); opacity: .7; }

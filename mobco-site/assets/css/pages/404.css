@@ -44,6 +44,7 @@ body[data-page='404'] .notfound {
 html[lang='ar'] .notfound__title { max-inline-size: 14ch; }
 .notfound__lead { max-inline-size: 48ch; color: rgba(255, 255, 255, .78); }
 .notfound__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block-start: var(--space-2); }
+@media (max-width: 559.98px) { .notfound__actions .btn { flex: 1 1 100%; } }
 
 .notfound__links { inline-size: 100%; max-inline-size: 560px; margin-block-start: var(--space-6); }
 .notfound__links-title {

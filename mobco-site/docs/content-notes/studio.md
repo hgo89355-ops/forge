@@ -11,7 +11,8 @@
   (AR «نموذج كتلي توضيحي — ليس بمقياس رسم»).
 - "From model to project" section: "The studio’s models are illustrative massing studies inspired by the project
   renders. They are not to scale and do not represent final designs, areas or heights." — generic and true.
-- Each project card carries an "Illustrative model" glass badge.
+- Each project card carries an "Illustrative 3D model" glass badge (AR «نموذج توضيحي ثلاثي الأبعاد») — worded so it
+  labels the studio model, not the project photo underneath it.
 - The section cut shows a **percentage of model height**, never metres; the time of day is a lighting control only.
 - Model descriptors / taglines / hotspot texts come from the five model modules (`meta.descriptors`, `meta.tagline`,
   `meta.hotspots`), written by the model authors as illustrative, generic descriptions. The engine shows them as-is;
@@ -46,6 +47,15 @@ panels, scrims, chips and arrows mirror in RTL.
   still for client/architect review.
 - Arabic time readout ("2:30 م") is no longer forced into an LTR run, so the meridiem follows the time when read
   right-to-left.
+
+## Fresh-eyes review — pass 2 (QA lead)
+- Model taglines no longer repeat the disclaimer that sits right below them (the info panel already shows
+  "Illustrative massing model — not to scale"): Victoria 101 "A glass residential tower and a mid-rise wing, set
+  among mature trees."; Innovation Campus "Ring buildings, a sail-finned tower and a sweeping sky bridge, set in
+  landscaped grounds."; Lagoon Villa Community "A gated community of white villas with private gardens, set around
+  lagoon pools." (Arabic updated to match). All descriptive of the illustrative model only — no specs.
+- No new facts were introduced; nothing in the studio states areas, heights, storeys, dates or names beyond
+  `site-data.js`.
 
 ## Not shown on purpose
 No areas, heights, storeys, completion dates, client names, awards or certifications appear anywhere in the

@@ -29,12 +29,21 @@ function onScrollState({ y }) {
 function markActive() {
   const page = document.body.dataset.page;
   if (!page) return;
+  // On a section's child page (e.g. mobco-construction.html, body[data-subsidiary]) the section link stays
+  // highlighted but is not the current page itself: aria-current="true"; the child link gets "page".
+  const isChild = !!document.body.dataset.subsidiary;
   $$('[data-nav]').forEach((a) => {
     const on = a.getAttribute('data-nav') === page;
     a.classList.toggle('is-active', on);
-    if (on) a.setAttribute('aria-current', 'page');
+    if (on) a.setAttribute('aria-current', isChild ? 'true' : 'page');
     else a.removeAttribute('aria-current');
   });
+  if (isChild) {
+    const file = location.pathname.split('/').pop();
+    $$('.mega__card, .mobile-nav__sub a').forEach((a) => {
+      if (a.getAttribute('href') === file) a.setAttribute('aria-current', 'page');
+    });
+  }
 }
 
 /* ---------------------------------------------------------------- mega menu */
