@@ -13,6 +13,7 @@ Owner: studio page builder. Files: `studio.html`, `assets/css/pages/studio.css`,
 | 4 | `assets/js/core/ui.js` tooltips | Hide the tooltip on `pointerdown` (toolbar button that opens a modal). | **Done** (core). |
 | 5 | Home page (`index.html` owner) | A compact studio embed is available — see §2. | Info. |
 | 6 | `assets/icons/sprite.svg` | Icons `box-select`, `sun-moon`, `scissors`. | **Done**; the studio now uses `box-select` (isolate a level) and `scissors` (section cut). |
+| 7 | `assets/js/core/header.js` | On a page loaded directly in Arabic (`?lang=ar`), an automated scan still found the burger button's `aria-label="Open menu"` in English at desktop width; the Arabic label (`data-label-open-ar`) seems to be applied only after a toggle or a language change. Please set it on init too. | Open (low; the burger is hidden at desktop widths). |
 
 ## 2. Engine API — `createStudio(container, options)` (for a compact home-page embed)
 

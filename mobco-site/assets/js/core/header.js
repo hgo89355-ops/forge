@@ -8,7 +8,7 @@
 
 import { $, $$, hasFinePointer, isRTL } from './utils.js';
 import { onScroll, stopScroll, startScroll } from './motion.js';
-import { onLang } from './i18n.js';
+import { onLang, getLang } from './i18n.js';
 
 let header, mobileNav, burger, releaseTrap, lastFocus;
 let initialized = false;
@@ -175,11 +175,13 @@ function initMobileNav() {
   });
   const mq = matchMedia('(min-width: 1200px)');
   mq.addEventListener?.('change', (e) => { if (e.matches) closeMobileNav({ restoreFocus: false }); });
-  onLang((lang) => {
+  const syncBurgerLabel = (lang) => {
     const open = document.documentElement.classList.contains('nav-open');
     const key = open ? 'close' : 'open';
     burger.setAttribute('aria-label', burger.getAttribute(`data-label-${key}${lang === 'ar' ? '-ar' : ''}`) || burger.getAttribute('aria-label'));
-  });
+  };
+  syncBurgerLabel(getLang()); // a page that boots in Arabic never fires langchange
+  onLang(syncBurgerLabel);
 }
 
 /* ---------------------------------------------------------------- init */
