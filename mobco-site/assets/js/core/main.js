@@ -10,7 +10,6 @@ import { initUI, toast, openLightbox, openModal } from './ui.js';
 import { initSearch, openSearch } from './search.js';
 import { initCursor } from './cursor.js';
 import { initTransitions } from './transitions.js';
-import { initConsent } from './consent.js';
 
 const html = document.documentElement;
 html.classList.add('js');
@@ -25,7 +24,6 @@ const steps = [
   ['search', initSearch],
   ['cursor', initCursor],
   ['transitions', initTransitions],
-  ['consent', initConsent],
 ];
 for (const [name, fn] of steps) {
   try { fn(); } catch (err) { console.error(`[mobco] ${name} failed to initialise`, err); }
