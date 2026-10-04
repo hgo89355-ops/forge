@@ -278,7 +278,10 @@ html[lang='ar'] .studio__level-num { font-family: var(--font-arabic); letter-spa
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
   pointer-events: auto;
-  animation: studio-fade-up 360ms var(--ease-out) both;
+  /* positioned by JS with an inline transform: the entrance animates the independent `scale`/`opacity`
+     properties only, so the (filled) animation never overrides that transform */
+  transform-origin: 50% 50%;
+  animation: studio-card-in 360ms var(--ease-out) both;
 }
 .studio-hotcard__num {
   display: block;
@@ -838,6 +841,7 @@ html[lang='ar'] .studio-help__head { font-size: .9375rem; letter-spacing: 0; tex
 @keyframes studio-pulse { 0% { transform: scale(.85); opacity: .9; } 70%, 100% { transform: scale(1.6); opacity: 0; } }
 @keyframes studio-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes studio-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes studio-card-in { from { opacity: 0; scale: .96; } to { opacity: 1; scale: 1; } }
 @keyframes studio-pop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 @keyframes studio-pop-center { from { opacity: 0; transform: translate(-50%, -6px); } to { opacity: 1; transform: translateX(-50%); } }
 @keyframes studio-pop-center-rtl { from { opacity: 0; transform: translate(50%, -6px); } to { opacity: 1; transform: translateX(50%); } }

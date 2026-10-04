@@ -534,8 +534,8 @@ body[data-page='home'] .hb-studio__live {
   pointer-events: none; /* non-interactive turntable: clicks go to the .hb-studio__open link */
   transition: opacity 1.4s var(--ease-out);
   /* feather the rendered rectangle into the navy stage */
-  -webkit-mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 58%, transparent 100%);
-  mask-image: radial-gradient(ellipse 62% 60% at 50% 52%, #000 58%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 54% 52% at 50% 50%, #000 64%, transparent 100%);
+  mask-image: radial-gradient(ellipse 54% 52% at 50% 50%, #000 64%, transparent 100%);
 }
 body[data-page='home'] .hb-studio__live .studio-canvas { display: block; inline-size: 100%; block-size: 100%; outline: none; }
 body[data-page='home'] .hb-studio__embed .hb-axo { transition: opacity 1s var(--ease-out); }

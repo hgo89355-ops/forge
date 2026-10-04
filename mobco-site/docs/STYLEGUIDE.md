@@ -60,6 +60,8 @@ Copy `_template.html`. Required edits:
   `<meta name="robots" content="noindex">` (only the template and styleguide are noindex).
 - Hero image preload: `<link rel="preload" href="assets/img/<hero>.webp" as="image" type="image/webp" fetchpriority="high">`.
 - Page CSS/JS: `assets/css/pages/<page>.css`, `<script type="module" src="assets/js/pages/<page>.js">`.
+  Exceptions: `studio.html` loads its entry from `assets/js/studio/studio.js` (there is no `pages/studio.js`);
+  the three subsidiary pages share `assets/css/pages/subsidiary.css` / `assets/js/pages/subsidiary.js`.
 - `studio.html` also adds, **before** the module scripts:
   `<script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.js","three/addons/":"./assets/vendor/three/addons/"}}</script>`
 - **Keep the inline boot `<script>` verbatim** (it sets `html.js`, early `lang/dir`, the first-visit
@@ -74,6 +76,8 @@ Copy `_template.html`. Required edits:
 - `<body data-page="<id>" data-hero="dark|light">`
   - `data-page` = nav id: `home|about|subsidiaries|projects|studio|media|careers|contact` (`404` for 404).
     It drives the active nav link (`aria-current="page"`).
+  - Optional `data-footer-cta="off"` hides the footer's "Let's build what's next" block — for pages (home) that
+    end on their own closing CTA.
   - `data-hero="dark"` → transparent header with white text over your first (dark/photo) section; it turns
     solid white on scroll. `data-hero="light"` → navy header text from the start. With a light first
     section that is not `.page-hero`, give it `.pt-header` (padding-top = header height + 64px).
@@ -94,12 +98,15 @@ Copy `_template.html`. Required edits:
 **Brand colours** `--navy-950 #0b1620` · `--navy-900 #122230` · `--navy-800 #1a2e3e` · `--navy-700 #263a4a` ·
 `--navy-600 #364a5b` · `--slate-500 #5b6e7d` · `--slate-400` · `--slate-300` · `--slate-200` · `--slate-100` ·
 `--sand-50 #f5f7f8` · `--white` · `--teal-300 #9be3da` · `--teal-400 #6fd1c5` (signature accent) ·
-`--teal-600 #3fa89c` · `--teal-700 #2a7a70` (accent **text** on light, AA) · `--gold-500 #b8975a`
+`--teal-600 #3fa89c` (decorative lines/fills on light) · `--teal-650 #349487` (large accent text on light, e.g. headline
+`<em>`: 3.66:1 on white, 3.41:1 on sand) · `--teal-700 #2a7a70` (small accent **text** on light, AA) · `--gold-500 #b8975a`
 (MOBCO Real Estate Development only) · `--danger #c2493f` · `--danger-300` · `--warning`.
 
 **Semantic (theme-aware — prefer these in components)**: `--bg`, `--fg` (body text), `--fg-strong`
 (headings), `--fg-muted`, `--accent` (decorative: lines, numerals), `--accent-text` (accent as text),
 `--line` (hairline), `--line-strong`, `--surface` (cards/fields), `--surface-2`, `--focus`.
+**`--focus` is the focus-ring colour** used by every `:focus-visible` outline — never reuse the name for your own
+custom property (e.g. a focal point): a non-colour value silently invalidates the outline. Use `--focal`, `--pt`, ….
 They switch automatically inside `.section--dark`, `.section--deep`, `.on-dark`, `.theme-dark`,
 `.page-hero`, `.cta-band`, `.site-footer`, `.lightbox`.
 
@@ -230,6 +237,9 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
 - `figure > figcaption.caption` (accent-rule caption).
 - `[data-kenburns]` (slow drift; `="out"` reverses) — on any wrapper that contains an `<img>`.
 - Parallax: `<div class="media ratio-16x9 parallax-frame"><div data-parallax="0.12"><picture>…</picture></div></div>`.
+  The `<picture>` is stretched to the frame (`display:block; block-size:100%`) so the image covers it.
+- The reset gives `img, picture { max-width: 100% }`. An intentionally oversized picture (e.g. a parallax layer
+  wider than its card) needs `max-inline-size: none` on the `<picture>`/`<img>`.
 
 ### 6.5 Cards
 - `.card` (padding, hairline border, surface bg) + `.card--hover` (lift + teal top rule + icon-tile fill),
@@ -254,7 +264,8 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
 - Chips (filters): `<div class="chip-group" data-chip-group="single|multi" aria-label="…">` with
   `<button class="chip" data-value="residential" aria-pressed="false">…<span class="chip__count">2</span></button>`.
   In `multi`, a chip with `data-value="all"` is exclusive. Event `chipchange` → `e.detail.values` (array).
-  Links styled as chips (`<a class="chip">`) are fine for navigation. `.chip--sm`.
+  Links styled as chips (`<a class="chip">`) are fine for navigation. Chips are 44px tall (touch target);
+  `.chip--sm` (32px) only for dense, non-primary UI on fine pointers.
 - Tabs:
   ```html
   <div class="tabs [tabs--pills]" data-tabs>
@@ -306,11 +317,20 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   `data-match="#other"`. Custom message: `data-error="…" data-ar-error="…"` on the control. Errors render in
   `.field__error` (auto-created) with `aria-invalid`/`aria-describedby`; first invalid control gets focus;
   messages re-render on language change. Valid fields get `.is-valid` (check mark).
+  A `.check` checkbox/radio gets one message next to its label (tagged `data-for="<name>"`); a radio group
+  shares one message and all its radios share one state (no stale `aria-invalid` on siblings).
+- **Multi-step forms**: `validateForm(container)` works on any element (e.g. one wizard step) and returns `true`
+  when valid. `data-validate="manual"` keeps inline validation (focusout/input/change/langchange) but leaves
+  `submit` to the page — drive the steps yourself and dispatch nothing extra.
+- Forms are a single `minmax(0, 1fr)` column by default (`.form`, `.form__row`, `.field`, and inputs have
+  `min-inline-size: 0`), so long `<select>` options never widen a form beyond its card on mobile.
 - On a valid submit the form dispatches **`validsubmit`** (`e.detail = { data, formData, form }`; files are
   serialised as `{name,size,type}`) — the site is static, nothing is sent. If the form has `data-toast`, a
   success toast shows and the form resets unless your listener calls `e.preventDefault()`.
   Typical page code: listen, `e.preventDefault()`, swap the form for a `.form-success` panel.
-- Range: `<div class="range"><div class="range__head"><label class="range__label" for="r">…</label><output class="range__value" for="r"></output></div><input class="range__input" id="r" type="range" min="0" max="100" value="50" data-suffix=" m"></div>` (fill + live output; `data-prefix`/`data-suffix`).
+- Range: `<div class="range"><div class="range__head"><label class="range__label" for="r">…</label><output class="range__value" for="r"></output></div><input class="range__input" id="r" type="range" min="0" max="100" value="50" data-suffix=" m"></div>` (fill + live output; `data-prefix`/`data-suffix`, localised with `data-ar-prefix`/`data-ar-suffix`, re-rendered on
+  language change). `data-format="none"` = core updates only the fill; the page writes the `<output>` (and should set
+  `aria-valuetext`).
 - Dropzone: `<div class="dropzone" data-dropzone data-max-size="10" data-max-files="3"><input class="dropzone__input" id="cv" name="cv" type="file" accept=".pdf,.doc,.docx" [multiple] [required]><label class="dropzone__area" for="cv"><svg class="icon">…file-up</svg><span class="dropzone__title">…<u>browse</u></span><span class="dropzone__hint">…</span></label></div>` — drag-over state, type/size/count checks (toast on rejection), removable file list, keeps `input.files` in sync.
 - `.form-success` panel for the post-submit state.
 
@@ -328,7 +348,12 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   Focus trap, Esc, scroll lock, focus return. Events `modalopen` / `modalclose` (bubble from the modal).
 - **Drawer**: same pattern with `.drawer[data-drawer] > .drawer__backdrop[data-drawer-close] + aside.drawer__panel` (`.drawer__head/__body/__foot`), opens from the inline-end (`.drawer--start` for the other side); `data-drawer-open="id"`. Width via `style="--drawer-w:560px"`.
 - **Lightbox**: declarative `<a href="assets/img/x.jpg" data-webp="assets/img/x.webp" data-lightbox="gallery-1" data-caption="…" data-ar-caption="…"><img alt="…"></a>` (links with the same group value form one gallery), or `openLightbox(items, index)` (§8). Zoom (wheel / pinch / double-click or double-tap / +/-/0 keys), pan when zoomed, swipe, arrows, Home/End, counter, captions, RTL-aware.
-- **Toast**: `toast(msg, {type})` (§8). **Tooltip**: `data-tooltip="…" data-ar-tooltip="…"` on any focusable element.
+- **Toast**: `toast(msg, {type})` (§8). **Tooltip**: `data-tooltip="…" data-ar-tooltip="…"` on any focusable element
+  (hidden on scroll, Esc and when the trigger is pressed).
+- The lightbox re-renders its caption, alt and button labels when the language changes while it is open.
+- Re-opening a modal/drawer during its 650ms close transition is safe (the pending hide is cancelled).
+- The cookie banner hides while any overlay locks the page (`html.is-locked`: modal, drawer, lightbox, search,
+  mobile nav) and comes back when it closes.
 - **Copy**: `<button data-copy="info.ksa@mobco-group.com">` or `data-copy-target="#selector"` → clipboard + toast.
 - **Consent-gated embed** (contact map):
   ```html
@@ -360,7 +385,8 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   ```
   Native scroll + snap (touch), mouse drag with inertia, arrows (disabled at ends), keyboard ←/→, progress,
   counter. Slide width via `--slide-w` on the viewport (default 82% → 46% → one third). `--bleed` runs to the
-  viewport edge on the inline-end side.
+  viewport edge on the inline-end side. After a mouse drag, snapping stays off until the smooth snap has
+  finished (no "snap back" to the previous slide).
 - Compare: `<div class="compare" data-compare="50" style="--ratio:16/10"><div class="compare__layer compare__layer--before [media--blueprint]"><picture>…</picture><span class="compare__label">Before</span></div><div class="compare__layer compare__layer--after"><picture>…</picture><span class="compare__label">After</span></div></div>` — handle (role=slider) is created by JS; pointer anywhere + arrows/PageUp/PageDown/Home/End; RTL-aware.
 - Stats:
   ```html
@@ -375,10 +401,14 @@ In JS: `icon('map-pin', 'icon--sm')` from `core/utils.js` returns the same marku
   (sand, for `data-hero="light"`). Parts: `.page-hero__bg` (+ `data-kenburns`), `.page-hero__inner`
   (breadcrumb, eyebrow, `.page-hero__title.display`, `.page-hero__lead`, `.page-hero__actions`), `.page-hero__foot`
   (`.scroll-cue` + `dl.page-hero__meta`). Home builds its own art-directed hero (page CSS) but should reuse tokens.
+- Glass badges (`.badge--glass`) keep their dark backing inside `.section--dark/--deep/.on-dark` (over photos).
+- `.contact-line` is styled for dark backgrounds (footer); in page content on light backgrounds use
+  `.contact-line.contact-line--light` (dark text, 44px touch target).
 
 ### 6.10 Global chrome (automatic — do not re-implement)
-Header (transparent → solid, hide on scroll down / show on up, active link, Projects mega menu with the five
-projects + "Open 3D Studio", search button, EN | ع toggle, CTA, burger → full-screen mobile nav), footer,
+Header (transparent → solid, hide on scroll down / show on up, active link, Subsidiaries mega menu (the three
+company pages + Elite Education), Projects mega menu (five featured projects, "View all 33 projects" — the count is
+static HTML and `tools/build.mjs` fails if it no longer matches `PROJECTS.length`) + "Open 3D Studio", search button, EN | ع toggle, CTA, burger → full-screen mobile nav), footer,
 scroll-progress bar, back-to-top ring, skip link, first-visit preloader, page-transition curtain, custom
 cursor (fine pointers), cookie banner, toasts, search overlay (⌘/Ctrl+K or `/`).
 
@@ -446,7 +476,16 @@ import { WORLD } from '../data/world-map.js';
 ### core/motion.js
 - `scan(root = document)` — wire every motion attribute inside `root` (idempotent). **Call after inserting DOM.**
 - `refresh()` — recompute (ScrollTrigger refresh, Lenis resize, parallax). Call after layout changes.
-- `scrollTo(target, {offset, immediate})` — element | selector | y; default offset clears the fixed header.
+- `scrollTo(target, {gap, offset, immediate})` — element | selector | y. Element targets land `--header-h + 16px`
+  below the top (`{gap: 24}` for a different gap), with or without Lenis — the header offset is applied exactly
+  once (element positions are measured from `window.scrollY`, so a stale Lenis position doesn't skew them).
+  Numbers are absolute y. `offset` is the legacy raw offset (with Lenis it is passed to `lenis.scrollTo()` as-is,
+  which also subtracts the html scroll-padding) — prefer `gap` in new code.
+- Same-page `<a href="#id">` links scroll smoothly below the header and move focus; add `data-no-scroll` to a link
+  to opt out (the browser then updates the hash natively and fires `hashchange`, e.g. for hash-driven overlays).
+  A hash on load is aligned after init and re-aligned after `document.fonts.ready` and `load` (until the user
+  scrolls; skipped while an overlay locks the page). There is no `:target` scroll-margin — the html
+  `scroll-padding-block-start` already clears the header for native fragment jumps.
 - `onScroll(cb({y, progress, max})) → unsubscribe` · `getLenis()` (instance or `null` on touch/reduced motion)
 - `gsapReady() → {gsap, ScrollTrigger} | null` — GSAP and ScrollTrigger are UMD globals; ScrollTrigger is
   registered and synced with Lenis. Guard with `const g = gsapReady(); if (g) { … }`.
@@ -461,9 +500,10 @@ import { WORLD } from '../data/world-map.js';
   openLightbox(getProject('eastmain').gallery.map(g => ({ src:`assets/img/${g.base}.jpg`, srcWebp:`assets/img/${g.base}.webp`, caption:g.caption })), 0);
   ```
 - `toast(msg: string|{en,ar}, { type:'success'|'info'|'warning'|'error' = 'success', duration = 4200 }) → { close, el }`
-- `copyText(text) → Promise<boolean>` · `validateForm(form) → boolean`
+- `copyText(text) → Promise<boolean>` · `validateForm(formOrAnyContainer) → boolean` (validates the named controls
+  inside, shows inline errors, focuses the first invalid one — use it per step in multi-step forms)
 
-### core/search.js — `openSearch(prefill?)`, `closeSearch()` (index = `PAGES` + `PROJECTS` + `SUBSIDIARIES` + `SECTORS`).
+### core/search.js — `openSearch(prefill?)`, `closeSearch()` (index = `PAGES` + `SUBSIDIARIES` (→ their `page`) + `PROJECTS` (incl. category names) + `PROJECT_CATEGORIES` (→ `projects.html?category=<id>`) + `SECTORS`; results de-duplicated by URL).
 ### core/consent.js — `hasConsent()`, `getConsent()` (`'accepted'|'declined'|null`), `setConsent(v)`, `onConsent(cb) → unsubscribe` (fires immediately if already accepted), `openConsent()`; event `consentchange`.
 ### core/preloader.js — `whenLoaded() → Promise` (resolves when the first-visit preloader has lifted; immediately otherwise). Start hero timelines after it: `whenLoaded().then(playHero)`.
 ### core/header.js — `openMobileNav()`, `closeMobileNav()`, `closeMega()` (rarely needed).
@@ -490,17 +530,21 @@ import { WORLD } from '../data/world-map.js';
   ids `mobco-construction mobco-developments mobco-real-estate elite-education`. Descriptions are generic → keep the `todo` in content notes.
 - `REGIONS[]` `{id:'ksa'|'egypt'|'canada', mapKey, image, name, short, blurb}` (blurbs verbatim)
 - `OFFICES[]` `{id, region, hq, name, label, city, addresses:[{en:[lines], ar:[lines]}], phones:[{display, href}], email, geo:{lat, lon, approx:true}, mapsQuery}` · `CAREERS[]` `{id, email, label}`
-- `PROJECTS[]` (exactly 5) `{id, slug, name, nameIsDescriptive, region|null, location|null, sectors[], typology, status:null,
-  image, pos, gallery:[{base, pos, caption}], summary, imageNote, highlights[], studioModel, todo[]}` —
-  `eastmain` (mixed-use), `victoria-101` (residential-tower), `lagoon-villa-community` (villa-community, descriptive),
-  `innovation-campus` (campus, descriptive), `classical-landmark` (landmark, descriptive, region ksa).
+- `PROJECTS[]` (33: the five originals + 28 portfolio projects with photos) `{id, slug, name, nameIsDescriptive, region|null,
+  location|null, category, featured, sectors[], typology, status:null, image, pos, gallery:[{base, pos, caption}], summary,
+  imageNote, highlights[], studioModel, todo[]}` — originals: `eastmain` (mixed-use), `victoria-101` (residential-tower),
+  `lagoon-villa-community` (descriptive), `innovation-campus` (descriptive), `classical-landmark` (descriptive, region ksa).
+- `PROJECT_CATEGORIES[]` `{id, icon, name, sectors[]}` (the client's own tabs) · `getCategory(id)`
 - `NAV[]` `{id, href, label, mega?}` · `CTA` · `PAGES[]` (search index: `{id, url, icon, title, description, keywords:{en[],ar[]}}`) · `QUICK_LINKS[]`
 - Helpers: `getProject(idOrSlug)`, `getSubsidiary(id)`, `getSector(id)`, `getRegion(id)`, `getOffice(id)`, `getPage(id)`,
   `projectsBy({region, sector})`, `projectUrl(p) → 'projects.html#<slug>'`, `studioUrl(p) → 'studio.html?model=<studioModel>'`.
 
-### data/logo-data.js — `LOGO = { full, mark, fullViewBox:'8 6 226 166', markViewBox:'7.4 6.2 98.7 144.2' }`
+### data/logo-data.js — `LOGO = { full, mark, group, fullViewBox:'8 6 226 166', markViewBox:'7.4 6.2 98.7 144.2' }`
+`group` is "GROUP" outlined from Manrope 700 (same position as the `<text>` below) for contexts without the web font.
+Downloadable files: `assets/img/logo-mobco-group.svg` (navy) / `-white.svg` (text outlined — no font needed),
+`logo-mark.svg` (navy) / `logo-mark-white.svg`.
 Inline: `<svg viewBox="${LOGO.fullViewBox}" fill="currentColor" class="logo"><path d="${LOGO.full}"/><text x="233" y="168" text-anchor="end" font-family="Manrope" font-weight="700" font-size="14.5" letter-spacing="10.5">GROUP</text></svg>` (class `.logo` forces LTR so "GROUP" stays aligned in RTL).
-### data/world-map.js — `WORLD` (viewBox `0 0 1000 520`; crop to `0 0 1000 440`): `land`, `borders`, `highlight.{ksa,egypt,canada}`, `dots[[x,y,key?]]`, `offices.{ksa,egypt,canada}.{label, lonlat, xy}`.
+### data/world-map.js — `WORLD` (viewBox `0 0 1000 520`; crop to `0 0 1000 440`): `land`, `borders`, `highlight.{ksa,egypt,canada}`, `dots[[x,y,key?]]`, `offices.{ksa,egypt,canada}.{label, lonlat, xy}`, `markers.uk.{lonlat, xy, dots}` (London marker + the four GB dots).
 
 ### Rendering data-driven content (pattern)
 ```js
@@ -547,6 +591,11 @@ use GSAP via `gsapReady()`.
 - Mirror directional icons with `.icon--dir`. Keep logos, maps, charts, media and the 3D canvas un-mirrored.
 - Number sequences like "01 / 05" need `direction:ltr; unicode-bidi:isolate` (`.num-ltr`).
 - Keyboard: horizontal arrows are already mirrored in tabs/lightbox/compare/carousel.
+- Logical insets resolve against the element's **own** `direction`/`writing-mode`: an element with both
+  `direction: ltr` and `inset-inline-end` is pinned to the physical right in RTL, and an element with
+  `writing-mode: vertical-rl` maps `inset-inline-*` to the vertical axis. Position an outer wrapper (normal
+  direction, horizontal) and put the `direction`/`writing-mode` on an inner element.
+- Chevrons drawn with logical borders flip in RTL — counter-rotate them (see `.field--select::after`).
 
 ## 11. Motion rules
 
@@ -579,22 +628,43 @@ uses `--accent-text`), no information conveyed by motion only.
 node tools/build.mjs <page>.html [more.html]           # inline partials (only those files)
 node tools/build.mjs --check <page>.html               # verify includes are current (no writes)
 node tools/check.mjs --pages <page>.html --port <unique n> --shots /tmp/qa/<page>
-#   flags: --no-mobile --no-desktop --no-ar --qa (load with ?qa=1) --strict (missing planned pages = error) --concurrency n
+#   flags: --no-mobile --no-desktop --no-ar --qa (load with ?qa=1) --concurrency n
 node tools/build-icons.mjs                             # (foundation only) rebuild the icon sprite
 ```
 `check.mjs` serves the site itself (never run `playwright install`), loads desktop 1440×900 + mobile 390×844 ×
 EN/AR, scrolls through, and reports: console/page errors, failed or 4xx requests, horizontal overflow (with the
 offending elements, incl. mobile layout-viewport widening), broken images, missing `alt`, duplicate ids, links to
-missing files / anchors to missing ids, reveal elements still hidden, `data-ar` on non-leaf elements. Links to
-planned pages that don't exist yet are warnings. Screenshots: `<page>-<desktop|mobile>-<en|ar>.png` plus viewport
+missing files / anchors to missing ids (an id missing from the target's static HTML is looked up again after
+that page's scripts ran, so JS-rendered ids pass), reveal elements still hidden, `data-ar` on non-leaf elements.
+Viewport section shots scroll instantly (no smooth-scroll mid-frames). Element screenshots under mobile emulation
+drop touch emulation (hover/fine-pointer styles apply) — judge mobile from the viewport shots. Screenshots: `<page>-<desktop|mobile>-<en|ar>.png` plus viewport
 section shots `…-s01.png` for tall pages — **Read them** and iterate until the page is clean and beautiful.
 
 ## 15. Cross-page contracts & content honesty
-- Header/footer/search link to: `projects.html#<slug>` for the five slugs (`eastmain`, `victoria-101`,
-  `lagoon-villa-community`, `innovation-campus`, `classical-landmark`), `projects.html?sector=<sector id>`,
-  `subsidiaries.html#<subsidiary id>`, `contact.html#inquiry`, `studio.html` (and `studioUrl()` →
+- Header/footer/search link to: `projects.html#<slug>` for any project slug (mega menu: `eastmain`, `victoria-101`,
+  `neom-bay-airport`, `raffles-hotel-residence`, `sulaiman-fakeeh-hospital`), `projects.html?sector=<sector id>`,
+  `projects.html?category=<category id>`, the company pages `mobco-construction.html`, `mobco-developments.html`,
+  `mobco-real-estate.html`, `subsidiaries.html#education`, `contact.html#inquiry`, `studio.html` (and `studioUrl()` →
   `studio.html?model=<studioModel>`). Owners of those pages must provide those ids / honour those params.
 - Honesty (BRIEF §2): state only brief facts. Placeholders → `data-placeholder` + `<!-- TODO(content): … -->` and a
   line in `docs/content-notes/<page>.md`. Descriptive project names keep their "descriptive name" flag in notes.
   3D Studio models are illustrative — say so in the UI. Stats use 430+; the About narrative keeps "more than 150 projects".
 - The footer newsletter and all forms are client-side only (toast/success state; nothing is sent).
+
+## 16. Shared-file integration pass — page workarounds that can now go
+
+The requests in `docs/requests/*.md` were applied centrally (see the sections above). Every local workaround still
+works (none was relied on being broken), so removing them is optional clean-up for the page owners:
+
+| Page | Local workaround | Now covered by |
+|---|---|---|
+| about | `initAnchors()` in about.js; `body[data-page='about'] .x` list-margin selectors; `.about-story__frame … picture` height | motion.js anchors (single header offset); `:where()` list reset; `.parallax-frame > [data-parallax] > picture` |
+| careers | `label.careers-check`, RTL select chevron, `.careers-form` minmax tracks | ui.js `errorEl` (one message per check / radio group); main.css RTL chevron + `minmax(0,1fr)` forms |
+| careers | `scrollTo('#apply', { offset: -(header + 24) })` (still lands one header too low with Lenis — legacy `offset`) | `scrollTo('#apply', { gap: 24 })` |
+| careers, studio | output formatting that races the core range listener | `data-format="none"` (or `data-suffix` + `data-ar-suffix`) |
+| contact | `goTo()` offset maths, capture-phase anchor handler, hash re-align, `main [id]:target` margin, radio sibling clean-up, capture-phase submit, h2 `<em>` colour | `scrollTo(el, { gap })`, core anchors + hash re-align after fonts/load, no `:target` margin, radio group state, `data-validate="manual"`, `--teal-650` accents |
+| home / home-b | `.site-footer__cta { display:none }`, `.hb-region__badge`, carousel `scroll-snap-type: none`, parallax picture height | `<body data-footer-cta="off">`, `.badge--glass` in dark sections, carousel snap fix, parallax picture rule |
+| media | chip 44px override, CSS-inverted mark on navy | chips are 44px; `assets/img/logo-mark-white.svg` (+ outlined "GROUP" in the logo downloads) |
+| projects | consent banner hidden under the viewer, `icon-btn--sm` 44px, modal reopen race | `html.is-locked .consent`, 44px `icon-btn--sm` on coarse pointers, `openPanel` cancels the pending hide; `data-ar-aria-roledescription`; `data-no-scroll` links |
+| subsidiaries | `scrollToEl()`, `COS[].focus` override for Real Estate | `scrollTo(el)`; `SUBSIDIARIES['mobco-real-estate'].focus` updated from the verbatim copy |
+| subsidiary pages | London marker maths, `.sd-lease` contact lines, `handshake`/inline quote icons | `WORLD.markers.uk`, `.contact-line--light`, sprite icons `key`, `key-round`, `door-open`, `quote` |

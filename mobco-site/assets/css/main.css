@@ -1355,6 +1355,8 @@ fieldset.form__group > legend { padding: 0; margin-block-end: var(--space-3); }
   color: var(--danger);
 }
 .field__error:empty { display: none; }
+/* message created next to a .check label (checkbox / radio group): own row inside flex or grid groups */
+.field__error[data-for] { flex-basis: 100%; grid-column: 1 / -1; }
 .section--dark .field__error, .on-dark .field__error, .section--deep .field__error { color: var(--danger-300); }
 .field.is-invalid .field__input { border-color: var(--danger); }
 .field.is-invalid .field__input:focus { box-shadow: 0 0 0 3px rgba(194, 73, 63, .18); }
