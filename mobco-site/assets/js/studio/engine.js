@@ -124,7 +124,8 @@ export function createStudio(container, options = {}) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
-  renderer.shadowMap.enabled = true;
+  // CPU rasterisers: no shadow maps (simpler shaders compile several times faster and render cheaper)
+  renderer.shadowMap.enabled = !lowPower;
   renderer.shadowMap.type = THREE.PCFShadowMap; // r186: PCF is the soft-filtered map (PCFSoftShadowMap was removed)
   // The sun's shadow map is re-rendered only when something that casts or moves changes (time, model, explode,
   // section, materials); orbiting the camera reuses it, which roughly halves the cost of a frame.
@@ -1044,7 +1045,9 @@ export function createStudio(container, options = {}) {
     const colliders = (Array.isArray(built.colliders) ? built.colliders : [])
       .filter((c) => c && Array.isArray(c.min) && Array.isArray(c.max))
       .map((c) => new THREE.Box3(root.localToWorld(new THREE.Vector3().fromArray(c.min)), root.localToWorld(new THREE.Vector3().fromArray(c.max))).expandByScalar(0.45));
-    const lamps = (Array.isArray(built.lamps) ? built.lamps : []).filter((l) => l && l.isLight).slice(0, 8);
+    const allLamps = (Array.isArray(built.lamps) ? built.lamps : []).filter((l) => l && l.isLight);
+    const lamps = allLamps.slice(0, lowPower ? 2 : 8); // every light costs in every shader
+    allLamps.slice(lamps.length).forEach((l) => l.parent?.remove(l));
     lamps.forEach((l) => {
       if (!l.parent) scene.add(l);
       const ud = l.userData || {};

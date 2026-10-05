@@ -111,7 +111,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     uFlatGrid: { value: new THREE.Vector3(1, 1, 1) },
     uFlatGridOpacity: { value: 0.12 },
   };
-  const groundMat = track(new THREE.MeshStandardMaterial({ name: 'studio-ground', color: '#cfc7b6', roughness: 1, metalness: 0 }));
+  const groundMat = track(new THREE.MeshStandardMaterial({ name: 'studio-ground', color: '#ffffff', roughness: 1, metalness: 0 }));
   groundMat.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, groundUniforms, realism.uniforms);
     shader.vertexShader = realism.VERT_DECL + shader.vertexShader.replace(
@@ -130,12 +130,22 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
       .replace('#include <map_fragment>', `#include <map_fragment>
         {
           vec3 gp = vRlWorld;
+          // surrounding terrain: muted earth with drifts of dry green scrub and paler sand, broken into large
+          // irregular patches (reads as land seen from afar, never as a flat studio floor)
+          float huge = rlNoise(gp * 0.0035 + 7.0);
           float big = rlNoise(gp * 0.012 + 2.0);
           float mid = rlNoise(gp * 0.07);
           float fine = rlDetail(gp, 0.9);
-          // dry earth with faint sandier and greener drifts, very low contrast
-          diffuseColor.rgb *= mix(vec3(0.95, 0.96, 0.93), vec3(1.05, 1.02, 0.95), big);
-          diffuseColor.rgb *= 0.94 + 0.08 * mid + 0.05 * (fine - 0.5);
+          vec3 earth = vec3(0.30, 0.27, 0.19);
+          vec3 scrub = vec3(0.21, 0.24, 0.13);
+          vec3 sand = vec3(0.46, 0.41, 0.29);
+          vec3 tg = mix(earth, scrub, smoothstep(0.36, 0.66, 0.6 * huge + 0.4 * big));
+          tg = mix(tg, sand, smoothstep(0.58, 0.86, big * 0.7 + mid * 0.3) * 0.55);
+          // faint plot edges (tracks / field boundaries) at the scale of city blocks, very low contrast
+          vec2 plot = abs(fract(gp.xz / vec2(173.0, 131.0) + 0.5 * vec2(huge, big)) - 0.5);
+          float edge = 1.0 - smoothstep(0.0, 0.012, min(plot.x, plot.y));
+          tg = mix(tg, sand * 0.95, edge * 0.35);
+          diffuseColor.rgb *= tg * (0.93 + 0.1 * mid + 0.06 * (fine - 0.5)) * 1.55;
           float gFade = 1.0 - smoothstep(uFadeNear, uFadeFar, length(gp.xz));
           float gLines = max(studioGrid(gp.xz, 10.0) * 0.55, studioGrid(gp.xz, 50.0));
           diffuseColor.rgb = mix(diffuseColor.rgb, uGridColor, gLines * gFade * uGridOpacity * (1.0 - uFlat));
@@ -148,7 +158,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
           gl_FragColor = vec4(mix(uFlatColor, uFlatGrid, fLines * fFade * uFlatGridOpacity), 1.0);
         }`);
   };
-  groundMat.customProgramCacheKey = () => 'mobco-studio-ground-v2';
+  groundMat.customProgramCacheKey = () => 'mobco-studio-ground-v3';
   const ground = new THREE.Mesh(track(new THREE.PlaneGeometry(5000, 5000)), groundMat);
   ground.name = 'studio-ground';
   ground.rotation.x = -Math.PI / 2;
@@ -282,8 +292,9 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     contact.position.z = (box.min.z + box.max.z) / 2;
     groundUniforms.uFadeNear.value = radius * 1.1;
     groundUniforms.uFadeFar.value = radius * 3.6;
-    fog.near = radius * 3;
-    fog.far = radius * 14;
+    // the terrain melts into the horizon haze
+    fog.near = radius * 2.2;
+    fog.far = radius * 11;
     aoBox = box.clone();
     aoDirty = true;
     placeLight();
