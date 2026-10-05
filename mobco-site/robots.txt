@@ -1,0 +1,13 @@
+# MOBCO Group
+User-agent: *
+Allow: /
+Disallow: /styleguide.html
+Disallow: /_template.html
+Disallow: /partials/
+Disallow: /tools/
+Disallow: /docs/
+Disallow: /demos/
+Disallow: /404.html
+
+# TODO(deploy): replace with the production domain once confirmed.
+Sitemap: https://mobco-group.com/sitemap.xml
