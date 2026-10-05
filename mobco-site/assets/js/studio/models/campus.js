@@ -1,1172 +1,775 @@
 /**
  * MOBCO Explore in 3D · model: "campus"
  * ---------------------------------------------------------------------------
- * An ILLUSTRATIVE massing model inspired by the aerial render of the
- * "Innovation Campus" (assets/img/campus.webp). It is not a replica and carries
- * no real dimensions: two white ring buildings with perforated shells wrapped
- * around garden courtyards, a slender glass tower with a sail-like fin, a
- * sweeping pedestrian sky bridge, and a plaza with water and palm groves.
+ * Innovation Campus, modelled from the aerial render (assets/img/campus.jpg). Illustrative: the layout,
+ * shapes and proportions follow the render, sizes are estimated (no published dimensions).
  *
- * Module contract (shared with the Studio engine):
- *   export const meta       , ids, copy, camera presets, hotspots, sun
- *   export function build(THREE, ctx) → { root, floors, site, nightMaterials,
- *                                         lamps, update, dispose }
- * The module imports nothing; THREE is injected. World units are metres,
- * ground is y = 0. The engine provides ground, sky, lights and fog.
+ * North part: a sculpted white horseshoe building wrapped around a garden court, open to the south where a
+ * small gate building sits between two reflecting pools; a glass drum tower with white floor plates at the
+ * back, wrapped by a curved white sail that rises above the crown; a long four-storey bar behind it and
+ * flowing glazed wings either side. South-east: an office block with balconies and a curved white end wall.
+ * South of the road and roundabout: two low pavilions under perforated white shells, each around an open
+ * courtyard, linked by a glazed sky bridge over the tree-lined boulevard.
+ *
+ * Contract: export meta, export build(THREE, ctx) -> { root, floors, site, nightMaterials, lamps, update, dispose }.
+ * World units are metres, ground y = 0, +z = south (towards the default camera), +x = east.
  */
+
+import { createKit, makeRng, clamp, smoothstep, P, bandProfile } from './_kit.js';
 
 export const meta = {
   id: 'campus',
   name: { en: 'Innovation Campus', ar: 'حرم الابتكار' },
   projectSlug: 'innovation-campus',
   tagline: {
-    en: 'Ring buildings, a sail-finned tower and a sweeping sky bridge, set in landscaped grounds.',
-    ar: 'مبانٍ حلقية وبرج بعنصر شراعي وجسر معلّق انسيابي، وسط مساحات خضراء منسّقة.',
+    en: 'A white horseshoe around a garden court, a glass tower wrapped by a sail, and two perforated pavilions linked by a sky bridge.',
+    ar: 'مبنى أبيض على شكل حدوة حول فناء مزروع، وبرج زجاجي يلتفّ حوله شراع، وجناحان بغلاف مثقّب يربطهما جسر معلّق.',
   },
   descriptors: [
     { label: { en: 'Typology', ar: 'النمط' }, value: { en: 'Campus', ar: 'حرم تعليمي' } },
-    { label: { en: 'Massing', ar: 'التكوين الكتلي' }, value: { en: 'Two ring buildings around garden courtyards', ar: 'مبنيان حلقيان حول فناءين مزروعين' } },
-    { label: { en: 'Landmark', ar: 'العنصر المميّز' }, value: { en: 'Central tower with a sail-like fin', ar: 'برج مركزي بعنصر شراعي منحنٍ' } },
-    { label: { en: 'Connection', ar: 'الربط' }, value: { en: 'Curved pedestrian sky bridge', ar: 'جسر مشاة معلّق منحنٍ' } },
-    { label: { en: 'Landscape', ar: 'تنسيق الموقع' }, value: { en: 'Plaza, water and palm groves', ar: 'ساحة ومسطّحات مائية وبساتين نخيل' } },
+    { label: { en: 'Massing', ar: 'التكوين الكتلي' }, value: { en: 'Horseshoe building around a garden court', ar: 'مبنى على شكل حدوة حول فناء مزروع' } },
+    { label: { en: 'Landmark', ar: 'العنصر المميّز' }, value: { en: 'Glass tower wrapped by a curved sail', ar: 'برج زجاجي يلتفّ حوله شراع منحنٍ' } },
+    { label: { en: 'Connection', ar: 'الربط' }, value: { en: 'Glazed sky bridge over the boulevard', ar: 'جسر معلّق زجاجي فوق الجادة' } },
+    { label: { en: 'Landscape', ar: 'تنسيق الموقع' }, value: { en: 'Wooded grounds, pools and a roundabout', ar: 'أراضٍ مشجّرة وأحواض مائية ودوّار' } },
   ],
   camera: {
-    target: [0, 9, -2],
-    aerial: [86, 88, 150],
-    street: [0, 2.0, 68],
-    top: [0, 180, 0.01],
-    front: [0, 18, 150],
+    target: [0, 6, -40],
+    aerial: [18, 190, 250],
+    street: [-30, 2.2, 36],
+    top: [0, 420, -39.9],
+    front: [0, 40, 260],
   },
   hotspots: [
     {
-      id: 'shell', position: [-36, 18.6, 47],
-      title: { en: 'Perforated shell', ar: 'الغلاف المثقّب' },
-      text: {
-        en: 'A soft white shell wraps each ring building; a scatter of glazed panels lets daylight into the upper levels.',
-        ar: 'يلتفّ غلاف أبيض انسيابي حول كل مبنى حلقي، وتسمح ألواح زجاجية متناثرة بدخول الضوء الطبيعي إلى المستويات العليا.',
-      },
-    },
-    {
-      id: 'bridge', position: [0, 14.8, 47.5],
-      title: { en: 'Sky bridge', ar: 'الجسر المعلّق' },
-      text: {
-        en: 'A curved, glazed pedestrian bridge links the two rings at an upper level and passes over the entrance boulevard.',
-        ar: 'جسر مشاة زجاجي منحنٍ يربط المبنيين الحلقيين عند مستوى علوي ويمرّ فوق جادة المدخل.',
-      },
-    },
-    {
-      id: 'tower', position: [0, 50, -38],
+      id: 'tower', position: [0, 60, -164],
       title: { en: 'Central tower', ar: 'البرج المركزي' },
-      text: {
-        en: 'A slender glass drum with white floor bands, framed by a sail-like fin that rises above the crown.',
-        ar: 'أسطوانة زجاجية رشيقة بأحزمة بيضاء عند كل طابق، يحتضنها عنصر شراعي يرتفع فوق تاج البرج.',
-      },
+      text: { en: 'A glass drum with white floor plates, wrapped by a curved sail that rises above the crown.', ar: 'أسطوانة زجاجية بأحزمة بيضاء عند كل طابق، يلتفّ حولها شراع منحنٍ يرتفع فوق قمّتها.' },
     },
     {
-      id: 'plaza', position: [0, 1.6, -25],
-      title: { en: 'Central plaza', ar: 'الساحة المركزية' },
-      text: {
-        en: 'A circular paved plaza with a reflecting pool and a glass pavilion gathers arrivals at the foot of the tower.',
-        ar: 'ساحة دائرية مرصوفة مع حوض عاكس وجناح زجاجي تستقبل القادمين عند قاعدة البرج.',
-      },
+      id: 'ring', position: [-82, 18, -98],
+      title: { en: 'Horseshoe building', ar: 'مبنى الحدوة' },
+      text: { en: 'A sculpted white shell curves around the court, with glazing set back under its inner edge.', ar: 'غلاف أبيض منحوت ينحني حول الفناء، والواجهات الزجاجية متراجعة تحت حافته الداخلية.' },
     },
     {
-      id: 'courtyard', position: [36, 4, 30],
-      title: { en: 'Garden courtyard', ar: 'الفناء المزروع' },
-      text: {
-        en: 'Each ring wraps around a shaded garden courtyard planted with palms.',
-        ar: 'يحيط كل مبنى حلقي بفناء مظلّل مزروع بالنخيل.',
-      },
+      id: 'court', position: [-26, 15, -102],
+      title: { en: 'Garden court', ar: 'الفناء المزروع' },
+      text: { en: 'A planted court with a glass pavilion and a paved spine from the gate to the tower.', ar: 'فناء مزروع فيه جناح زجاجي وممرّ مرصوف من البوابة إلى البرج.' },
+    },
+    {
+      id: 'pavilions', position: [-118, 24, 84],
+      title: { en: 'Perforated pavilions', ar: 'الجناحان المثقّبان' },
+      text: { en: 'Two low buildings under white perforated shells, each around an open courtyard.', ar: 'مبنيان منخفضان تحت غلافين أبيضين مثقّبين، يحيط كل منهما بفناء مفتوح.' },
+    },
+    {
+      id: 'bridge', position: [0, 26, 96],
+      title: { en: 'Sky bridge', ar: 'الجسر المعلّق' },
+      text: { en: 'A glazed bridge links the two pavilions across the boulevard.', ar: 'جسر زجاجي يربط الجناحين فوق الجادة.' },
     },
   ],
   sun: { azimuth: -35, elevation: 40 },
 };
 
-/* ------------------------------------------------------------------------ */
-/* Parameters (all illustrative)                                             */
-/* ------------------------------------------------------------------------ */
-
-/** Ring buildings: superellipse cross-section revolved around a vertical axis. */
-const RING_DEFAULTS = {
-  rc: 17.5,        // radius of the shell's cross-section centre
-  a: 7.6,          // half-width of the cross-section (radial)
-  b: 5.4,          // half-height of the cross-section
-  yc: 12.2,        // height of the cross-section centre
-  n: 3.4,          // superellipse exponent (2 = ellipse, larger = boxier)
-  tilt: 0.16,      // lowers the courtyard side (rise per metre towards the outside)
-  yEdge: 8.4,      // height of the shell's lower edges (the glazed base runs below it)
-  levels: [0, 4.2, 8.4, 12.8], // floor breaks: ground, L1 (glazed base), L2 (in shell), roof canopy
-};
-
-const RINGS = [
-  { id: 'ring-west', cx: -36, cz: 30, seed: 11, phase: 0.4, nameEn: 'West ring', nameAr: 'المبنى الحلقي الغربي' },
-  { id: 'ring-east', cx: 36, cz: 30, seed: 29, phase: 2.1, nameEn: 'East ring', nameAr: 'المبنى الحلقي الشرقي', rc: 17.0, a: 7.2 },
+/* ------------------------------------------------------------------ layout (metres) */
+const C = { cx: 0, cz: -95, rx: 80, rz: 58 };                 // horseshoe centre line
+const TOWER = { x: 0, z: -164, R: 12.5, lobbyH: 6.5, fh: 3.9, n: 11, crownH: 3.4, sailH: 68 };
+const BAR = { x0: -114, x1: 114, z0: -216, z1: -197, fh: 4, n: 4 };
+const OFFICE = { cx: 88, cz: -38, r: 24, x1: 160, z0: -62, z1: -14, fh: 4, n: 5 };
+const PAVS = [
+  { id: 'pav-west', cx: -100, cz: 102, rx: 52, rz: 34, a: 18, phase: 0.6, seed: 3 },
+  { id: 'pav-east', cx: 102, cz: 88, rx: 50, rz: 33, a: 18, phase: 2.4, seed: 7 },
 ];
-
-const TOWER = {
-  id: 'tower', cx: 0, cz: -38,
-  R: 7,            // glass drum radius
-  lobbyH: 6,       // lobby height
-  floorH: 4.2,     // typical floor-to-floor
-  floors: 9,       // typical floors above the lobby
-  crownH: 3.8,     // crown drum height
-  finH: 64,        // overall height of the sail fin tip
-  finTheta: 0.95,  // bearing (rad, from +z towards +x) of the fin's centre at its base
-};
-
-const COLORS = {
-  white: 0xf3f2ee,
-  shell: 0xf6f5f1,
-  glass: 0x93b7c6,
-  panel: 0x34566b,
-  interior: 0xb9b6ae,
-  frame: 0xe6e6e2,
-  stone: 0xe3dfd6,
-  plaza: 0xffffff,
-  lawn: 0x93a77f,
-  asphalt: 0x62686c,
-  marking: 0xf1f1ee,
-  water: 0x5fb3bf,
-  trunk: 0x9d917f,
-  frond: 0x5f8250,
-  canopy: 0x6f8a5c,
-  teal: 0x5fb2b8,
-  glowWarm: 0xffc98a,
-  lampGlow: 0xffe3b8,
-};
-
-/* ------------------------------------------------------------------------ */
-/* Pure helpers                                                              */
-/* ------------------------------------------------------------------------ */
-
-/** Deterministic PRNG (mulberry32) so the model is identical on every load. */
-function makeRng(seed) {
-  let s = seed >>> 0;
-  return () => {
-    s = (s + 0x6d2b79f5) >>> 0;
-    let t = s;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
-const smoothstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-const spow = (x, p) => Math.sign(x) * Math.pow(Math.abs(x), p);
-
-/**
- * Dense ring-shell profile in the (r, y) plane, from the outer lower edge, over
- * the top, to the courtyard-side lower edge. Each point carries its outward
- * normal (nr, ny) and cumulative arc length s.
- */
-function ringProfile(c, samples) {
-  const p = 2 / c.n;
-  // angle at which the superellipse reaches yEdge (ignoring tilt; tilt handled by clipping below)
-  const k = clamp((c.yc - c.yEdge) / c.b, 0, 0.99);
-  const phi0 = -Math.asin(Math.pow(k, c.n / 2)) - 0.12;
-  const phi1 = Math.PI - phi0;
-  const raw = [];
-  for (let i = 0; i <= samples; i++) {
-    const phi = phi0 + (phi1 - phi0) * (i / samples);
-    const r = c.rc + c.a * spow(Math.cos(phi), p);
-    let y = c.yc + c.b * spow(Math.sin(phi), p);
-    y -= c.tilt * (c.rc - r) * smoothstep(c.yc - c.b, c.yc + c.b, y + 2); // courtyard side sits lower
-    raw.push({ r, y });
-  }
-  // keep only the part above yEdge (trim both ends at exactly yEdge)
-  const pts = [];
-  for (let i = 0; i < raw.length; i++) {
-    const a = raw[i];
-    if (a.y >= c.yEdge) {
-      if (pts.length === 0 && i > 0) {
-        const b = raw[i - 1]; const t = (c.yEdge - b.y) / (a.y - b.y);
-        pts.push({ r: b.r + (a.r - b.r) * t, y: c.yEdge });
-      }
-      pts.push({ ...a });
-    } else if (pts.length) {
-      const b = raw[i - 1]; const t = (c.yEdge - b.y) / (a.y - b.y);
-      pts.push({ r: b.r + (a.r - b.r) * t, y: c.yEdge });
-      break;
-    }
-  }
-  // normals + arc length
-  let s = 0;
-  for (let i = 0; i < pts.length; i++) {
-    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
-    const dr = b.r - a.r, dy = b.y - a.y, l = Math.hypot(dr, dy) || 1;
-    pts[i].nr = dy / l; pts[i].ny = -dr / l; pts[i].tr = dr / l; pts[i].ty = dy / l;
-    if (i > 0) s += Math.hypot(pts[i].r - pts[i - 1].r, pts[i].y - pts[i - 1].y);
-    pts[i].s = s;
-  }
-  return pts;
-}
-
-/** Interpolate a profile at arc length s. */
-function profileAt(pts, s) {
-  let i = 1;
-  while (i < pts.length - 1 && pts[i].s < s) i++;
-  const a = pts[i - 1], b = pts[i];
-  const t = clamp((s - a.s) / ((b.s - a.s) || 1), 0, 1);
-  const L = (k) => a[k] + (b[k] - a[k]) * t;
-  const nr = L('nr'), ny = L('ny'), nl = Math.hypot(nr, ny) || 1;
-  const tr = L('tr'), ty = L('ty'), tl = Math.hypot(tr, ty) || 1;
-  return { r: L('r'), y: L('y'), nr: nr / nl, ny: ny / nl, tr: tr / tl, ty: ty / tl };
-}
-
-/** Clip a profile polyline to the height band [y0, y1]; returns contiguous pieces. */
-function sliceProfile(pts, y0, y1) {
-  const out = [];
-  let cur = null;
-  const lerp = (a, b, t) => {
-    const o = {};
-    for (const k of ['r', 'y', 'nr', 'ny']) o[k] = a[k] + (b[k] - a[k]) * t;
-    return o;
-  };
-  for (let i = 0; i < pts.length - 1; i++) {
-    const a = pts[i], b = pts[i + 1];
-    let ta = 0, tb = 1;
-    const dy = b.y - a.y;
-    if (Math.abs(dy) < 1e-9) {
-      if (a.y < y0 || a.y > y1) { ta = 1; tb = 0; }
-    } else {
-      const t0 = (y0 - a.y) / dy, t1 = (y1 - a.y) / dy;
-      ta = Math.max(0, Math.min(t0, t1)); tb = Math.min(1, Math.max(t0, t1));
-    }
-    if (tb - ta <= 1e-6) { if (cur) { out.push(cur); cur = null; } continue; }
-    const pa = lerp(a, b, ta), pb = lerp(a, b, tb);
-    if (cur && ta === 0) cur.push(pb);
-    else { if (cur) out.push(cur); cur = [pa, pb]; }
-    if (tb < 1) { out.push(cur); cur = null; }
-  }
-  if (cur) out.push(cur);
-  return out.filter((p) => p.length >= 2);
-}
-
-/** Inner/outer radius of the ring shell's interior at height y (for floor plates). */
-function shellSpanAt(pts, y) {
-  let rMin = Infinity, rMax = -Infinity;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const a = pts[i], b = pts[i + 1];
-    if ((a.y - y) * (b.y - y) <= 0 && a.y !== b.y) {
-      const r = a.r + (b.r - a.r) * ((y - a.y) / (b.y - a.y));
-      rMin = Math.min(rMin, r); rMax = Math.max(rMax, r);
-    }
-  }
-  return rMin < rMax ? [rMin, rMax] : null;
-}
-
-/* ------------------------------------------------------------------------ */
-/* build()                                                                   */
-/* ------------------------------------------------------------------------ */
+const ROAD = { z0: 4, z1: 20, rbx: 0, rbz: 12, rbR: 25, rbIsland: 13, blvd: [4, 14] };
+const DEG = Math.PI / 180;
 
 export function build(THREE, ctx = {}) {
-  const HIGH = ctx.quality !== 'low';
-  const envMap = ctx.envMap || null;
-  const Q = {
-    lathe: HIGH ? 128 : 64,        // radial segments of ring shells
-    profile: HIGH ? 90 : 46,       // profile samples of ring shells
-    panelPitch: HIGH ? 1.25 : 1.7, // perforation grid pitch (m)
-    cyl: HIGH ? 64 : 36,           // radial segments of glass drums
-    sweep: HIGH ? 120 : 60,        // bridge sweep steps
-    palms: HIGH ? 1 : 0.55,        // palm density factor
-    trees: HIGH ? 1 : 0.5,
-  };
-
-  /* ---------- resource tracking (for dispose) ---------- */
-  const geos = new Set(), mats = new Set(), texs = new Set(), instanced = [];
-  const G = (g) => { geos.add(g); return g; };
-  const Mt = (m) => { mats.add(m); return m; };
-
-  /* ---------- procedural textures ---------- */
-  const hasCanvas = typeof document !== 'undefined';
-  function canvasTex(size, draw, opts = {}) {
-    if (!hasCanvas) return null;
-    const cv = document.createElement('canvas');
-    cv.width = cv.height = size;
-    draw(cv.getContext('2d'), size);
-    const t = new THREE.CanvasTexture(cv);
-    if (opts.srgb) t.colorSpace = THREE.SRGBColorSpace;
-    if (opts.repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(opts.repeat, opts.repeat); }
-    t.anisotropy = 4;
-    texs.add(t);
-    return t;
-  }
-  // Tileable ripple normal map for water (sum of sines → height → normals).
-  const waterNormal = canvasTex(128, (g, S) => {
-    const img = g.createImageData(S, S);
-    const h = (x, y) => {
-      const u = (x / S) * Math.PI * 2, v = (y / S) * Math.PI * 2;
-      return Math.sin(u * 3 + v * 2) * 0.5 + Math.sin(u * 5 - v * 4) * 0.3 + Math.sin(v * 7 + u) * 0.2;
-    };
-    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
-      const dx = h(x + 1, y) - h(x - 1, y), dy = h(x, y + 1) - h(x, y - 1);
-      const nx = -dx * 0.9, ny = -dy * 0.9, nz = 1, l = Math.hypot(nx, ny, nz);
-      const i = (y * S + x) * 4;
-      img.data[i] = (nx / l * 0.5 + 0.5) * 255; img.data[i + 1] = (ny / l * 0.5 + 0.5) * 255;
-      img.data[i + 2] = (nz / l * 0.5 + 0.5) * 255; img.data[i + 3] = 255;
-    }
-    g.putImageData(img, 0, 0);
-  }, { repeat: 6 });
-  // Radial stone-joint pattern for the circular plaza (UVs of a CircleGeometry are centred).
-  const plazaMap = canvasTex(1024, (g, S) => {
-    g.fillStyle = '#ece8e0'; g.fillRect(0, 0, S, S);
-    const c = S / 2;
-    g.strokeStyle = 'rgba(150,140,125,0.35)'; g.lineWidth = 1.6;
-    for (let r = c * 0.12; r < c; r += c * 0.055) { g.beginPath(); g.arc(c, c, r, 0, Math.PI * 2); g.stroke(); }
-    for (let i = 0; i < 96; i++) {
-      const a = (i / 96) * Math.PI * 2;
-      g.beginPath(); g.moveTo(c + Math.cos(a) * c * 0.12, c + Math.sin(a) * c * 0.12);
-      g.lineTo(c + Math.cos(a) * c, c + Math.sin(a) * c); g.stroke();
-    }
-    // a lighter inner ring band
-    g.strokeStyle = 'rgba(255,255,255,0.75)'; g.lineWidth = c * 0.03;
-    g.beginPath(); g.arc(c, c, c * 0.72, 0, Math.PI * 2); g.stroke();
-  }, { srgb: true });
-
-  /* ---------- materials ---------- */
-  const std = (p) => Mt(new THREE.MeshStandardMaterial(p));
-  const phys = (p) => Mt(new THREE.MeshPhysicalMaterial(p));
-  const withEnv = (p) => (envMap ? { ...p, envMap } : p);
-
-  const mat = {
-    white: std({ name: 'campus-white', color: COLORS.white, roughness: 0.5, metalness: 0 }),
-    shell: phys({ name: 'campus-shell', color: COLORS.shell, roughness: 0.36, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.45, side: THREE.DoubleSide }),
-    panel: phys(withEnv({ name: 'campus-panel-glass', color: COLORS.panel, roughness: 0.12, metalness: 0.45, envMapIntensity: 1.3, emissive: COLORS.glowWarm, emissiveIntensity: 0 })),
-    glass: phys(withEnv({ name: 'campus-glass', color: COLORS.glass, roughness: 0.06, metalness: 0.1, transparent: true, opacity: 0.42, envMapIntensity: 1.2, depthWrite: false })),
-    interior: std({ name: 'campus-interior', color: COLORS.interior, roughness: 0.9, emissive: COLORS.glowWarm, emissiveIntensity: 0 }),
-    frame: std({ name: 'campus-frame', color: COLORS.frame, roughness: 0.38, metalness: 0.35 }),
-    stone: std({ name: 'campus-stone', color: COLORS.stone, roughness: 0.95 }),
-    plaza: std({ name: 'campus-plaza', color: COLORS.plaza, map: plazaMap, roughness: 0.85 }),
-    lawn: std({ name: 'campus-lawn', color: COLORS.lawn, roughness: 1 }),
-    asphalt: std({ name: 'campus-asphalt', color: COLORS.asphalt, roughness: 0.95 }),
-    marking: std({ name: 'campus-marking', color: COLORS.marking, roughness: 0.8 }),
-    water: phys(withEnv({ name: 'campus-water', color: COLORS.water, roughness: 0.08, metalness: 0.1, normalMap: waterNormal, normalScale: new THREE.Vector2(0.35, 0.35), envMapIntensity: 1.2, emissive: COLORS.teal, emissiveIntensity: 0 })),
-    trunk: std({ name: 'campus-palm-trunk', color: COLORS.trunk, roughness: 0.9 }),
-    frond: std({ name: 'campus-palm-frond', color: COLORS.frond, roughness: 0.85, side: THREE.DoubleSide }),
-    canopy: std({ name: 'campus-tree-canopy', color: COLORS.canopy, roughness: 0.95 }),
-    lampHead: std({ name: 'campus-lamp-head', color: 0xffffff, roughness: 0.4, emissive: COLORS.lampGlow, emissiveIntensity: 0 }),
-    accent: std({ name: 'campus-accent-teal', color: COLORS.teal, roughness: 0.4, metalness: 0.1, emissive: COLORS.teal, emissiveIntensity: 0 }),
-    carLight: std({ name: 'campus-car-white', color: 0xe9e9e7, roughness: 0.35, metalness: 0.4 }),
-    carDark: std({ name: 'campus-car-dark', color: 0x4a5258, roughness: 0.35, metalness: 0.5 }),
-  };
-  const nightMaterials = [mat.interior, mat.panel, mat.lampHead, mat.water, mat.accent];
-
-  /* ---------- geometry helpers ---------- */
-
-  /** Build an indexed BufferGeometry; flips triangles whose winding disagrees with the given normals. */
-  function makeGeo(pos, nor, idx, { fix = true, uv = null } = {}) {
-    if (fix) {
-      for (let t = 0; t < idx.length; t += 3) {
-        const [a, b, c] = [idx[t] * 3, idx[t + 1] * 3, idx[t + 2] * 3];
-        const ux = pos[b] - pos[a], uy = pos[b + 1] - pos[a + 1], uz = pos[b + 2] - pos[a + 2];
-        const vx = pos[c] - pos[a], vy = pos[c + 1] - pos[a + 1], vz = pos[c + 2] - pos[a + 2];
-        const fx = uy * vz - uz * vy, fy = uz * vx - ux * vz, fz = ux * vy - uy * vx;
-        const nx = nor[a] + nor[b] + nor[c], ny = nor[a + 1] + nor[b + 1] + nor[c + 1], nz = nor[a + 2] + nor[b + 2] + nor[c + 2];
-        if (fx * nx + fy * ny + fz * nz < 0) { const tmp = idx[t + 1]; idx[t + 1] = idx[t + 2]; idx[t + 2] = tmp; }
-      }
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
-    if (uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
-    g.setIndex(idx);
-    g.computeBoundingSphere();
-    return G(g);
-  }
-
-  /** Concatenate geometries (position + normal [+ index]) into one; sources are disposed. */
-  function mergeGeos(list) {
-    const pos = [], nor = [], idx = [];
-    let off = 0;
-    for (const src of list) {
-      const g = src;
-      const p = g.getAttribute('position'), n = g.getAttribute('normal');
-      for (let i = 0; i < p.count; i++) { pos.push(p.getX(i), p.getY(i), p.getZ(i)); nor.push(n.getX(i), n.getY(i), n.getZ(i)); }
-      if (g.index) for (let i = 0; i < g.index.count; i++) idx.push(g.index.getX(i) + off);
-      else for (let i = 0; i < p.count; i++) idx.push(i + off);
-      off += p.count;
-      g.dispose(); geos.delete(g);
-    }
-    return makeGeo(pos, nor, idx, { fix: false });
-  }
-
-  /**
-   * Revolve a profile [{r, y, nr?, ny?}] around the local y axis.
-   * smooth=true uses per-point normals (curved shells); false gives crisp
-   * per-segment normals (slabs, bands).
-   */
-  function latheGeo(pts, seg, smooth = true, phiStart = 0, phiLen = Math.PI * 2) {
-    const pos = [], nor = [], idx = [];
-    const ring = (r, y, nr, ny) => {
-      const base = pos.length / 3;
-      for (let j = 0; j <= seg; j++) {
-        const th = phiStart + (phiLen * j) / seg, s = Math.sin(th), c = Math.cos(th);
-        pos.push(r * s, y, r * c); nor.push(nr * s, ny, nr * c);
-      }
-      return base;
-    };
-    const quads = (b0, b1) => { for (let j = 0; j < seg; j++) idx.push(b0 + j, b1 + j, b0 + j + 1, b0 + j + 1, b1 + j, b1 + j + 1); };
-    if (smooth) {
-      const bases = pts.map((p, i) => {
-        let nr = p.nr, ny = p.ny;
-        if (nr === undefined) {
-          const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
-          const dr = b.r - a.r, dy = b.y - a.y, l = Math.hypot(dr, dy) || 1; nr = dy / l; ny = -dr / l;
-        }
-        return ring(p.r, p.y, nr, ny);
-      });
-      for (let i = 0; i < bases.length - 1; i++) quads(bases[i], bases[i + 1]);
-    } else {
-      for (let i = 0; i < pts.length - 1; i++) {
-        const a = pts[i], b = pts[i + 1];
-        const dr = b.r - a.r, dy = b.y - a.y, l = Math.hypot(dr, dy) || 1;
-        quads(ring(a.r, a.y, dy / l, -dr / l), ring(b.r, b.y, dy / l, -dr / l));
-      }
-    }
-    return makeGeo(pos, nor, idx);
-  }
-
-  /** Annular slab (closed rectangle revolved): r0..r1 radially, y0..y1 vertically. */
-  const slabGeo = (r0, r1, y0, y1, seg = Q.cyl) => latheGeo(
-    [{ r: r0, y: y0 }, { r: r1, y: y0 }, { r: r1, y: y1 }, { r: r0, y: y1 }, { r: r0, y: y0 }].map((p) => ({ ...p, r: Math.max(p.r, 0.001) })),
-    seg, false);
-
-  /** Open cylinder wall (outward normals). */
-  const wallGeo = (r, y0, y1, seg = Q.cyl) => latheGeo([{ r, y: y0 }, { r, y: y1 }], seg, false);
-
-  /** Sweep a closed CCW 2-D polygon [[x, y]] along frames [{P, S, U}] with crisp edges. */
-  function sweepGeo(frames, poly) {
-    const pos = [], nor = [], idx = [];
-    for (let e = 0; e < poly.length; e++) {
-      const [x0, y0] = poly[e], [x1, y1] = poly[(e + 1) % poly.length];
-      const ex = y1 - y0, ey = -(x1 - x0), el = Math.hypot(ex, ey) || 1; // outward edge normal (CCW polygon)
-      const base = pos.length / 3;
-      for (const f of frames) {
-        for (const [x, y] of [[x0, y0], [x1, y1]]) {
-          pos.push(f.P.x + f.S.x * x + f.U.x * y, f.P.y + f.S.y * x + f.U.y * y, f.P.z + f.S.z * x + f.U.z * y);
-          nor.push((f.S.x * ex + f.U.x * ey) / el, (f.S.y * ex + f.U.y * ey) / el, (f.S.z * ex + f.U.z * ey) / el);
-        }
-      }
-      for (let i = 0; i < frames.length - 1; i++) {
-        const a = base + i * 2, b = a + 2;
-        idx.push(a, b, a + 1, a + 1, b, b + 1);
-      }
-    }
-    return makeGeo(pos, nor, idx);
-  }
-
-  /**
-   * Thick parametric surface P(u, v), u ∈ [0,1] across, v ∈ [v0,v1] along.
-   * outward(P) gives a hint used to orient the surface normal. Returns a
-   * closed plate of the given thickness (outer, inner, two long edges, caps).
-   */
-  function thickSurfaceGeo(fn, nu, nv, v0, v1, thick, outward) {
-    const P = [], N = [];
-    const eps = 1e-3;
-    for (let j = 0; j <= nv; j++) {
-      const v = v0 + (v1 - v0) * (j / nv);
-      for (let i = 0; i <= nu; i++) {
-        const u = i / nu;
-        const p = fn(u, v);
-        const du = fn(Math.min(1, u + eps), v).sub(fn(Math.max(0, u - eps), v));
-        const dv = fn(u, Math.min(1, v + eps)).sub(fn(u, Math.max(0, v - eps)));
-        const n = new THREE.Vector3().crossVectors(du, dv).normalize();
-        if (n.dot(outward(p)) < 0) n.negate();
-        P.push(p); N.push(n);
-      }
-    }
-    const at = (i, j) => j * (nu + 1) + i;
-    const parts = [];
-    // outer / inner faces
-    for (const side of [1, -1]) {
-      const pos = [], nor = [], idx = [];
-      P.forEach((p, k) => {
-        const q = side > 0 ? p : p.clone().addScaledVector(N[k], -thick);
-        pos.push(q.x, q.y, q.z); nor.push(N[k].x * side, N[k].y * side, N[k].z * side);
-      });
-      for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) idx.push(at(i, j), at(i + 1, j), at(i, j + 1), at(i + 1, j), at(i + 1, j + 1), at(i, j + 1));
-      parts.push(makeGeo(pos, nor, idx));
-    }
-    // edge strips (u = 0, u = 1 along v; v = v0, v = v1 along u)
-    const strip = (keys, dirFn) => {
-      const pos = [], nor = [], idx = [];
-      keys.forEach((k, m) => {
-        const p = P[k], q = p.clone().addScaledVector(N[k], -thick), d = dirFn(k, m);
-        pos.push(p.x, p.y, p.z, q.x, q.y, q.z); nor.push(d.x, d.y, d.z, d.x, d.y, d.z);
-      });
-      for (let m = 0; m < keys.length - 1; m++) { const a = m * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
-      parts.push(makeGeo(pos, nor, idx));
-    };
-    const colKeys = (i) => Array.from({ length: nv + 1 }, (_, j) => at(i, j));
-    const rowKeys = (j) => Array.from({ length: nu + 1 }, (_, i) => at(i, j));
-    const tangentU = (k, sign) => { const i = k % (nu + 1), j = Math.floor(k / (nu + 1)); const a = P[at(Math.max(0, i - 1), j)], b = P[at(Math.min(nu, i + 1), j)]; return b.clone().sub(a).normalize().multiplyScalar(sign); };
-    const tangentV = (k, sign) => { const i = k % (nu + 1), j = Math.floor(k / (nu + 1)); const a = P[at(i, Math.max(0, j - 1))], b = P[at(i, Math.min(nv, j + 1))]; return b.clone().sub(a).normalize().multiplyScalar(sign); };
-    strip(colKeys(0), (k) => tangentU(k, -1));
-    strip(colKeys(nu), (k) => tangentU(k, 1));
-    strip(rowKeys(0), (k) => tangentV(k, -1));
-    strip(rowKeys(nv), (k) => tangentV(k, 1));
-    return mergeGeos(parts);
-  }
-
-  /** Flat diamond (rhombus) in the XY plane facing +Z, unit size. */
-  const diamondGeo = makeGeo(
-    [0, 0.5, 0, -0.5, 0, 0, 0, -0.5, 0, 0.5, 0, 0],
-    [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
-    [0, 1, 2, 0, 2, 3]);
-
-  /* ---------- scene objects helpers ---------- */
-  const mesh = (geo, material, name, { cast = true, receive = true } = {}) => {
-    const m = new THREE.Mesh(geo, material);
-    m.name = name; m.castShadow = cast; m.receiveShadow = receive;
-    return m;
-  };
-  const instancedMesh = (geo, material, matrices, name, { cast = true, receive = true } = {}) => {
-    if (!matrices.length) return null;
-    const im = new THREE.InstancedMesh(geo, material, matrices.length);
-    matrices.forEach((m4, i) => im.setMatrixAt(i, m4));
-    im.instanceMatrix.needsUpdate = true;
-    im.name = name; im.castShadow = cast; im.receiveShadow = receive;
-    im.computeBoundingSphere();
-    instanced.push(im);
-    return im;
-  };
-  const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(), _p = new THREE.Vector3(), _e = new THREE.Euler();
-  const trs = (x, y, z, ry = 0, sx = 1, sy = 1, sz = 1, rx = 0, rz = 0) => {
-    _e.set(rx, ry, rz); _q.setFromEuler(_e);
-    return new THREE.Matrix4().compose(_p.set(x, y, z), _q, _s.set(sx, sy, sz));
-  };
-
-  /**
-   * Mullions on a circular wall: vertical fins at radius r every `pitch` metres,
-   * plus optional horizontal transoms at the given heights.
-   */
-  function circularMullions(r, y0, y1, pitch, name, transoms = []) {
-    const n = Math.max(8, Math.round((2 * Math.PI * r) / pitch));
-    const mats4 = [];
-    for (let i = 0; i < n; i++) {
-      const th = (i / n) * Math.PI * 2;
-      mats4.push(trs(r * Math.sin(th), (y0 + y1) / 2, r * Math.cos(th), th, 0.12, y1 - y0, 0.28));
-    }
-    const group = [instancedMesh(unitBox, mat.frame, mats4, name)];
-    for (const ty of transoms) group.push(mesh(slabGeo(r - 0.06, r + 0.1, ty - 0.05, ty + 0.05), mat.frame, `${name}-transom`, { cast: false }));
-    return group.filter(Boolean);
-  }
-  const unitBox = G(new THREE.BoxGeometry(1, 1, 1));
-
-  /* ---------- containers ---------- */
+  const K = createKit(THREE, ctx);
+  const { high } = K;
   const root = new THREE.Group(); root.name = 'campus';
   const site = new THREE.Group(); site.name = 'campus-site';
-  root.add(site);
   const floors = [];
-  const newFloor = (level, labelEn, labelAr, buildingId, x = 0, z = 0) => {
-    const g = new THREE.Group();
-    g.name = `${buildingId}-L${level}`;
-    g.position.set(x, 0, z);
-    g.userData = { level, label: { en: labelEn, ar: labelAr }, buildingId };
-    root.add(g); floors.push(g);
-    return g;
+  const fg = (...a) => { const f = K.floorGroup(root, ...a); floors.push(f); return f; };
+
+  /* ---------------------------------------------------------------- materials */
+  const shellTex = K.canvasTex(high ? 512 : 256, high ? 512 : 256, (c, w, h) => {
+    const rnd = makeRng(41);
+    c.fillStyle = '#f3f2ee'; c.fillRect(0, 0, w, h);
+    // soft large-scale mottling (cast panels)
+    for (let i = 0; i < 70; i++) {
+      const x = rnd() * w, y = rnd() * h, r = (0.05 + rnd() * 0.18) * w;
+      const gr = c.createRadialGradient(x, y, 0, x, y, r);
+      const a = 0.025 + rnd() * 0.03;
+      gr.addColorStop(0, rnd() < 0.5 ? `rgba(200,196,186,${a})` : `rgba(255,255,255,${a * 1.5})`);
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = gr; c.fillRect(0, 0, w, h);
+    }
+    // faint panel joints
+    c.strokeStyle = 'rgba(150,146,138,0.16)'; c.lineWidth = Math.max(1, w / 512);
+    for (let i = 0; i <= 8; i++) { const y = (i / 8) * h; c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); }
+    for (let i = 0; i <= 6; i++) { const x = (i / 6) * w; c.beginPath(); c.moveTo(x, 0); c.lineTo(x, h); c.stroke(); }
+    // sparse dark specks (small openings / fixings seen in the render)
+    for (let i = 0; i < 120; i++) {
+      const x = rnd() * w, y = rnd() * h, s = (0.6 + rnd() * 1.6) * (w / 512);
+      c.fillStyle = `rgba(70,74,80,${0.25 + rnd() * 0.35})`; c.fillRect(x, y, s * 1.6, s);
+    }
+  }, { repeat: [1 / 36, 1 / 36] });
+  const M = {
+    shell: K.std({ name: 'campus-shell-white', color: 0xffffff, map: shellTex, roughness: 0.58, metalness: 0 }),
+    white: K.std({ name: 'campus-render-white', color: 0xf1f0ec, roughness: 0.66 }),
+    slab: K.std({ name: 'campus-slab-edge-white', color: 0xf4f3ef, roughness: 0.5 }),
+    roof: K.std({ name: 'campus-roof-membrane', color: 0xd6d3cc, roughness: 0.9 }),
+    glass: K.glass('campus-glazing', 0x7e9fb1, { opacity: 0.4 }),
+    glassDark: K.glass('campus-glazing-dark', 0x4d6577, { opacity: 0.62, env: 1.5 }),
+    rail: K.glass('campus-balustrade-glass', 0xb8cdd6, { opacity: 0.22, env: 1 }),
+    mullion: K.std({ name: 'campus-mullion-metal', color: 0xdfe2e4, roughness: 0.35, metalness: 0.65 }),
+    interior: K.interior('campus-interior', 0x6a645c, 0xffd6a6, 1.0),
+    interiorCool: K.interior('campus-interior-office', 0x7b7a76, 0xfff0d8, 0.9),
+    water: K.water('campus-water-pool', 0x2f93b4, { emissive: 0x3cc8e0, nightMax: 0.5 }),
+    paving: K.std({ name: 'campus-plaza-paving', color: 0xe9e5dc, roughness: 0.85 }),
+    path: K.std({ name: 'campus-gravel-path', color: 0xc99a72, roughness: 0.95 }),
+    asphalt: K.std({ name: 'campus-asphalt-road', color: 0x55595d, roughness: 0.92 }),
+    kerb: K.std({ name: 'campus-kerb-paving', color: 0xcfcbc2, roughness: 0.9 }),
+    marking: K.std({ name: 'campus-road-mark', color: 0xf4f4f0, roughness: 0.7 }),
+    lawn: K.std({ name: 'campus-lawn-grass', color: 0x7f9a5a, roughness: 1 }),
+    meadow: K.std({ name: 'campus-meadow-grass', color: 0x6e8a4a, roughness: 1 }),
+    beds: K.std({ name: 'campus-planting-shrub-bed', color: 0x587540, roughness: 1 }),
+    soil: K.std({ name: 'campus-gravel-earth', color: 0xb99a76, roughness: 1 }),
+    context: K.std({ name: 'campus-context-render', color: 0xe8e5de, roughness: 0.8 }),
+    contextRoof: K.std({ name: 'campus-context-roof-concrete', color: 0xcfcac0, roughness: 0.9 }),
+    accent: K.std({ name: 'campus-logo-accent', color: 0x6b4fa0, roughness: 0.5 }),
   };
 
-  /* ====================================================================== */
-  /* Ring buildings                                                          */
-  /* ====================================================================== */
+  /* perforated shell: triangular openings with blue glass, density varies across the skin */
+  const PU = 64, PV = 32;                      // one texture tile covers 64 x 32 m
+  const perfW = high ? 1024 : 512, perfH = perfW / 2;
+  const perfCells = [];
+  {
+    const rnd = makeRng(77);
+    const cols = 36, rows = 20;
+    for (let r = 0; r < rows; r++) for (let q = 0; q < cols * 2; q++) {
+      const u = (q / 2 + 0.25) / cols, v = (r + 0.5) / rows;
+      const tau = Math.PI * 2;
+      const dens = 0.5 + 0.3 * Math.sin(tau * (2 * u) + 1.3) * Math.cos(tau * v) + 0.22 * Math.sin(tau * (3 * u + 2 * v) + 0.4) + 0.12 * Math.cos(tau * (5 * u - v));
+      const p = smoothstep(0.15, 0.95, dens);
+      if (rnd() > Math.pow(p, 1.1)) continue;
+      perfCells.push({ r, q, up: (q + r) % 2 === 0, s: 0.3 + 0.62 * p * (0.8 + rnd() * 0.2), lit: rnd() < 0.75, tone: rnd() });
+    }
+  }
+  const drawPerf = (mode) => (c, w, h) => {
+    const cols = 36, rows = 20;
+    const cw = w / cols, ch = h / rows;
+    c.fillStyle = mode === 'map' ? '#f4f3ef' : mode === 'emit' ? '#000' : 'rgb(0,150,0)';
+    c.fillRect(0, 0, w, h);
+    for (const cell of perfCells) {
+      const x0 = (cell.q / 2) * cw, y0 = cell.r * ch;
+      const cx = x0 + cw / 2, cy = y0 + ch / 2;
+      const s = cell.s;
+      const pts = cell.up
+        ? [[cx, cy - ch * 0.5 * s], [cx + cw * 0.5 * s, cy + ch * 0.5 * s], [cx - cw * 0.5 * s, cy + ch * 0.5 * s]]
+        : [[cx - cw * 0.5 * s, cy - ch * 0.5 * s], [cx + cw * 0.5 * s, cy - ch * 0.5 * s], [cx, cy + ch * 0.5 * s]];
+      if (mode === 'map') {
+        const t = cell.tone;
+        c.fillStyle = `rgb(${Math.round(40 + 50 * t)},${Math.round(72 + 60 * t)},${Math.round(104 + 70 * t)})`;
+      } else if (mode === 'emit') {
+        c.fillStyle = cell.lit ? `rgb(255,${Math.round(205 + 30 * cell.tone)},${Math.round(150 + 40 * cell.tone)})` : '#000';
+      } else c.fillStyle = 'rgb(0,28,150)'; // roughness (G) low, metalness (B) mid
+      c.beginPath(); c.moveTo(...pts[0]); c.lineTo(...pts[1]); c.lineTo(...pts[2]); c.closePath(); c.fill();
+    }
+  };
+  const rep = [1 / PU, 1 / PV];
+  const perfMap = K.canvasTex(perfW, perfH, drawPerf('map'), { repeat: rep });
+  const perfEmit = K.canvasTex(perfW, perfH, drawPerf('emit'), { repeat: rep });
+  const perfOrm = K.canvasTex(perfW, perfH, drawPerf('orm'), { repeat: rep, srgb: false });
+  M.perf = K.std({
+    name: 'campus-shell-perforated', color: 0xffffff, map: perfMap, roughness: 1, metalness: 1,
+    roughnessMap: perfOrm, metalnessMap: perfOrm, emissive: 0xffffff, emissiveMap: perfEmit, emissiveIntensity: 0,
+    envMap: ctx.envMap || null, envMapIntensity: 1,
+  });
+  M.perf.userData.__nightMax = 1.1;
+  M.perf.userData.baseEnvMapIntensity = 1;
+  K.nightMaterials.push(M.perf);
 
-  function buildRing(spec) {
-    const c = { ...RING_DEFAULTS, ...spec };
-    const prof = ringProfile(c, Q.profile);
-    const rOutEdge = prof[0].r, rInEdge = prof[prof.length - 1].r;
-    const rGlassOut = rOutEdge - 1.5, rGlassIn = rInEdge + 1.3;
-    const [yL2, yRoof] = [c.levels[2], c.levels[3]];
-    const labels = [
-      ['Ground floor', 'الطابق الأرضي'], ['Level 1', 'المستوى 1'], ['Level 2', 'المستوى 2'], ['Level 3 & roof', 'المستوى 3 والسقف'],
+  /* ---------------------------------------------------------------- helpers */
+  const fOf = (n) => (v, H) => Math.pow(Math.max(0, 1 - Math.pow(clamp(v / H, 0, 1), n)), 1 / n);
+  const mats3 = (a, b, c) => [a, b, c];
+  /** Instanced mullions along a plan path at offset u (path points spaced ~every `step`). */
+  function mullionsAlong(path, uFn, y0, y1, every = 1, name = 'mullions', parent = root, mat = M.mullion, size = [0.14, 0.22]) {
+    const ms = [];
+    const n = path.length;
+    for (let i = 0; i < n; i += every) {
+      const a = path[Math.max(0, i - 1)], b = path[Math.min(n - 1, i + 1)];
+      let tx = b[0] - a[0], tz = b[1] - a[1]; const l = Math.hypot(tx, tz) || 1; tx /= l; tz /= l;
+      const u = uFn(i / (n - 1));
+      const x = path[i][0] - tz * u, z = path[i][1] + tx * u;
+      ms.push(K.mat4(x, y0, z, Math.atan2(tx, tz), size[0], y1 - y0, size[1]));
+    }
+    const geo = unitBox;
+    const im = K.inst(name, geo, mat, ms, { cast: false });
+    parent.add(im);
+    return im;
+  }
+  const unitBox = K.g(new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0));
+  /** A vertical glass strip along a path at offset u (facing outward when outward = true). */
+  function glassAlong(path, uFn, y0, y1, mat, outward, opts = {}) {
+    return K.sweep(path, (t) => {
+      const u = uFn(t);
+      return outward ? [P(u, y0, 1, 0), P(u, y1, 1, 0)] : [P(u, y1, 1, 0), P(u, y0, 1, 0)];
+    }, { ...opts, openProfile: true });
+  }
+
+  /* ================================================================ HORSESHOE (ring) */
+  const ringPaths = [];
+  {
+    const levels = [
+      fg('ring', 0, 'Horseshoe building · ground level', 'مبنى الحدوة · الطابق الأرضي'),
+      fg('ring', 1, 'Horseshoe building · level 1', 'مبنى الحدوة · الطابق 1'),
+      fg('ring', 2, 'Horseshoe building · level 2 and roof', 'مبنى الحدوة · الطابق 2 والسطح'),
     ];
-    const lv = labels.map(([en, ar], i) => newFloor(i, `${c.nameEn} · ${en}`, `${c.nameAr} · ${ar}`, c.id, c.cx, c.cz));
-
-    /* Glazed base (ground + level 1): recessed glass drums under the shell's
-       overhang, white slab edges between them, slender perimeter columns. */
-    for (const level of [0, 1]) {
-      const g = lv[level], y0 = c.levels[level], y1 = c.levels[level + 1];
-      const yb = level === 0 ? 0.18 : y0 + 0.4; // glazing starts above the slab
-      if (level === 0) g.add(mesh(slabGeo(rGlassIn - 0.3, rGlassOut + 0.3, 0, 0.18), mat.stone, `${c.id}-ground-slab`, { cast: false }));
-      else g.add(mesh(slabGeo(rGlassIn - 0.45, rGlassOut + 0.45, y0, y0 + 0.4, Q.lathe), mat.white, `${c.id}-L1-slab`));
-      for (const [r, tag, inward] of [[rGlassOut, 'outer', -1], [rGlassIn, 'inner', 1]]) {
-        g.add(mesh(wallGeo(r + inward * 0.9, yb, y1, Q.lathe >> 1), mat.interior, `${c.id}-L${level}-interior-${tag}`, { cast: false }));
-        g.add(mesh(wallGeo(r, yb, y1, Q.lathe), mat.glass, `${c.id}-L${level}-glass-${tag}`, { cast: false, receive: false }));
-        circularMullions(r - 0.1 * inward, yb, y1, 1.7, `${c.id}-L${level}-mullions-${tag}`).forEach((m) => g.add(m));
-      }
-      const nCol = 32, colR = rOutEdge - 0.55, colMats = [];
-      for (let i = 0; i < nCol; i++) {
-        const th = ((i + 0.5) / nCol) * Math.PI * 2;
-        colMats.push(trs(colR * Math.sin(th), (yb + y1) / 2, colR * Math.cos(th), 0, 0.26, y1 - yb, 0.26));
-      }
-      g.add(instancedMesh(columnGeo, mat.white, colMats, `${c.id}-L${level}-columns`));
+    const fo = fOf(1.7), fi = fOf(3.4);
+    // arms run from the tower (t = 0) to the open south end (t = 1)
+    const arms = [
+      { a0: -169 * DEG, a1: -9 * DEG, rev: false },
+      { a0: 9 * DEG, a1: 163 * DEG, rev: true },
+    ];
+    for (const arm of arms) {
+      const n = high ? 110 : 56;
+      const path = K.arc(C.cx, C.cz, C.rx, C.rz, arm.a0, arm.a1, n);
+      ringPaths.push(path);
+      const par = (t) => {
+        const tt = arm.rev ? 1 - t : t;                         // 0 at the tower end, 1 at the south end
+        const end = smoothstep(0.7, 1, tt);
+        const back = smoothstep(0.12, 0, tt);
+        const H = 17.5 * (1 - 0.86 * Math.pow(end, 1.3)) + 2 * back + 1.2 * Math.sin(tt * 7.0) * (1 - end);
+        const a = 12.5 * (1 - 0.45 * end);
+        const ain = 15 * (1 - 0.6 * end);
+        const b1 = Math.min(5.2, H * 0.5);
+        const b2 = b1 + (H - b1) * 0.47;
+        return { H, a, ain, b1, b2, glass: -(a - 3.6) };
+      };
+      // L0: solid outer face to the ground, glazing set back on the court side
+      const l0 = K.sweep(path, (t) => {
+        const q = par(t);
+        return bandProfile(() => q.glass, (v) => q.a * fo(v, q.H), 0, q.b1, 4, { bot: 0, out: 0, top: 0, in: 1 });
+      }, { caps: true, capMat: 0 });
+      const l1 = K.sweep(path, (t) => {
+        const q = par(t);
+        return bandProfile((v) => -q.ain * fi(v, q.H), (v) => q.a * fo(v, q.H), q.b1, q.b2, 6, {});
+      }, { caps: true });
+      const l2 = K.sweep(path, (t) => {
+        const q = par(t);
+        return bandProfile((v) => -q.ain * fi(v, q.H), (v) => q.a * fo(v, q.H), q.b2, q.H, 9, {}, 1.2);
+      }, { caps: true });
+      levels[0].add(K.mesh('ring-shell-L0', l0, [M.shell, M.interior]));
+      levels[1].add(K.mesh('ring-shell-L1', l1, M.shell));
+      levels[2].add(K.mesh('ring-shell-L2', l2, M.shell));
+      const gl = glassAlong(path, (t) => par(t).glass - 0.25, 0, 5.0, M.glass, false);
+      const glm = K.mesh('ring-glazing', gl, M.glass, { cast: false }); levels[0].add(glm);
+      mullionsAlong(path, (t) => par(t).glass - 0.3, 0, 5.0, 2, 'ring-mullions', levels[0]);
+      // floor line inside the glazing
+      const fl = K.sweep(path, (t) => { const q = par(t); return [P(q.glass - 0.3, 3.2, 1), P(q.glass - 0.05, 3.2, 1), P(q.glass - 0.05, 3.5, 1), P(q.glass - 0.3, 3.5, 1)]; }, { caps: true });
+      levels[0].add(K.mesh('ring-floor-edge', fl, M.slab, { cast: false }));
     }
-
-    /* Floor plates inside the shell (revealed by explode / section cuts). The
-       level-2 plate also closes the soffit of the overhang. */
-    lv[2].add(mesh(slabGeo(rInEdge - 0.05, rOutEdge + 0.05, yL2 - 0.05, yL2 + 0.3, Q.lathe), mat.white, `${c.id}-L2-slab`));
-    {
-      const span = shellSpanAt(prof, yRoof + 0.3) || [rInEdge, rOutEdge];
-      lv[3].add(mesh(slabGeo(span[0] + 0.5, span[1] - 0.5, yRoof, yRoof + 0.3, Q.lathe), mat.white, `${c.id}-L3-slab`));
-    }
-
-    /* Shell, sliced into the level bands so the skin explodes with its floor. */
-    const lining = prof.map((p) => ({ r: p.r - p.nr * 0.6, y: p.y - p.ny * 0.6, nr: p.nr, ny: p.ny }));
-    for (const [y0, y1, level] of [[yL2 - 0.05, yRoof, 2], [yRoof, 99, 3]]) {
-      sliceProfile(prof, y0, y1).forEach((piece, k) => {
-        lv[level].add(mesh(latheGeo(piece, Q.lathe, true), mat.shell, `${c.id}-L${level}-shell-${k}`));
-      });
-      // interior lining (inset 0.6 m), what glows through the perforations at night
-      sliceProfile(lining, Math.max(y0, yL2 + 0.35), y1).forEach((piece, k) => {
-        lv[level].add(mesh(latheGeo(piece, Q.lathe >> 1, true), mat.interior, `${c.id}-L${level}-lining-${k}`, { cast: false }));
-      });
-    }
-
-    /* Perforations: diamond glazed panels scattered over the shell. */
-    const rand = makeRng(c.seed);
-    const S = prof[prof.length - 1].s;
-    const pitch = Q.panelPitch;
-    const perBand = [[], [], [], []];
-    const T = new THREE.Vector3(), B = new THREE.Vector3(), N = new THREE.Vector3(), X = new THREE.Vector3();
-    const rows = Math.floor(S / pitch);
-    for (let j = 1; j < rows; j++) {
-      const s = (j / rows) * S, sn = s / S;
-      if (sn < 0.07 || sn > 0.93) continue;
-      const pr = profileAt(prof, s);
-      const cols = Math.max(12, Math.round((2 * Math.PI * pr.r) / pitch));
-      for (let k = 0; k < cols; k++) {
-        const th = ((k + (j % 2) * 0.5) / cols) * Math.PI * 2;
-        // density: concentrated over the crown, modulated by slow waves around the ring
-        const crown = Math.exp(-(((sn - 0.5) / 0.23) ** 2));
-        const wave = 0.5 + 0.5 * Math.sin(th * 3 + c.phase + sn * 5) * Math.cos(th * 2 - c.phase * 1.7 + sn * 3);
-        const d = clamp(0.1 + 0.18 * wave + crown * (0.2 + 0.75 * wave), 0, 0.92);
-        if (rand() > d) continue;
-        const size = pitch * (0.4 + 0.75 * d * d) * (0.85 + rand() * 0.3);
-        const sth = Math.sin(th), cth = Math.cos(th);
-        T.set(cth, 0, -sth);
-        B.set(pr.tr * sth, pr.ty, pr.tr * cth);
-        N.set(pr.nr * sth, pr.ny, pr.nr * cth);
-        if (X.crossVectors(T, B).dot(N) < 0) T.negate();
-        const y = pr.y;
-        const ext = Math.abs(pr.ty) * size * 0.55;
-        const band = y < yRoof ? 2 : 3;
-        const [b0, b1] = band === 2 ? [yL2, yRoof] : [yRoof, 99];
-        if (y - ext < b0 || y + ext > b1) continue; // never straddle a floor break
-        const m4 = new THREE.Matrix4().makeBasis(T.clone().multiplyScalar(size * 0.82), B.clone().multiplyScalar(size), N.clone());
-        m4.setPosition(pr.r * sth + N.x * 0.07, y + N.y * 0.07, pr.r * cth + N.z * 0.07);
-        perBand[band].push(m4);
-      }
-    }
-    for (const level of [2, 3]) {
-      const im = instancedMesh(diamondGeo, mat.panel, perBand[level], `${c.id}-L${level}-perforations`, { cast: false });
-      if (im) lv[level].add(im);
-    }
-
-    return { prof, rOutEdge, rInEdge, rGlassOut, rGlassIn, c };
   }
 
-  const columnGeo = G(new THREE.CylinderGeometry(0.5, 0.5, 1, 10));
-  const rings = RINGS.map(buildRing);
-
-  /* ====================================================================== */
-  /* Central tower with sail fin                                             */
-  /* ====================================================================== */
-
-  function buildTower(t) {
-    const levels = [];
-    const yAt = (i) => (i === 0 ? 0 : t.lobbyH + (i - 1) * t.floorH); // floor level heights
-    const topY = yAt(t.floors + 1);
-    const crownTop = topY + t.crownH;
-    const nLevels = t.floors + 2;
-    for (let i = 0; i < nLevels; i++) {
-      const [en, ar] = i === 0 ? ['Lobby', 'الردهة'] : i === nLevels - 1 ? ['Crown & sail', 'التاج والشراع'] : [`Level ${i}`, `المستوى ${i}`];
-      levels.push(newFloor(i, `Tower · ${en}`, `البرج · ${ar}`, t.id, t.cx, t.cz));
-    }
-    const R = t.R;
-
-    // Lobby: taller, slightly wider glass drum with a canopy disc above
-    const L0 = levels[0];
-    L0.add(mesh(wallGeo(R + 0.2, 0, t.lobbyH, Q.cyl), mat.glass, 'tower-lobby-glass', { cast: false, receive: false }));
-    L0.add(mesh(wallGeo(R - 0.8, 0, t.lobbyH, Q.cyl), mat.interior, 'tower-lobby-interior', { cast: false }));
-    circularMullions(R + 0.28, 0, t.lobbyH, 1.6, 'tower-lobby-mullions', [3.2]).forEach((m) => L0.add(m));
-    L0.add(mesh(slabGeo(0.001, R - 0.8, 0, 0.15), mat.stone, 'tower-lobby-floor', { cast: false }));
-
-    // Typical floors: white slab-edge band + glass + interior lining + mullions
-    for (let i = 1; i <= t.floors; i++) {
-      const g = levels[i], y0 = yAt(i), y1 = yAt(i + 1);
-      const bandR = i === 1 ? R + 2.6 : R + 0.55; // level 1 band doubles as the lobby canopy
-      g.add(mesh(slabGeo(0.001, bandR, y0, y0 + 0.45), mat.white, `tower-L${i}-slab`));
-      g.add(mesh(wallGeo(R, y0 + 0.45, y1, Q.cyl), mat.glass, `tower-L${i}-glass`, { cast: false, receive: false }));
-      g.add(mesh(wallGeo(R - 0.8, y0 + 0.45, y1, Q.cyl >> 1), mat.interior, `tower-L${i}-interior`, { cast: false }));
-      circularMullions(R + 0.08, y0 + 0.45, y1, 1.5, `tower-L${i}-mullions`).forEach((m) => g.add(m));
-    }
-
-    // Crown: white drum, teal accent ring, roof disc
-    const crown = levels[nLevels - 1];
-    crown.add(mesh(slabGeo(0.001, R + 0.6, topY, crownTop - 0.4), mat.white, 'tower-crown'));
-    crown.add(mesh(slabGeo(R + 0.55, R + 0.66, topY + 1.2, topY + 1.45), mat.accent, 'tower-crown-accent', { cast: false }));
-    crown.add(mesh(slabGeo(0.001, R - 0.2, crownTop - 0.4, crownTop), mat.white, 'tower-roof'));
-
-    /* Sail fin: a thick curved blade that peels away from the drum like a
-       scroll, tight to the glass at its attached edge, bellying outwards
-       towards its free edge, and curls over the crown at the top. */
-    const H = t.finH;
-    const crestY = (u) => H - 11 * u * u;                       // crest falls towards the free edge
-    const finAt = (u, y) => {
-      const h = y / H;
-      const lean = smoothstep(crownTop - 6, H, y);              // curl over the crown
-      const peel = 1.2 + 4.2 * Math.pow(u, 1.6) * (0.35 + 0.65 * Math.sin(Math.PI * Math.min(1, h * 1.05)));
-      const r = (R + peel) * (1 - 0.6 * lean * lean);
-      const th = t.finTheta + u * (0.75 + 0.7 * h) - 0.45 * lean;
-      return new THREE.Vector3(r * Math.sin(th), y, r * Math.cos(th));
+  /* ================================================================ TOWER + SAIL */
+  {
+    const T = TOWER;
+    const slabGeo = K.g(new THREE.CylinderGeometry(T.R + 1.5, T.R + 1.5, 0.85, high ? 64 : 32));
+    const glassGeo = K.g(new THREE.CylinderGeometry(T.R - 0.2, T.R - 0.2, 1, high ? 48 : 28, 1, true));
+    const coreGeo = K.g(new THREE.CylinderGeometry(T.R - 1.4, T.R - 1.4, 1, 24, 1, false));
+    const nMull = high ? 40 : 24;
+    const addFloor = (level, y, h, en, ar, lobby = false) => {
+      const f = fg('tower', level, en, ar, y);
+      const off = (level % 2 ? 0.55 : -0.45);
+      const slab = K.mesh('tower-slab', slabGeo, M.slab);
+      slab.position.set(T.x + off, 0.42, T.z - off * 0.4);
+      f.add(slab);
+      const gm = K.mesh('tower-glass', glassGeo, M.glass, { cast: false });
+      gm.scale.y = h - 0.85; gm.position.set(T.x, 0.85 + (h - 0.85) / 2, T.z); f.add(gm);
+      const core = K.mesh('tower-interior', coreGeo, lobby ? M.interior : M.interiorCool, { cast: false });
+      core.scale.y = h - 0.9; core.position.set(T.x, 0.85 + (h - 0.9) / 2, T.z); f.add(core);
+      const ms = [];
+      for (let k = 0; k < nMull; k++) {
+        const a = (k / nMull) * Math.PI * 2;
+        ms.push(K.mat4(T.x + Math.sin(a) * (T.R - 0.1), 0.85, T.z + Math.cos(a) * (T.R - 0.1), a, 0.12, h - 0.85, 0.2));
+      }
+      f.add(K.inst('tower-mullions', unitBox, M.mullion, ms, { cast: false }));
+      return f;
     };
-    const outward = (p) => new THREE.Vector3(p.x, 0, p.z).normalize();
-    const finNu = HIGH ? 24 : 12;
-    for (let i = 0; i < nLevels; i++) {
-      const top = i === nLevels - 1;
-      const y0 = yAt(i), y1 = top ? H : yAt(i + 1);
-      const band = (u, v) => finAt(u, y0 + ((top ? crestY(u) : y1) - y0) * v);
-      const nv = top ? (HIGH ? 18 : 9) : (HIGH ? 3 : 2);
-      levels[i].add(mesh(thickSurfaceGeo(band, finNu, nv, 0, 1, 0.6, outward), mat.shell, `tower-L${i}-sail`));
-    }
-
-    /* A sparse scatter of glazed diamonds on the fin's outer face, denser
-       towards its free edge (echoes the ring shells). */
-    const finPanels = levels.map(() => []);
+    addFloor(0, 0, T.lobbyH, 'Tower · lobby', 'البرج · الردهة', true);
+    for (let i = 1; i <= T.n; i++) addFloor(i, T.lobbyH + (i - 1) * T.fh, T.fh, `Tower · level ${i}`, `البرج · الطابق ${i}`);
+    const topY = T.lobbyH + T.n * T.fh;
+    const crown = fg('tower', T.n + 1, 'Tower · crown', 'البرج · التاج', topY);
     {
-      const rnd = makeRng(41), e = 0.01;
-      const P = new THREE.Vector3(), Tu = new THREE.Vector3(), Tv = new THREE.Vector3(), Nn = new THREE.Vector3();
-      const step = HIGH ? 1.3 : 1.8;
-      for (let y = 1.5; y < H - 2; y += step) {
-        for (let u = 0.1; u < 0.96; u += 0.055 * (step / 1.3)) {
-          if (y > crestY(u) - 2) continue;
-          const d = 0.05 + 0.6 * u * u * smoothstep(4, H * 0.7, y);
-          if (rnd() > d) continue;
-          P.copy(finAt(u, y));
-          Tu.copy(finAt(u + e, y)).sub(finAt(u - e, y)).normalize();
-          Tv.copy(finAt(u, y + e)).sub(finAt(u, y - e)).normalize();
-          Nn.crossVectors(Tu, Tv).normalize();
-          if (Nn.dot(outward(P)) < 0) Nn.negate();
-          if (new THREE.Vector3().crossVectors(Tu, Tv).dot(Nn) < 0) Tu.negate();
-          const size = 0.7 + 0.6 * d + rnd() * 0.25;
-          const ext = size * 0.55;
-          const li = levels.findIndex((_, i) => y - ext >= yAt(i) && (i === nLevels - 1 || y + ext <= yAt(i + 1)));
-          if (li < 0) continue;
-          const m4 = new THREE.Matrix4().makeBasis(Tu.clone().multiplyScalar(size * 0.8), Tv.clone().multiplyScalar(size), Nn.clone());
-          m4.setPosition(P.x + Nn.x * 0.06, P.y + Nn.y * 0.06, P.z + Nn.z * 0.06);
-          finPanels[li].push(m4);
-        }
+      const ring = K.mesh('tower-crown-band', K.g(new THREE.CylinderGeometry(T.R + 0.6, T.R + 0.6, T.crownH, high ? 64 : 32, 1, true)), M.white);
+      ring.material = M.white; ring.position.set(T.x, 0.85 + T.crownH / 2, T.z); crown.add(ring);
+      const slab = K.mesh('tower-roof-slab', slabGeo, M.slab); slab.position.set(T.x, 0.42, T.z); crown.add(slab);
+      const roof = K.mesh('tower-roof', K.g(new THREE.CylinderGeometry(T.R + 0.4, T.R + 0.4, 0.4, 40)), M.roof); roof.position.set(T.x, 0.85 + T.crownH - 0.4, T.z); crown.add(roof);
+      // logo plaque facing south (the render shows a coloured logo on the crown)
+      const lm = [];
+      for (let k = 0; k < 3; k++) lm.push(K.mat4(T.x - 3.2 + k * 1.7, 0.85 + T.crownH * 0.32, T.z + T.R + 0.62, 0, 1.1, 1.4, 0.15));
+      crown.add(K.inst('tower-logo-letters', unitBox, M.accent, lm, { cast: false }));
+      // mast
+      const mast = K.mesh('tower-mast', K.g(new THREE.CylinderGeometry(0.18, 0.28, 18, 8)), M.mullion);
+      mast.position.set(T.x - 6, 0.85 + T.crownH + 9, T.z - 2); crown.add(mast);
+    }
+    // glazed lobby pavilion at the foot of the tower (south side)
+    {
+      const L = fg('tower', 0, 'Tower · entrance pavilion', 'البرج · جناح المدخل');
+      const w = 30, d = 13, h = 9.2, z0 = T.z + T.R - 3.5;
+      const g1 = K.mesh('lobby-glass', K.box(w, h - 0.8, d), M.glass, { cast: false }); g1.position.set(T.x, (h - 0.8) / 2, z0 + d / 2); L.add(g1);
+      const in1 = K.mesh('lobby-interior', K.box(w - 1.2, h - 1.2, d - 1.4), M.interior, { cast: false }); in1.position.set(T.x, (h - 1.2) / 2, z0 + d / 2); L.add(in1);
+      const roof = K.mesh('lobby-roof', K.box(w + 1.2, 0.8, d + 1.2), M.slab); roof.position.set(T.x, h - 0.4, z0 + d / 2); L.add(roof);
+      const mid = K.mesh('lobby-mezzanine', K.box(w + 0.4, 0.4, d + 0.4), M.slab); mid.position.set(T.x, 4.4, z0 + d / 2); L.add(mid);
+      const ms = [];
+      for (let k = 0; k <= 15; k++) ms.push(K.mat4(T.x - w / 2 + (k * w) / 15, 0, z0 + d + 0.05, 0, 0.16, h - 0.8, 0.2));
+      L.add(K.inst('lobby-mullions', unitBox, M.mullion, ms, { cast: false }));
+      // roof garden trees on the pavilion (seen in the render)
+      K.shrubs(L, [[T.x - 9, z0 + 4, 2], [T.x - 4, z0 + 6, 1.6], [T.x + 7, z0 + 5, 2.2], [T.x + 11, z0 + 8, 1.6]], { y: h, name: 'lobby-roof-planting' });
+    }
+    // the sail: a curved white plate that wraps the south-east of the drum and rises above the crown
+    {
+      const Hs = T.sailH, ns = high ? 46 : 26, na = high ? 16 : 10;
+      const st = [];
+      for (let k = 0; k <= ns; k++) {
+        const s = k / ns, y = Hs * s;
+        const tip = smoothstep(0.8, 1, s);
+        const sw = Math.sin((Math.PI / 2) * Math.min(1, s / 0.72));
+        const ta = (42 - 54 * sw + 34 * tip) * DEG;
+        const tb = (152 - 62 * Math.pow(s, 1.2) - 30 * tip) * DEG;
+        const r = T.R + 2.4 + 9 * Math.pow(Math.max(0, 1 - y / 22), 2) + 3 * tip;
+        const th = 1.1 - 0.5 * s;
+        const prof = [];
+        for (let j = 0; j <= na; j++) { const a = tb + (ta - tb) * (j / na); prof.push(P(Math.sin(a) * (r + th / 2), Math.cos(a) * (r + th / 2), j === 0 || j === na)); }
+        for (let j = 0; j <= na; j++) { const a = ta + (tb - ta) * (j / na); prof.push(P(Math.sin(a) * (r - th / 2), Math.cos(a) * (r - th / 2), j === 0 || j === na)); }
+        st.push({ o: [T.x, y, T.z], U: [1, 0, 0], V: [0, 0, 1], prof });
       }
-      finPanels.forEach((list, i) => {
-        const im = instancedMesh(diamondGeo, mat.panel, list, `tower-L${i}-sail-perforations`, { cast: false });
-        if (im) levels[i].add(im);
-      });
-    }
-    return { topY, crownTop };
-  }
-  buildTower(TOWER);
-
-  /* ====================================================================== */
-  /* Sky bridge (one floor group, level 1, it joins the rings' first floor) */
-  /* ====================================================================== */
-
-  const bridgeGroup = newFloor(1, 'Sky bridge', 'الجسر المعلّق', 'bridge');
-  const bridgeCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-20.5, 4.6, 38.0),
-    new THREE.Vector3(-12, 8.0, 45.5),
-    new THREE.Vector3(0, 10.2, 47.5),
-    new THREE.Vector3(11, 8.6, 43),
-    new THREE.Vector3(20.0, 4.6, 33.0),
-  ], false, 'centripetal');
-  const frames = [];
-  {
-    const up = new THREE.Vector3(0, 1, 0);
-    for (let i = 0; i <= Q.sweep; i++) {
-      const tt = i / Q.sweep;
-      const P = bridgeCurve.getPointAt(tt), Tn = bridgeCurve.getTangentAt(tt);
-      const S = new THREE.Vector3().crossVectors(Tn, up).normalize();
-      const U = new THREE.Vector3().crossVectors(S, Tn).normalize();
-      frames.push({ P, S, U, T: Tn, t: tt });
+      const sail = K.mesh('tower-sail', K.loft(st, { caps: true }), M.shell);
+      root.add(sail);
     }
   }
-  const W = 2.9; // half width of the walkway
-  // deck: a shallow lens in section (CCW polygon in side/up coordinates)
-  const deckPoly = [[-W - 0.5, 0], [-W - 0.5, -0.3], [-W + 0.6, -0.85], [0, -1.05], [W - 0.6, -0.85], [W + 0.5, -0.3], [W + 0.5, 0]];
-  bridgeGroup.add(mesh(sweepGeo(frames, deckPoly), mat.white, 'bridge-deck'));
-  // roof: a thin arched canopy overhanging the glass
-  const roofPoly = [[-W - 0.9, 3.05], [W + 0.9, 3.05]];
-  for (let k = 0; k <= 8; k++) {
-    const x = (W + 0.9) * (1 - (2 * k) / 8);
-    roofPoly.push([x, 3.17 + 0.5 * Math.cos((Math.PI / 2) * (x / (W + 0.9)))]);
-  }
-  bridgeGroup.add(mesh(sweepGeo(frames, roofPoly), mat.white, 'bridge-roof'));
-  for (const sgn of [-1, 1]) {
-    bridgeGroup.add(mesh(sweepGeo(frames, sgn < 0 ? [[-W - 0.04, 0], [-W + 0.04, 0], [-W + 0.04, 3.05], [-W - 0.04, 3.05]] : [[W - 0.04, 0], [W + 0.04, 0], [W + 0.04, 3.05], [W - 0.04, 3.05]]), mat.glass, `bridge-glass-${sgn < 0 ? 'l' : 'r'}`, { cast: false, receive: false }));
-  }
-  // glowing ceiling strip (interior) so the bridge reads as an inhabited tube at night
-  bridgeGroup.add(mesh(sweepGeo(frames, [[-W + 0.3, 2.85], [W - 0.3, 2.85], [W - 0.3, 3.05], [-W + 0.3, 3.05]]), mat.interior, 'bridge-ceiling', { cast: false }));
-  // a sweeping white "keel" ribbon under the deck, deepest at mid-span
+
+  /* ================================================================ BACK BAR */
   {
-    const keelFrames = frames;
-    const pos = [], nor = [], idx = [];
-    keelFrames.forEach((f, i) => {
-      const depth = 0.3 + 1.5 * Math.sin(Math.PI * f.t);
-      const a = f.P.clone().addScaledVector(f.U, -0.3).addScaledVector(f.S, W + 0.4);
-      const b = a.clone().addScaledVector(f.U, -depth).addScaledVector(f.S, -0.9 * Math.sin(Math.PI * f.t));
-      pos.push(a.x, a.y, a.z, b.x, b.y, b.z); nor.push(f.S.x, f.S.y, f.S.z, f.S.x, f.S.y, f.S.z);
-      if (i < keelFrames.length - 1) { const k = i * 2; idx.push(k, k + 2, k + 1, k + 1, k + 2, k + 3); }
+    const B = BAR;
+    const w = B.x1 - B.x0, d = B.z1 - B.z0, cx = (B.x0 + B.x1) / 2, cz = (B.z0 + B.z1) / 2;
+    for (let i = 0; i < B.n; i++) {
+      const top = i === B.n - 1;
+      const f = fg('bar', i, i === 0 ? 'Long building · ground level' : `Long building · level ${i}`, i === 0 ? 'المبنى الطولي · الطابق الأرضي' : `المبنى الطولي · الطابق ${i}`, i * B.fh);
+      const inset = top ? 2.2 : 0;
+      const slab = K.mesh('bar-slab', K.box(w + 0.8 - inset * 2, 0.7, d + 0.8 - inset * 2), M.slab); slab.position.set(cx, 0.35, cz); f.add(slab);
+      // spandrel band (white) and ribbon glazing
+      const span = K.mesh('bar-spandrel', K.box(w - inset * 2, 1.0, d - inset * 2), M.white); span.position.set(cx, 1.2, cz); f.add(span);
+      const gl = K.mesh('bar-glass', K.box(w - 0.6 - inset * 2, B.fh - 1.7, d - 0.6 - inset * 2), top ? M.glassDark : M.glass, { cast: false });
+      gl.position.set(cx, 1.7 + (B.fh - 1.7) / 2, cz); f.add(gl);
+      const inn = K.mesh('bar-interior', K.box(w - 2.4 - inset * 2, B.fh - 1.8, d - 2.4 - inset * 2), M.interiorCool, { cast: false });
+      inn.position.set(cx, 1.7 + (B.fh - 1.8) / 2, cz); f.add(inn);
+      const ms = [];
+      const step = top ? 3.2 : 1.6;
+      for (let x = B.x0 + inset; x <= B.x1 - inset + 0.01; x += step) {
+        ms.push(K.mat4(x, 1.7, B.z1 - inset - 0.25, 0, top ? 0.6 : 0.1, B.fh - 1.7, 0.2));
+        ms.push(K.mat4(x, 1.7, B.z0 + inset + 0.25, 0, top ? 0.6 : 0.1, B.fh - 1.7, 0.2));
+      }
+      f.add(K.inst('bar-mullions', unitBox, top ? M.white : M.mullion, ms, { cast: false }));
+      if (top) {
+        const roof = K.mesh('bar-roof', K.box(w - inset * 2 + 1, 0.8, d - inset * 2 + 1), M.roof); roof.position.set(cx, B.fh + 0.4, cz); f.add(roof);
+        // rooftop plant screens
+        const pm = [];
+        for (let x = B.x0 + 12; x < B.x1 - 8; x += 22) pm.push(K.mat4(x, B.fh + 0.8, cz, 0, 8, 2.2, 6));
+        f.add(K.inst('bar-roof-plant', unitBox, M.white, pm));
+      }
+    }
+  }
+
+  /* ================================================================ WINGS (flowing glazed buildings) */
+  {
+    const L0 = fg('wings', 0, 'Wings · ground level', 'الأجنحة · الطابق الأرضي');
+    const L1 = fg('wings', 1, 'Wings · upper level and roof', 'الأجنحة · الطابق العلوي والسطح');
+    const fo = fOf(5.5);
+    const wings = [
+      { a0: -154, a1: -103, rx: 113, rz: 86, H: 9.5, a: 10.5 },
+      { a0: -98, a1: -66, rx: 121, rz: 93, H: 7.6, a: 8.5 },
+      { a0: 103, a1: 152, rx: 113, rz: 86, H: 9.5, a: 10.5 },
+    ];
+    for (const wg of wings) {
+      const path = K.arc(C.cx, C.cz, wg.rx, wg.rz, wg.a0 * DEG, wg.a1 * DEG, high ? 60 : 30);
+      const par = (t) => { const e = Math.sin(Math.PI * t); return { H: wg.H * (0.82 + 0.18 * e), a: wg.a * (0.85 + 0.15 * e) }; };
+      const b1 = 4.6;
+      const g0 = K.sweep(path, (t) => { const q = par(t); return bandProfile(() => -(q.a - 2.2), () => q.a - 2.2, 0, b1, 1, { bot: 0, out: 1, top: 0, in: 1 }); }, { caps: true, capMat: 1 });
+      L0.add(K.mesh('wing-core', g0, [M.white, M.interior]));
+      L0.add(K.mesh('wing-glass-out', glassAlong(path, (t) => par(t).a - 1.95, 0, b1, M.glass, true), M.glass, { cast: false }));
+      L0.add(K.mesh('wing-glass-in', glassAlong(path, (t) => -(par(t).a - 1.95), 0, b1, M.glass, false), M.glass, { cast: false }));
+      mullionsAlong(path, (t) => par(t).a - 1.9, 0, b1, 2, 'wing-mullions-out', L0);
+      mullionsAlong(path, (t) => -(par(t).a - 1.9), 0, b1, 2, 'wing-mullions-in', L0);
+      const g1 = K.sweep(path, (t) => { const q = par(t); return bandProfile((v) => -q.a * fo(v, q.H), (v) => q.a * fo(v, q.H), b1, q.H, 7, {}, 1.2); }, { caps: true });
+      L1.add(K.mesh('wing-roof-shell', g1, M.shell));
+      // upper glazing band inside the roof shell (clerestory)
+      L1.add(K.mesh('wing-clerestory', glassAlong(path, (t) => par(t).a * 0.98, b1 + 0.3, b1 + 2.6, M.glassDark, true), M.glassDark, { cast: false }));
+    }
+  }
+
+  /* ================================================================ OFFICE BLOCK (south-east) */
+  {
+    const O = OFFICE;
+    const westArc = K.arc(O.cx, O.cz, O.r, O.r, Math.PI, 2 * Math.PI, high ? 32 : 18);
+    const eastPath = [[O.cx, O.z1], [O.cx + 20, O.z1], [O.cx + 45, O.z1], [O.x1, O.z1], [O.x1, O.cz], [O.x1, O.z0], [O.cx + 45, O.z0], [O.cx + 20, O.z0], [O.cx, O.z0]];
+    // densify straight runs for mullions
+    const dens = (pts, step) => {
+      const out = [];
+      for (let i = 0; i < pts.length - 1; i++) {
+        const [ax, az] = pts[i], [bx, bz] = pts[i + 1];
+        const n = Math.max(1, Math.round(Math.hypot(bx - ax, bz - az) / step));
+        for (let k = 0; k < n; k++) out.push([ax + ((bx - ax) * k) / n, az + ((bz - az) * k) / n]);
+      }
+      out.push(pts[pts.length - 1]);
+      return out;
+    };
+    const eastD = dens(eastPath, 2.0);
+    const footprint = [...westArc.slice(0, -1), ...eastPath.slice(0, -1)];
+    const offset = (pts, d) => pts.map(([x, z]) => {
+      // offset outward from the building centre (convex footprint, good enough here)
+      const cx = (O.cx + O.x1) / 2 - 8, cz = O.cz;
+      let dx = x - cx, dz = z - cz;
+      if (x > O.cx) { // rectangle part: push along the dominant axis
+        const ex = Math.abs(x - O.x1) < 0.5 ? 1 : 0, ez = Math.abs(z - O.z0) < 0.5 ? -1 : Math.abs(z - O.z1) < 0.5 ? 1 : 0;
+        return [x + ex * d, z + ez * d];
+      }
+      dx = x - O.cx; dz = z - O.cz; const l = Math.hypot(dx, dz) || 1;
+      return [x + (dx / l) * d, z + (dz / l) * d];
     });
-    const keel = mesh(makeGeo(pos, nor, idx), mat.shell, 'bridge-keel');
-    bridgeGroup.add(keel);
-  }
-  // mullions on both glass walls
-  {
-    const mm = [];
-    const n = Math.round(bridgeCurve.getLength() / 2.2);
-    const bm = new THREE.Matrix4();
-    for (let i = 1; i < n; i++) {
-      const tt = i / n, P = bridgeCurve.getPointAt(tt), Tn = bridgeCurve.getTangentAt(tt);
-      const S = new THREE.Vector3().crossVectors(Tn, new THREE.Vector3(0, 1, 0)).normalize();
-      const U = new THREE.Vector3().crossVectors(S, Tn).normalize();
-      for (const sgn of [-1, 1]) {
-        bm.makeBasis(Tn.clone().multiplyScalar(0.1), U.clone().multiplyScalar(3.05), S.clone().multiplyScalar(0.18));
-        const c0 = P.clone().addScaledVector(S, sgn * W).addScaledVector(U, 1.525);
-        bm.setPosition(c0);
-        mm.push(bm.clone());
+    const slabPts = offset(footprint, 1.6);
+    const inPts = offset(footprint, -1.6);
+    const slabGeo = K.prism(slabPts, 0, 0.55);
+    const roofGeo = K.prism(offset(footprint, 0.4), 0, 0.9);
+    const innerGeo = K.prism(inPts, 0, 1);
+    const rnd = makeRng(55);
+    for (let i = 0; i < O.n; i++) {
+      const f = fg('office', i, i === 0 ? 'Office block · ground level' : `Office block · level ${i}`, i === 0 ? 'مبنى المكاتب · الطابق الأرضي' : `مبنى المكاتب · الطابق ${i}`, i * O.fh);
+      f.add(K.mesh('office-slab', slabGeo, M.slab));
+      const inn = K.mesh('office-interior', innerGeo, M.interiorCool, { cast: false }); inn.scale.y = O.fh - 0.7; inn.position.y = 0.55; f.add(inn);
+      // west end: curved solid wall with scattered small windows
+      f.add(K.mesh('office-west-wall', K.sweep(westArc, () => [P(-0.35, 0.55, 1), P(0.35, 0.55, 1), P(0.35, O.fh, 1), P(-0.35, O.fh, 1)], { caps: true }), M.white));
+      const wins = [];
+      for (let k = 2; k < westArc.length - 2; k += 1) {
+        if (rnd() < 0.55) continue;
+        const [x, z] = westArc[k];
+        const a = Math.atan2(x - O.cx, z - O.cz);
+        wins.push(K.mat4(x + Math.sin(a) * 0.36, 1.2 + rnd() * 1.6, z + Math.cos(a) * 0.36, a, 0.7 + rnd() * 0.5, 0.7 + rnd() * 0.4, 0.06));
+      }
+      if (wins.length) f.add(K.inst('office-west-windows', unitBox, M.glassDark, wins, { cast: false }));
+      // east part: full-height glazing set back behind balconies
+      f.add(K.mesh('office-glass', glassAlong(eastD, () => -0.2, 0.55, O.fh, M.glass, true), M.glass, { cast: false }));
+      f.add(K.mesh('office-balustrade', glassAlong(eastD, () => 1.45, 0.55, 1.6, M.rail, true), M.rail, { cast: false }));
+      const ms = [];
+      for (let k = 0; k < eastD.length; k += 1) ms.push(K.mat4(eastD[k][0], 0.55, eastD[k][1], 0, 0.12, O.fh - 0.55, 0.12));
+      f.add(K.inst('office-mullions', unitBox, M.mullion, ms, { cast: false }));
+      if (i === O.n - 1) {
+        const roof = K.mesh('office-roof', roofGeo, M.roof); roof.position.y = O.fh; f.add(roof);
       }
     }
-    bridgeGroup.add(instancedMesh(unitBox, mat.frame, mm, 'bridge-mullions', { cast: false }));
+    // pilotis at ground level along the south front
+    const pil = [];
+    for (let x = O.cx + 4; x < O.x1; x += 8) pil.push(K.mat4(x, 0, O.z1 + 1.2, 0, 0.6, O.fh, 0.6));
+    floors.find((f) => f.name === 'office-L0').add(K.inst('office-columns', unitBox, M.white, pil));
   }
-  // slender V-struts down to the lawns either side of the boulevard
+
+  /* ================================================================ PERFORATED PAVILIONS (south) */
+  const pavPaths = [];
   {
-    const strut = (a, b, r) => {
-      const d = b.clone().sub(a), len = d.length();
-      const m4 = new THREE.Matrix4().compose(a.clone().add(b).multiplyScalar(0.5), new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()), new THREE.Vector3(r * 2, len, r * 2));
-      return m4;
+    const levels = [
+      fg('pavilions', 0, 'Pavilions · ground level', 'الجناحان · الطابق الأرضي'),
+      fg('pavilions', 1, 'Pavilions · level 1', 'الجناحان · الطابق 1'),
+      fg('pavilions', 2, 'Pavilions · upper level and roof', 'الجناحان · الطابق العلوي والسطح'),
+    ];
+    const fo = fOf(1.9), fi = fOf(2.2);
+    for (const pv of PAVS) {
+      const n = high ? 120 : 60;
+      const path = K.arc(pv.cx, pv.cz, pv.rx, pv.rz, 0, Math.PI * 2, n).slice(0, -1);
+      pavPaths.push({ pv, path });
+      const par = (t) => {
+        const a = t * Math.PI * 2;
+        const H = 17 + 5 * Math.sin(2 * a + pv.phase) + 2.5 * Math.cos(3 * a + pv.seed);
+        const w = pv.a + 5 * Math.sin(a + pv.phase * 0.7);
+        return { H, w, b1: 7.5, b2: 7.5 + (H - 7.5) * 0.42 };
+      };
+      const g0 = K.sweep(path, (t) => { const q = par(t); return bandProfile(() => -(q.w - 2.6), () => q.w - 2.6, 0, q.b1, 1, { bot: 0, out: 1, top: 0, in: 1 }); }, { closed: true });
+      levels[0].add(K.mesh(`${pv.id}-core`, g0, [M.white, M.interior]));
+      levels[0].add(K.mesh(`${pv.id}-glass-out`, glassAlong(path, (t) => par(t).w - 2.35, 0, 7.5, M.glass, true, { closed: true }), M.glass, { cast: false }));
+      levels[0].add(K.mesh(`${pv.id}-glass-in`, glassAlong(path, (t) => -(par(t).w - 2.35), 0, 7.5, M.glass, false, { closed: true }), M.glass, { cast: false }));
+      mullionsAlong(path, (t) => par(t).w - 2.3, 0, 7.5, 1, `${pv.id}-mullions`, levels[0]);
+      const sw = (q) => q.w + 2.4;
+      const g1 = K.sweep(path, (t) => { const q = par(t); return bandProfile((v) => -sw(q) * fi(v, q.H), (v) => sw(q) * fo(v, q.H), q.b1, q.b2, 5, { bot: 1, out: 0, top: 0, in: 0 }); }, { closed: true });
+      const g2 = K.sweep(path, (t) => { const q = par(t); return bandProfile((v) => -sw(q) * fi(v, q.H), (v) => sw(q) * fo(v, q.H), q.b2, q.H, 9, {}, 1.2); }, { closed: true });
+      levels[1].add(K.mesh(`${pv.id}-shell-L1`, g1, [M.perf, M.white]));
+      levels[2].add(K.mesh(`${pv.id}-shell-L2`, g2, M.perf));
+    }
+  }
+
+  /* ================================================================ SKY BRIDGE */
+  {
+    const ctrl = [[-46, 15, 104], [-30, 18, 108], [-10, 21, 101], [10, 20.5, 89], [28, 17, 80], [44, 13.5, 82]];
+    const path = K.spline(ctrl, high ? 70 : 36);
+    const prof = [
+      P(-2.4, 0.9, 1, 0), P(-1.6, 0, 0, 0), P(1.6, 0, 0, 0), P(2.4, 0.9, 1, 1),
+      P(2.4, 3.6, 1, 0), P(2.0, 4.2, 0, 0), P(-2.0, 4.2, 0, 0), P(-2.4, 3.6, 1, 1),
+    ];
+    const geo = K.sweep(path, () => prof, { caps: true, capMat: 0 });
+    const bridge = K.mesh('sky-bridge', geo, [M.shell, M.glass]);
+    root.add(bridge);
+    // a white ribbon fin along the south edge (the render's sweeping edge)
+    const fin = K.sweep(path, (t) => { const e = Math.sin(Math.PI * t); return [P(2.2, -0.5, 1), P(3.6 + 1.6 * e, 0.3, 1), P(3.6 + 1.6 * e, 0.7, 1), P(2.2, 0.9, 1)]; }, { caps: true });
+    root.add(K.mesh('sky-bridge-ribbon', fin, M.shell));
+    const deck = K.sweep(path, () => [P(-2.2, 0.9, 1), P(2.2, 0.9, 1), P(2.2, 1.0, 1), P(-2.2, 1.0, 1)], { caps: true });
+    root.add(K.mesh('sky-bridge-floor', deck, M.paving, { cast: false }));
+    const ceil = K.sweep(path, () => [P(-0.5, 3.75, 1), P(0.5, 3.75, 1), P(0.5, 3.85, 1), P(-0.5, 3.85, 1)], { caps: true });
+    root.add(K.mesh('sky-bridge-light-line', ceil, K.lampMat('campus-bridge-light', 0xfff0d6, 1.6), { cast: false }));
+  }
+
+  /* ================================================================ COURT, GATE, POOLS */
+  {
+    // paved spine from the gate to the tower
+    const spine = [];
+    const sp = K.spline([[0, -34], [-3, -55], [3, -80], [-2, -105], [0, -128], [0, -140]], 40);
+    const left = [], right = [];
+    sp.forEach(([x, z], i) => { const w = 6 + 2.5 * Math.sin(i * 0.45); left.push([x - w, z]); right.push([x + w, z]); });
+    spine.push(...left, ...right.reverse());
+    site.add(K.mesh('court-spine-paving', K.flat(spine, 0.26), M.paving, { cast: false }));
+    // court planting base (inside the horseshoe)
+    const court = K.arc(C.cx, C.cz, C.rx - 15, C.rz - 15, 0, Math.PI * 2, 64).slice(0, -1);
+    site.add(K.mesh('court-meadow-grass', K.flat(court, 0.16), M.meadow, { cast: false }));
+    // glass teardrop pavilion with a white fin
+    const tp = [-24, -100];
+    const lathe = [];
+    for (let i = 0; i <= 14; i++) { const t = i / 14; lathe.push(new THREE.Vector2(9.5 * Math.pow(Math.sin(Math.PI * Math.min(1, t * 0.98 + 0.02)), 0.8) * (1 - 0.55 * t) + 0.01, 15 * t)); }
+    const tgeo = K.g(new THREE.LatheGeometry(lathe, high ? 14 : 10));
+    const tear = K.mesh('court-pavilion-glass', tgeo, K.glass('campus-pavilion-glazing', 0x9cc0d0, { opacity: 0.45, side: THREE.DoubleSide }), { cast: false });
+    tear.position.set(tp[0], 0, tp[1]); tear.rotation.z = 0.12; root.add(tear);
+    const tin = K.mesh('court-pavilion-interior', K.g(new THREE.CylinderGeometry(6, 7, 3.2, 16)), M.interior, { cast: false }); tin.position.set(tp[0], 1.6, tp[1]); root.add(tin);
+    {
+      const st = [];
+      const ns = 24;
+      for (let k = 0; k <= ns; k++) {
+        const s = k / ns, y = 17 * s;
+        const r = 9.8 * Math.pow(Math.sin(Math.PI * Math.min(1, s * 0.9 + 0.05)), 0.7) * (1 - 0.45 * s) + 0.6;
+        const a0 = (40 + 30 * s) * DEG, a1 = (150 - 60 * s) * DEG;
+        const prof = [];
+        const na = 8;
+        for (let j = 0; j <= na; j++) { const a = a1 + (a0 - a1) * (j / na); prof.push(P(Math.sin(a) * (r + 0.4), Math.cos(a) * (r + 0.4), j === 0 || j === na)); }
+        for (let j = 0; j <= na; j++) { const a = a0 + (a1 - a0) * (j / na); prof.push(P(Math.sin(a) * r, Math.cos(a) * r, j === 0 || j === na)); }
+        st.push({ o: [tp[0] + 1.2, y, tp[1]], U: [1, 0, 0], V: [0, 0, 1], prof });
+      }
+      root.add(K.mesh('court-pavilion-fin', K.loft(st, { caps: true }), M.shell));
+    }
+    // flat white block (east of the spine) and terraced glass steps on the inner east side
+    const blk = K.mesh('court-block', K.box(24, 6.5, 18), M.white); blk.position.set(24, 3.25, -86); root.add(blk);
+    const blkG = K.mesh('court-block-glazing', K.box(24.2, 1.6, 18.2), M.glassDark, { cast: false }); blkG.position.set(24, 4.2, -86); root.add(blkG);
+    {
+      const path = K.arc(C.cx, C.cz, C.rx - 22, C.rz - 22, 52 * DEG, 98 * DEG, 24);
+      for (let k = 0; k < 3; k++) {
+        const h0 = k * 3.4, u0 = -2 - k * 4.5;
+        const g = K.sweep(path, () => [P(u0 - 4.5, h0, 1, 0), P(2, h0, 1, 0), P(2, h0 + 3.4, 1, 0), P(u0 - 4.5, h0 + 3.4, 1, 1)], { caps: true });
+        root.add(K.mesh(`court-terrace-${k}`, g, [M.slab, M.glass]));
+      }
+    }
+    // gate building between the arm ends and the reflecting pools
+    const gate = new THREE.Group(); gate.name = 'gate'; root.add(gate);
+    const gz = C.cz + C.rz + 2;
+    const gb = K.mesh('gate-glass', K.box(15, 7, 8), M.glass, { cast: false }); gb.position.set(0, 3.5, gz); gate.add(gb);
+    const gi = K.mesh('gate-interior', K.box(14, 6.6, 7), M.interior, { cast: false }); gi.position.set(0, 3.3, gz); gate.add(gi);
+    const gr = K.mesh('gate-roof', K.box(17, 0.8, 10), M.slab); gr.position.set(0, 7.4, gz); gate.add(gr);
+    const gf = K.mesh('gate-frame', K.box(17, 9, 1.2), M.white); gf.position.set(0, 4.5, gz - 4.6); gate.add(gf);
+    for (const s of [-1, 1]) {
+      const pool = K.arc(C.cx, C.cz, C.rx + 13, C.rz + 13, s * 7 * DEG, s * 42 * DEG, 24);
+      const g = K.sweep(pool, () => [P(-4, 0.05, 1), P(4, 0.05, 1), P(4, 0.24, 1), P(-4, 0.24, 1)], { caps: true });
+      site.add(K.mesh(`pool-${s < 0 ? 'west' : 'east'}`, g, M.water, { cast: false }));
+      const rim = K.sweep(pool, () => [P(-4.8, 0.02, 1), P(4.8, 0.02, 1), P(4.8, 0.18, 1), P(-4.8, 0.18, 1)], { caps: true });
+      site.add(K.mesh(`pool-rim-${s}`, rim, M.paving, { cast: false }));
+    }
+    // court water channel
+    const ch = K.spline([[-14, -88], [-20, -76], [-12, -62], [-6, -50]], 22);
+    site.add(K.mesh('court-water-channel', K.sweep(ch, () => [P(-1.4, 0.05, 1), P(1.4, 0.05, 1), P(1.4, 0.3, 1), P(-1.4, 0.3, 1)], { caps: true }), M.water, { cast: false }));
+    // forecourt paving before the gate
+    site.add(K.mesh('gate-forecourt-paving', K.flat([[-26, -40], [26, -40], [22, -24], [-22, -24]], 0.26), M.paving, { cast: false }));
+  }
+
+  /* ================================================================ GROUND, ROADS */
+  {
+    const S = { x0: -250, x1: 250, z0: -255, z1: 250 };
+    site.add(K.mesh('site-lawn-grass', K.flat([[S.x0, S.z0], [S.x1, S.z0], [S.x1, S.z1], [S.x0, S.z1]], 0.1), M.lawn, { cast: false }));
+    // E-W road with sidewalks, through the roundabout
+    const ewN = [[S.x0, ROAD.z0], [S.x1, ROAD.z0], [S.x1, ROAD.z1], [S.x0, ROAD.z1]];
+    site.add(K.mesh('road-ew-asphalt', K.flat(ewN, 0.2), M.asphalt, { cast: false }));
+    site.add(K.mesh('road-ew-kerb-n', K.flat([[S.x0, ROAD.z0 - 3], [S.x1, ROAD.z0 - 3], [S.x1, ROAD.z0], [S.x0, ROAD.z0]], 0.3), M.kerb, { cast: false }));
+    site.add(K.mesh('road-ew-kerb-s', K.flat([[S.x0, ROAD.z1], [S.x1, ROAD.z1], [S.x1, ROAD.z1 + 3], [S.x0, ROAD.z1 + 3]], 0.3), M.kerb, { cast: false }));
+    // roundabout: asphalt ring and planted island
+    const rb = K.g(new THREE.RingGeometry(ROAD.rbIsland, ROAD.rbR, 64, 1)); rb.rotateX(-Math.PI / 2); rb.translate(ROAD.rbx, 0.21, ROAD.rbz);
+    site.add(K.mesh('roundabout-asphalt', rb, M.asphalt, { cast: false }));
+    const isl = K.g(new THREE.CylinderGeometry(ROAD.rbIsland, ROAD.rbIsland + 0.2, 0.35, 48)); isl.translate(ROAD.rbx, 0.3, ROAD.rbz);
+    site.add(K.mesh('roundabout-island-soil', isl, M.soil, { cast: false }));
+    const isl2 = K.g(new THREE.CylinderGeometry(ROAD.rbIsland - 3.5, ROAD.rbIsland - 3, 0.5, 40)); isl2.translate(ROAD.rbx, 0.4, ROAD.rbz);
+    site.add(K.mesh('roundabout-island-planting-shrub-bed', isl2, M.beds, { cast: false }));
+    // boulevard south (two carriageways, tree median) and access road north to the gate
+    const [bi, bo] = ROAD.blvd;
+    for (const s of [-1, 1]) {
+      site.add(K.mesh('boulevard-asphalt', K.flat([[s * bi, ROAD.z1], [s * bo, ROAD.z1], [s * bo, S.z1], [s * bi, S.z1]], 0.2), M.asphalt, { cast: false }));
+      site.add(K.mesh('boulevard-kerb', K.flat([[s * bo, ROAD.z1 + 3], [s * (bo + 3), ROAD.z1 + 3], [s * (bo + 3), S.z1], [s * bo, S.z1]], 0.3), M.kerb, { cast: false }));
+    }
+    site.add(K.mesh('access-road-asphalt', K.flat([[-8, -24], [8, -24], [9, ROAD.z0], [-9, ROAD.z0]], 0.2), M.asphalt, { cast: false }));
+    // lane markings (dashes)
+    const dashes = [];
+    for (let x = S.x0 + 4; x < S.x1; x += 9) { if (Math.abs(x) < ROAD.rbR + 2) continue; dashes.push(K.mat4(x, 0.2, (ROAD.z0 + ROAD.z1) / 2, Math.PI / 2, 0.18, 0.02, 3.2)); }
+    for (let z = ROAD.z1 + 10; z < S.z1; z += 9) for (const s of [-1, 1]) dashes.push(K.mat4(s * (bi + bo) / 2, 0.2, z, 0, 0.18, 0.02, 3.2));
+    site.add(K.inst('road-mark-dashes', unitBox, M.marking, dashes, { cast: false, receive: true }));
+    // crossings near the roundabout
+    const zebra = [];
+    for (let k = -3; k <= 3; k++) { zebra.push(K.mat4(ROAD.rbR + 6, 0.2, ROAD.rbz + k * 1.6, Math.PI / 2, 0.7, 0.02, 4)); zebra.push(K.mat4(-ROAD.rbR - 6, 0.2, ROAD.rbz + k * 1.6, Math.PI / 2, 0.7, 0.02, 4)); }
+    site.add(K.inst('road-mark-crossings', unitBox, M.marking, zebra, { cast: false }));
+
+    // meandering earth paths through the grounds (terracotta gravel in the render)
+    const paths = [
+      [[-200, -40], [-160, -20], [-120, -36], [-96, -14], [-60, -22], [-30, -30]],
+      [[-210, -120], [-170, -100], [-150, -60], [-170, -30]],
+      [[-60, 40], [-90, 60], [-150, 55], [-200, 70]],
+      [[170, -110], [140, -90], [130, -70]],
+      [[30, 150], [60, 140], [90, 150], [140, 160], [190, 150]],
+    ];
+    paths.forEach((ctrl, i) => {
+      const p = K.spline(ctrl, 40);
+      site.add(K.mesh(`grounds-gravel-path-${i}`, K.sweep(p, () => [P(-1.8, 0.05, 1), P(1.8, 0.05, 1), P(1.8, 0.2, 1), P(-1.8, 0.2, 1)], { caps: true }), M.path, { cast: false }));
+    });
+    // planted beds in the court
+    const bedSpots = [[-40, -120, 14, 9], [-50, -80, 10, 16], [44, -98, 9, 12], [14, -122, 12, 8], [-8, -64, 8, 6]];
+    bedSpots.forEach(([x, z, rx, rz], i) => site.add(K.mesh(`court-planting-shrub-bed-${i}`, K.flat(K.arc(x, z, rx, rz, 0, Math.PI * 2, 20).slice(0, -1), 0.22), M.beds, { cast: false })));
+    // the pavilions' courtyards: lawns
+    for (const { pv } of pavPaths) site.add(K.mesh(`${pv.id}-courtyard-lawn-grass`, K.flat(K.arc(pv.cx, pv.cz, pv.rx - 16, pv.rz - 16, 0, Math.PI * 2, 40).slice(0, -1), 0.16), M.meadow, { cast: false }));
+  }
+
+  /* ================================================================ VEGETATION */
+  {
+    const rnd = makeRng(808);
+    const ell = (x, z, cx, cz, rx, rz) => Math.hypot((x - cx) / rx, (z - cz) / rz);
+    const inRect = (x, z, x0, x1, z0, z1) => x > x0 && x < x1 && z > z0 && z < z1;
+    const nearPath = (x, z, path, d) => { for (let i = 0; i < path.length; i += 2) if (Math.hypot(path[i][0] - x, path[i][1] - z) < d) return true; return false; };
+    const blocked = (x, z) => {
+      const rc = ell(x, z, C.cx, C.cz, C.rx, C.rz);
+      if (rc > 0.72 && rc < 1.3 && z < C.cz + C.rz + 10) return true;         // horseshoe + wings band
+      if (rc <= 0.72) return true;                                           // court (planted separately)
+      if (Math.abs(x) < 34 && z > -48 && z < 0) return true;                  // gate forecourt, pools, access
+      if (Math.hypot(x - TOWER.x, z - TOWER.z) < 30) return true;
+      if (inRect(x, z, BAR.x0 - 5, BAR.x1 + 5, BAR.z0 - 5, BAR.z1 + 6)) return true;
+      if (inRect(x, z, OFFICE.cx - OFFICE.r - 5, OFFICE.x1 + 5, OFFICE.z0 - 6, OFFICE.z1 + 5)) return true;
+      if (z > ROAD.z0 - 5 && z < ROAD.z1 + 5) return true;
+      if (Math.hypot(x - ROAD.rbx, z - ROAD.rbz) < ROAD.rbR + 4) return true;
+      if (z > ROAD.z1 && Math.abs(x) < ROAD.blvd[1] + 5) return true;
+      for (const { pv } of pavPaths) { const r = ell(x, z, pv.cx, pv.cz, pv.rx, pv.rz); if (r > 0.55 && r < 1.45) return true; }
+      return false;
     };
-    const sm = [];
-    for (const tt of [0.24, 0.76]) {
-      const f = frames[Math.round(tt * Q.sweep)];
-      const foot = f.P.clone(); foot.y = 0;
-      for (const sgn of [-1, 1]) {
-        const top = f.P.clone().addScaledVector(f.U, -0.95).addScaledVector(f.S, sgn * 1.6);
-        sm.push(strut(foot, top, 0.22));
+    const big = [];
+    const N = high ? 1250 : 420;
+    let tries = 0;
+    while (big.length < N && tries < 40000) {
+      tries++;
+      const x = -246 + rnd() * 492, z = -250 + rnd() * 496;
+      if (blocked(x, z)) continue;
+      const grove = 0.5 + 0.5 * Math.sin(x * 0.045 + 1.3) * Math.cos(z * 0.04 - 0.7);
+      if (rnd() > 0.45 + 0.55 * grove) continue;
+      big.push([x, z, 9 + rnd() * 6, 1.0 + rnd() * 0.35]);
+    }
+    // avenues: boulevard median and both verges; along the E-W road
+    for (let z = ROAD.z1 + 8; z < 236; z += 10) {
+      big.push([0, z, 7 + rnd() * 2, 0.75]);
+      big.push([-(ROAD.blvd[1] + 5.5), z + 4, 9 + rnd() * 2, 0.95]);
+      big.push([ROAD.blvd[1] + 5.5, z + 2, 9 + rnd() * 2, 0.95]);
+    }
+    for (let x = -232; x < 236; x += 12) { if (Math.abs(x) < 40) continue; big.push([x, ROAD.z0 - 6.5, 8 + rnd() * 2, 0.9]); big.push([x + 5, ROAD.z1 + 6.5, 8 + rnd() * 2, 0.9]); }
+    // court trees (lush, smaller)
+    const court = [];
+    for (let i = 0; i < (high ? 70 : 34); i++) {
+      const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 0.68;
+      const x = C.cx + Math.sin(a) * C.rx * r, z = C.cz + Math.cos(a) * C.rz * r;
+      if (Math.abs(x) < 9 || Math.hypot(x + 24, z + 100) < 13 || inRect(x, z, 10, 38, -97, -75) || Math.hypot(x, z - TOWER.z) < 28) continue;
+      court.push([x, z, 5 + rnd() * 4, 0.9]);
+    }
+    // pavilion courtyard trees
+    for (const { pv } of pavPaths) {
+      for (let i = 0; i < (high ? 26 : 12); i++) {
+        const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 0.42;
+        court.push([pv.cx + Math.sin(a) * pv.rx * r, pv.cz + Math.cos(a) * pv.rz * r, 6 + rnd() * 4, 1]);
       }
     }
-    bridgeGroup.add(instancedMesh(columnGeo, mat.white, sm, 'bridge-struts'));
+    // roundabout island
+    for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; court.push([ROAD.rbx + Math.sin(a) * 6, ROAD.rbz + Math.cos(a) * 6, 4 + rnd() * 2, 0.8]); }
+    K.trees(site, big, { seed: 31, name: 'grounds-trees' });
+    K.trees(site, court, { seed: 47, name: 'court-trees', palette: [0x6e8f45, 0x7d9a4e, 0x5e7f3f, 0x86a35a] });
+    // palms by the tower and along the office front (slim palms in the render)
+    const palmSpots = [[-18, -142, 9], [-12, -136, 8], [17, -140, 9], [22, -134, 8], [-10, -45, 7], [10, -45, 7]];
+    for (let x = OFFICE.cx + 2; x < OFFICE.x1; x += 9) palmSpots.push([x, OFFICE.z1 + 7, 8 + rnd() * 2]);
+    K.palms(site, palmSpots, { seed: 5, name: 'campus-palms' });
+    // shrubs: court beds, roundabout, along the horseshoe foot
+    const sh = [];
+    for (let i = 0; i < (high ? 220 : 90); i++) {
+      const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 0.7;
+      const x = C.cx + Math.sin(a) * C.rx * r, z = C.cz + Math.cos(a) * C.rz * r;
+      if (Math.abs(x) < 8 || Math.hypot(x, z - TOWER.z) < 26) continue;
+      sh.push([x, z, 1 + rnd() * 1.8]);
+    }
+    for (let i = 0; i < 24; i++) { const a = rnd() * Math.PI * 2, r = 3 + rnd() * 5; sh.push([ROAD.rbx + Math.sin(a) * r, ROAD.rbz + Math.cos(a) * r, 1 + rnd()]); }
+    for (const path of ringPaths) for (let i = 2; i < path.length - 2; i += 3) {
+      const [x, z] = path[i]; const dx = x - C.cx, dz = (z - C.cz) * (C.rx / C.rz); const l = Math.hypot(dx, dz) || 1;
+      sh.push([x + (dx / l) * 15, z + (dz / l) * 15 * (C.rz / C.rx), 1.4 + rnd()]);
+    }
+    K.shrubs(site, sh, { seed: 17, name: 'campus-shrubs' });
   }
 
-  /* ====================================================================== */
-  /* Site / landscape (non-exploding)                                        */
-  /* ====================================================================== */
-
-  const roundedRect = (x0, z0, x1, z1, rad) => {
-    // Shape lives in (x, -z) so that rotateX(-π/2) maps it onto the ground.
-    const s = new THREE.Shape();
-    const [ax, ay, bx, by] = [x0, -z1, x1, -z0];
-    s.moveTo(ax + rad, ay); s.lineTo(bx - rad, ay); s.quadraticCurveTo(bx, ay, bx, ay + rad);
-    s.lineTo(bx, by - rad); s.quadraticCurveTo(bx, by, bx - rad, by); s.lineTo(ax + rad, by);
-    s.quadraticCurveTo(ax, by, ax, by - rad); s.lineTo(ax, ay + rad); s.quadraticCurveTo(ax, ay, ax + rad, ay);
-    return s;
-  };
-  const circleShape = (x, z, r, hole = false) => {
-    const s = hole ? new THREE.Path() : new THREE.Shape();
-    s.absarc(x, -z, r, 0, Math.PI * 2, hole);
-    return s;
-  };
-  const flat = (shape, y, curveSegments = 32) => { const g = G(new THREE.ShapeGeometry(shape, curveSegments)); g.rotateX(-Math.PI / 2); g.translate(0, y, 0); return g; };
-  const raised = (shape, y0, depth, curveSegments = 32) => {
-    const g = G(new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, curveSegments }));
-    g.rotateX(-Math.PI / 2); g.translate(0, y0, 0); return g;
-  };
-  const cs = HIGH ? 48 : 24;
-
-  // Site base (stone paving) and roads
-  site.add(mesh(flat(roundedRect(-70, -70, 70, 70, 10), 0.02, 8), mat.stone, 'site-paving', { cast: false }));
-  const ROAD = { half: 4.5, ewZ: -4, rbR: 12 };
-  site.add(mesh(flat(roundedRect(-70, ROAD.ewZ - ROAD.half, 70, ROAD.ewZ + ROAD.half, 0.01), 0.05, 2), mat.asphalt, 'road-east-west', { cast: false }));
-  site.add(mesh(flat(roundedRect(-ROAD.half, ROAD.ewZ, ROAD.half, 70, 0.01), 0.05, 2), mat.asphalt, 'road-boulevard', { cast: false }));
-  site.add(mesh(flat(circleShape(0, ROAD.ewZ, ROAD.rbR), 0.05, cs), mat.asphalt, 'road-roundabout', { cast: false }));
-  // dashed centre lines
+  /* ================================================================ CONTEXT: city blocks at the edge of the grounds */
   {
-    const dm = [];
-    for (let x = -68; x <= 68; x += 5) if (Math.abs(x) > ROAD.rbR + 1) dm.push(trs(x, 0.08, ROAD.ewZ, 0, 2.4, 0.02, 0.16));
-    for (let z = ROAD.ewZ + ROAD.rbR + 2; z <= 68; z += 5) dm.push(trs(0, 0.08, z, 0, 0.16, 0.02, 2.4));
-    // pedestrian crossings near the roundabout
-    for (const [cx, cz, rot] of [[0, ROAD.ewZ + ROAD.rbR + 4, 0], [-(ROAD.rbR + 4), ROAD.ewZ, Math.PI / 2], [ROAD.rbR + 4, ROAD.ewZ, Math.PI / 2]]) {
-      for (let k = -3; k <= 3; k++) {
-        const o = k * 1.2;
-        dm.push(rot ? trs(cx, 0.08, cz + o, 0, 2.6, 0.02, 0.6) : trs(cx + o, 0.08, cz, 0, 0.6, 0.02, 2.6));
-      }
-    }
-    site.add(instancedMesh(unitBox, mat.marking, dm, 'road-markings', { cast: false }));
+    const rnd = makeRng(1201);
+    const bodies = [], roofs = [];
+    const add = (x, z, w, d, h) => { bodies.push(K.mat4(x, 0, z, 0, w, h, d)); roofs.push(K.mat4(x, h, z, 0, w + 0.6, 0.5, d + 0.6)); };
+    for (let x = -240; x <= 240; x += 19) { if (rnd() < 0.25) continue; add(x + rnd() * 5, -238 + rnd() * 6, 10 + rnd() * 8, 9 + rnd() * 6, 6 + rnd() * 10); }
+    for (let z = -215; z <= 240; z += 21) for (const s of [-1, 1]) { if (rnd() < 0.35 || (z > -5 && z < 30)) continue; add(s * (236 + rnd() * 6), z, 10 + rnd() * 6, 12 + rnd() * 8, 5 + rnd() * 8); }
+    for (let x = -236; x <= 236; x += 22) { if (Math.abs(x) < 34 || rnd() < 0.3) continue; add(x, 240 + rnd() * 4, 12 + rnd() * 6, 9 + rnd() * 4, 6 + rnd() * 5); }
+    site.add(K.inst('context-blocks', unitBox, M.context, bodies), K.inst('context-roofs', unitBox, M.contextRoof, roofs));
   }
 
-  // Lawns (raised beds read crisply in a model and never z-fight with paving)
-  const LAWN_H = 0.15;
-  const lawnSW = roundedRect(-67, ROAD.ewZ + ROAD.half + 2.2, -ROAD.half - 2, 67, 4);
-  const lawnSE = roundedRect(ROAD.half + 2, ROAD.ewZ + ROAD.half + 2.2, 67, 67, 4);
-  const lawnN = roundedRect(-67, -67, 67, ROAD.ewZ - ROAD.half - 2.2, 4);
-  site.add(mesh(raised(lawnSW, 0.02, LAWN_H, 6), mat.lawn, 'lawn-south-west', { cast: false }));
-  site.add(mesh(raised(lawnSE, 0.02, LAWN_H, 6), mat.lawn, 'lawn-south-east', { cast: false }));
-  site.add(mesh(raised(lawnN, 0.02, LAWN_H, 6), mat.lawn, 'lawn-north', { cast: false }));
-  site.add(mesh(raised(circleShape(0, ROAD.ewZ, 6), 0.05, 0.25, cs), mat.lawn, 'roundabout-island', { cast: false }));
-
-  // Ring aprons: paved annulus around each ring, courtyard stays planted
-  for (const rg of rings) {
-    const s = circleShape(rg.c.cx, rg.c.cz, rg.rOutEdge + 3.5);
-    s.holes.push(circleShape(rg.c.cx, rg.c.cz, rg.rGlassIn - 1.2, true));
-    site.add(mesh(raised(s, 0.02, 0.22, cs * 2), mat.stone, `${rg.c.id}-apron`, { cast: false }));
-    // courtyard path ring
-    const p = circleShape(rg.c.cx, rg.c.cz, rg.rGlassIn - 4.2);
-    p.holes.push(circleShape(rg.c.cx, rg.c.cz, rg.rGlassIn - 5.6, true));
-    site.add(mesh(raised(p, 0.02, 0.2, cs), mat.stone, `${rg.c.id}-courtyard-path`, { cast: false }));
-  }
-
-  // Tower plaza with a recessed reflecting pool (annular sector facing the boulevard)
-  const PLAZA = { x: TOWER.cx, z: TOWER.cz, r: 25 };
-  const poolPath = (hole) => {
-    const p = hole ? new THREE.Path() : new THREE.Shape();
-    const [r0, r1, a0, a1] = [TOWER.R + 4.2, TOWER.R + 8.5, -Math.PI / 2 - 1.0, -Math.PI / 2 + 1.0];
-    // angles measured in shape space (x, -z): -π/2 points to +z (south, towards the entrance)
-    p.absarc(PLAZA.x, -PLAZA.z, r1, a0, a1, false);
-    p.absarc(PLAZA.x, -PLAZA.z, r0, a1, a0, true);
-    p.closePath();
-    return p;
-  };
+  /* ================================================================ CARS, LAMPS, NIGHT LIGHTS */
   {
-    const plazaShape = circleShape(PLAZA.x, PLAZA.z, PLAZA.r);
-    plazaShape.holes.push(poolPath(true));
-    const pg = raised(plazaShape, 0.02, 0.25, cs * 2);
-    // planar UVs centred on the plaza for the radial joint texture
-    const uv = pg.getAttribute('uv'), ps = pg.getAttribute('position');
-    for (let i = 0; i < uv.count; i++) uv.setXY(i, (ps.getX(i) - PLAZA.x) / (2 * PLAZA.r) + 0.5, -(ps.getZ(i) - PLAZA.z) / (2 * PLAZA.r) + 0.5);
-    site.add(mesh(pg, mat.plaza, 'tower-plaza', { cast: false }));
-    // plaza approach from the roundabout
-    site.add(mesh(raised(roundedRect(-5, PLAZA.z + PLAZA.r - 2, 5, ROAD.ewZ - ROAD.half, 0.01), 0.02, 0.18, 2), mat.stone, 'plaza-approach', { cast: false }));
-    const water = mesh(flat(poolPath(false), 0.2, cs), mat.water, 'plaza-pool', { cast: false });
-    const wuv = water.geometry.getAttribute('uv');
-    const wps = water.geometry.getAttribute('position');
-    for (let i = 0; i < wuv.count; i++) wuv.setXY(i, wps.getX(i) / 12, wps.getZ(i) / 12);
-    site.add(water);
-  }
-
-  // Glass cone pavilion in the west courtyard (the render shows a glazed tent-like form)
-  {
-    const rg = rings[0];
-    const coneH = 8, coneR = 4.6;
-    const cone = mesh(G(new THREE.ConeGeometry(coneR, coneH, HIGH ? 40 : 20, 1, true)), mat.glass, 'pavilion-glass', { cast: false, receive: false });
-    cone.position.set(rg.c.cx, 0.2 + coneH / 2, rg.c.cz);
-    site.add(cone);
-    const coneIn = mesh(G(new THREE.ConeGeometry(coneR - 0.5, coneH - 1, HIGH ? 24 : 12, 1, true)), mat.interior, 'pavilion-interior', { cast: false });
-    coneIn.position.set(rg.c.cx, 0.2 + (coneH - 1) / 2, rg.c.cz);
-    site.add(coneIn);
-    // helical white ribs
-    const ribs = [];
-    const nr = 10;
-    for (let i = 0; i < nr; i++) {
-      const th = (i / nr) * Math.PI * 2;
-      const base = new THREE.Vector3(rg.c.cx + coneR * Math.sin(th), 0.2, rg.c.cz + coneR * Math.cos(th));
-      const tip = new THREE.Vector3(rg.c.cx, 0.2 + coneH, rg.c.cz);
-      const d = tip.clone().sub(base), len = d.length();
-      ribs.push(new THREE.Matrix4().compose(base.clone().add(tip).multiplyScalar(0.5), new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()), new THREE.Vector3(0.16, len, 0.16)));
-    }
-    site.add(instancedMesh(columnGeo, mat.white, ribs, 'pavilion-ribs'));
-    // round pool in the east courtyard
-    const rg2 = rings[1];
-    site.add(mesh(raised(circleShape(rg2.c.cx, rg2.c.cz, 4.4), 0.02, 0.3, cs), mat.white, 'courtyard-fountain-rim', { cast: false }));
-    const fw = mesh(flat(circleShape(rg2.c.cx, rg2.c.cz, 4.0), 0.27, cs), mat.water, 'courtyard-fountain-water', { cast: false });
-    site.add(fw);
-  }
-
-  /* ---------- vegetation ---------- */
-  // Palm: tapered trunk + crown of drooping fronds (one merged geometry)
-  const trunkGeo = G(new THREE.CylinderGeometry(0.17, 0.27, 1, HIGH ? 7 : 5, 1));
-  trunkGeo.translate(0, 0.5, 0);
-  const frondGeo = (() => {
-    const pos = [], nor = [], idx = [];
-    const F = HIGH ? 9 : 7, segs = HIGH ? 5 : 3, L = 3.4;
-    for (let f = 0; f < F; f++) {
-      const a = (f / F) * Math.PI * 2 + (f % 2) * 0.2;
-      const ca = Math.cos(a), sa = Math.sin(a);
-      const lift = f % 2 ? 0.9 : 0.55;
-      const base = pos.length / 3;
-      for (let k = 0; k <= segs; k++) {
-        const s = k / segs;
-        const d = s * L, h = lift * s * 1.8 - 2.1 * s * s;
-        const w = 0.62 * Math.pow(Math.sin(Math.PI * Math.min(0.98, s * 0.9 + 0.08)), 0.8);
-        const cx = ca * d, cz = sa * d;
-        pos.push(cx - sa * w, h - 0.12 * w, cz + ca * w, cx + sa * w, h - 0.12 * w, cz - ca * w);
-        nor.push(0, 1, 0, 0, 1, 0);
-        if (k < segs) { const b = base + k * 2; idx.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); }
-      }
-    }
-    const g = makeGeo(pos, nor, idx);
-    g.computeVertexNormals();
-    return g;
-  })();
-  const canopyGeo = G(new THREE.IcosahedronGeometry(1, HIGH ? 2 : 1));
-  const treeTrunkGeo = trunkGeo;
-
-  // Placement: rejection against buildings, roads, pools, bridge
-  const bridgePlan = frames.filter((_, i) => i % 4 === 0).map((f) => [f.P.x, f.P.z]);
-  const blocked = (x, z, pad = 0) => {
-    if (Math.abs(x) > 66 || Math.abs(z) > 66) return true;
-    if (Math.abs(z - ROAD.ewZ) < ROAD.half + 1.6 + pad) return true;                 // E-W road
-    if (z > ROAD.ewZ && Math.abs(x) < ROAD.half + 1.6 + pad) return true;           // boulevard
-    if (Math.hypot(x, z - ROAD.ewZ) < ROAD.rbR + 1 + pad) return true;               // roundabout
-    for (const rg of rings) {
-      const d = Math.hypot(x - rg.c.cx, z - rg.c.cz);
-      if (d > rg.rGlassIn - 6.4 - pad && d < rg.rOutEdge + 4 + pad) return true;       // ring + apron + path
-      if (d < 6.0 + pad) return true;                                                // courtyard centrepiece
-    }
-    if (Math.hypot(x - PLAZA.x, z - PLAZA.z) < PLAZA.r + 0.5 + pad) return true;      // plaza
-    if (Math.abs(x) < 6 && z < ROAD.ewZ && z > PLAZA.z) return true;                  // approach
-    for (const [bx, bz] of bridgePlan) if (Math.hypot(x - bx, z - bz) < 5 + pad) return true;
-    return false;
-  };
-
-  const palms = [], trees = [];
-  const prand = makeRng(7);
-  const addPalm = (x, z, h = 5.8 + prand() * 2.6) => palms.push({ x, z, h, r: prand() * Math.PI * 2, lean: (prand() - 0.5) * 0.12 });
-  // boulevard avenue (both sides) and east-west avenue
-  for (let z = ROAD.ewZ + ROAD.rbR + 6; z <= 66; z += 6.5) for (const x of [-ROAD.half - 1.0, ROAD.half + 1.0]) {
-    const near = bridgePlan.some(([bx, bz]) => Math.hypot(x - bx, z - bz) < 5);
-    if (!near) addPalm(x, z, 7.2 + prand() * 1.2);
-  }
-  for (let x = -64; x <= 64; x += 7) if (Math.abs(x) > ROAD.rbR + 4) {
-    addPalm(x, ROAD.ewZ - ROAD.half - 1.0, 7 + prand());
-    if (!blocked(x, ROAD.ewZ + ROAD.half + 3.5, -1.6)) addPalm(x, ROAD.ewZ + ROAD.half + 1.0, 7 + prand());
-  }
-  // plaza rim
-  for (let i = 0; i < 22; i++) {
-    const a = (i / 22) * Math.PI * 2;
-    if (Math.abs(Math.atan2(Math.sin(a), Math.cos(a)) - Math.PI / 2) < 0.28) continue; // keep the approach open (+z)
-    addPalm(PLAZA.x + Math.cos(a) * (PLAZA.r - 1.6), PLAZA.z + Math.sin(a) * (PLAZA.r - 1.6), 6.5 + prand() * 1.5);
-  }
-  // roundabout island
-  for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; addPalm(Math.cos(a) * 3, ROAD.ewZ + Math.sin(a) * 3, 5.5 + prand() * 1.5); }
-  addPalm(0, ROAD.ewZ, 8.5);
-  // courtyards: palms between path and building
-  for (const rg of rings) {
-    const n = 14;
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2 + 0.2, rr = rg.rGlassIn - 3.0;
-      addPalm(rg.c.cx + Math.cos(a) * rr, rg.c.cz + Math.sin(a) * rr, 5.5 + prand() * 1.5);
-    }
-    if (rg === rings[1]) for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; addPalm(rg.c.cx + Math.cos(a) * 7.2, rg.c.cz + Math.sin(a) * 7.2, 6 + prand() * 2); }
-  }
-  // groves: random scatter on the lawns
-  const grove = (n, x0, z0, x1, z1, kind) => {
-    for (let k = 0, tries = 0; k < n && tries < n * 30; tries++) {
-      const x = x0 + prand() * (x1 - x0), z = z0 + prand() * (z1 - z0);
-      if (blocked(x, z, 0.5)) continue;
-      const list = kind === 'palm' ? palms : trees;
-      if (list.some((p) => Math.hypot(p.x - x, p.z - z) < (kind === 'palm' ? 3.4 : 5.2))) continue;
-      if (kind === 'palm') addPalm(x, z); else trees.push({ x, z, s: 2.6 + prand() * 1.6, r: prand() * 6 });
-      k++;
-    }
-  };
-  const gp = Q.palms, gt = Q.trees;
-  grove(Math.round(34 * gp), -66, 4, -4, 66, 'palm');
-  grove(Math.round(34 * gp), 4, 4, 66, 66, 'palm');
-  grove(Math.round(30 * gp), -66, -66, 66, -12, 'palm');
-  grove(Math.round(26 * gt), -66, -66, 66, -14, 'tree');
-  grove(Math.round(14 * gt), -66, 40, 66, 66, 'tree');
-
-  {
-    const tm = [], cm = [];
-    const top = new THREE.Vector3();
-    for (const p of palms) {
-      const m4 = trs(p.x, 0.15, p.z, p.r, 1, p.h, 1, p.lean, -p.lean);
-      tm.push(m4);
-      top.set(0, 1, 0).applyMatrix4(m4); // crown sits on the (leaning) trunk tip
-      const sc = 0.62 + p.h / 40;
-      cm.push(trs(top.x, top.y - 0.1, top.z, p.r, sc, sc, sc));
-    }
-    site.add(instancedMesh(trunkGeo, mat.trunk, tm, 'palm-trunks'));
-    site.add(instancedMesh(frondGeo, mat.frond, cm, 'palm-crowns'));
-    const ttm = [], tcm = [];
-    for (const t of trees) {
-      ttm.push(trs(t.x, 0.15, t.z, 0, 1.3, t.s * 0.9, 1.3));
-      tcm.push(trs(t.x, 0.15 + t.s * 1.35, t.z, t.r, t.s, t.s * 0.82, t.s));
-    }
-    site.add(instancedMesh(treeTrunkGeo, mat.trunk, ttm, 'tree-trunks'));
-    site.add(instancedMesh(canopyGeo, mat.canopy, tcm, 'tree-canopies'));
-  }
-
-  /* ---------- street lamps, cars ---------- */
-  const lampPoleGeo = G(new THREE.CylinderGeometry(0.07, 0.1, 1, 6)); lampPoleGeo.translate(0, 0.5, 0);
-  const lampHeadGeo = G(new THREE.CylinderGeometry(0.4, 0.3, 0.16, 10));
-  {
-    const pm = [], hm = [];
-    const addLamp = (x, z, h = 6) => { pm.push(trs(x, 0.02, z, 0, 1, h, 1)); hm.push(trs(x, 0.02 + h, z)); };
-    for (let z = ROAD.ewZ + ROAD.rbR + 9; z <= 66; z += 13) for (const x of [-ROAD.half - 0.6, ROAD.half + 0.6]) {
-      if (!bridgePlan.some(([bx, bz]) => Math.hypot(x - bx, z - bz) < 4)) addLamp(x, z);
-    }
-    for (let x = -62; x <= 62; x += 14) if (Math.abs(x) > ROAD.rbR + 5) { addLamp(x, ROAD.ewZ - ROAD.half - 0.6); addLamp(x + 7, ROAD.ewZ + ROAD.half + 0.6); }
-    for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2 + 0.13; addLamp(PLAZA.x + Math.cos(a) * (PLAZA.r - 4.2), PLAZA.z + Math.sin(a) * (PLAZA.r - 4.2), 4.2); }
-    site.add(instancedMesh(lampPoleGeo, mat.frame, pm, 'lamp-poles'));
-    site.add(instancedMesh(lampHeadGeo, mat.lampHead, hm, 'lamp-heads', { cast: false }));
-  }
-  const carGeo = (() => {
-    const body = new THREE.BoxGeometry(4.3, 0.75, 1.8); body.translate(0, 0.55, 0);
-    const cabin = new THREE.BoxGeometry(2.3, 0.6, 1.6); cabin.translate(-0.2, 1.2, 0);
-    return mergeGeos([body, cabin]);
-  })();
-  {
-    const crand = makeRng(5);
-    const light = [], dark = [];
-    const put = (x, z, ry) => (crand() < 0.6 ? light : dark).push(trs(x, 0.05, z, ry));
-    for (let i = 0; i < 8; i++) { const z = 14 + crand() * 40; put(crand() < 0.5 ? -2.2 : 2.2, z, Math.PI / 2); }
-    for (let i = 0; i < 10; i++) { let x = (crand() * 2 - 1) * 64; if (Math.abs(x) < ROAD.rbR + 3) x += Math.sign(x || 1) * 16; put(x, ROAD.ewZ + (crand() < 0.5 ? -2.2 : 2.2), 0); }
-    site.add(instancedMesh(carGeo, mat.carLight, light, 'cars-light'));
-    site.add(instancedMesh(carGeo, mat.carDark, dark, 'cars-dark'));
-  }
-
-  /* ---------- night lights (engine ramps intensity to userData.nightIntensity) ---------- */
-  const lamps = [];
-  const point = (name, x, y, z, intensity, dist = 34) => {
-    const l = new THREE.PointLight(COLORS.lampGlow, 0, dist, 2);
-    l.name = name; l.position.set(x, y, z); l.castShadow = false;
-    l.userData.nightIntensity = intensity;
-    root.add(l); lamps.push(l);
-  };
-  for (let i = 0; i < 4; i++) {
-    const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
-    point(`plaza-light-${i}`, PLAZA.x + Math.cos(a) * 16, 4.5, PLAZA.z + Math.sin(a) * 16, 160);
-  }
-  point('bridge-light', 0, 6.0, 46.5, 140, 30);
-  point('courtyard-west-light', rings[0].c.cx, 4, rings[0].c.cz, 120, 22);
-  point('courtyard-east-light', rings[1].c.cx, 4, rings[1].c.cz, 120, 22);
-  {
-    // uplight washing the sail fin
-    const th = TOWER.finTheta;
-    const sl = new THREE.SpotLight(0xfff1dc, 0, 90, 0.42, 0.6, 1.4);
+    const rnd = makeRng(64);
+    const list = [];
+    for (let i = 0; i < 14; i++) { const x = -225 + rnd() * 450; if (Math.abs(x) < ROAD.rbR + 4) continue; const north = rnd() < 0.5; list.push([x, north ? ROAD.z0 + 4 : ROAD.z1 - 4, north ? -Math.PI / 2 : Math.PI / 2]); }
+    for (let i = 0; i < 12; i++) { const z = ROAD.z1 + 12 + rnd() * 200; const east = rnd() < 0.5; list.push([east ? (ROAD.blvd[0] + ROAD.blvd[1]) / 2 + 2 : -(ROAD.blvd[0] + ROAD.blvd[1]) / 2 - 2, z, east ? Math.PI : 0]); }
+    list.push([ROAD.rbx + 18, ROAD.rbz + 6, 2.2], [ROAD.rbx - 16, ROAD.rbz - 10, -0.9]);
+    K.cars(site, list, { name: 'campus-cars' });
+    const posts = [];
+    for (let x = -220; x <= 220; x += 24) { if (Math.abs(x) < ROAD.rbR + 4) continue; posts.push([x, ROAD.z0 - 1.6, 0], [x + 12, ROAD.z1 + 1.6, Math.PI]); }
+    for (let z = ROAD.z1 + 14; z < 236; z += 22) posts.push([-1.2, z, -Math.PI / 2], [1.2, z + 11, Math.PI / 2]);
+    K.lampPosts(site, posts, { h: 8, name: 'campus-street-lamps' });
+    K.light(site, 'light-gate', 0, 6, C.cz + C.rz + 10, 110, 40);
+    K.light(site, 'light-court-west', -30, 7, -96, 120, 46);
+    K.light(site, 'light-court-east', 30, 7, -96, 110, 46);
+    K.light(site, 'light-tower-foot', 0, 6, TOWER.z + 22, 140, 44);
+    K.light(site, 'light-roundabout', ROAD.rbx, 7, ROAD.rbz, 120, 46);
+    K.light(site, 'light-bridge', 0, 12, 94, 130, 40);
+    K.light(site, 'light-office', OFFICE.cx + 30, 6, OFFICE.z1 + 8, 100, 40);
+    // sail uplight
+    const sl = new THREE.SpotLight(0xfff1dc, 0, 120, 0.5, 0.7, 1.3);
     sl.name = 'sail-uplight';
-    sl.position.set(TOWER.cx + Math.sin(th) * 22, 0.6, TOWER.cz + Math.cos(th) * 22);
-    sl.target.position.set(TOWER.cx + Math.sin(th) * 6, 36, TOWER.cz + Math.cos(th) * 6);
-    sl.castShadow = false;
-    sl.userData.nightIntensity = 2400;
-    root.add(sl, sl.target); lamps.push(sl);
+    sl.position.set(TOWER.x + 30, 0.6, TOWER.z + 30);
+    sl.target.position.set(TOWER.x + 8, 40, TOWER.z + 8);
+    sl.userData.nightIntensity = 700;
+    site.add(sl, sl.target); K.lamps.push(sl);
   }
 
-  /* ---------- floors ordered bottom → top (level, then building) ---------- */
   floors.sort((a, b) => a.userData.level - b.userData.level);
 
-  /* ---------- animation + disposal ---------- */
-  function update(dt, t) {
-    if (waterNormal) { waterNormal.offset.x = (t * 0.012) % 1; waterNormal.offset.y = (t * 0.007) % 1; }
-  }
-  function dispose() {
-    for (const im of instanced) im.dispose();
-    for (const l of lamps) l.dispose && l.dispose();
-    geos.forEach((g) => g.dispose());
-    mats.forEach((m) => m.dispose());
-    texs.forEach((t) => t.dispose());
-    geos.clear(); mats.clear(); texs.clear();
-    root.removeFromParent();
-  }
-
-  return { root, floors, site, nightMaterials, lamps, update, dispose };
+  root.add(site);
+  return {
+    root, floors, site,
+    nightMaterials: K.nightMaterials,
+    lamps: K.lamps,
+    update(dt, t) {
+      const n = K.waterNormal();
+      if (n) { n.offset.x = (t * 0.01) % 1; n.offset.y = (t * 0.006) % 1; }
+    },
+    dispose() { K.dispose(); root.removeFromParent(); },
+  };
 }

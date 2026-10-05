@@ -174,6 +174,15 @@ const ROUGH = {
   solar: 'roughnessFactor = clamp(roughnessFactor + (rlNoise(vRlWorld * 0.4) - 0.5) * 0.06, 0.05, 1.0);',
   plain: '',
 };
+// Physically shaped glass (opt-in with material.userData.physicalGlass): the tinted body covers what is behind
+// by its opacity, rising towards 1 at grazing angles (Fresnel), while reflections are ADDED on top instead of being
+// scaled by the opacity. Output is premultiplied; the material blends One / OneMinusSrcAlpha. Lit interiors stay
+// visible through clear panels at night and the sky still reads on the glass.
+const PHYSICAL_GLASS = /* glsl */`
+  { float pgNV = saturate(dot(geometryNormal, geometryViewDir));
+    float pgF = pow(1.0 - pgNV, 5.0);
+    float pgA = clamp(diffuseColor.a + (1.0 - diffuseColor.a) * pgF * 0.85, 0.0, 1.0);
+    gl_FragColor = vec4(totalDiffuse * pgA + totalSpecular + totalEmissiveRadiance, pgA); }`;
 // Glass: let reflections win at grazing angles (real glazing turns mirror-like towards the horizon)
 const GLASS_ALPHA = /* glsl */`
   { float rlF = pow(1.0 - saturate(dot(geometryNormal, geometryViewDir)), 3.0);
@@ -202,6 +211,16 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
     const cls = classify(m);
     m.userData.__rl = cls || false;
     if (!cls) return false;
+    const pg = !!m.userData.physicalGlass && m.transparent;
+    if (pg) {
+      m.blending = THREE.CustomBlending;
+      m.blendEquation = THREE.AddEquation;
+      m.blendSrc = THREE.OneFactor;
+      m.blendDst = THREE.OneMinusSrcAlphaFactor;
+      m.blendSrcAlpha = THREE.OneFactor;
+      m.blendDstAlpha = THREE.OneMinusSrcAlphaFactor;
+      m.premultipliedAlpha = false;
+    }
     // reflections: glass and water take the outdoor environment explicitly so they can reflect more than
     // the diffuse fill (scene.environmentIntensity applies to materials without their own envMap)
     if (cls === 'glass' || cls === 'water' || cls === 'solar') {
@@ -212,7 +231,7 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
       envMats.add(m);
       if (cls === 'glass') {
         m.roughness = Math.min(m.roughness ?? 0.05, 0.06);
-        if ('ior' in m) m.ior = 1.52;
+        if ('ior' in m && !pg) m.ior = 1.52;
         if ('specularIntensity' in m) m.specularIntensity = 1;
       }
       if (cls === 'water') m.roughness = Math.min(m.roughness ?? 0.05, 0.05);
@@ -233,13 +252,14 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
       if (ALBEDO[cls]) fs = fs.replace('#include <map_fragment>', `#include <map_fragment>\n${ALBEDO[cls]}`);
       if (ROUGH[cls]) fs = fs.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>\n${ROUGH[cls]}`);
       if (cls !== 'glass' && cls !== 'water') fs = fs.replace('#include <aomap_fragment>', `#include <aomap_fragment>\n${AO_APPLY}`);
-      if (cls === 'glass') fs = fs.replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${GLASS_ALPHA}`);
+      if (pg) fs = fs.replace('#include <opaque_fragment>', PHYSICAL_GLASS);
+      else if (cls === 'glass') fs = fs.replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${GLASS_ALPHA}`);
       shader.fragmentShader = fs;
     };
     m.customProgramCacheKey = function realismKey() {
       let base = '';
       try { base = prevKey && prevKey !== realismKey ? String(prevKey.call(this)) : ''; } catch { base = ''; }
-      return `${base}|rl-${cls}`;
+      return `${base}|rl-${cls}${pg ? '-pg' : ''}`;
     };
     m.needsUpdate = true;
     return true;
@@ -265,7 +285,9 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
   const ENV = {
     day: { top: [0.22, 0.36, 0.62], horizon: [0.92, 0.94, 0.96], ground: [0.33, 0.30, 0.26], city: [0.36, 0.39, 0.43], glow: [1.6, 1.45, 1.2] },
     golden: { top: [0.16, 0.2, 0.36], horizon: [1.15, 0.72, 0.42], ground: [0.26, 0.2, 0.16], city: [0.2, 0.18, 0.2], glow: [2.6, 1.4, 0.6] },
-    night: { top: [0.008, 0.012, 0.026], horizon: [0.03, 0.04, 0.06], ground: [0.012, 0.012, 0.014], city: [0.02, 0.022, 0.03], glow: [0, 0, 0] },
+    // blue hour: deep blue zenith, a lighter blue band low in the sky, lit windows on the skyline
+    dusk: { top: [0.035, 0.075, 0.2], horizon: [0.2, 0.3, 0.52], ground: [0.025, 0.026, 0.032], city: [0.03, 0.032, 0.04], glow: [0.18, 0.2, 0.28], lights: 1 },
+    night: { top: [0.008, 0.012, 0.026], horizon: [0.03, 0.04, 0.06], ground: [0.012, 0.012, 0.014], city: [0.02, 0.022, 0.03], glow: [0, 0, 0], lights: 0.6 },
   };
   function buildEnvScene(v) {
     const sc = new THREE.Scene();
@@ -318,6 +340,24 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
       city.setColorAt(i, tint.setRGB(k, k, k * 1.03));
     }
     sc.add(city);
+    // after dusk the skyline carries small warm window lights (only seen in reflections)
+    if (v.lights) {
+      const lg = new THREE.PlaneGeometry(0.35, 0.22);
+      const lm = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.6 * v.lights, 1.15 * v.lights, 0.7 * v.lights), side: THREE.DoubleSide });
+      disposables.push(lg, lm);
+      const nl = 420;
+      const lights = new THREE.InstancedMesh(lg, lm, nl);
+      for (let i = 0; i < nl; i++) {
+        const a = rnd() * Math.PI * 2;
+        const r = 36.8;
+        p.set(Math.sin(a) * r, 0.2 + Math.pow(rnd(), 1.8) * 5.5, Math.cos(a) * r);
+        q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), a);
+        s.set(1, 1, 1);
+        m4.compose(p, q, s);
+        lights.setMatrixAt(i, m4);
+      }
+      sc.add(lights);
+    }
     return { sc, dispose: () => disposables.forEach((d) => d.dispose()) };
   }
   function envFor(renderer, variant) {
@@ -333,7 +373,7 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
   }
   /** Swap in the outdoor environment that matches the sun height. Returns true when it changed. */
   function setEnvironment(scene, renderer, elevation, envIntensity) {
-    const variant = elevation > 9 ? 'day' : elevation > -3 ? 'golden' : 'night';
+    const variant = elevation > 9 ? 'day' : elevation > -2 ? 'golden' : elevation > -9 ? 'dusk' : 'night';
     // reflections dim with the light (the engine scales its own envMats the same way)
     envIntensityScale = envIntensity / 0.82;
     envMats.forEach((m) => { m.envMapIntensity = (m.userData.__rlEnvBase || 1) * envIntensityScale; });

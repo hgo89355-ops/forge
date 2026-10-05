@@ -19,6 +19,11 @@
 //   clickAction: 'focus'          click on the building flies in (emits 'pick'); 'select' (default) | 'none'
 //   focusPoint(p, {factor, distance, direction, duration, instant}) · focusHotspot(id, {distance, duration})
 //   rotate(leftRad, upRad) · zoom(factor, {duration}) · setWheelZoom(bool)
+//   hour: 19.75                   initial (and reset) time of day, e.g. the blue hour for the home hero
+//   homeView: {position, target}  fixed home camera (no fit-to-panels); setHomeView(view, {apply, instant})
+//   zoomToCursor: true            wheel / pinch dolly towards the pointer (product-viewer feel)
+//   minTargetY: 1                 lowest orbit target height (keeps the camera above the ground)
+// The near plane follows the orbit distance, so a close camera can look through the glass into the floors.
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
@@ -190,6 +195,7 @@ export function createStudio(container, options = {}) {
   controls.zoomSpeed = 0.9;
   controls.panSpeed = 0.8;
   controls.autoRotateSpeed = 0.55;
+  controls.zoomToCursor = !!opts.zoomToCursor;
   controls.enabled = opts.controls !== false;
   controls.enableZoom = opts.controls !== false;
   controls.listenToKeyEvents(canvas);
@@ -213,13 +219,16 @@ export function createStudio(container, options = {}) {
   function setWheelZoom(on) { wheelZoom = !!on; }
 
   /* -------------------------------------------------------------- state */
+  const homeHour = Number.isFinite(opts.hour) ? clamp(opts.hour, MIN_HOUR, MAX_HOUR) : DEFAULT_HOUR;
+  let homeView = opts.homeView && Array.isArray(opts.homeView.position) && Array.isArray(opts.homeView.target) ? opts.homeView : null;
+  const minTargetY = Number.isFinite(opts.minTargetY) ? opts.minTargetY : 0;
   const state = {
     id: null,
     mode: 'realistic',
     explode: 0,
     explodeTarget: 0,
     section: 1,          // 1 = no cut, 0 = cut at ground
-    hour: DEFAULT_HOUR,
+    hour: homeHour,
     autoRotate: !!opts.autoRotate && !reduced(),
     hotspots: opts.hotspots !== false,
     hover: -1,
@@ -255,7 +264,20 @@ export function createStudio(container, options = {}) {
     const t = controls.target;
     t.x = clamp(t.x, -r, r);
     t.z = clamp(t.z, -r, r);
-    t.y = clamp(t.y, 0, model.height + 30);
+    t.y = clamp(t.y, minTargetY, model.height + 30);
+  }
+  /** Near plane follows the orbit distance: close-ups through glass need a small near plane, wide views keep
+      depth precision. Also keeps the camera above the ground. */
+  let nearNow = camera.near;
+  function fitNear() {
+    if (camera.position.y < 0.35) camera.position.y = 0.35;
+    const d = camera.position.distanceTo(controls.target);
+    const n = clamp(d * 0.012, 0.04, 0.5);
+    if (Math.abs(n - nearNow) / nearNow > 0.08) {
+      nearNow = n;
+      camera.near = n;
+      camera.updateProjectionMatrix();
+    }
   }
 
   /* -------------------------------------------------------------- sizing */
@@ -368,6 +390,7 @@ export function createStudio(container, options = {}) {
     }
     if (!dirty) return;
     needsRender = false;
+    fitNear();
     const r0 = PERF ? performance.now() : 0;
     renderer.render(scene, camera);
     if (PERF && perfFrames++ < 12) plog('frame ms', Math.round(performance.now() - r0), renderer.info.render.calls, renderer.info.render.triangles);
@@ -492,6 +515,7 @@ export function createStudio(container, options = {}) {
 
   /** Preset position, pulled back when overlay panels leave only part of the canvas free (not for street). */
   function viewPos(name) {
+    if (name === 'aerial' && homeView) return new THREE.Vector3().fromArray(homeView.position);
     const cam = model.meta.camera;
     const p = new THREE.Vector3().fromArray(cam[name] || cam.aerial);
     if (name === 'street') return p;
@@ -501,11 +525,12 @@ export function createStudio(container, options = {}) {
     const f = fitFactor(p, tg, explodedBox(easeOutCubic(clamp(state.explodeTarget, 0, 1))), { closer: 0.72 });
     return p.sub(tg).multiplyScalar(f).add(tg);
   }
+  const homeTarget = () => (homeView ? homeView.target : model.meta.camera.target);
   function setView(name, { instant = false } = {}) {
     if (!model) return;
-    const cam = model.meta.camera;
-    const pos = viewPos(VIEWS.includes(name) ? name : 'aerial');
-    tweenCamera(pos, cam.target, { instant });
+    const v = VIEWS.includes(name) ? name : 'aerial';
+    const pos = viewPos(v);
+    tweenCamera(pos, v === 'aerial' ? homeTarget() : model.meta.camera.target, { instant });
     state.view = name;
     emit('change', getState());
   }
@@ -1047,7 +1072,7 @@ export function createStudio(container, options = {}) {
     state.section = 1;
     sectionPlane.constant = 1e5;
     sectionVis.visible = false;
-    state.hour = DEFAULT_HOUR;
+    state.hour = homeHour;
     env.fitToBounds(model.shadowBounds);
     controls.maxDistance = Math.max(260, model.radius * 5.5);
     applyMaterials();
@@ -1064,16 +1089,16 @@ export function createStudio(container, options = {}) {
     emit('progress', { id, value: 1 });
 
     // reveal: camera glides in, floors settle from a gentle explode
-    const cam = model.meta.camera;
+    const tgt0 = homeTarget();
     if (instantCamera || still()) {
-      tweenCamera(viewPos('aerial'), cam.target, { instant: true });
+      tweenCamera(viewPos('aerial'), tgt0, { instant: true });
     } else {
-      const from = viewPos('aerial').sub(new THREE.Vector3().fromArray(cam.target)).multiplyScalar(1.28).add(new THREE.Vector3().fromArray(cam.target));
+      const from = viewPos('aerial').sub(new THREE.Vector3().fromArray(tgt0)).multiplyScalar(1.28).add(new THREE.Vector3().fromArray(tgt0));
       from.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.22);
       camera.position.copy(from);
-      controls.target.fromArray(cam.target);
+      controls.target.fromArray(tgt0);
       controls.update(0);
-      tweenCamera(viewPos('aerial'), cam.target, { duration: 1800 });
+      tweenCamera(viewPos('aerial'), tgt0, { duration: 1800 });
       if (model.floors.length) revealTween = { t0: now(), duration: 1500 };
     }
     state.view = 'aerial';
@@ -1186,9 +1211,14 @@ export function createStudio(container, options = {}) {
     setExplode(0);
     setSection(1);
     setMode('realistic');
-    setTime(DEFAULT_HOUR);
+    setTime(homeHour);
     setAutoRotate(!!opts.autoRotate);
     setView('aerial');
+  }
+  /** Replace the home camera ({position, target}); `apply` flies there now. */
+  function setHomeView(view, { apply = false, instant = false } = {}) {
+    homeView = view && Array.isArray(view.position) && Array.isArray(view.target) ? view : null;
+    if (apply && model) { tweenCamera(viewPos('aerial'), homeTarget(), { instant }); state.view = 'aerial'; }
   }
   function setControlsEnabled({ zoom: z } = {}) {
     if (opts.controls === false) return;
@@ -1221,7 +1251,7 @@ export function createStudio(container, options = {}) {
     THREE, renderer, scene, camera, controls, canvas, quality, lowPower,
     on, load, setView, setExplode, setSection, setMode, setTime, setAutoRotate, setHotspots, setInsets,
     select, selectStep, focusPoint, focusAt, floorAt, zoom, reset, snapshot, renderThumbnail, getState, invalidate, dispose, setControlsEnabled,
-    focusHotspot, rotate, setWheelZoom,
+    focusHotspot, rotate, setWheelZoom, setHomeView, tweenCamera,
     get model() { return model ? { id: model.id, meta: model.meta, floors: model.floors.map((f, i) => floorInfo(i)) } : null; },
   };
   if (opts.model) api.ready = load(opts.model).catch(() => null);

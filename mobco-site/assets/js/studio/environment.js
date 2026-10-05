@@ -17,9 +17,12 @@ export const MIN_HOUR = 6;
 export const MAX_HOUR = 22;
 
 // Sky keyframes by sun elevation (deg): colours are sRGB hex, interpolated in linear space.
+// Between about -3 and -8 degrees the sky holds the saturated "blue hour" of architectural dusk renders.
 const SKY_KEYS = [
-  { el: -10, top: '#05080f', horizon: '#121a2b', bottom: '#0a0f18' },
-  { el: -3, top: '#141c33', horizon: '#3a3f58', bottom: '#191d2b' },
+  { el: -14, top: '#04070e', horizon: '#0f1726', bottom: '#080c14' },
+  { el: -8, top: '#0c1630', horizon: '#26406e', bottom: '#111624' },
+  { el: -5, top: '#142a5a', horizon: '#4a6ea8', bottom: '#171d2c' },
+  { el: -2, top: '#203a6c', horizon: '#8a8fae', bottom: '#262838' },
   { el: 5, top: '#3d5274', horizon: '#e6b48a', bottom: '#6b6863' },
   { el: 16, top: '#5b84b0', horizon: '#e9dfcf', bottom: '#a29a8c' },
   { el: 32, top: '#5d8cc0', horizon: '#dfe8ef', bottom: '#b4ad9f' },
@@ -280,9 +283,13 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     // fill: sky above, warm bounce from the ground below
     hemi.color.copy(skyUniforms.uTop.value).lerp(tmpB.set('#ffffff'), 0.5);
     hemi.groundColor.copy(tmpA.set(night > 0.5 ? '#16161f' : '#a3967f')).lerp(tmpB.set('#c48a5c'), golden * 0.5);
-    hemi.intensity = 0.07 + 0.55 * day;
-    // very low at night: bright reflections on glass would wash out the lit interiors
-    scene.environmentIntensity = 0.035 + 0.785 * day;
+    // blue hour (sun 3 to 9 degrees below the horizon): the sky itself is the light, cool and soft
+    const blue = smoothstep(-13, -6.5, elevation) * (1 - smoothstep(-3, 4, elevation));
+    hemi.intensity = 0.07 + 0.55 * day + 0.12 * blue;
+    if (blue > 0.01) hemi.color.lerp(tmpA.set('#5b7fc0'), blue * 0.7);
+    // very low at night: bright reflections on glass would wash out the lit interiors; the blue hour keeps a
+    // share of sky reflection so glazing still reads as glass
+    scene.environmentIntensity = 0.035 + 0.785 * day + 0.42 * blue * (1 - day);
     if (renderer) renderer.toneMappingExposure = 0.98 + 0.12 * night;
     current = { night, day, elevation, azimuth };
     finish(renderer, elevation);

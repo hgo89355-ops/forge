@@ -2,13 +2,13 @@
    assets/css/pages/home.css: HOME page, part A (hero, who we are, companies,
    plan / build / manage, stats). Selectors are prefixed `hx-` (hero) or `ha-`
    (part B uses `hb-`) or scoped to body[data-page='home'].
-   Tokens from main.css; logical properties throughout (RTL-safe). The hero photo,
-   its pins and the detail card use physical coordinates (the photo is never mirrored).
+   Tokens from main.css; logical properties throughout (RTL-safe). The hero's 3D view,
+   its still, pins and detail card use physical coordinates (the model is never mirrored).
    ========================================================================== */
 
 /* -------------------------------------------------------------------------
-   01 · HERO: the real Eastmain building, zoomable, with depth tilt
-   The photo, its pins and the card use physical coordinates (the image is never mirrored).
+   01 · HERO: Eastmain as a detailed 3D building (spin and zoom, product-viewer style)
+   The view, its still, pins and the card use physical coordinates (the model is never mirrored).
    ------------------------------------------------------------------------- */
 .hx {
   --hx-glass: color-mix(in srgb, var(--navy-950) 58%, transparent);
@@ -29,10 +29,11 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  /* night sky tone while the still decodes */
-  background: linear-gradient(180deg, #1d2c52 0%, #2e4677 55%, #263048 100%);
+  /* blue-hour sky tone while the still decodes */
+  background: linear-gradient(180deg, #14295a 0%, #2a4a85 55%, #1b2233 100%);
 }
-.hx__poster { position: absolute; inset: 0; }
+.hx__poster { position: absolute; inset: 0; overflow: hidden; }
+/* JS sizes and moves the still so its camera centre matches the live view; without JS it simply covers */
 .hx__poster img {
   position: absolute;
   left: 0;
@@ -42,7 +43,7 @@
   block-size: 100%;
   max-inline-size: none;
   object-fit: cover;
-  object-position: 47% 53%;
+  object-position: 50% 50%;
   transform-origin: 0 0;
   user-select: none;
   -webkit-user-drag: none;
@@ -50,16 +51,25 @@
 .hx__view {
   position: absolute;
   inset: 0;
-  cursor: grab;
-  touch-action: pan-y;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
-.hx.is-dragging .hx__view { cursor: grabbing; }
-.hx__view:focus { outline: none; }
-.hx__view:focus-visible { outline: 2px solid var(--teal-400); outline-offset: -6px; }
-.hx__view canvas { display: block; inline-size: 100%; block-size: 100%; opacity: 0; transition: opacity 700ms var(--ease-soft); }
+.hx__view canvas {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 900ms var(--ease-soft);
+}
+.hx__view canvas:active { cursor: grabbing; }
+.hx__view canvas:focus { outline: none; }
+.hx__view canvas:focus-visible { outline: 2px solid var(--teal-400); outline-offset: -6px; }
 .hx.is-live .hx__view canvas { opacity: 1; }
+.hx.is-static .hx__view { display: none; }
+/* still renderer (?poster=1): the bare view, no overlays */
+.hx.is-poster :is(.hx__inner, .hx__shade, .hx__pins, .hx__hint, .hx-card) { display: none !important; }
+.hx__fallback[hidden] { display: none; }
 
 /* legibility: header band, copy side, dock band (mirrored in RTL); fades out while exploring */
 .hx__shade {

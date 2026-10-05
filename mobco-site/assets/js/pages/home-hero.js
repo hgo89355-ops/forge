@@ -1,194 +1,66 @@
-// assets/js/pages/home-hero.js: HOME hero, the real Eastmain building as a zoomable photo.
+// assets/js/pages/home-hero.js: HOME hero, Eastmain as a detailed 3D building you can spin and zoom (product-viewer style).
 //
-// · The still (assets/img/hero/eastmain-1920.*) paints first. A small raw WebGL view then takes over: the photo plus
-//   a depth map (eastmain-depth.png), so moving the cursor tilts the building a few degrees with true depth parallax.
-//   The high-res image (eastmain-hd.webp) loads after first paint (desktop) or on the first zoom (touch).
-// · Wheel zooms toward the cursor only after a press inside the hero (or with ctrl / meta, trackpad pinch);
-//   before that a small hint shows and the page scrolls normally. Leaving the hero or Esc disengages.
-// · Drag pans, double-click / double-tap zooms in, pinch zooms, one-finger vertical swipes scroll the page.
-// · Pins fly to real details and open a small card. Keyboard: arrows pan, plus / minus zoom, 0 resets, Esc closes.
-// · Reduced motion: no tilt, instant moves. ?qa=1 or no WebGL: the still is moved with CSS transforms (no tilt).
+// · A still rendered from this same viewer (assets/img/hero/eastmain-3d-*) paints first, aligned to the live camera.
+//   After first paint the studio engine (assets/js/studio/engine.js) is imported, the Eastmain model is built at the
+//   blue hour, and the live canvas crossfades in on its first frame.
+// · Drag to orbit (limited above the ground). The mouse wheel zooms towards the pointer only after a click inside the
+//   viewer; wheeling before that shows a small hint and the page scrolls normally. Esc or leaving the hero gives the
+//   wheel back. Touch: horizontal drags orbit, one-finger vertical swipes scroll the page, pinch zooms.
+// · Close zoom reaches the facade, so the lit floors are visible through the glass.
+// · "+" pins on real features fly the camera there and open a small card. Plus / minus, reset, full screen,
+//   Explore in 3D. Slow auto-rotate until the visitor interacts (off for reduced motion, low-power renderers, ?qa=1).
+// · The copy fades while zoomed in. Arabic mirrors the layout (copy on the right), never the model.
+// · No WebGL2: the still stays, with the Explore in 3D link. ?poster=1 renders the bare view for the stills.
 
 import { t, onLang } from '../core/i18n.js';
-import { $, $$, clamp, isQA, isRTL, prefersReducedMotion } from '../core/utils.js';
+import { $, $$, clamp, isQA, isRTL, prefersReducedMotion, rafThrottle } from '../core/utils.js';
 import { whenLoaded } from '../core/preloader.js';
 
-const IMG = { w: 3160, h: 2840 };
-const SRC = {
-  hd: 'assets/img/hero/eastmain-hd.webp',
-  depth: 'assets/img/hero/eastmain-depth.png',
+const MODEL = 'mixed-use';
+const HOUR = 19.8;           // blue hour: sun about 5.5 degrees below the horizon
+// Home cameras (world metres). Desktop keeps the corner of the glass box in a three-quarter view from the plaza;
+// phones stand further back so the whole building fits the narrow frame.
+const VIEWS = {
+  desk: { position: [58, 9.5, 56], target: [2, 10.5, -8] },
+  mob: { position: [74, 16, 92], target: [4, 10, -8] },
 };
-const OVER = 1.06;   // rest view is slightly larger than cover, so the tilt never shows an edge
-const ZMAX = 4;     // the source photo stays crisp to about 4x
-const TILT = 0.05;   // max tilt in radians (about 3 degrees)
-const PAR = 0.8;     // depth parallax strength (screen half-heights per unit of depth)
-const FOCUS = 0.28;  // depth value that stays put (the building)
-const REST = { desk: { cx: 0.47, cy: 0.53 }, mob: { cx: 0.47, cy: 0.5 } };
-
-// image coordinates (0 to 1) of details that are really visible in the photo
-const PINS = [
-  {
-    u: 0.455, v: 0.42, z: 2,
-    title: { en: 'Glass facade', ar: 'الواجهة الزجاجية' },
-    text: { en: 'Office floors sit behind full-height glass, the ceiling lights visible at night.', ar: 'طوابق مكاتب خلف زجاج بكامل الارتفاع، وتظهر أضواء أسقفها ليلًا.' },
-  },
-  {
-    u: 0.52, v: 0.735, z: 2.3,
-    title: { en: 'Shopfronts', ar: 'واجهات المحلات' },
-    text: { en: 'Shops and cafés open onto the plaza at ground level.', ar: 'محلات ومقاهٍ تطل على الساحة في الطابق الأرضي.' },
-  },
-  {
-    u: 0.6, v: 0.82, z: 1.8,
-    title: { en: 'Plaza and pool', ar: 'الساحة والبركة' },
-    text: { en: 'A shallow pool with small fountains runs through the plaza.', ar: 'بركة ماء ضحلة بنوافير صغيرة تمتد عبر الساحة.' },
-  },
-  {
-    u: 0.855, v: 0.56, z: 2,
-    title: { en: 'Palms and planting', ar: 'النخيل والتشجير' },
-    text: { en: 'Palm trees and planting line the edge of the plaza.', ar: 'أشجار النخيل والنباتات على أطراف الساحة.' },
-  },
-];
+// The stills are rendered with no side insets: the camera target sits at the image centre.
+const POSTER = { desk: { w: 2800, h: 1080 }, mob: { w: 400, h: 1200 } };
+const PIN_DIST = { offices: 30, shops: 26, plaza: 46, roof: 44 };
 const S = {
-  view: { en: 'Eastmain, New Cairo. Zoomable photo.', ar: 'إيست مين، القاهرة الجديدة. صورة قابلة للتكبير.' },
-  pin: { en: 'Show detail: {name}', ar: 'عرض التفصيل: {name}' },
-  full: { en: 'Full view', ar: 'العرض الكامل' },
-  zoom: { en: 'Zoom {n}%', ar: 'التكبير {n}%' },
+  canvas: { en: 'Eastmain, New Cairo. Interactive 3D model.', ar: 'إيست مين، القاهرة الجديدة. نموذج تفاعلي ثلاثي الأبعاد.' },
+  role: { en: '3D viewer', ar: 'عارض ثلاثي الأبعاد' },
+  pin: { en: 'Show: {name}', ar: 'عرض: {name}' },
+  home: { en: 'Full view', ar: 'العرض الكامل' },
   fsIn: { en: 'Full screen', ar: 'ملء الشاشة' },
   fsOut: { en: 'Exit full screen', ar: 'الخروج من ملء الشاشة' },
 };
 const fmt = (v, o) => t(v).replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');
 const pad = (n) => String(n).padStart(2, '0');
-const easeInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
-/* ------------------------------------------------------------------ WebGL renderer */
-const VERT = `attribute vec2 aPos; varying vec2 vUv;
-void main(){ vUv = vec2(aPos.x * .5 + .5, .5 - aPos.y * .5); gl_Position = vec4(aPos, 0., 1.); }`;
-const FRAG = `precision highp float;
-uniform sampler2D uImg; uniform sampler2D uDepth;
-uniform vec2 uRes; uniform vec2 uCenter; uniform vec2 uScale; uniform vec2 uTilt;
-uniform float uPar; uniform float uFocus;
-varying vec2 vUv;
-const float F = 3.0;
-vec2 toUv(vec2 q, float A){ return uCenter + vec2(q.x / (2. * A), -q.y * .5) / uScale; }
-void main(){
-  float A = uRes.x / uRes.y;
-  vec2 p = vec2((vUv.x * 2. - 1.) * A, 1. - vUv.y * 2.);
-  float ca = cos(uTilt.x), sa = sin(uTilt.x), cb = cos(uTilt.y), sb = sin(uTilt.y);
-  // inverse rotation (plane frame): Rx(-a) * Ry(-b)
-  mat3 ry = mat3(cb, 0., sb,  0., 1., 0.,  -sb, 0., cb);
-  mat3 rx = mat3(1., 0., 0.,  0., ca, -sa,  0., sa, ca);
-  mat3 inv = rx * ry;
-  vec3 o = inv * vec3(0., 0., F);
-  vec3 d = inv * vec3(p, -F);
-  vec2 hit = o.xy - (o.z / d.z) * d.xy;
-  vec2 slope = d.xy / d.z + p / F;
-  vec2 q = hit;
-  for (int i = 0; i < 4; i++) {
-    float h = (texture2D(uDepth, clamp(toUv(q, A), 0., 1.)).r - uFocus) * uPar;
-    q = hit + h * slope;
-  }
-  gl_FragColor = vec4(texture2D(uImg, clamp(toUv(q, A), 0., 1.)).rgb, 1.);
-}`;
-
-function createGL(canvas) {
-  const opts = { antialias: false, alpha: false, depth: false, stencil: false, premultipliedAlpha: false, powerPreference: 'high-performance' };
-  const gl = canvas.getContext('webgl2', opts) || canvas.getContext('webgl', opts);
-  if (!gl) return null;
-  const isGL2 = typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext;
-  const sh = (type, src) => {
-    const s = gl.createShader(type);
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) || 'shader');
-    return s;
-  };
-  const prog = gl.createProgram();
-  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
-  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog) || 'link');
-  gl.useProgram(prog);
-  const buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-  const loc = gl.getAttribLocation(prog, 'aPos');
-  gl.enableVertexAttribArray(loc);
-  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const u = {};
-  for (const n of ['uImg', 'uDepth', 'uRes', 'uCenter', 'uScale', 'uTilt', 'uPar', 'uFocus']) u[n] = gl.getUniformLocation(prog, n);
-  gl.uniform1i(u.uImg, 0);
-  gl.uniform1i(u.uDepth, 1);
-  const textures = [gl.createTexture(), gl.createTexture()];
-
-  function upload(unit, source, mip) {
-    gl.activeTexture(gl.TEXTURE0 + unit);
-    gl.bindTexture(gl.TEXTURE_2D, textures[unit]);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    if (mip && isGL2) {
-      gl.generateMipmap(gl.TEXTURE_2D);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    } else {
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    }
-  }
-
-  function draw(st) {
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.uniform2f(u.uRes, canvas.width, canvas.height);
-    gl.uniform2f(u.uCenter, st.cx, st.cy);
-    gl.uniform2f(u.uScale, st.sx, st.sy);
-    gl.uniform2f(u.uTilt, st.tx, st.ty);
-    gl.uniform1f(u.uPar, PAR);
-    gl.uniform1f(u.uFocus, FOCUS);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  }
-  return { gl, upload, draw, maxTex: gl.getParameter(gl.MAX_TEXTURE_SIZE) };
-}
-
-function loadImage(src) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.decoding = 'async';
-    img.onload = () => res(img);
-    img.onerror = () => rej(new Error(`image ${src}`));
-    img.src = src;
-  });
-}
-async function decoded(src) {
-  const img = await loadImage(src);
-  if ('createImageBitmap' in window) {
-    try { return await createImageBitmap(img); } catch { /* fall through */ }
-  }
-  return img;
-}
-function hasWebGL() {
+function hasWebGL2() {
   try {
     if (new URLSearchParams(location.search).get('nogl') === '1') return false;
-    const c = document.createElement('canvas');
-    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    const gl = document.createElement('canvas').getContext('webgl2');
     gl?.getExtension('WEBGL_lose_context')?.loseContext();
     return !!gl;
   } catch { return false; }
 }
 
-/* ------------------------------------------------------------------ hero */
 export function initHero() {
   const root = $('[data-hx]');
   if (!root) return;
   const stage = $('[data-hx-stage]', root);
   const view = $('[data-hx-view]', root);
-  const poster = $('[data-hx-poster] img', root);
-  const posterSrc = $('[data-hx-poster-src]', root);
+  const posterImg = $('[data-hx-poster] img', root);
   const pinsLayer = $('[data-hx-pins]', root);
   const hint = $('[data-hx-hint]', root);
   const copy = $('[data-hx-copy]', root);
   const dock = $('[data-hx-dock]', root);
+  const bar = $('[data-hx-bar]', root);
   const card = $('[data-hx-card]', root);
   const live = $('[data-hx-live]', root);
+  const fallbackLink = $('[data-hx-fallback]', root);
   const btn = {
     zin: $('[data-hx-zoom="in"]', root),
     zout: $('[data-hx-zoom="out"]', root),
@@ -202,414 +74,386 @@ export function initHero() {
     close: $('[data-hx-card-close]', card),
   };
 
+  const params = new URLSearchParams(location.search);
+  const posterMode = params.get('poster') === '1';
   const qa = isQA();
-  const reduced = prefersReducedMotion() || qa;
-  const fine = matchMedia('(pointer: fine)').matches;
+  const reduced = prefersReducedMotion();
+  const fine = typeof matchMedia === 'function' && matchMedia('(pointer: fine)').matches;
 
-  let W = 1, H = 1, dispW = 1, dispH = 1;
-  const cur = { z: 1, cx: 0.5, cy: 0.5 };
-  const tgt = { z: 1, cx: 0.5, cy: 0.5 };
-  const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
-  let flight = null;
-  let glr = null;          // WebGL renderer, null in CSS mode
-  let hdState = 'none';    // none | loading | done
-  let visible = true;
-  let raf = 0;
-  let last = 0;
+  let engine = null;
+  let ready = false;
+  let revealPending = false;
+  let hotspots = [];
+  const pins = new Map();
+  let openId = null;
   let engaged = false;
-  let openIdx = -1;
-  let hintTimer = 0;
+  let autoAllowed = false;
+  let autoOn = false;
   let zoomed = false;
-  const pinEls = [];
-  let ui = [];
+  let hintTimer = 0;
+  let lastFrame = [];
+  let homeDist = 1;
+  let layoutKind = '';
+  let box = { w: 0, h: 0, top: 0, bottom: 0, cw: 0, ch: 0, ui: [] };
 
-  const mobile = () => W < 768;
-  const rest = () => (mobile() ? REST.mob : REST.desk);
+  const mobile = () => box.w < 768;
+  const kind = () => (mobile() ? 'mob' : 'desk');
   const announce = (msg) => { if (live) { live.textContent = ''; requestAnimationFrame(() => { live.textContent = msg; }); } };
 
-  /* ---------------------------------------------------------------- geometry */
-  function measure() {
-    const r = stage.getBoundingClientRect();
-    W = Math.max(1, r.width);
-    H = Math.max(1, r.height);
-    const s = Math.max(W / IMG.w, H / IMG.h) * OVER;
-    dispW = IMG.w * s;
-    dispH = IMG.h * s;
-  }
-  function clampState(st) {
-    st.z = clamp(st.z, 1, ZMAX);
-    const kx = dispW * st.z, ky = dispH * st.z;
-    const ex = (W / 2 + W * 0.025) / kx, ey = (H / 2 + H * 0.025) / ky;
-    st.cx = ex >= 0.5 ? 0.5 : clamp(st.cx, ex, 1 - ex);
-    st.cy = ey >= 0.5 ? 0.5 : clamp(st.cy, ey, 1 - ey);
-    return st;
-  }
-  const toUv = (sx, sy, st) => ({ u: st.cx + (sx - W / 2) / (dispW * st.z), v: st.cy + (sy - H / 2) / (dispH * st.z) });
-  // image uv to stage px, through the same tilt as the shader (surface of the building, no parallax)
-  function toScreen(u, v) {
-    const A = W / H;
-    const qx = (u - cur.cx) * dispW * cur.z / W * 2 * A;
-    const qy = -(v - cur.cy) * dispH * cur.z / H * 2;
-    const ca = Math.cos(tilt.x), sa = Math.sin(tilt.x), cb = Math.cos(tilt.y), sb = Math.sin(tilt.y);
-    // R = Ry(b) * Rx(a)
-    const y1 = qy * ca, z1 = qy * sa;
-    const x2 = qx * cb + z1 * sb, z2 = -qx * sb + z1 * cb;
-    const k = 3 / (3 - z2);
-    return { x: (x2 * k / A + 1) / 2 * W, y: (1 - y1 * k) / 2 * H };
-  }
+  if (posterMode) root.classList.add('is-poster');
 
-  /* ---------------------------------------------------------------- render */
-  function paint() {
-    if (glr) {
-      glr.draw({ cx: cur.cx, cy: cur.cy, sx: dispW * cur.z / W, sy: dispH * cur.z / H, tx: tilt.x, ty: tilt.y });
-    } else {
-      const z = cur.z;
-      const x = W / 2 - cur.cx * dispW * z, y = H / 2 - cur.cy * dispH * z;
-      poster.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${z.toFixed(4)})`;
+  /* ------------------------------------------------------------------ layout: insets, poster alignment */
+  function measure() {
+    const s = stage.getBoundingClientRect();
+    const c = copy.getBoundingClientRect();
+    const d = dock.getBoundingClientRect();
+    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80;
+    box = { ...box, w: s.width, h: s.height };
+    const rel = (r, m) => ({ x0: r.left - s.left - m, x1: r.right - s.left + m, y0: r.top - s.top - m, y1: r.bottom - s.top + m });
+    const uiRects = [...dock.children].filter((el) => !el.hidden).map((el) => el.getBoundingClientRect());
+    if (!zoomed) uiRects.push(c);
+    box.ui = uiRects.filter((r) => r.width).map((r) => rel(r, 14));
+    box.ui.push({ x0: -1e4, x1: 1e4, y0: -1e4, y1: header + 8 });
+    let ins;
+    if (posterMode) ins = { left: 0, right: 0, top: 0, bottom: 0 };
+    else if (mobile()) ins = { left: 0, right: 0, top: Math.max(header, c.bottom - s.top), bottom: Math.max(0, s.bottom - d.top + 8) };
+    else {
+      // the building moves to the free side of the copy (mirrored in Arabic); vertical stays centred
+      const side = Math.round(s.width * 0.3);
+      ins = { left: isRTL() ? 0 : side, right: isRTL() ? side : 0, top: 0, bottom: 0 };
     }
-    placePins();
+    box.top = mobile() ? ins.top : header;
+    box.bottom = Math.max(0, s.bottom - d.top + 8);
+    root.style.setProperty('--hx-dock', `${Math.round(s.bottom - d.top)}px`);
+    return ins;
+  }
+  /** Place the still so its camera centre lands where the live view puts it (the engine shifts the projection by
+      (left minus right) / 2 and (top minus bottom) / 2 pixels). */
+  function alignPoster(ins) {
+    if (!posterImg) return;
+    const k = kind();
+    const P = POSTER[k];
+    const W = box.w, H = box.h;
+    const aspect = W / H;
+    // the engine keeps the vertical field of view on wide screens and the horizontal one below an aspect of 1.25
+    const liveScale = aspect >= 1.25 ? H : W / 1.25;
+    const stillScale = P.w / P.h >= 1.25 ? P.h : P.w / 1.25;
+    const s = liveScale / stillScale;
+    const cx = W / 2 + (ins.left - ins.right) / 2;
+    const cy = H / 2 + (ins.top - ins.bottom) / 2;
+    let w = P.w * s, h = P.h * s;
+    let x = cx - w / 2, y = cy - h / 2;
+    // never leave an edge uncovered: grow (and recentre) when needed
+    if (x > 0 || y > 0 || x + w < W || y + h < H || !(s > 0)) {
+      const sc = Math.max(W / P.w, H / P.h);
+      w = P.w * sc; h = P.h * sc;
+      x = clamp(cx - w / 2, W - w, 0); y = clamp(cy - h / 2, H - h, 0);
+    }
+    posterImg.style.width = `${w.toFixed(1)}px`;
+    posterImg.style.height = `${h.toFixed(1)}px`;
+    posterImg.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+  }
+  function layout() {
+    const ins = measure();
+    alignPoster(ins);
+    if (engine) {
+      engine.setInsets(ins);
+      const k = kind();
+      if (k !== layoutKind) {
+        layoutKind = k;
+        engine.setHomeView(VIEWS[k], { apply: ready && !openId && !zoomed, instant: true });
+        homeDist = dist(VIEWS[k].position, VIEWS[k].target);
+      }
+    } else layoutKind = '';
+    measureCard();
     placeCard();
   }
-  function placeStill() {
-    poster.style.width = `${dispW}px`;
-    poster.style.height = `${dispH}px`;
-    if (glr) {
-      const st = clampState({ ...rest(), z: 1 });
-      const x = W / 2 - st.cx * dispW, y = H / 2 - st.cy * dispH;
-      poster.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
-    }
-  }
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
-  function tick(now) {
-    raf = 0;
-    const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
-    last = now;
-    let moving = false;
-    if (flight) {
-      const p = clamp((now - flight.t0) / flight.dur, 0, 1);
-      const e = easeInOut(p);
-      const z = Math.exp(Math.log(flight.a.z) + (Math.log(flight.b.z) - Math.log(flight.a.z)) * e);
-      // pan in step with the change of view size, so the target grows from where it is
-      const dz = 1 / flight.b.z - 1 / flight.a.z;
-      const w = Math.abs(dz) > 1e-3 ? (1 / z - 1 / flight.a.z) / dz : e;
-      cur.z = z;
-      cur.cx = flight.a.cx + (flight.b.cx - flight.a.cx) * w;
-      cur.cy = flight.a.cy + (flight.b.cy - flight.a.cy) * w;
-      if (p >= 1) { const done = flight.done; flight = null; Object.assign(cur, tgt); done?.(); } else moving = true;
-    } else {
-      const k = 1 - Math.exp(-dt * 14);
-      for (const key of ['z', 'cx', 'cy']) {
-        const d = tgt[key] - cur[key];
-        if (Math.abs(d) > (key === 'z' ? 1e-4 : 1e-5)) { cur[key] += d * k; moving = true; } else cur[key] = tgt[key];
-      }
-    }
-    const kt = 1 - Math.exp(-dt * 4.5);
-    for (const [a, b] of [['x', 'tx'], ['y', 'ty']]) {
-      const d = tilt[b] - tilt[a];
-      if (Math.abs(d) > 1e-5) { tilt[a] += d * kt; moving = true; } else tilt[a] = tilt[b];
-    }
-    paint();
-    if (moving) request(); else last = 0;
-  }
-  function request() { if (!raf && visible) raf = requestAnimationFrame(tick); }
-  function jump() { Object.assign(cur, tgt); tilt.x = tilt.tx; tilt.y = tilt.ty; paint(); }
-
-  /* ---------------------------------------------------------------- state changes */
-  function setZoomedUI() {
-    const on = tgt.z > 1.12 || openIdx >= 0;
-    if (on !== zoomed) {
-      zoomed = on;
-      root.classList.toggle('is-zoomed', on);
-      ui = uiRects();
-      view.style.touchAction = on ? 'none' : 'pan-y';
-      if (on) loadHD();
-    }
-    if (btn.zin) btn.zin.disabled = tgt.z >= ZMAX - 1e-3;
-    if (btn.zout) btn.zout.disabled = tgt.z <= 1 + 1e-3;
-  }
-  function settle() {
-    clampState(tgt);
-    setZoomedUI();
-    if (reduced) jump(); else request();
-  }
-  function zoomAt(factor, sx = W / 2, sy = H / 2) {
-    flight = null;
-    const p = toUv(sx, sy, tgt);
-    tgt.z = clamp(tgt.z * factor, 1, ZMAX);
-    tgt.cx = p.u - (sx - W / 2) / (dispW * tgt.z);
-    tgt.cy = p.v - (sy - H / 2) / (dispH * tgt.z);
-    settle();
-  }
-  function panBy(dx, dy) {
-    flight = null;
-    tgt.cx -= dx / (dispW * tgt.z);
-    tgt.cy -= dy / (dispH * tgt.z);
-    settle();
-  }
-  function flyTo(st, done) {
-    clampState(st);
-    Object.assign(tgt, st);
-    setZoomedUI();
-    if (reduced) { flight = null; jump(); done?.(); return; }
-    const dist = Math.hypot((st.cx - cur.cx) * dispW, (st.cy - cur.cy) * dispH) / Math.max(W, H);
-    const dur = clamp(700 + 260 * Math.abs(Math.log(st.z / cur.z)) + 500 * dist, 700, 1500);
-    flight = { a: { ...cur }, b: { ...st }, t0: performance.now(), dur, done };
-    last = 0;
-    request();
-  }
-  function reset({ say = true } = {}) {
-    closeCard({ fly: false });
-    flyTo({ ...rest(), z: 1 });
-    if (say) announce(t(S.full));
-  }
-
-  /* ---------------------------------------------------------------- high-res image */
-  async function loadHD() {
-    if (hdState !== 'none') return;
-    hdState = 'loading';
-    try {
-      if (glr) {
-        if (glr.maxTex < IMG.w) { hdState = 'done'; return; }
-        const bmp = await decoded(SRC.hd);
-        if (!glr) return;
-        glr.upload(0, bmp, true);
-        bmp.close?.();
-        paint();
-      } else {
-        await loadImage(SRC.hd);
-        if (posterSrc) posterSrc.srcset = SRC.hd;
-        poster.src = SRC.hd;
-      }
-      hdState = 'done';
-    } catch (err) {
-      hdState = 'none';
-      console.warn('[hero] high-res image failed', err);
-    }
-  }
-
-  /* ---------------------------------------------------------------- pins + card */
+  /* ------------------------------------------------------------------ pins */
+  function clearPins() { pinsLayer.innerHTML = ''; pins.clear(); }
   function buildPins() {
-    PINS.forEach((p, i) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'hx-pin';
-      b.innerHTML = '<span class="hx-pin__dot" aria-hidden="true"></span>';
-      b.addEventListener('click', (e) => { e.stopPropagation(); openPin(i); });
-      b.addEventListener('pointerdown', (e) => e.stopPropagation());
-      pinsLayer.append(b);
-      pinEls.push(b);
+    clearPins();
+    if (posterMode) return;
+    hotspots.forEach((h) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'hx-pin is-off';
+      el.tabIndex = -1;
+      el.dataset.id = h.id;
+      el.setAttribute('aria-expanded', 'false');
+      el.innerHTML = '<span class="hx-pin__dot" aria-hidden="true"></span>';
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (openId === h.id) closeCard({ back: true }); else openCard(h.id);
+      });
+      el.addEventListener('pointerdown', (e) => e.stopPropagation());
+      pinsLayer.appendChild(el);
+      pins.set(h.id, el);
     });
-    paintPinText();
+    labelPins();
   }
-  function paintPinText() {
-    pinEls.forEach((b, i) => b.setAttribute('aria-label', fmt(S.pin, { name: t(PINS[i].title) })));
-    view.setAttribute('aria-label', t(S.view));
-    if (openIdx >= 0) fillCard(openIdx);
-    if (btn.full) btn.full.setAttribute('aria-label', t(document.fullscreenElement ? S.fsOut : S.fsIn));
+  function labelPins() { hotspots.forEach((h) => pins.get(h.id)?.setAttribute('aria-label', fmt(S.pin, { name: t(h.title) }))); }
+  const underUI = (x, y) => box.ui.some((r) => x > r.x0 && x < r.x1 && y > r.y0 && y < r.y1);
+  function onFrame({ hotspots: list }) {
+    lastFrame = list || [];
+    for (const p of lastFrame) {
+      const el = pins.get(p.id);
+      if (!el) continue;
+      const edge = p.x < 20 || p.y < 20 || p.x > box.w - 20 || p.y > box.h - 20;
+      const show = ready && p.visible && !edge && (p.id === openId || !underUI(p.x, p.y));
+      if (el.__show !== show) {
+        el.__show = show;
+        el.classList.toggle('is-off', !show);
+        el.tabIndex = show ? 0 : -1;
+      }
+      if (el.__occ !== p.occluded) { el.__occ = p.occluded; el.classList.toggle('is-occluded', !!p.occluded); }
+      if (show) el.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`;
+    }
+    placeCard();
+    checkZoom();
+    if (revealPending) {
+      revealPending = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('is-live')));
+    }
   }
-  function uiRects() {
-    const s = stage.getBoundingClientRect();
-    const list = [...dock.children].filter((el) => !el.hidden).map((el) => el.getBoundingClientRect());
-    if (!zoomed) list.push(copy.getBoundingClientRect());
-    list.push({ left: s.left, right: s.right, top: s.top, bottom: s.top + (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80) });
-    return list.map((r) => ({ x0: r.left - s.left - 16, x1: r.right - s.left + 16, y0: r.top - s.top - 16, y1: r.bottom - s.top + 16 }));
+
+  /* ------------------------------------------------------------------ zoom state: fade the copy when close */
+  function checkZoom() {
+    if (!engine) return;
+    const d = engine.camera.position.distanceTo(engine.controls.target);
+    const on = !!openId || d < homeDist * 0.7;
+    if (on === zoomed) return;
+    zoomed = on;
+    root.classList.toggle('is-zoomed', on);
+    measure();
   }
-  function placePins() {
-    pinEls.forEach((b, i) => {
-      const p = toScreen(PINS[i].u, PINS[i].v);
-      const out = p.x < 24 || p.y < 24 || p.x > W - 24 || p.y > H - 24 || ui.some((r) => p.x > r.x0 && p.x < r.x1 && p.y > r.y0 && p.y < r.y1);
-      const hide = out && i !== openIdx;
-      b.classList.toggle('is-off', hide);
-      b.tabIndex = hide ? -1 : 0;
-      b.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`;
-    });
+
+  /* ------------------------------------------------------------------ card */
+  function measureCard() {
+    if (card.hidden) return;
+    box.cw = card.offsetWidth;
+    box.ch = card.offsetHeight;
+  }
+  function fillCard() {
+    const i = hotspots.findIndex((h) => h.id === openId);
+    if (i < 0) return;
+    const h = hotspots[i];
+    cardEls.count.textContent = `${pad(i + 1)} / ${pad(hotspots.length)}`;
+    cardEls.title.textContent = t(h.title);
+    cardEls.text.textContent = t(h.text);
+    measureCard();
   }
   function placeCard() {
-    if (openIdx < 0 || mobile()) return;
-    const p = toScreen(PINS[openIdx].u, PINS[openIdx].v);
-    const cw = card.offsetWidth, ch = card.offsetHeight;
-    let x = isRTL() ? p.x - 40 - cw : p.x + 40;
-    x = clamp(x, 16, W - cw - 16);
-    const y = clamp(p.y - ch / 2, 96, H - ch - 112);
-    card.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    if (!openId || card.hidden) return;
+    if (mobile()) { card.style.transform = ''; return; }
+    const p = lastFrame.find((x) => x.id === openId);
+    if (!p) return;
+    const gap = 32, m = 20;
+    const { w, cw, ch } = box;
+    let x = p.x > w * 0.56 ? p.x - gap - cw : p.x + gap;
+    if (x + cw > w - m) x = p.x - gap - cw;
+    if (x < m) x = Math.min(p.x + gap, w - m - cw);
+    const y = clamp(p.y - ch / 2, box.top + 8, Math.max(box.top + 8, box.h - box.bottom - ch - 8));
+    card.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+    card.classList.toggle('is-away', !p.visible);
   }
-  function fillCard(i) {
-    cardEls.count.textContent = `${pad(i + 1)} / ${pad(PINS.length)}`;
-    cardEls.title.textContent = t(PINS[i].title);
-    cardEls.text.textContent = t(PINS[i].text);
-  }
-  function pinView(i) {
-    const p = PINS[i];
-    const z = mobile() ? Math.max(1.3, p.z * 0.7) : p.z;
-    // where the detail should land on screen: beside the card (desktop) or above the bottom card (phones)
-    const fx = mobile() ? 0.5 : (isRTL() ? 0.6 : 0.4);
-    const fy = mobile() ? 0.36 : 0.5;
-    return { z, cx: p.u - (fx - 0.5) * W / (dispW * z), cy: p.v - (fy - 0.5) * H / (dispH * z) };
-  }
-  function openPin(i, { focusCard = true } = {}) {
-    const first = openIdx < 0;
-    openIdx = (i + PINS.length) % PINS.length;
-    pinEls.forEach((b, k) => b.classList.toggle('is-active', k === openIdx));
-    fillCard(openIdx);
-    card.classList.add('is-away');
-    card.hidden = false;
-    setZoomedUI();
-    flyTo(pinView(openIdx), () => {
-      card.classList.remove('is-away');
-      card.classList.remove('is-open');
-      void card.offsetWidth;
-      card.classList.add('is-open');
-      placeCard();
+  function openCard(id, { focus = true } = {}) {
+    if (!engine || !hotspots.some((h) => h.id === id)) return;
+    stopAuto();
+    engage(true);
+    const first = !openId;
+    openId = id;
+    pins.forEach((el, k) => {
+      el.setAttribute('aria-expanded', String(k === id));
+      el.classList.toggle('is-active', k === id);
     });
+    card.hidden = false;
+    fillCard();
     placeCard();
-    if (first && focusCard) cardEls.close.focus({ preventScroll: true });
+    card.classList.remove('is-open');
+    void card.offsetWidth;
+    card.classList.add('is-open');
+    engine.focusHotspot(id, { distance: (PIN_DIST[id] || 36) * (mobile() ? 1.35 : 1), duration: reduced ? 0 : 1400 });
+    checkZoom();
+    if (first && focus) cardEls.close?.focus({ preventScroll: true });
   }
-  function closeCard({ fly = true, focusPin = false } = {}) {
-    if (openIdx < 0) return;
-    const was = openIdx;
-    openIdx = -1;
+  function closeCard({ back = false, focusPin = false } = {}) {
+    if (!openId) return;
+    const id = openId;
+    openId = null;
     card.hidden = true;
     card.classList.remove('is-open', 'is-away');
-    pinEls.forEach((b) => b.classList.remove('is-active'));
-    if (fly) { flyTo({ ...rest(), z: 1 }); announce(t(S.full)); } else setZoomedUI();
-    if (focusPin) pinEls[was]?.focus({ preventScroll: true });
+    pins.forEach((el) => { el.setAttribute('aria-expanded', 'false'); el.classList.remove('is-active'); });
+    if (back) { engine?.setView('aerial'); announce(t(S.home)); }
+    if (focusPin) {
+      const el = pins.get(id);
+      if (el && !el.classList.contains('is-off')) el.focus({ preventScroll: true });
+      else engine?.canvas.focus({ preventScroll: true });
+    }
+    checkZoom();
+  }
+  function stepCard(dir) {
+    if (!openId || !hotspots.length) return;
+    const i = hotspots.findIndex((h) => h.id === openId);
+    openCard(hotspots[(i + dir + hotspots.length) % hotspots.length].id, { focus: false });
   }
 
-  /* ---------------------------------------------------------------- engagement + hint */
+  /* ------------------------------------------------------------------ controls */
+  function stopAuto() {
+    if (!autoOn) return;
+    autoOn = false;
+    engine?.setAutoRotate(false);
+  }
+  function resetAll() {
+    if (!engine) return;
+    closeCard();
+    engine.setView('aerial');
+    autoOn = autoAllowed;
+    engine.setAutoRotate(autoOn);
+    announce(t(S.home));
+  }
+  function zoomBy(f) {
+    if (!engine) return;
+    stopAuto();
+    engine.zoom(f, { duration: reduced ? 0 : 420 });
+  }
+
+  /* ------------------------------------------------------------------ wheel engagement + hint */
   function engage(on) {
     if (engaged === on) return;
     engaged = on;
+    engine?.setWheelZoom(on);
+    // while engaged the wheel belongs to the viewer: keep Lenis from smooth-scrolling the page as well
+    engine?.canvas.toggleAttribute('data-lenis-prevent', on);
     root.classList.toggle('is-engaged', on);
-    if (on) { view.setAttribute('data-lenis-prevent', ''); root.classList.remove('is-hint'); } else view.removeAttribute('data-lenis-prevent');
+    if (on) root.classList.remove('is-hint');
   }
   function showHint() {
-    if (!fine || !hint) return;
+    if (!fine || !hint || !ready) return;
     root.classList.add('is-hint');
     clearTimeout(hintTimer);
     hintTimer = setTimeout(() => root.classList.remove('is-hint'), 1800);
   }
 
-  /* ---------------------------------------------------------------- input */
-  const pts = new Map();
-  let drag = null;
-  let pinch = null;
-  let lastTap = { t: 0, x: 0, y: 0 };
-  const local = (e) => { const r = stage.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-
-  view.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0 && e.pointerType === 'mouse') return;
-    engage(true);
-    const p = local(e);
-    pts.set(e.pointerId, p);
-    if (pts.size === 2) {
-      const [a, b] = [...pts.values()];
-      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, m: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } };
-      drag = null;
-    } else if (pts.size === 1) {
-      const canPan = e.pointerType === 'mouse' || zoomed;
-      drag = canPan ? { x: p.x, y: p.y, moved: 0 } : null;
-      if (canPan) { try { view.setPointerCapture(e.pointerId); } catch { /* ignore */ } root.classList.add('is-dragging'); }
-    }
-  });
-  view.addEventListener('pointermove', (e) => {
-    if (!pts.has(e.pointerId)) return;
-    const p = local(e);
-    pts.set(e.pointerId, p);
-    if (pinch && pts.size >= 2) {
-      const [a, b] = [...pts.values()];
-      const d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
-      const m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-      panBy(m.x - pinch.m.x, m.y - pinch.m.y);
-      zoomAt(d / pinch.d, m.x, m.y);
-      pinch = { d, m };
-      Object.assign(cur, tgt);
-      paint();
-    } else if (drag) {
-      const dx = p.x - drag.x, dy = p.y - drag.y;
-      drag.moved += Math.abs(dx) + Math.abs(dy);
-      drag.x = p.x; drag.y = p.y;
-      if (openIdx >= 0 && drag.moved > 6) closeCard({ fly: false });
-      panBy(dx, dy);
-    }
-  });
-  const endPointer = (e) => {
-    if (!pts.has(e.pointerId)) return;
-    const p = pts.get(e.pointerId);
-    pts.delete(e.pointerId);
-    if (pts.size < 2) pinch = null;
-    if (pts.size === 0) {
-      const tap = e.type === 'pointerup' && (!drag || drag.moved < 8);
-      drag = null;
-      root.classList.remove('is-dragging');
-      if (tap && e.pointerType !== 'mouse') {
-        const now = performance.now();
-        if (now - lastTap.t < 320 && Math.hypot(p.x - lastTap.x, p.y - lastTap.y) < 36) { doubleAt(p.x, p.y); lastTap.t = 0; touchDbl = now; } else lastTap = { t: now, x: p.x, y: p.y };
-      }
-    }
-  };
-  view.addEventListener('pointerup', endPointer);
-  view.addEventListener('pointercancel', endPointer);
-  let touchDbl = 0;
-  view.addEventListener('dblclick', (e) => { if (performance.now() - touchDbl < 600) return; const p = local(e); doubleAt(p.x, p.y); });
-  function doubleAt(x, y) {
-    closeCard({ fly: false });
-    if (tgt.z >= ZMAX - 0.01) reset(); else zoomAt(2.2, x, y);
+  /* ------------------------------------------------------------------ loading */
+  function fallback() {
+    root.classList.remove('is-loading', 'is-live');
+    root.classList.add('is-static');
+    ready = false;
+    clearPins();
+    closeCard();
+    if (bar) bar.hidden = true;
+    if (fallbackLink) fallbackLink.hidden = false;
+    try { engine?.dispose(); } catch { /* ignore */ }
+    engine = null;
+    layout();
+  }
+  function onLoad({ hotspots: hs }) {
+    hotspots = Array.isArray(hs) ? hs : [];
+    buildPins();
+    ready = true;
+    root.classList.remove('is-loading');
+    revealPending = true;
+    if (autoOn) setTimeout(() => { if (autoOn) engine?.setAutoRotate(true); }, 1500);
+    layout();
   }
 
-  view.addEventListener('wheel', (e) => {
-    const pinchGesture = e.ctrlKey || e.metaKey;
-    if (!engaged && !pinchGesture) { showHint(); return; }
-    e.preventDefault();
-    const p = local(e);
-    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * H : e.deltaY;
-    if (openIdx >= 0) closeCard({ fly: false });
-    zoomAt(Math.exp(-clamp(dy, -240, 240) * (pinchGesture ? 0.01 : 0.0022)), p.x, p.y);
-  }, { passive: false });
-
-  function setTiltFrom(e) {
-    if (reduced || !glr) return;
-    const r = stage.getBoundingClientRect();
-    const nx = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1);
-    const ny = clamp((e.clientY - r.top) / r.height * 2 - 1, -1, 1);
-    const k = 1 / Math.sqrt(cur.z);
-    tilt.ty = nx * TILT * k;
-    tilt.tx = ny * TILT * 0.7 * k;
-    request();
+  async function boot() {
+    if (!hasWebGL2()) { fallback(); return; }
+    root.classList.add('is-loading');
+    let mod;
+    try {
+      mod = await import('../studio/engine.js');
+      const k = kind();
+      engine = mod.createStudio(view, {
+        model: null,
+        controls: !posterMode,
+        ui: false,
+        hotspots: !posterMode,
+        autoRotate: false,
+        quality: 'auto',
+        touchAction: 'pan-y',
+        wheelZoom: false,
+        clickAction: 'none',
+        hour: HOUR,
+        homeView: VIEWS[k],
+        zoomToCursor: true,
+        minTargetY: 1,
+      });
+    } catch (err) {
+      console.warn('[home] 3D viewer unavailable', err);
+      fallback();
+      return;
+    }
+    layoutKind = kind();
+    homeDist = dist(VIEWS[layoutKind].position, VIEWS[layoutKind].target);
+    autoAllowed = !reduced && !engine.lowPower && !qa && !posterMode;
+    autoOn = autoAllowed;
+    const c = engine.controls;
+    c.autoRotateSpeed = 0.35;
+    c.minDistance = 2.5;
+    c.maxDistance = 190;
+    c.maxPolarAngle = Math.PI * 0.485;
+    c.zoomSpeed = 1.1;
+    const cv = engine.canvas;
+    cv.setAttribute('aria-label', t(S.canvas));
+    cv.setAttribute('aria-roledescription', t(S.role));
+    cv.setAttribute('aria-describedby', 'hx-help');
+    engine.on('load', onLoad);
+    engine.on('frame', onFrame);
+    engine.on('interact', () => { stopAuto(); if (openId) closeCard(); });
+    engine.on('contextlost', () => { console.warn('[home] WebGL context lost'); fallback(); });
+    layout();
+    try {
+      await engine.load(MODEL, { instantCamera: true });
+    } catch (err) {
+      console.warn('[home] 3D model failed to load', err);
+      fallback();
+      return;
+    }
+    // the engine's own limit is generous for the studio; the hero keeps the camera near the building
+    c.maxDistance = 190;
   }
-  root.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') setTiltFrom(e); });
-  root.addEventListener('pointerdown', (e) => { if (!e.target.closest('a')) engage(true); });
-  root.addEventListener('pointerleave', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    engage(false);
-    tilt.tx = 0; tilt.ty = 0;
-    request();
-  });
 
-  view.addEventListener('keydown', (e) => {
-    const step = 0.12;
-    const k = e.key;
-    let used = true;
-    if (k === 'ArrowLeft') panBy(W * step, 0);
-    else if (k === 'ArrowRight') panBy(-W * step, 0);
-    else if (k === 'ArrowUp') panBy(0, H * step);
-    else if (k === 'ArrowDown') panBy(0, -H * step);
-    else if (k === '+' || k === '=') zoomAt(1.5);
-    else if (k === '-' || k === '_') zoomAt(1 / 1.5);
-    else if (k === '0') reset();
-    else used = false;
-    if (used) { e.preventDefault(); if (k !== '0') announce(fmt(S.zoom, { n: Math.round(tgt.z * 100) })); }
-  });
-  root.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (openIdx >= 0) { e.stopPropagation(); closeCard({ focusPin: true }); } else engage(false);
-  });
-
-  btn.zin?.addEventListener('click', () => { closeCard({ fly: false }); zoomAt(1.6); announce(fmt(S.zoom, { n: Math.round(tgt.z * 100) })); });
-  btn.zout?.addEventListener('click', () => { closeCard({ fly: false }); zoomAt(1 / 1.6); announce(fmt(S.zoom, { n: Math.round(tgt.z * 100) })); });
-  btn.reset?.addEventListener('click', () => reset());
-  cardEls.close.addEventListener('click', () => closeCard({ focusPin: true }));
-  $$('[data-hx-card-step]', card).forEach((b) => b.addEventListener('click', () => openPin(openIdx + Number(b.dataset.hxCardStep), { focusCard: false })));
+  /* ------------------------------------------------------------------ wiring */
+  btn.zin?.addEventListener('click', () => zoomBy(0.72));
+  btn.zout?.addEventListener('click', () => zoomBy(1.38));
+  btn.reset?.addEventListener('click', resetAll);
+  cardEls.close?.addEventListener('click', () => closeCard({ back: true, focusPin: true }));
+  $$('[data-hx-card-step]', card).forEach((b) => b.addEventListener('click', () => stepCard(Number(b.dataset.hxCardStep))));
   card.addEventListener('pointerdown', (e) => e.stopPropagation());
+
+  // wheel zoom only after a press inside the viewer; before that, a hint and the page scrolls
+  view.addEventListener('wheel', (e) => { if (!engaged && !(e.ctrlKey || e.metaKey)) showHint(); }, { passive: true });
+  root.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('a')) return;
+    if (e.target.closest('.hx__stage, .hx-card, .hx__bar')) { engage(true); stopAuto(); }
+  }, true);
+  root.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') engage(false); });
+
+  // keyboard: arrows orbit, plus / minus zoom, 0 resets, Esc closes the card and gives the wheel back
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (openId) { e.preventDefault(); closeCard({ back: true, focusPin: true }); }
+      engage(false);
+      return;
+    }
+    if (!engine || e.target !== engine.canvas || e.altKey || e.metaKey || e.ctrlKey) return;
+    const a = 0.16;
+    let handled = true;
+    switch (e.key) {
+      case 'ArrowLeft': engine.rotate(-a, 0); break;
+      case 'ArrowRight': engine.rotate(a, 0); break;
+      case 'ArrowUp': engine.rotate(0, -a * 0.6); break;
+      case 'ArrowDown': engine.rotate(0, a * 0.6); break;
+      case '+': case '=': zoomBy(0.75); break;
+      case '-': case '_': zoomBy(1.33); break;
+      case '0': case 'Home': resetAll(); break;
+      default: handled = false;
+    }
+    if (handled) { e.preventDefault(); e.stopPropagation(); stopAuto(); }
+  }, true);
 
   if (btn.full && document.fullscreenEnabled && root.requestFullscreen) {
     btn.full.hidden = false;
@@ -623,97 +467,40 @@ export function initHero() {
     });
   }
 
-  /* ---------------------------------------------------------------- layout + lifecycle */
-  function relayout() {
-    const wasMobile = mobile();
-    measure();
-    ui = uiRects();
-    root.style.setProperty('--hx-dock', `${Math.round(stage.getBoundingClientRect().bottom - dock.getBoundingClientRect().top)}px`);
-    if (glr) {
-      const canvas = glr.gl.canvas;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(4.2e6 / (W * H)));
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-    }
-    placeStill();
-    if (openIdx >= 0) Object.assign(tgt, pinView(openIdx));
-    else if (!zoomed || wasMobile !== mobile()) Object.assign(tgt, { ...rest(), z: zoomed ? tgt.z : 1 });
-    clampState(tgt);
-    flight = null;
-    jump();
-  }
-
-  // static layout for the still before anything else (CSS mode moves it, WebGL mode keeps it as the first paint)
-  poster.style.transformOrigin = '0 0';
-  view.tabIndex = 0;
-  view.setAttribute('role', 'application');
-  view.setAttribute('aria-describedby', 'hx-help');
-  view.style.touchAction = 'pan-y';
-  buildPins();
-  measure();
-  Object.assign(tgt, clampState({ ...rest(), z: 1 }));
-  Object.assign(cur, tgt);
-  root.classList.add('is-css');
-  relayout();
-  setZoomedUI();
-
-  if ('ResizeObserver' in window) {
-    let pending = 0;
-    new ResizeObserver(() => { cancelAnimationFrame(pending); pending = requestAnimationFrame(relayout); }).observe(stage);
-  } else window.addEventListener('resize', relayout);
-  // pins avoid the copy, which fades in late: refresh the UI areas once fonts and the intro are settled
-  const refreshUI = () => { ui = uiRects(); placePins(); };
-  document.fonts?.ready.then(refreshUI);
+  // off-screen: give the wheel back; the engine pauses its own rendering
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([en]) => {
-      visible = en.isIntersecting;
-      if (!visible) engage(false); else request();
-    }).observe(root);
+    new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) engage(false); }, { threshold: 0 }).observe(root);
   }
-  root.addEventListener('transitionend', (e) => { if (e.target === copy) refreshUI(); });
-  onLang(() => { paintPinText(); refreshUI(); paint(); });
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(rafThrottle(layout));
+    [stage, copy, dock].forEach((el) => ro.observe(el));
+  } else window.addEventListener('resize', rafThrottle(layout));
+  root.addEventListener('transitionend', (e) => { if (e.target === copy) measure(); });
 
-  whenLoaded().then(() => {
-    root.classList.add('is-ready');
-    setTimeout(refreshUI, 1400);
-    if (qa || !hasWebGL()) return;
-    startGL().catch((err) => {
-      console.warn('[hero] WebGL view unavailable, using the still', err);
-      glr = null;
-      root.classList.remove('is-live');
-      root.classList.add('is-css');
-      relayout();
-    });
+  onLang(() => {
+    labelPins();
+    engine?.canvas.setAttribute('aria-label', t(S.canvas));
+    engine?.canvas.setAttribute('aria-roledescription', t(S.role));
+    if (btn.full) btn.full.setAttribute('aria-label', t(document.fullscreenElement ? S.fsOut : S.fsIn));
+    if (openId) fillCard();
+    layout();
   });
 
-  async function startGL() {
-    const canvas = document.createElement('canvas');
-    canvas.setAttribute('aria-hidden', 'true');
-    const r = createGL(canvas);
-    if (!r) throw new Error('no context');
-    const [img, depth] = await Promise.all([decoded(poster.currentSrc || poster.src), decoded(SRC.depth)]);
-    r.upload(0, img, true);
-    r.upload(1, depth, false);
-    img.close?.();
-    depth.close?.();
-    canvas.addEventListener('webglcontextlost', (e) => {
-      e.preventDefault();
-      glr = null;
-      canvas.remove();
-      root.classList.remove('is-live');
-      root.classList.add('is-css');
-      hdState = 'none';
-      relayout();
-    });
-    view.append(canvas);
-    glr = r;
-    root.classList.remove('is-css');
-    relayout();
-    requestAnimationFrame(() => root.classList.add('is-live'));
-    // the high-res image after first paint: right away on desktop, on the first zoom on touch screens
-    if (fine) {
-      const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 600));
-      idle(() => loadHD(), { timeout: 2500 });
-    }
-  }
+  /* ------------------------------------------------------------------ boot: still first, engine after first paint */
+  layout();
+  if (posterImg && !posterImg.complete) posterImg.addEventListener('load', layout, { once: true });
+  whenLoaded().then(() => {
+    root.classList.add('is-ready');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const go = () => boot().catch((err) => { console.warn('[home] 3D hero failed', err); fallback(); });
+      if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 600 });
+      else setTimeout(go, 60);
+    }));
+  });
+
+  // read-only handle for QA scripts and the still renderer
+  Object.defineProperty(window, 'MOBCO_HERO', {
+    configurable: true,
+    get: () => ({ engine, ready, live: root.classList.contains('is-live'), openId, engaged, autoOn, zoomed }),
+  });
 }
