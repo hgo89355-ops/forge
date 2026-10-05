@@ -46,7 +46,7 @@ export const meta = {
     { id: 'offices', position: [11, 15.2, 0.4],
       title: { en: 'Offices and clinics', ar: 'مكاتب وعيادات' },
       text: { en: 'The glazed upper floors hold office and clinic spaces.', ar: 'تضم الطوابق الزجاجية العليا مساحات للمكاتب والعيادات.' } },
-    { id: 'shops', position: [-14, 3.2, -1.6],
+    { id: 'shops', position: [6, 3.2, -1.6],
       title: { en: 'Shops', ar: 'المحلات' },
       text: { en: 'Retail opens straight onto the plaza at street level.', ar: 'تنفتح المحلات مباشرة على الساحة في مستوى الشارع.' } },
     { id: 'plaza', position: [6, 0.9, 16],
@@ -223,8 +223,8 @@ export function build(THREE, ctx = {}) {
     stoneLight: std('stone-light', { color: 0xddd7cc, roughness: 0.74 }),
     render:     std('render-wall', { color: 0xb8b1a5, roughness: 0.86 }),
     concrete:   std('concrete-slab', { color: 0x8d8c88, roughness: 0.9 }),
-    spandrel:   std('spandrel-dark', { color: 0x24303c, roughness: 0.06, metalness: 0.55, envMapIntensity: 2.4 }),
-    plenum:     std('plenum-band', { color: 0x15181c, roughness: 0.9 }),
+    spandrel:   std('spandrel-dark', { color: 0x3a4d62, roughness: 0.05, metalness: 0.62, envMapIntensity: 2.8 }),
+    plenum:     std('plenum-band', { color: 0x262a30, roughness: 0.9 }),
     soffit:     std('timber-soffit', { color: 0x9a6e48, roughness: 0.62 }),
     timberDeck: std('timber-deck', { color: 0x8e6a4a, roughness: 0.72 }),
     gravel:     std('roof-gravel', { color: 0x9b968c, roughness: 1 }),
@@ -503,8 +503,8 @@ export function build(THREE, ctx = {}) {
         // clustered tones: slow pattern + noise so reflective patches read like the render
         const hv = hash(faceId, i, row), hb = hash(faceId + 7, Math.floor(i / 3), Math.floor(row / 2));
         let tone = TONE.clear;
-        if (hb > 0.62 || hv > 0.86) tone = TONE.refl;
-        if (hv < 0.07 || (hb < 0.08 && hv < 0.5)) tone = TONE.dark;
+        if (hb > 0.52 || hv > 0.8) tone = TONE.refl;
+        if (hv < 0.05 || (hb < 0.06 && hv < 0.4)) tone = TONE.dark;
         const off = offsetPanels ? [0, 0, 0, 0.14, 0.28][Math.floor(hash(faceId + 3, i, row) * 5)] : 0;
         const o = 0.05 + off;
         const mat = tone === TONE.dark ? M.spandrel : tone === TONE.refl ? M.glassRefl : M.glassClear;
@@ -1049,7 +1049,19 @@ export function build(THREE, ctx = {}) {
   const bowls = [[-28, 4.6], [-12, 4.6], [4, 4.6], [27, 4.4], [27, -7.5], [55, 15], [-40, 18]];
   instanced(site, 'planter-bowls', bowlGeo, M.stone, bowls.map(([x, z]) => mtx(x, 0, z)));
   for (const [x, z] of bowls) for (let i = 0; i < 3; i++) shrubMs.push(mtx(x + rr(-0.5, 0.5), 0.8, z + rr(-0.5, 0.5), rr(0.6, 0.85), rr(0.5, 0.7), rr(0.6, 0.85), 0, rr(0, 6)));
-  const shrubGeo = (() => { const g = new THREE.IcosahedronGeometry(1, 1); const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const k = 0.82 + 0.3 * hash(Math.round(p.getX(i) * 9), Math.round(p.getY(i) * 9), Math.round(p.getZ(i) * 9)); p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); } g.computeVertexNormals(); return G(g); })();
+  // lumpy crown: displaced icosphere with smooth (radial) normals, so it reads soft rather than faceted
+  const lumpy = (detail) => {
+    const g = new THREE.IcosahedronGeometry(1, detail); const p = g.attributes.position; const nrm = g.attributes.normal;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+      const k = 0.84 + 0.26 * hash(Math.round(x * 5), Math.round(y * 5), Math.round(z * 5));
+      p.setXYZ(i, x * k, y * k, z * k);
+      nrm.setXYZ(i, x, y, z);
+    }
+    return G(g);
+  };
+  const shrubGeo = lumpy(HIGH ? 2 : 1);
+  const crownGeo = lumpy(1);
 
   // deciduous trees: trunk + branches (merged), crown of leaf cards (alpha)
   const branchParts = [cy(0.07, 0.13, 3.2, 7, 0, 1.6, 0, 0x5d5046)];
@@ -1074,6 +1086,8 @@ export function build(THREE, ctx = {}) {
   // street trees along the boulevards and the far verges (simple rounded crowns, they read as a tree line)
   const stTrunk = [], stCrown = [], stCrownCol = [];
   const streetTree = (x, z) => {
+    // keep the hero's camera positions clear
+    if (Math.hypot(x - 50, z - 44) < 14 || Math.hypot(x - 56, z - 54) < 16) return;
     const s = rr(0.85, 1.25);
     stTrunk.push(mtx(x, 0, z, 0.9 * s, 1.0 * s, 0.9 * s));
     for (let i = 0; i < 3; i++) {
@@ -1085,7 +1099,7 @@ export function build(THREE, ctx = {}) {
   for (let z = -30; z <= 40; z += rr(9, 13)) { streetTree(-78.5, z); streetTree(78.5, z); streetTree(-100, z); streetTree(100, z); }
   const stTrunkGeo = merge([cy(0.1, 0.16, 3.4, 6, 0, 1.7, 0, 0x5d5046)]);
   instanced(site, 'street-tree-trunks', stTrunkGeo, M.siteObj, stTrunk);
-  instanced(site, 'street-tree-crowns', shrubGeo, M.shrub, stCrown, { colors: stCrownCol });
+  instanced(site, 'street-tree-crowns', crownGeo, M.shrub, stCrown, { colors: stCrownCol });
   instanced(site, 'tree-wood', treeWoodGeo, M.siteObj, woodMs);
   instanced(site, 'tree-leaves', cardGeo, M.leaves, cardMs);
   instanced(site, 'shrubs', shrubGeo, M.shrub, shrubMs);
@@ -1255,21 +1269,18 @@ export function build(THREE, ctx = {}) {
   }
 
   /* ================================================================ */
-  /*  NIGHT LAMPS (8 at most; intensity 0 until the engine ramps them) */
+  /*  NIGHT LAMPS (5; each one costs per pixel; intensity 0 until dusk) */
   /* ================================================================ */
   const lamps = [];
   function lamp(name, x, y, z, color, nightIntensity, distance) {
     const l = new THREE.PointLight(color, 0, distance, 2); l.name = name; l.position.set(x, y, z);
     l.castShadow = false; l.userData.nightIntensity = nightIntensity; site.add(l); lamps.push(l);
   }
-  lamp('lamp-arcade-c', 10, 4.2, -0.8, 0xffc890, 60, 16);
-  lamp('lamp-arcade-f', -16, 4.2, -0.8, 0xffc890, 60, 16);
-  lamp('lamp-arcade-w', -47, 4.2, -0.8, 0xffc890, 50, 16);
-  lamp('lamp-lobby', C.x1 + 0.4, 4.2, -10, 0xffc890, 55, 16);
-  lamp('lamp-pavilion', 40, 3.6, -5.6, 0xffc27a, 70, 18);
+  lamp('lamp-arcade-c', 2, 4.2, -0.6, 0xffc890, 90, 22);
+  lamp('lamp-arcade-w', -34, 4.2, -0.6, 0xffc890, 80, 22);
+  lamp('lamp-lobby', C.x1 + 0.4, 4.2, -10, 0xffc890, 60, 16);
+  lamp('lamp-pavilion', 40, 3.6, -5.6, 0xffc27a, 75, 18);
   lamp('lamp-pool', 5, 1.2, 13.5, 0x7fd0ff, 60, 30);
-  lamp('lamp-plaza-e', 46, 5.5, 14, 0xffd6a0, 45, 22);
-  lamp('lamp-plaza-w', -36, 5.5, 14, 0xffd6a0, 45, 22);
 
   /* ================================================================ */
   /*  ANIMATION + DISPOSE                                             */
@@ -1298,5 +1309,18 @@ export function build(THREE, ctx = {}) {
     root.removeFromParent();
   }
 
-  return { root, floors, site, nightMaterials, lamps, update, dispose };
+  // camera keep-out boxes (root space): zooming stops at the glass instead of entering the building
+  const colliders = [
+    { min: [C.x0, 0, C.z0], max: [C.x1 + 0.35, SOFFIT + 0.2, C.z1 - REC] },
+    { min: [C.x0, SOFFIT, C.z0], max: [C.x1 + 0.4, ROOF + 1.5, C.z1 + 0.4] },
+    { min: [F.x0, 0, F.z0], max: [F.x1, SOFFIT + 0.2, F.z1 - REC] },
+    { min: [F.x0, SOFFIT, F.z0], max: [F.x1, ROOF + 1.5, F.z1 + 0.75] },
+    { min: [W.x0, 0, W.z0], max: [W.x1, SOFFIT + 0.2, W.z1 - REC] },
+    { min: [W.x0, SOFFIT, W.z0], max: [W.x1, ROOF + 1.3, W.z1 + 0.45] },
+    { min: [K.x0, 0, K.z0], max: [K.x1, ROOF + 2.6, K.z1] },
+    { min: [P.x0, 0, P.z0], max: [P.x1, P.h + 1.2, P.z1] },
+    { min: [P.x0 - 0.6, P.h - 0.1, P.z0 - 0.6], max: [P.x1 + 0.9, P.h + 1.2, P.z1 + 2.6] },
+  ];
+
+  return { root, floors, site, nightMaterials, lamps, update, dispose, colliders };
 }

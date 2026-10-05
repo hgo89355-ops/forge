@@ -89,7 +89,7 @@ export function createKit(THREE, ctx = {}) {
     const mat = phys({
       name, color, roughness: opts.roughness ?? 0.04, metalness: 0.05, envMap, envMapIntensity: 1.25,
       clearcoat: high ? 1 : 0, clearcoatRoughness: 0.05, emissive: opts.emissive ?? 0x2aa8c0, emissiveIntensity: 0,
-      normalMap: waterNormal(), normalScale: new THREE.Vector2(0.35, 0.35),
+      normalMap: waterNormal(), normalScale: new THREE.Vector2(0.16, 0.16),
     });
     mat.userData.baseEnvMapIntensity = 1.25;
     mat.userData.__nightMax = opts.nightMax ?? 0.45;
@@ -439,7 +439,23 @@ export function createKit(THREE, ctx = {}) {
       trunk,
       crowns: [crownGeo(3, high ? 6 : 5), crownGeo(17, high ? 5 : 4), crownGeo(29, high ? 7 : 5)],
       trunkMat: std({ name: 'tree-trunk-bark', color: 0x6b5a48, roughness: 1 }),
-      crownMat: std({ name: 'tree-foliage', color: 0xffffff, vertexColors: true, roughness: 0.92, metalness: 0 }),
+      crownMat: (() => {
+        // leafy cut-out texture: the lobes read as clumps of leaves with ragged edges and gaps
+        const leaf = canvasTex(256, 256, (c, w, h) => {
+          const rnd = makeRng(611);
+          c.clearRect(0, 0, w, h);
+          for (let i = 0; i < 1150; i++) {
+            const x = rnd() * w, y = rnd() * h, r = 3 + rnd() * 5, a = rnd() * Math.PI;
+            const v = 150 + Math.round(rnd() * 105);
+            c.fillStyle = `rgb(${v},${v},${v})`;
+            for (const [ox, oy] of [[0, 0], [w, 0], [-w, 0], [0, h], [0, -h]]) {
+              c.beginPath(); c.ellipse(x + ox, y + oy, r, r * 0.55, a, 0, Math.PI * 2); c.fill();
+            }
+          }
+        }, { repeat: [3, 3] });
+        const mt = std({ name: 'tree-foliage', color: 0xffffff, vertexColors: true, roughness: 0.92, metalness: 0, map: leaf, alphaTest: leaf ? 0.45 : 0, side: leaf ? THREE.DoubleSide : THREE.FrontSide });
+        return mt;
+      })(),
     };
     return _trees;
   }

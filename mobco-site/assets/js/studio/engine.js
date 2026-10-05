@@ -126,6 +126,11 @@ export function createStudio(container, options = {}) {
   renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap; // r186: PCF is the soft-filtered map (PCFSoftShadowMap was removed)
+  // The sun's shadow map is re-rendered only when something that casts or moves changes (time, model, explode,
+  // section, materials); orbiting the camera reuses it, which roughly halves the cost of a frame.
+  renderer.shadowMap.autoUpdate = false;
+  let shadowDirty = true;
+  const shadowsChanged = () => { shadowDirty = true; };
   renderer.localClippingEnabled = true;
   const canvas = renderer.domElement;
   canvas.className = 'studio-canvas';
@@ -278,6 +283,30 @@ export function createStudio(container, options = {}) {
     t.z = clamp(t.z, -r, r);
     t.y = clamp(t.y, minTargetY, model.height + 30);
   }
+  /** Models may list collider boxes (built.colliders, root space): the camera never enters them, so zooming in stops
+      at the facade (looking through the glass) instead of passing into walls. Returns true when it pushed back. */
+  const prevCam = new THREE.Vector3(), prevTgt = new THREE.Vector3();
+  let prevValid = false;
+  const inside = (p) => model.colliders.some((b) => b.containsPoint(p));
+  function keepOut() {
+    if (!model || !model.colliders.length) { prevValid = false; return false; }
+    if (tween) { prevValid = false; return false; }
+    let pushed = false;
+    if (inside(camera.position)) {
+      if (prevValid && !inside(prevCam)) {
+        camera.position.copy(prevCam);
+        controls.target.copy(prevTgt);
+        pushed = true;
+      } else {
+        // started inside (e.g. an authored view): lift the camera out above the box
+        const b = model.colliders.find((x) => x.containsPoint(camera.position));
+        camera.position.y = b.max.y + 0.5;
+        pushed = true;
+      }
+    }
+    prevCam.copy(camera.position); prevTgt.copy(controls.target); prevValid = true;
+    return pushed;
+  }
   /** Near plane follows the orbit distance: close-ups through glass need a small near plane, wide views keep
       depth precision. Also keeps the camera above the ground. */
   let nearNow = camera.near;
@@ -380,6 +409,7 @@ export function createStudio(container, options = {}) {
     if (tween) { stepTween(t); dirty = true; }
     if (revealTween) { stepReveal(t); dirty = true; }
     if (controls.update(dt)) dirty = true;
+    if (keepOut()) dirty = true;
 
     // explode easing
     if (Math.abs(state.explode - state.explodeTarget) > 0.0005) {
@@ -398,12 +428,14 @@ export function createStudio(container, options = {}) {
       dirty = true;
     }
     if (model?.update && (!lowPower || dirty)) {
-      try { model.update(dt, elapsed); } catch (e) { console.warn('[studio] model update failed', e); model.update = null; }
+      // a model's update() may return true when something that casts a shadow moved (refreshes the shadow map)
+      try { if (model.update(dt, elapsed) === true) shadowsChanged(); } catch (e) { console.warn('[studio] model update failed', e); model.update = null; }
       dirty = true;
     }
     if (!dirty) return;
     needsRender = false;
     fitNear();
+    if (shadowDirty) { shadowDirty = false; renderer.shadowMap.needsUpdate = true; }
     const r0 = PERF ? performance.now() : 0;
     draw();
     if (PERF && perfFrames++ < 12) plog('frame ms', Math.round(performance.now() - r0), renderer.info.render.calls, renderer.info.render.triangles);
@@ -450,8 +482,21 @@ export function createStudio(container, options = {}) {
   }
 
   /* -------------------------------------------------------------- camera tweens */
+  /** Last point on the segment from -> to that is outside every collider (the whole segment when none). */
+  function safeDest(from, to) {
+    if (!model || !model.colliders.length || !inside(to)) return to;
+    const v = new THREE.Vector3();
+    let last = from.clone();
+    for (let i = 1; i <= 32; i++) {
+      v.lerpVectors(from, to, i / 32);
+      if (inside(v)) break;
+      last.copy(v);
+    }
+    return last;
+  }
   function tweenCamera(toPos, toTarget, { duration = 1300, instant = false, locked = false } = {}) {
-    const p = new THREE.Vector3().fromArray(toPos.toArray ? toPos.toArray() : toPos);
+    let p = new THREE.Vector3().fromArray(toPos.toArray ? toPos.toArray() : toPos);
+    if (!instant) p = safeDest(camera.position, p);
     const tg = new THREE.Vector3().fromArray(toTarget.toArray ? toTarget.toArray() : toTarget);
     if (instant || still()) {
       tween = null;
@@ -551,6 +596,7 @@ export function createStudio(container, options = {}) {
   /* -------------------------------------------------------------- explode */
   function applyExplode() {
     if (!model) return;
+    shadowsChanged();
     const e = easeOutCubic(clamp(state.explode, 0, 1));
     model.floors.forEach((f) => { f.group.position.y = f.baseY + f.level * model.gap * e; });
     // keep the growing stack in frame: lift the orbit target and ease the camera back a little
@@ -585,6 +631,7 @@ export function createStudio(container, options = {}) {
     return 0.25 + state.section * (model.cutTop - 0.25);
   }
   function setSection(v) {
+    shadowsChanged();
     state.section = clamp(+v, 0, 1);
     const active = model && state.section < 0.999;
     const h = sectionHeight();
@@ -609,6 +656,7 @@ export function createStudio(container, options = {}) {
   /* -------------------------------------------------------------- render modes & isolation */
   function applyMaterials() {
     if (!model) return;
+    shadowsChanged();
     const mode = state.mode;
     const sel = state.selected;
     const needEdges = mode === 'blueprint' || mode === 'xray';
@@ -639,6 +687,7 @@ export function createStudio(container, options = {}) {
 
   /* -------------------------------------------------------------- time of day */
   function applyTime() {
+    shadowsChanged();
     const sunMeta = model?.meta.sun || {};
     const { night } = env.setTime(state.hour, sunMeta, renderer);
     const flat = state.mode === 'blueprint' || state.mode === 'xray';
@@ -992,6 +1041,9 @@ export function createStudio(container, options = {}) {
       .filter((h) => Array.isArray(h.position) && h.position.length === 3)
       .map((h, i) => ({ ...h, id: h.id || `h${i + 1}`, world: root.localToWorld(new THREE.Vector3().fromArray(h.position)), occluded: false }));
 
+    const colliders = (Array.isArray(built.colliders) ? built.colliders : [])
+      .filter((c) => c && Array.isArray(c.min) && Array.isArray(c.max))
+      .map((c) => new THREE.Box3(root.localToWorld(new THREE.Vector3().fromArray(c.min)), root.localToWorld(new THREE.Vector3().fromArray(c.max))).expandByScalar(0.45));
     const lamps = (Array.isArray(built.lamps) ? built.lamps : []).filter((l) => l && l.isLight).slice(0, 8);
     lamps.forEach((l) => {
       if (!l.parent) scene.add(l);
@@ -1014,7 +1066,7 @@ export function createStudio(container, options = {}) {
       id, mod, meta: nMeta, built, root, site, floors, meshes, materials: [...materials], envMats, buildingBounds,
       night: (Array.isArray(built.nightMaterials) ? built.nightMaterials : []).filter((m) => m && m.isMaterial),
       lamps, update: typeof built.update === 'function' ? built.update.bind(built) : null,
-      hotspots, solids, siteSolids, pickables, bounds, shadowBounds, size, center, radius, height,
+      hotspots, solids, siteSolids, pickables, bounds, shadowBounds, size, center, radius, height, colliders,
       cutTop: height + 0.5, gap, maxLevel, sectionActive: false, edgeBudget: modes.newBudget(),
     };
   }
@@ -1125,6 +1177,7 @@ export function createStudio(container, options = {}) {
     return model.meta;
   }
   function stepReveal(t) {
+    shadowsChanged();
     const k = clamp((t - revealTween.t0) / revealTween.duration, 0, 1);
     const e = 1 - easeOutCubic(k);
     if (model) model.floors.forEach((f) => { f.group.position.y = f.baseY + f.level * model.gap * 0.55 * e * e; });
@@ -1186,6 +1239,7 @@ export function createStudio(container, options = {}) {
       renderer.setViewport(0, 0, w, h);
       renderer.setScissor(0, 0, w, h);
       renderer.setScissorTest(true);
+      renderer.shadowMap.needsUpdate = true;
       renderer.render(scene, thumbCam);
       const out = document.createElement('canvas');
       out.width = w * 2 > 640 ? w : Math.round(w * Math.min(2, dpr));
@@ -1201,6 +1255,7 @@ export function createStudio(container, options = {}) {
     env.fitToBounds(model.shadowBounds);
     state.hour = prevHour;
     applyTime();
+    renderer.shadowMap.needsUpdate = true;
     draw(); // restore the live frame in the same task
     try { built.dispose?.(); } catch { /* ignore */ }
     return url;

@@ -10,8 +10,11 @@
  *
  * Module contract: imports nothing (THREE is injected), exports `meta` and
  * `build(THREE, ctx)`. World units are metres; +z is the front (arrival side),
- * the ground plane is y = 0 and is provided by the engine.
+ * the ground plane is y = 0 and is provided by the engine. The surroundings (lawns, trees, perimeter road,
+ * cars) use the shared detail kit in ./_kit.js.
  */
+
+import { createKit, makeRng as kitRng, P as KP } from './_kit.js';
 
 const DEG = Math.PI / 180;
 const TAU = Math.PI * 2;
@@ -138,13 +141,13 @@ export function build(THREE, ctx = {}) {
   const BRICK_TILE = 3.2; // metres covered by one texture repeat
   const brickTex = (() => {
     const N = 512, c = makeCanvas(N, N), g = c.getContext('2d');
-    g.fillStyle = '#c99a83'; g.fillRect(0, 0, N, N); // mortar
+    g.fillStyle = '#a8705f'; g.fillRect(0, 0, N, N); // mortar
     const courses = 24, ch = N / courses, bw = N / 8;
     for (let r = 0; r < courses; r++) {
       const off = (r % 2) * bw / 2;
       for (let i = -1; i < 9; i++) {
         const v = (rnd() - 0.5) * 0.12, l = 0.5 + v;
-        const R = Math.round(170 * (1 + v)), Gc = Math.round(88 * (1 + v * 1.2)), B = Math.round(66 * (1 + v));
+        const R = Math.round(158 * (1 + v)), Gc = Math.round(74 * (1 + v * 1.2)), B = Math.round(58 * (1 + v));
         g.fillStyle = `rgb(${R},${Gc},${B})`;
         g.fillRect(i * bw + off + 1, r * ch + 1, bw - 2, ch - 2);
         if (l > 0.55) { g.fillStyle = 'rgba(255,220,200,0.05)'; g.fillRect(i * bw + off + 1, r * ch + 1, bw - 2, ch / 3); }
@@ -196,6 +199,8 @@ export function build(THREE, ctx = {}) {
   const M = {
     brick: std('terracotta-brick', { color: '#ffffff', map: brickTex, roughness: 0.86, metalness: 0 }),
     stone: std('stone-wall', { color: '#e2d5bc', roughness: 0.78 }),
+    brickShade: std('terracotta-brick-recess', { color: '#8c8c8c', map: brickTex, roughness: 0.9, metalness: 0 }),
+    copper: std('copper-column-metal', { color: '#a0673f', roughness: 0.32, metalness: 0.75 }),
     trim: std('cream-stone-trim', { color: '#ede3cf', roughness: 0.62 }),
     plinth: std('stone-plinth', { color: '#c9bba1', roughness: 0.8 }),
     roof: std('roof-deck', { color: '#c6bfb2', roughness: 0.92 }),
@@ -210,7 +215,7 @@ export function build(THREE, ctx = {}) {
     frond: std('palm-frond', { color: '#5a7a34', roughness: 0.85 }), // single-sided: the crown geometry carries both faces
     trunk: std('palm-trunk', { color: '#8f7759', roughness: 0.95 }),
     paving: std('forecourt-paving', { color: '#ffffff', map: paveTex, roughness: 0.82 }),
-    drive: std('drive-granite', { color: '#a89f8f', roughness: 0.85 }),
+    drive: std('drive-granite', { color: '#bdb5a7', roughness: 0.42 }),
     poolTile: std('pool-tile', { color: '#5aa8a1', roughness: 0.5 }),
     water: phys('water', { color: '#1f666c', roughness: 0.04, metalness: 0.1, transparent: true, opacity: 0.8, envMapIntensity: 1.3, normalMap: waterNormal, normalScale: new THREE.Vector2(0.12, 0.12), emissive: new THREE.Color('#3fa89c').multiplyScalar(0.45), emissiveIntensity: 0, depthWrite: false }),
     lamp: std('lamp-head', { color: '#f4efe6', roughness: 0.4, emissive: '#ffe2b4', emissiveIntensity: 0 }),
@@ -612,21 +617,21 @@ export function build(THREE, ctx = {}) {
 
     // Levels 1 to 3: curved balconies, slab, terracotta balustrade with motifs, slender columns, recessed wall with French doors
     for (let level = 1; level <= 3; level++) {
-      const gl = floors[level], L = LEVELS[level], yb = L.y0 + SLAB, bh = 1.05;
+      const gl = floors[level], L = LEVELS[level], yb = L.y0 + SLAB, bh = 1.3;
       mesh(gl, 'drum-balcony-slab', cylGeo(DX, DZ, R, L.y0, SLAB), M.trim);
-      mesh(gl, 'drum-balcony-edge-band', arcBandGeo(DX, DZ, R - 0.2, R + 0.12, L.y0 + 0.06, 0.24, -ARC, ARC), M.trim);
+      mesh(gl, 'drum-balcony-edge-band', arcBandGeo(DX, DZ, R - 0.2, R + 0.3, L.y0 - 0.12, 0.52, -ARC, ARC), M.trim);
       mesh(gl, 'drum-balustrade', arcBandGeo(DX, DZ, R - 0.34, R - 0.06, yb, bh, -ARC, ARC), M.brick);
       mesh(gl, 'drum-balustrade-coping', arcBandGeo(DX, DZ, R - 0.42, R + 0.04, yb + bh, 0.12, -ARC, ARC), M.trim);
-      for (let a = -76, i = 0; a <= 76; a += 9.5, i++) {
+      for (let a = -70, i = 0; a <= 70; a += 14, i++) {
         const t = a * DEG;
-        ornamentAt(gl, (i + level) % 2 ? 'diamond' : 'roundel', DX + (R - 0.06) * Math.sin(t), DZ + (R - 0.06) * Math.cos(t), t, yb + bh / 2, 0.62);
+        ornamentAt(gl, (i + level) % 2 ? 'diamond' : 'roundel', DX + (R - 0.02) * Math.sin(t), DZ + (R - 0.02) * Math.cos(t), t, yb + bh / 2, 0.95);
       }
       const ct = yb + bh + 0.12, ch = L.y0 + L.h - ct;
       for (let a = -76; a <= 76; a += 19) {
         const t = a * DEG, rc = R - 0.22;
         inst(gl, 'drum-balcony-column', U.shaft, M.trim, DX + rc * Math.sin(t), ct + ch / 2, DZ + rc * Math.cos(t), 0.15, ch, 0.15);
       }
-      mesh(gl, 'drum-recessed-wall', cylGeo(DX, DZ, RW, yb, L.h - SLAB, { open: true, tile: BRICK_TILE }), M.brick);
+      mesh(gl, 'drum-recessed-wall', cylGeo(DX, DZ, RW, yb, L.h - SLAB, { open: true, tile: BRICK_TILE }), M.brickShade);
       for (let a = -72; a <= 72; a += 12) {
         const t = a * DEG;
         windowAt(gl, DX + RW * Math.sin(t), DZ + RW * Math.cos(t), t, yb + 0.05, 1.25, 2.55, { mullions: 2, transom: HIGH });
@@ -665,7 +670,7 @@ export function build(THREE, ctx = {}) {
   {
     const g = floors[0];
     const P0 = -34 * DEG, P1 = 34 * DEG, rIn = R - 0.05, rOut = 24.0;
-    const yb = 5.45, beam = 0.55;           // underside of rafters / rafter depth
+    const yb = 6.3, beam = 0.55;            // underside of rafters / rafter depth
     mesh(g, 'porte-cochere-fascia', arcBandGeo(DX, DZ, rOut - 0.5, rOut, yb - 0.15, beam + 0.4, P0, P1), M.timber);
     mesh(g, 'porte-cochere-ledger', arcBandGeo(DX, DZ, rIn, rIn + 0.45, yb, beam + 0.1, P0, P1), M.timber);
     const step = HIGH ? 1.6 : 3.2;
@@ -678,9 +683,9 @@ export function build(THREE, ctx = {}) {
     // stone columns with base and capital
     for (const a of [-29, -9.5, 9.5, 29]) {
       const t = a * DEG, rc = 20.6, x = DX + rc * Math.sin(t), z = DZ + rc * Math.cos(t);
-      inst(g, 'porte-cochere-column', U.cyl, M.trim, x, 0.06 + (yb - 0.6) / 2 + 0.25, z, 0.42, yb - 0.6 - 0.5, 0.42);
+      inst(g, 'porte-cochere-column', U.cyl, M.copper, x, 0.06 + (yb - 0.6) / 2 + 0.25, z, 0.42, yb - 0.6 - 0.5, 0.42);
       inst(g, 'porte-cochere-column-base', U.box, M.plinth, x, 0.06 + 0.25, z, 1.15, 0.5, 1.15, t);
-      inst(g, 'porte-cochere-column-capital', U.cyl, M.trim, x, yb - 0.32, z, 0.62, 0.36, 0.62);
+      inst(g, 'porte-cochere-column-capital', U.cyl, M.copper, x, yb - 0.32, z, 0.62, 0.36, 0.62);
       inst(g, 'porte-cochere-column-abacus', U.box, M.trim, x, yb - 0.07, z, 1.35, 0.14, 1.35, t);
     }
     // downlights (glow at night)
@@ -808,6 +813,42 @@ export function build(THREE, ctx = {}) {
     }
   }
 
+  /* ---------- surroundings (kit): lawn band with trees, a perimeter road with cars and street lamps */
+  const K = createKit(THREE, ctx);
+  {
+    const S = site;
+    const pw = 128, pd = 122, pcz = 1;
+    const hole = [[-pw / 2, pcz - pd / 2], [pw / 2, pcz - pd / 2], [pw / 2, pcz + pd / 2], [-pw / 2, pcz + pd / 2]];
+    const E = 150;
+    S.add(K.mesh('surround-lawn-grass', K.flat([[-E, -E], [E, -E], [E, E], [-E, E]], 0.06, [hole]), K.std({ name: 'surround-lawn-grass', color: 0x7a8f50, roughness: 1 }), { cast: false }));
+    // perimeter road loop just outside the paving
+    const asphalt = K.std({ name: 'surround-asphalt-road', color: 0x4f545a, roughness: 0.9 });
+    const kerb = K.std({ name: 'surround-kerb-paving', color: 0xd6d0c4, roughness: 0.85 });
+    const loop = [[-pw / 2 - 8, pcz - pd / 2 - 8], [pw / 2 + 8, pcz - pd / 2 - 8], [pw / 2 + 8, pcz + pd / 2 + 8], [-pw / 2 - 8, pcz + pd / 2 + 8]];
+    const dense = [];
+    for (let i = 0; i < 4; i++) { const [ax, az] = loop[i], [bx, bz] = loop[(i + 1) % 4]; for (let k = 0; k < 24; k++) dense.push([ax + ((bx - ax) * k) / 24, az + ((bz - az) * k) / 24]); }
+    S.add(K.mesh('surround-road-asphalt', K.sweep(dense, () => [KP(-4.5, 0.1, 1), KP(4.5, 0.1, 1), KP(4.5, 0.16, 1), KP(-4.5, 0.16, 1)], { closed: true }), asphalt, { cast: false }));
+    S.add(K.mesh('surround-road-kerb', K.sweep(dense, () => [KP(4.5, 0.1, 1), KP(7, 0.1, 1), KP(7, 0.28, 1), KP(4.5, 0.28, 1)], { closed: true }), kerb, { cast: false }));
+    const rr = kitRng(77);
+    const trees = [];
+    let tries = 0;
+    while (trees.length < (HIGH ? 170 : 70) && tries < 6000) {
+      tries++;
+      const x = -E + rr() * 2 * E, z = -E + rr() * 2 * E;
+      if (Math.abs(x) < pw / 2 + 15 && Math.abs(z - pcz) < pd / 2 + 15) continue;
+      trees.push([x, z, 9 + rr() * 6, 1 + rr() * 0.3]);
+    }
+    K.trees(S, trees, { seed: 23, name: 'surround-trees', palette: [0x5c7a3e, 0x6b8646, 0x4f6c38, 0x77904c] });
+    const sh = [];
+    for (let i = 0; i < 80; i++) { const a = rr() * Math.PI * 2; sh.push([Math.sin(a) * (pw / 2 + 12 + rr() * 6), pcz + Math.cos(a) * (pd / 2 + 12 + rr() * 6), 1.2 + rr()]); }
+    K.shrubs(S, sh.filter(([x, z]) => Math.abs(x) > pw / 2 + 9 || Math.abs(z - pcz) > pd / 2 + 9), { name: 'surround-shrubs' });
+    K.cars(S, [[-pw / 2 - 10, -20, 0], [pw / 2 + 6, 30, Math.PI], [-20, pcz + pd / 2 + 10, Math.PI / 2], [30, pcz - pd / 2 - 6, -Math.PI / 2], [-pw / 2 - 6, 60, Math.PI]], { name: 'surround-cars' });
+    const posts = [];
+    for (let x = -60; x <= 60; x += 30) posts.push([x, pcz + pd / 2 + 2.6, Math.PI]);
+    K.lampPosts(S, posts, { h: 6, name: 'surround-street-lamps' });
+  }
+  nightMaterials.push(...K.nightMaterials);
+
   flushBatches();
 
   /* ---------- runtime API */
@@ -818,6 +859,7 @@ export function build(THREE, ctx = {}) {
   }
 
   function dispose() {
+    K.dispose();
     for (const im of instanced) im.dispose();
     for (const l of lamps) l.dispose?.();
     for (const g of geos) g.dispose();

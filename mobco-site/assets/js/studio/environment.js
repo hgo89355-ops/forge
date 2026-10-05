@@ -161,6 +161,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     uBase: { value: new THREE.Color('#9aa3ad') },
     uHaze: { value: new THREE.Color('#dfe8ef') },
     uNight: { value: 0 },
+    uFade: { value: 1 },
   };
   const skyGeo = track(new THREE.BoxGeometry(1, 1, 1));
   skyGeo.translate(0, 0.5, 0);
@@ -177,7 +178,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
         gl_Position = projectionMatrix * viewMatrix * w;
       }`,
     fragmentShader: /* glsl */`
-      uniform vec3 uBase; uniform vec3 uHaze; uniform float uNight;
+      uniform vec3 uBase; uniform vec3 uHaze; uniform float uNight; uniform float uFade;
       varying vec3 vW; varying vec3 vN; varying float vSeed;
       float h2(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       void main() {
@@ -196,10 +197,11 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
         }
         // haze: lower parts fade into the horizon colour
         col = mix(col, uHaze, (0.3 * (1.0 - smoothstep(0.0, 40.0, vW.y)) + 0.1) * (1.0 - 0.6 * uNight));
-        gl_FragColor = vec4(col, 1.0);
+        gl_FragColor = vec4(col, uFade);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
       }`,
+    transparent: true,
   }));
   const SKYN = 72;
   const skyline = new THREE.InstancedMesh(skyGeo, skylineMat, SKYN);
@@ -220,6 +222,9 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
   skyline.frustumCulled = false;
   skyline.visible = false;
   skyline.raycast = () => {};
+  skyline.renderOrder = -50;
+  // it reads as a city only from street and low views: fade it out as the camera rises (aerial views show the plain)
+  skyline.onBeforeRender = (r, s, camera) => { skyU.uFade.value = 1 - smoothstep(38, 75, camera.position.y); };
   scene.add(skyline);
 
   /* ------------------------------------------------------------ contact shadow (legacy blob, kept for the API;

@@ -21,8 +21,8 @@ const HOUR = 19.8;           // blue hour: sun about 5.5 degrees below the horiz
 // Home cameras (world metres). Desktop keeps the corner of the glass box in a three-quarter view from the plaza;
 // phones stand further back so the whole building fits the narrow frame.
 const VIEWS = {
-  desk: { position: [50, 7, 44], target: [8, 10.5, -10] },
-  mob: { position: [60, 14, 62], target: [4, 10.5, -10] },
+  desk: { position: [50, 8.5, 44], target: [8, 9.2, -10] },
+  mob: { position: [56, 10, 54], target: [4, 9, -10] },
 };
 // The stills are rendered with no side insets: the camera target sits at the image centre.
 const POSTER = { desk: { w: 2800, h: 1080 }, mob: { w: 400, h: 1200 } };
@@ -396,7 +396,7 @@ export function initHero() {
     c.autoRotateSpeed = 0.35;
     c.minDistance = 2.5;
     c.maxDistance = 190;
-    c.maxPolarAngle = Math.PI * 0.485;
+    c.maxPolarAngle = Math.PI * 0.5; // down to eye level, never below the target
     c.zoomSpeed = 1.1;
     const cv = engine.canvas;
     cv.setAttribute('aria-label', t(S.canvas));
