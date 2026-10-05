@@ -10,7 +10,8 @@
 // · "+" pins on real features fly the camera there and open a small card. Plus / minus, reset, full screen,
 //   Explore in 3D. Slow auto-rotate until the visitor interacts (off for reduced motion, low-power renderers, ?qa=1).
 // · The copy fades while zoomed in. Arabic mirrors the layout (copy on the right), never the model.
-// · No WebGL2: the still stays, with the Explore in 3D link. ?poster=1 renders the bare view for the stills.
+// · No WebGL2: the still stays, with the Explore in 3D link. CPU rasterisers (no GPU): the still stays until the
+//   pointer reaches the hero. ?poster=1 renders the bare view for the stills.
 
 import { t, onLang } from '../core/i18n.js';
 import { $, $$, clamp, isQA, isRTL, prefersReducedMotion, rafThrottle } from '../core/utils.js';
@@ -359,20 +360,19 @@ export function initHero() {
     layout();
   }
 
-  /** On CPU rasterisers the first frame (shader compilation) can stall the page for seconds: start only once the
-      hero is in view and scrolling has paused, so someone scrolling straight past is never held up. */
-  function whenHeroSettled() {
+  /** On CPU rasterisers (no GPU) the first frame compiles for seconds and every frame is slow: the still (a render
+      of this same model) stays until the visitor reaches for the hero (pointer over it, a tap or keyboard focus). */
+  function whenWanted() {
     return new Promise((resolve) => {
-      let seen = false, timer = 0;
-      const check = () => {
-        clearTimeout(timer);
-        if (seen && window.scrollY < root.offsetHeight * 0.4) timer = setTimeout(done, 1200);
+      // a real pointer move over the hero (not the hover update a scroll causes under a resting pointer), a press,
+      // keyboard focus or a wheel turn
+      const evs = ['pointermove', 'pointerdown', 'focusin', 'wheel'];
+      const go = (e) => {
+        if (e.type === 'pointermove' && !(e.movementX || e.movementY)) return;
+        evs.forEach((t) => root.removeEventListener(t, go));
+        resolve();
       };
-      const io = new IntersectionObserver(([e]) => { seen = e.intersectionRatio >= 0.5; check(); }, { threshold: [0, 0.5, 1] });
-      const onScroll = () => check();
-      function done() { io.disconnect(); window.removeEventListener('scroll', onScroll); resolve(); }
-      io.observe(root);
-      window.addEventListener('scroll', onScroll, { passive: true });
+      evs.forEach((t) => root.addEventListener(t, go, { passive: true }));
     });
   }
 
@@ -381,7 +381,9 @@ export function initHero() {
     let mod;
     try {
       mod = await import('../studio/engine.js');
-      if (mod.gpu().software && !posterMode) await whenHeroSettled();
+      const lp = params.get('lowpower');
+      const cpu = lp === '1' || (lp !== '0' && mod.gpu().software);
+      if (cpu && !posterMode) await whenWanted();
       root.classList.add('is-loading');
       const k = kind();
       engine = mod.createStudio(view, {
