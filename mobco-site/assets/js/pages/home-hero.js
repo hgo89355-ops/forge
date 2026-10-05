@@ -359,12 +359,30 @@ export function initHero() {
     layout();
   }
 
+  /** On CPU rasterisers the first frame (shader compilation) can stall the page for seconds: start only once the
+      hero is in view and scrolling has paused, so someone scrolling straight past is never held up. */
+  function whenHeroSettled() {
+    return new Promise((resolve) => {
+      let seen = false, timer = 0;
+      const check = () => {
+        clearTimeout(timer);
+        if (seen && window.scrollY < root.offsetHeight * 0.4) timer = setTimeout(done, 1200);
+      };
+      const io = new IntersectionObserver(([e]) => { seen = e.intersectionRatio >= 0.5; check(); }, { threshold: [0, 0.5, 1] });
+      const onScroll = () => check();
+      function done() { io.disconnect(); window.removeEventListener('scroll', onScroll); resolve(); }
+      io.observe(root);
+      window.addEventListener('scroll', onScroll, { passive: true });
+    });
+  }
+
   async function boot() {
     if (!hasWebGL2()) { fallback(); return; }
-    root.classList.add('is-loading');
     let mod;
     try {
       mod = await import('../studio/engine.js');
+      if (mod.gpu().software && !posterMode) await whenHeroSettled();
+      root.classList.add('is-loading');
       const k = kind();
       engine = mod.createStudio(view, {
         model: null,
