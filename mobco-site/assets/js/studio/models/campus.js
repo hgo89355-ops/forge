@@ -41,7 +41,7 @@ export const meta = {
   },
   hotspots: [
     {
-      id: 'tower', position: [0, 60, -164],
+      id: 'tower', position: [0, 74, -170],
       title: { en: 'Central tower', ar: 'البرج المركزي' },
       text: { en: 'A glass drum with white floor plates, wrapped by a curved sail that rises above the crown.', ar: 'أسطوانة زجاجية بأحزمة بيضاء عند كل طابق، يلتفّ حولها شراع منحنٍ يرتفع فوق قمّتها.' },
     },
@@ -56,12 +56,12 @@ export const meta = {
       text: { en: 'A planted court with a glass pavilion and a paved spine from the gate to the tower.', ar: 'فناء مزروع فيه جناح زجاجي وممرّ مرصوف من البوابة إلى البرج.' },
     },
     {
-      id: 'pavilions', position: [-118, 24, 84],
+      id: 'pavilions', position: [-118, 24, 62],
       title: { en: 'Perforated pavilions', ar: 'الجناحان المثقّبان' },
       text: { en: 'Two low buildings under white perforated shells, each around an open courtyard.', ar: 'مبنيان منخفضان تحت غلافين أبيضين مثقّبين، يحيط كل منهما بفناء مفتوح.' },
     },
     {
-      id: 'bridge', position: [0, 26, 96],
+      id: 'bridge', position: [0, 26, 76],
       title: { en: 'Sky bridge', ar: 'الجسر المعلّق' },
       text: { en: 'A glazed bridge links the two pavilions across the boulevard.', ar: 'جسر زجاجي يربط الجناحين فوق الجادة.' },
     },
@@ -70,16 +70,22 @@ export const meta = {
 };
 
 /* ------------------------------------------------------------------ layout (metres) */
-const C = { cx: 0, cz: -95, rx: 80, rz: 58 };                 // horseshoe centre line
-const TOWER = { x: 0, z: -164, R: 12.5, lobbyH: 6.5, fh: 3.9, n: 11, crownH: 3.4, sailH: 68 };
+const C = { cx: 0, cz: -95, rx: 76, rz: 56 };                 // horseshoe centre line
+const TOWER = { x: 0, z: -170, R: 15, lobbyH: 6.5, fh: 3.9, n: 14, crownH: 3.4, sailH: 84 };
 const BAR = { x0: -114, x1: 114, z0: -216, z1: -197, fh: 4, n: 4 };
-const OFFICE = { cx: 88, cz: -38, r: 24, x1: 160, z0: -62, z1: -14, fh: 4, n: 5 };
+const OFFICE = { cx: 92, cz: -40, r: 22, x1: 166, z0: -62, z1: -18, fh: 4.1, n: 5 };
 const PAVS = [
-  { id: 'pav-west', cx: -100, cz: 102, rx: 52, rz: 34, a: 18, phase: 0.6, seed: 3 },
-  { id: 'pav-east', cx: 102, cz: 88, rx: 50, rz: 33, a: 18, phase: 2.4, seed: 7 },
+  { id: 'pav-west', cx: -100, cz: 80, rx: 52, rz: 34, a: 18, phase: 0.6, seed: 3 },
+  { id: 'pav-east', cx: 102, cz: 68, rx: 50, rz: 33, a: 18, phase: 2.4, seed: 7 },
 ];
-const ROAD = { z0: 4, z1: 20, rbx: 0, rbz: 12, rbR: 25, rbIsland: 13, blvd: [4, 14] };
+const ROAD = { z0: -4, z1: 12, rbx: 0, rbz: 4, rbR: 22, rbIsland: 11, blvd: [4, 14] };
 const DEG = Math.PI / 180;
+const WINGS = [
+  { a0: -154, a1: -103, rx: 117, rz: 90, H: 12, a: 13 },
+  { a0: -99, a1: -66, rx: 125, rz: 97, H: 9, a: 10 },
+  { a0: 103, a1: 152, rx: 117, rz: 90, H: 12, a: 13 },
+  { a0: 80, a1: 101, rx: 125, rz: 97, H: 9, a: 10 },
+];
 
 export function build(THREE, ctx = {}) {
   const K = createKit(THREE, ctx);
@@ -129,8 +135,8 @@ export function build(THREE, ctx = {}) {
     asphalt: K.std({ name: 'campus-asphalt-road', color: 0x55595d, roughness: 0.92 }),
     kerb: K.std({ name: 'campus-kerb-paving', color: 0xcfcbc2, roughness: 0.9 }),
     marking: K.std({ name: 'campus-road-mark', color: 0xf4f4f0, roughness: 0.7 }),
-    lawn: K.std({ name: 'campus-lawn-grass', color: 0x7f9a5a, roughness: 1 }),
-    meadow: K.std({ name: 'campus-meadow-grass', color: 0x6e8a4a, roughness: 1 }),
+    lawn: K.std({ name: 'campus-lawn-grass', color: 0x7a8b56, roughness: 1 }),
+    meadow: K.std({ name: 'campus-meadow-grass', color: 0x657d44, roughness: 1 }),
     beds: K.std({ name: 'campus-planting-shrub-bed', color: 0x587540, roughness: 1 }),
     soil: K.std({ name: 'campus-gravel-earth', color: 0xb99a76, roughness: 1 }),
     context: K.std({ name: 'campus-context-render', color: 0xe8e5de, roughness: 0.8 }),
@@ -238,9 +244,9 @@ export function build(THREE, ctx = {}) {
         const tt = arm.rev ? 1 - t : t;                         // 0 at the tower end, 1 at the south end
         const end = smoothstep(0.7, 1, tt);
         const back = smoothstep(0.12, 0, tt);
-        const H = 17.5 * (1 - 0.86 * Math.pow(end, 1.3)) + 2 * back + 1.2 * Math.sin(tt * 7.0) * (1 - end);
-        const a = 12.5 * (1 - 0.45 * end);
-        const ain = 15 * (1 - 0.6 * end);
+        const H = 19 * (1 - 0.86 * Math.pow(end, 1.3)) + 2 * back + 1.2 * Math.sin(tt * 7.0) * (1 - end);
+        const a = 16 * (1 - 0.45 * end);
+        const ain = 19 * (1 - 0.6 * end);
         const b1 = Math.min(5.2, H * 0.5);
         const b2 = b1 + (H - b1) * 0.47;
         return { H, a, ain, b1, b2, glass: -(a - 3.6) };
@@ -315,7 +321,7 @@ export function build(THREE, ctx = {}) {
     // glazed lobby pavilion at the foot of the tower (south side)
     {
       const L = fg('tower', 0, 'Tower · entrance pavilion', 'البرج · جناح المدخل');
-      const w = 30, d = 13, h = 9.2, z0 = T.z + T.R - 3.5;
+      const w = 34, d = 13, h = 9.2, z0 = T.z + T.R - 3.5;
       const g1 = K.mesh('lobby-glass', K.box(w, h - 0.8, d), M.glass, { cast: false }); g1.position.set(T.x, (h - 0.8) / 2, z0 + d / 2); L.add(g1);
       const in1 = K.mesh('lobby-interior', K.box(w - 1.2, h - 1.2, d - 1.4), M.interior, { cast: false }); in1.position.set(T.x, (h - 1.2) / 2, z0 + d / 2); L.add(in1);
       const roof = K.mesh('lobby-roof', K.box(w + 1.2, 0.8, d + 1.2), M.slab); roof.position.set(T.x, h - 0.4, z0 + d / 2); L.add(roof);
@@ -334,13 +340,15 @@ export function build(THREE, ctx = {}) {
         const s = k / ns, y = Hs * s;
         const tip = smoothstep(0.8, 1, s);
         const sw = Math.sin((Math.PI / 2) * Math.min(1, s / 0.72));
-        const ta = (42 - 54 * sw + 34 * tip) * DEG;
-        const tb = (152 - 62 * Math.pow(s, 1.2) - 30 * tip) * DEG;
-        const r = T.R + 2.4 + 9 * Math.pow(Math.max(0, 1 - y / 22), 2) + 3 * tip;
+        const ta = (42 - 56 * sw + 36 * tip) * DEG;
+        const tb = (172 - 84 * Math.pow(s, 1.15) - 30 * tip) * DEG;
+        const r = T.R + 2.4 + 12 * Math.pow(Math.max(0, 1 - y / 26), 2) + 3 * tip;
         const th = 1.1 - 0.5 * s;
+        const spread = 8 * (1 - 0.5 * s);           // the sail peels away from the drum towards its east edge
+        const rr = (f) => r + spread * f * f;
         const prof = [];
-        for (let j = 0; j <= na; j++) { const a = tb + (ta - tb) * (j / na); prof.push(P(Math.sin(a) * (r + th / 2), Math.cos(a) * (r + th / 2), j === 0 || j === na)); }
-        for (let j = 0; j <= na; j++) { const a = ta + (tb - ta) * (j / na); prof.push(P(Math.sin(a) * (r - th / 2), Math.cos(a) * (r - th / 2), j === 0 || j === na)); }
+        for (let j = 0; j <= na; j++) { const f = 1 - j / na, a = tb + (ta - tb) * (j / na); prof.push(P(Math.sin(a) * (rr(f) + th / 2), Math.cos(a) * (rr(f) + th / 2), j === 0 || j === na)); }
+        for (let j = 0; j <= na; j++) { const f = j / na, a = ta + (tb - ta) * (j / na); prof.push(P(Math.sin(a) * (rr(f) - th / 2), Math.cos(a) * (rr(f) - th / 2), j === 0 || j === na)); }
         st.push({ o: [T.x, y, T.z], U: [1, 0, 0], V: [0, 0, 1], prof });
       }
       const sail = K.mesh('tower-sail', K.loft(st, { caps: true }), M.shell);
@@ -385,12 +393,7 @@ export function build(THREE, ctx = {}) {
     const L0 = fg('wings', 0, 'Wings · ground level', 'الأجنحة · الطابق الأرضي');
     const L1 = fg('wings', 1, 'Wings · upper level and roof', 'الأجنحة · الطابق العلوي والسطح');
     const fo = fOf(5.5);
-    const wings = [
-      { a0: -154, a1: -103, rx: 113, rz: 86, H: 9.5, a: 10.5 },
-      { a0: -98, a1: -66, rx: 121, rz: 93, H: 7.6, a: 8.5 },
-      { a0: 103, a1: 152, rx: 113, rz: 86, H: 9.5, a: 10.5 },
-    ];
-    for (const wg of wings) {
+    for (const wg of WINGS) {
       const path = K.arc(C.cx, C.cz, wg.rx, wg.rz, wg.a0 * DEG, wg.a1 * DEG, high ? 60 : 30);
       const par = (t) => { const e = Math.sin(Math.PI * t); return { H: wg.H * (0.82 + 0.18 * e), a: wg.a * (0.85 + 0.15 * e) }; };
       const b1 = 4.6;
@@ -429,12 +432,14 @@ export function build(THREE, ctx = {}) {
       // offset outward from the building centre (convex footprint, good enough here)
       const cx = (O.cx + O.x1) / 2 - 8, cz = O.cz;
       let dx = x - cx, dz = z - cz;
-      if (x > O.cx) { // rectangle part: push along the dominant axis
+      if (x > O.cx + 0.01) { // rectangle part: push along the dominant axis
         const ex = Math.abs(x - O.x1) < 0.5 ? 1 : 0, ez = Math.abs(z - O.z0) < 0.5 ? -1 : Math.abs(z - O.z1) < 0.5 ? 1 : 0;
         return [x + ex * d, z + ez * d];
       }
+      // the curved west end keeps a thin slab edge (no balconies)
+      const dd = d > 0 ? Math.min(d, 0.45) : d;
       dx = x - O.cx; dz = z - O.cz; const l = Math.hypot(dx, dz) || 1;
-      return [x + (dx / l) * d, z + (dz / l) * d];
+      return [x + (dx / l) * dd, z + (dz / l) * dd];
     });
     const slabPts = offset(footprint, 1.6);
     const inPts = offset(footprint, -1.6);
@@ -487,15 +492,15 @@ export function build(THREE, ctx = {}) {
       pavPaths.push({ pv, path });
       const par = (t) => {
         const a = t * Math.PI * 2;
-        const H = 17 + 5 * Math.sin(2 * a + pv.phase) + 2.5 * Math.cos(3 * a + pv.seed);
+        const H = 20 + 6 * Math.sin(2 * a + pv.phase) + 2.5 * Math.cos(3 * a + pv.seed);
         const w = pv.a + 5 * Math.sin(a + pv.phase * 0.7);
-        return { H, w, b1: 7.5, b2: 7.5 + (H - 7.5) * 0.42 };
+        return { H, w, b1: 9, b2: 9 + (H - 9) * 0.42 };
       };
       const g0 = K.sweep(path, (t) => { const q = par(t); return bandProfile(() => -(q.w - 2.6), () => q.w - 2.6, 0, q.b1, 1, { bot: 0, out: 1, top: 0, in: 1 }); }, { closed: true });
       levels[0].add(K.mesh(`${pv.id}-core`, g0, [M.white, M.interior]));
-      levels[0].add(K.mesh(`${pv.id}-glass-out`, glassAlong(path, (t) => par(t).w - 2.35, 0, 7.5, M.glass, true, { closed: true }), M.glass, { cast: false }));
-      levels[0].add(K.mesh(`${pv.id}-glass-in`, glassAlong(path, (t) => -(par(t).w - 2.35), 0, 7.5, M.glass, false, { closed: true }), M.glass, { cast: false }));
-      mullionsAlong(path, (t) => par(t).w - 2.3, 0, 7.5, 1, `${pv.id}-mullions`, levels[0]);
+      levels[0].add(K.mesh(`${pv.id}-glass-out`, glassAlong(path, (t) => par(t).w - 2.35, 0, 9, M.glass, true, { closed: true }), M.glass, { cast: false }));
+      levels[0].add(K.mesh(`${pv.id}-glass-in`, glassAlong(path, (t) => -(par(t).w - 2.35), 0, 9, M.glass, false, { closed: true }), M.glass, { cast: false }));
+      mullionsAlong(path, (t) => par(t).w - 2.3, 0, 9, 1, `${pv.id}-mullions`, levels[0]);
       const sw = (q) => q.w + 2.4;
       const g1 = K.sweep(path, (t) => { const q = par(t); return bandProfile((v) => -sw(q) * fi(v, q.H), (v) => sw(q) * fo(v, q.H), q.b1, q.b2, 5, { bot: 1, out: 0, top: 0, in: 0 }); }, { closed: true });
       const g2 = K.sweep(path, (t) => { const q = par(t); return bandProfile((v) => -sw(q) * fi(v, q.H), (v) => sw(q) * fo(v, q.H), q.b2, q.H, 9, {}, 1.2); }, { closed: true });
@@ -506,7 +511,7 @@ export function build(THREE, ctx = {}) {
 
   /* ================================================================ SKY BRIDGE */
   {
-    const ctrl = [[-46, 15, 104], [-30, 18, 108], [-10, 21, 101], [10, 20.5, 89], [28, 17, 80], [44, 13.5, 82]];
+    const ctrl = [[-46, 18, 82], [-30, 21, 86], [-10, 23, 79], [10, 22.5, 68], [28, 19, 60], [44, 16, 62]];
     const path = K.spline(ctrl, high ? 70 : 36);
     const prof = [
       P(-2.4, 0.9, 1, 0), P(-1.6, 0, 0, 0), P(1.6, 0, 0, 0), P(2.4, 0.9, 1, 1),
@@ -534,22 +539,22 @@ export function build(THREE, ctx = {}) {
     spine.push(...left, ...right.reverse());
     site.add(K.mesh('court-spine-paving', K.flat(spine, 0.26), M.paving, { cast: false }));
     // court planting base (inside the horseshoe)
-    const court = K.arc(C.cx, C.cz, C.rx - 15, C.rz - 15, 0, Math.PI * 2, 64).slice(0, -1);
+    const court = K.arc(C.cx, C.cz, C.rx - 17, C.rz - 17, 0, Math.PI * 2, 64).slice(0, -1);
     site.add(K.mesh('court-meadow-grass', K.flat(court, 0.16), M.meadow, { cast: false }));
     // glass teardrop pavilion with a white fin
     const tp = [-24, -100];
     const lathe = [];
-    for (let i = 0; i <= 14; i++) { const t = i / 14; lathe.push(new THREE.Vector2(9.5 * Math.pow(Math.sin(Math.PI * Math.min(1, t * 0.98 + 0.02)), 0.8) * (1 - 0.55 * t) + 0.01, 15 * t)); }
+    for (let i = 0; i <= 14; i++) { const t = i / 14; lathe.push(new THREE.Vector2(12.5 * Math.pow(Math.sin(Math.PI * Math.min(1, t * 0.98 + 0.02)), 0.8) * (1 - 0.55 * t) + 0.01, 20 * t)); }
     const tgeo = K.g(new THREE.LatheGeometry(lathe, high ? 14 : 10));
     const tear = K.mesh('court-pavilion-glass', tgeo, K.glass('campus-pavilion-glazing', 0x9cc0d0, { opacity: 0.45, side: THREE.DoubleSide }), { cast: false });
     tear.position.set(tp[0], 0, tp[1]); tear.rotation.z = 0.12; root.add(tear);
-    const tin = K.mesh('court-pavilion-interior', K.g(new THREE.CylinderGeometry(6, 7, 3.2, 16)), M.interior, { cast: false }); tin.position.set(tp[0], 1.6, tp[1]); root.add(tin);
+    const tin = K.mesh('court-pavilion-interior', K.g(new THREE.CylinderGeometry(8, 9.5, 3.2, 16)), M.interior, { cast: false }); tin.position.set(tp[0], 1.6, tp[1]); root.add(tin);
     {
       const st = [];
       const ns = 24;
       for (let k = 0; k <= ns; k++) {
-        const s = k / ns, y = 17 * s;
-        const r = 9.8 * Math.pow(Math.sin(Math.PI * Math.min(1, s * 0.9 + 0.05)), 0.7) * (1 - 0.45 * s) + 0.6;
+        const s = k / ns, y = 22.5 * s;
+        const r = 12.9 * Math.pow(Math.sin(Math.PI * Math.min(1, s * 0.9 + 0.05)), 0.7) * (1 - 0.45 * s) + 0.6;
         const a0 = (40 + 30 * s) * DEG, a1 = (150 - 60 * s) * DEG;
         const prof = [];
         const na = 8;
@@ -563,7 +568,7 @@ export function build(THREE, ctx = {}) {
     const blk = K.mesh('court-block', K.box(24, 6.5, 18), M.white); blk.position.set(24, 3.25, -86); root.add(blk);
     const blkG = K.mesh('court-block-glazing', K.box(24.2, 1.6, 18.2), M.glassDark, { cast: false }); blkG.position.set(24, 4.2, -86); root.add(blkG);
     {
-      const path = K.arc(C.cx, C.cz, C.rx - 22, C.rz - 22, 52 * DEG, 98 * DEG, 24);
+      const path = K.arc(C.cx, C.cz, C.rx - 27, C.rz - 27, 52 * DEG, 98 * DEG, 24);
       for (let k = 0; k < 3; k++) {
         const h0 = k * 3.4, u0 = -2 - k * 4.5;
         const g = K.sweep(path, () => [P(u0 - 4.5, h0, 1, 0), P(2, h0, 1, 0), P(2, h0 + 3.4, 1, 0), P(u0 - 4.5, h0 + 3.4, 1, 1)], { caps: true });
@@ -578,7 +583,7 @@ export function build(THREE, ctx = {}) {
     const gr = K.mesh('gate-roof', K.box(17, 0.8, 10), M.slab); gr.position.set(0, 7.4, gz); gate.add(gr);
     const gf = K.mesh('gate-frame', K.box(17, 9, 1.2), M.white); gf.position.set(0, 4.5, gz - 4.6); gate.add(gf);
     for (const s of [-1, 1]) {
-      const pool = K.arc(C.cx, C.cz, C.rx + 13, C.rz + 13, s * 7 * DEG, s * 42 * DEG, 24);
+      const pool = K.arc(C.cx, C.cz, C.rx + 17, C.rz + 17, s * 6 * DEG, s * 42 * DEG, 24);
       const g = K.sweep(pool, () => [P(-4, 0.05, 1), P(4, 0.05, 1), P(4, 0.24, 1), P(-4, 0.24, 1)], { caps: true });
       site.add(K.mesh(`pool-${s < 0 ? 'west' : 'east'}`, g, M.water, { cast: false }));
       const rim = K.sweep(pool, () => [P(-4.8, 0.02, 1), P(4.8, 0.02, 1), P(4.8, 0.18, 1), P(-4.8, 0.18, 1)], { caps: true });
@@ -628,7 +633,7 @@ export function build(THREE, ctx = {}) {
     const paths = [
       [[-200, -40], [-160, -20], [-120, -36], [-96, -14], [-60, -22], [-30, -30]],
       [[-210, -120], [-170, -100], [-150, -60], [-170, -30]],
-      [[-60, 40], [-90, 60], [-150, 55], [-200, 70]],
+      [[-60, 150], [-100, 140], [-160, 150], [-210, 130]],
       [[170, -110], [140, -90], [130, -70]],
       [[30, 150], [60, 140], [90, 150], [140, 160], [190, 150]],
     ];
@@ -653,6 +658,14 @@ export function build(THREE, ctx = {}) {
       const rc = ell(x, z, C.cx, C.cz, C.rx, C.rz);
       if (rc > 0.72 && rc < 1.3 && z < C.cz + C.rz + 10) return true;         // horseshoe + wings band
       if (rc <= 0.72) return true;                                           // court (planted separately)
+      {
+        const phi = Math.atan2(x - C.cx, z - C.cz) / DEG;
+        for (const wg of WINGS) {
+          if (phi < wg.a0 - 4 || phi > wg.a1 + 4) continue;
+          const rw = ell(x, z, C.cx, C.cz, wg.rx, wg.rz);
+          if (Math.abs(rw - 1) * wg.rx < wg.a + 5) return true;
+        }
+      }
       if (Math.abs(x) < 34 && z > -48 && z < 0) return true;                  // gate forecourt, pools, access
       if (Math.hypot(x - TOWER.x, z - TOWER.z) < 30) return true;
       if (inRect(x, z, BAR.x0 - 5, BAR.x1 + 5, BAR.z0 - 5, BAR.z1 + 6)) return true;
@@ -680,13 +693,13 @@ export function build(THREE, ctx = {}) {
       big.push([-(ROAD.blvd[1] + 5.5), z + 4, 9 + rnd() * 2, 0.95]);
       big.push([ROAD.blvd[1] + 5.5, z + 2, 9 + rnd() * 2, 0.95]);
     }
-    for (let x = -232; x < 236; x += 12) { if (Math.abs(x) < 40) continue; big.push([x, ROAD.z0 - 6.5, 8 + rnd() * 2, 0.9]); big.push([x + 5, ROAD.z1 + 6.5, 8 + rnd() * 2, 0.9]); }
+    for (let x = -232; x < 236; x += 12) { if (Math.abs(x) < 40) continue; if (x < OFFICE.cx - 30 || x > OFFICE.x1 + 4) big.push([x, ROAD.z0 - 6.5, 8 + rnd() * 2, 0.9]); big.push([x + 5, ROAD.z1 + 6.5, 8 + rnd() * 2, 0.9]); }
     // court trees (lush, smaller)
     const court = [];
     for (let i = 0; i < (high ? 70 : 34); i++) {
       const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * 0.68;
       const x = C.cx + Math.sin(a) * C.rx * r, z = C.cz + Math.cos(a) * C.rz * r;
-      if (Math.abs(x) < 9 || Math.hypot(x + 24, z + 100) < 13 || inRect(x, z, 10, 38, -97, -75) || Math.hypot(x, z - TOWER.z) < 28) continue;
+      if (Math.abs(x) < 9 || Math.hypot(x + 24, z + 100) < 16 || inRect(x, z, 10, 38, -97, -75) || Math.hypot(x, z - TOWER.z) < 28) continue;
       court.push([x, z, 5 + rnd() * 4, 0.9]);
     }
     // pavilion courtyard trees
@@ -702,7 +715,7 @@ export function build(THREE, ctx = {}) {
     K.trees(site, court, { seed: 47, name: 'court-trees', palette: [0x6e8f45, 0x7d9a4e, 0x5e7f3f, 0x86a35a] });
     // palms by the tower and along the office front (slim palms in the render)
     const palmSpots = [[-18, -142, 9], [-12, -136, 8], [17, -140, 9], [22, -134, 8], [-10, -45, 7], [10, -45, 7]];
-    for (let x = OFFICE.cx + 2; x < OFFICE.x1; x += 9) palmSpots.push([x, OFFICE.z1 + 7, 8 + rnd() * 2]);
+    for (let x = OFFICE.cx + 2; x < OFFICE.x1; x += 9) palmSpots.push([x, OFFICE.z1 + 5, 8 + rnd() * 2]);
     K.palms(site, palmSpots, { seed: 5, name: 'campus-palms' });
     // shrubs: court beds, roundabout, along the horseshoe foot
     const sh = [];
@@ -715,7 +728,7 @@ export function build(THREE, ctx = {}) {
     for (let i = 0; i < 24; i++) { const a = rnd() * Math.PI * 2, r = 3 + rnd() * 5; sh.push([ROAD.rbx + Math.sin(a) * r, ROAD.rbz + Math.cos(a) * r, 1 + rnd()]); }
     for (const path of ringPaths) for (let i = 2; i < path.length - 2; i += 3) {
       const [x, z] = path[i]; const dx = x - C.cx, dz = (z - C.cz) * (C.rx / C.rz); const l = Math.hypot(dx, dz) || 1;
-      sh.push([x + (dx / l) * 15, z + (dz / l) * 15 * (C.rz / C.rx), 1.4 + rnd()]);
+      sh.push([x + (dx / l) * 19, z + (dz / l) * 19 * (C.rz / C.rx), 1.4 + rnd()]);
     }
     K.shrubs(site, sh, { seed: 17, name: 'campus-shrubs' });
   }
@@ -725,10 +738,14 @@ export function build(THREE, ctx = {}) {
     const rnd = makeRng(1201);
     const bodies = [], roofs = [];
     const add = (x, z, w, d, h) => { bodies.push(K.mat4(x, 0, z, 0, w, h, d)); roofs.push(K.mat4(x, h, z, 0, w + 0.6, 0.5, d + 0.6)); };
-    for (let x = -240; x <= 240; x += 19) { if (rnd() < 0.25) continue; add(x + rnd() * 5, -238 + rnd() * 6, 10 + rnd() * 8, 9 + rnd() * 6, 6 + rnd() * 10); }
+    for (let z = -240; z >= -300; z -= 22) for (let x = -250; x <= 250; x += 17) { if (rnd() < 0.3) continue; add(x + rnd() * 6, z + rnd() * 6, 9 + rnd() * 8, 9 + rnd() * 7, 5 + rnd() * 10); }
     for (let z = -215; z <= 240; z += 21) for (const s of [-1, 1]) { if (rnd() < 0.35 || (z > -5 && z < 30)) continue; add(s * (236 + rnd() * 6), z, 10 + rnd() * 6, 12 + rnd() * 8, 5 + rnd() * 8); }
     for (let x = -236; x <= 236; x += 22) { if (Math.abs(x) < 34 || rnd() < 0.3) continue; add(x, 240 + rnd() * 4, 12 + rnd() * 6, 9 + rnd() * 4, 6 + rnd() * 5); }
     site.add(K.inst('context-blocks', unitBox, M.context, bodies), K.inst('context-roofs', unitBox, M.contextRoof, roofs));
+    const ct = [];
+    for (let i = 0; i < (high ? 160 : 60); i++) ct.push([-250 + rnd() * 500, -244 - rnd() * 60, 8 + rnd() * 5, 1]);
+    K.trees(site, ct, { seed: 77, name: 'context-trees' });
+    site.add(K.mesh('context-ground-paving', K.flat([[-255, -255], [255, -255], [255, -305], [-255, -305]], 0.1), M.contextRoof, { cast: false }));
   }
 
   /* ================================================================ CARS, LAMPS, NIGHT LIGHTS */

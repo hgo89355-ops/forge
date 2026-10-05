@@ -155,6 +155,73 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
   ground.receiveShadow = true;
   scene.add(ground);
 
+  /* ------------------------------------------------------------ distant skyline (opt-in per model: meta.skyline)
+     A ring of hazy mid-rise blocks 420 to 760 m out; after dusk their windows light up at random. One draw call. */
+  const skyU = {
+    uBase: { value: new THREE.Color('#9aa3ad') },
+    uHaze: { value: new THREE.Color('#dfe8ef') },
+    uNight: { value: 0 },
+  };
+  const skyGeo = track(new THREE.BoxGeometry(1, 1, 1));
+  skyGeo.translate(0, 0.5, 0);
+  const skylineMat = track(new THREE.ShaderMaterial({
+    name: 'studio-skyline',
+    uniforms: skyU,
+    vertexShader: /* glsl */`
+      varying vec3 vW; varying vec3 vN; varying float vSeed;
+      void main() {
+        vec4 w = modelMatrix * instanceMatrix * vec4(position, 1.0);
+        vW = w.xyz;
+        vN = normalize(mat3(modelMatrix * instanceMatrix) * normal);
+        vSeed = instanceMatrix[3].x * 0.137 + instanceMatrix[3].z * 0.071;
+        gl_Position = projectionMatrix * viewMatrix * w;
+      }`,
+    fragmentShader: /* glsl */`
+      uniform vec3 uBase; uniform vec3 uHaze; uniform float uNight;
+      varying vec3 vW; varying vec3 vN; varying float vSeed;
+      float h2(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      void main() {
+        float side = abs(vN.x) > 0.5 ? 0.86 : 1.0;
+        vec3 col = uBase * (abs(vN.y) > 0.5 ? 1.08 : side);
+        if (abs(vN.y) < 0.5 && uNight > 0.01) {
+          float along = abs(vN.x) > 0.5 ? vW.z : vW.x;
+          vec2 q = vec2(along / 3.4, vW.y / 3.6);
+          vec2 f = fract(q);
+          vec2 cell = floor(q);
+          float win = step(0.18, f.x) * step(f.x, 0.82) * step(0.3, f.y) * step(f.y, 0.78);
+          float lit = step(0.74, h2(cell + vSeed));
+          float small = clamp(1.0 - length(fwidth(q)) * 1.6, 0.0, 1.0);
+          float k = mix(0.22, win, small) * lit * (0.6 + 0.4 * h2(cell * 1.7 + vSeed));
+          col += vec3(1.0, 0.74, 0.44) * k * 0.5 * uNight;
+        }
+        // haze: lower parts fade into the horizon colour
+        col = mix(col, uHaze, (0.3 * (1.0 - smoothstep(0.0, 40.0, vW.y)) + 0.1) * (1.0 - 0.6 * uNight));
+        gl_FragColor = vec4(col, 1.0);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+  }));
+  const SKYN = 72;
+  const skyline = new THREE.InstancedMesh(skyGeo, skylineMat, SKYN);
+  {
+    let sd = 11;
+    const rnd = () => { sd = (sd * 16807) % 2147483647; return (sd - 1) / 2147483646; };
+    const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), p = new THREE.Vector3(), sc = new THREE.Vector3();
+    for (let i = 0; i < SKYN; i++) {
+      const a = (i / SKYN) * Math.PI * 2 + rnd() * 0.05;
+      const r = 420 + rnd() * 340;
+      p.set(Math.sin(a) * r, -0.5, Math.cos(a) * r);
+      q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), a + (rnd() - 0.5) * 0.3);
+      sc.set(24 + rnd() * 50, 10 + Math.pow(rnd(), 1.8) * 40, 18 + rnd() * 30);
+      skyline.setMatrixAt(i, m4.compose(p, q, sc));
+    }
+  }
+  skyline.name = 'studio-skyline';
+  skyline.frustumCulled = false;
+  skyline.visible = false;
+  skyline.raycast = () => {};
+  scene.add(skyline);
+
   /* ------------------------------------------------------------ contact shadow (legacy blob, kept for the API;
      the baked ground occlusion replaces it, so it stays hidden) */
   const contactMat = track(new THREE.MeshBasicMaterial({ name: 'studio-contact', color: '#1a1a2a', transparent: true, opacity: 0, depthWrite: false, toneMapped: false }));
@@ -192,7 +259,8 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
   let theme = 'sky';
   let aoBox = null, aoDirty = false;
   let toneReady = false;
-  const envObjects = new Set([sky, ground, contact]);
+  const envObjects = new Set([sky, ground, contact, skyline]);
+  let skylineOn = false;
 
   function fitToBounds(box) {
     const sphere = box.getBoundingSphere(new THREE.Sphere());
@@ -285,12 +353,16 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     hemi.groundColor.copy(tmpA.set(night > 0.5 ? '#16161f' : '#a3967f')).lerp(tmpB.set('#c48a5c'), golden * 0.5);
     // blue hour (sun 3 to 9 degrees below the horizon): the sky itself is the light, cool and soft
     const blue = smoothstep(-13, -6.5, elevation) * (1 - smoothstep(-3, 4, elevation));
-    hemi.intensity = 0.07 + 0.55 * day + 0.12 * blue;
+    hemi.intensity = 0.07 + 0.55 * day + 0.42 * blue;
     if (blue > 0.01) hemi.color.lerp(tmpA.set('#5b7fc0'), blue * 0.7);
     // very low at night: bright reflections on glass would wash out the lit interiors; the blue hour keeps a
     // share of sky reflection so glazing still reads as glass
-    scene.environmentIntensity = 0.035 + 0.785 * day + 0.42 * blue * (1 - day);
+    scene.environmentIntensity = 0.035 + 0.785 * day + 0.62 * blue * (1 - day);
     if (renderer) renderer.toneMappingExposure = 0.98 + 0.12 * night;
+    // skyline: a darker, hazier silhouette than the horizon; windows after dusk
+    skyU.uHaze.value.copy(skyUniforms.uHorizon.value);
+    skyU.uBase.value.copy(skyUniforms.uHorizon.value).multiplyScalar(0.2 + 0.5 * day).lerp(skyUniforms.uTop.value, 0.2);
+    skyU.uNight.value = night;
     current = { night, day, elevation, azimuth };
     finish(renderer, elevation);
     return current;
@@ -299,10 +371,14 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
   /**
    * Visual theme for render modes: 'sky' (realistic / clay), 'blueprint', 'xray'.
    */
+  /** Show the distant skyline (models that sit in a city opt in with meta.skyline). */
+  function setSkyline(on) { skylineOn = !!on; skyline.visible = skylineOn && theme === 'sky'; }
+
   function setTheme(next) {
     theme = next;
     const flat = next === 'blueprint' || next === 'xray';
     sky.visible = !flat;
+    skyline.visible = skylineOn && !flat;
     contact.visible = false;
     sun.castShadow = !flat;
     groundUniforms.uFlat.value = flat ? 1 : 0;
@@ -324,7 +400,8 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
   }
 
   function dispose() {
-    scene.remove(sky, ground, contact, hemi, sun, sun.target);
+    scene.remove(sky, ground, contact, hemi, sun, sun.target, skyline);
+    skyline.dispose();
     sun.shadow.map?.dispose();
     realism.dispose();
     disposables.forEach((d) => d.dispose?.());
@@ -332,7 +409,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
 
   return {
     sky, ground, contact, sun, hemi, realism,
-    fitToBounds, setTime, setTheme, dispose,
+    fitToBounds, setTime, setTheme, setSkyline, dispose,
     get state() { return current; },
     get radius() { return radius; },
   };

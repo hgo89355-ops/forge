@@ -136,6 +136,70 @@ export function createKit(THREE, ctx = {}) {
     return _waterN;
   }
 
+  /* ------------------------------------------------------------ rooms behind glass */
+  // A COLS x ROWS atlas of rooms: by day, varied interior tones (dark rooms, pale curtains, warm walls); at night
+  // about `lit` of them glow (warm, a few cool), each with a brighter ceiling band. A room box's UVs are in
+  // (bay, level) cell units, so neighbouring floors and bays pick different cells.
+  const ROOM_COLS = 32, ROOM_ROWS = 32;
+  const _rooms = new Map();
+  function roomsMaterial(name = 'rooms-interior', { seed = 7, lit = 0.55, nightMax = 1.6, tone = 0x6e6a64 } = {}) {
+    const key = `${name}|${seed}|${lit}`;
+    if (_rooms.has(key)) return _rooms.get(key);
+    const rnd = makeRng(seed);
+    const cells = [];
+    for (let r = 0; r < ROOM_ROWS; r++) for (let c = 0; c < ROOM_COLS; c++) {
+      cells.push({ r, c, on: rnd() < lit, warm: rnd() < 0.86, k: 0.55 + rnd() * 0.45, blind: rnd() < 0.35 ? 0.15 + rnd() * 0.5 : 0, curtain: rnd(), shade: rnd() });
+    }
+    const S = high ? 16 : 8;
+    const draw = (emit) => (cx, w, h) => {
+      cx.fillStyle = emit ? '#000' : '#3b3d40'; cx.fillRect(0, 0, w, h);
+      for (const cl of cells) {
+        const x0 = cl.c * S, y0 = (ROOM_ROWS - 1 - cl.r) * S;
+        if (emit) {
+          if (!cl.on) continue;
+          const k = cl.k;
+          const col = (m) => cl.warm ? `rgb(${Math.round(255 * k * m)},${Math.round(196 * k * m)},${Math.round(128 * k * m)})` : `rgb(${Math.round(200 * k * m)},${Math.round(222 * k * m)},${Math.round(255 * k * m)})`;
+          const g2 = cx.createLinearGradient(0, y0, 0, y0 + S);
+          g2.addColorStop(0, col(1.0)); g2.addColorStop(0.25, col(0.85)); g2.addColorStop(1, col(0.45));
+          cx.fillStyle = g2; cx.fillRect(x0 + 1, y0 + 1, S - 2, S - 2);
+          if (cl.blind) { cx.fillStyle = col(0.3); cx.fillRect(x0 + 1, y0 + 1, S - 2, Math.round((S - 2) * cl.blind)); }
+        } else {
+          // interior by day: back wall tone, a pale ceiling line, sometimes a light curtain
+          const v = 26 + Math.round(cl.shade * 38);
+          cx.fillStyle = `rgb(${v + 10},${v + 7},${v + 3})`; cx.fillRect(x0, y0, S, S);
+          cx.fillStyle = `rgba(225,220,210,${0.25 + cl.shade * 0.2})`; cx.fillRect(x0, y0, S, Math.max(1, S / 8));
+          if (cl.curtain < 0.2) { cx.fillStyle = `rgba(232,226,214,${0.6 + cl.shade * 0.3})`; cx.fillRect(x0 + (cl.curtain < 0.15 ? 0 : S / 2), y0 + 1, S / 2, S - 1); }
+          if (cl.blind) { cx.fillStyle = 'rgba(220,214,204,0.85)'; cx.fillRect(x0, y0 + 1, S, Math.round((S - 1) * cl.blind)); }
+        }
+      }
+    };
+    const rep = [1 / ROOM_COLS, 1 / ROOM_ROWS];
+    const map = canvasTex(ROOM_COLS * S, ROOM_ROWS * S, draw(false), { repeat: rep });
+    const emissiveMap = canvasTex(ROOM_COLS * S, ROOM_ROWS * S, draw(true), { repeat: rep });
+    if (map) { map.magFilter = THREE.NearestFilter; }
+    const mat = std({ name, color: 0xffffff, map, emissive: 0xffffff, emissiveMap, emissiveIntensity: 0, roughness: 0.9, metalness: 0 });
+    if (!map) mat.color.set(tone);
+    mat.userData.__nightMax = nightMax;
+    mat.userData.realism = 'plain';
+    nightMaterials.push(mat);
+    _rooms.set(key, mat);
+    return mat;
+  }
+  /** Box geometry for one storey of rooms (bottom at y = 0), UVs in (bay, level) cells. */
+  function roomBox(w, h, d, level = 0, bay = 3.2, shift = 0) {
+    const geo = new THREE.BoxGeometry(w, h, d);
+    geo.translate(0, h / 2, 0);
+    const p = geo.attributes.position, n = geo.attributes.normal, uv = geo.attributes.uv;
+    const off = (level * 7 + shift) % ROOM_COLS;
+    for (let i = 0; i < p.count; i++) {
+      const nx = n.getX(i), ny = n.getY(i);
+      const along = Math.abs(nx) > 0.5 ? p.getZ(i) + d / 2 + (nx > 0 ? 13 : 5) * bay : p.getX(i) + w / 2 + (n.getZ(i) > 0 ? 0 : 19 * bay);
+      const v = Math.abs(ny) > 0.5 ? level + 0.02 : level + 0.02 + (p.getY(i) / h) * 0.96;
+      uv.setXY(i, along / bay + off, v);
+    }
+    return g(geo);
+  }
+
   /* ------------------------------------------------------------ loft */
   /**
    * Loft a profile through a list of stations. Each station: { o:[x,y,z], U:[x,y,z], V:[x,y,z], prof:[[u,v,sharp,mat],...] }.
@@ -553,6 +617,31 @@ export function createKit(THREE, ctx = {}) {
     return l;
   }
 
+  /**
+   * Draw-call batcher for one group (e.g. a floor): add(geometry, material, matrix) collects transformed copies,
+   * flush() merges them into one mesh per material. Glass-like materials do not cast shadows.
+   */
+  function batcher(group, name = 'batch') {
+    const byMat = new Map();
+    return {
+      isBatch: true, group,
+      add(geo, mat, mtx = null) {
+        if (geo && geo.isObject3D) { group.add(...arguments); return; }
+        if (!byMat.has(mat)) byMat.set(mat, []);
+        const c = geo.clone();
+        if (mtx) c.applyMatrix4(mtx);
+        byMat.get(mat).push(c);
+      },
+      flush() {
+        for (const [mat, list] of byMat) {
+          const glassy = mat.transparent && mat.opacity < 0.95;
+          group.add(mesh(`${name}-${mat.name}`, merge(list), mat, { cast: !glassy && !mat.userData.noCast, receive: true }));
+        }
+        byMat.clear();
+      },
+    };
+  }
+
   /** Floor group helper. */
   function floorGroup(parent, buildingId, level, en, ar, y = 0) {
     const fg = new THREE.Group();
@@ -571,9 +660,9 @@ export function createKit(THREE, ctx = {}) {
   }
 
   return {
-    THREE, high, g, m, tx, std, phys, glass, interior, lampMat, water, canvasTex, waterNormal,
+    THREE, high, g, m, tx, std, phys, glass, interior, lampMat, water, canvasTex, waterNormal, roomsMaterial, roomBox,
     loft, planStations, sweep, arc, spline, merge, mat4, inst, mesh, box, flat, prism,
-    crownGeo, trees, palms, shrubs, cars, lampPosts, light, floorGroup,
+    crownGeo, trees, palms, shrubs, cars, lampPosts, light, floorGroup, batcher,
     nightMaterials, lamps, dispose,
   };
 }

@@ -23,6 +23,8 @@
 //   homeView: {position, target}  fixed home camera (no fit-to-panels); setHomeView(view, {apply, instant})
 //   zoomToCursor: true            wheel / pinch dolly towards the pointer (product-viewer feel)
 //   minTargetY: 1                 lowest orbit target height (keeps the camera above the ground)
+//   bloom: true                   soft glow around lit windows and lamps (skipped on low-power renderers)
+//   maxDpr: 1.5                   upper bound for the device pixel ratio (heavy scenes on retina laptops)
 // The near plane follows the orbit distance, so a close camera can look through the glass into the floors.
 
 import * as THREE from 'three';
@@ -30,6 +32,7 @@ import { OrbitControls } from 'three/addons/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { createEnvironment, DEFAULT_HOUR, MIN_HOUR, MAX_HOUR } from './environment.js';
 import { createModeLibrary, patchCap, isGlassMaterial, MODES } from './modes.js';
+import { createBloom } from './realism.js';
 
 export { DEFAULT_HOUR, MIN_HOUR, MAX_HOUR, MODES };
 export const VIEWS = ['aerial', 'street', 'top', 'front'];
@@ -107,7 +110,7 @@ export function createStudio(container, options = {}) {
   const lowEnd = mobile || lowPower || (navigator.hardwareConcurrency || 8) <= 2 || (navigator.deviceMemory || 8) <= 2;
   const quality = opts.quality === 'auto' ? (opts.compact || lowEnd ? 'low' : 'high') : opts.quality;
   lowPowerFlag = lowPower;
-  const dprCap = lowPower ? 1 : mobile ? 1.5 : 2;
+  const dprCap = Math.min(lowPower ? 1 : mobile ? 1.5 : 2, Number.isFinite(opts.maxDpr) ? opts.maxDpr : 2);
   const hq = new URLSearchParams(location.search).get('hq') === '1'; // QA: full-resolution stills even on a CPU rasteriser
   let dprScale = lowPower && !hq ? 0.6 : 1; // adaptive (lowered when frames are slow)
 
@@ -146,6 +149,15 @@ export function createStudio(container, options = {}) {
   scene.environmentIntensity = 0.8;
 
   const env = createEnvironment(THREE, { scene, quality });
+  // optional bloom (needs half-float render targets; never on CPU rasterisers)
+  let bloom = null;
+  if (opts.bloom && !lowPower) {
+    try { bloom = createBloom(THREE, renderer); } catch (e) { console.warn('[studio] bloom unavailable', e); bloom = null; }
+  }
+  const draw = () => {
+    if (bloom && state.mode === 'realistic') bloom.render(scene, camera);
+    else renderer.render(scene, camera);
+  };
 
   // Section cut plane: keeps y <= constant
   const sectionPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1e5);
@@ -288,6 +300,7 @@ export function createStudio(container, options = {}) {
     const dpr = Math.min(window.devicePixelRatio || 1, dprCap) * dprScale;
     renderer.setPixelRatio(Math.max(0.5, dpr));
     renderer.setSize(width, height, false);
+    bloom?.setSize(width * renderer.getPixelRatio(), height * renderer.getPixelRatio());
     const aspect = width / height;
     camera.aspect = aspect;
     // Keep a calm architectural lens on wide screens; widen on portrait screens so the model still fits.
@@ -392,7 +405,7 @@ export function createStudio(container, options = {}) {
     needsRender = false;
     fitNear();
     const r0 = PERF ? performance.now() : 0;
-    renderer.render(scene, camera);
+    draw();
     if (PERF && perfFrames++ < 12) plog('frame ms', Math.round(performance.now() - r0), renderer.info.render.calls, renderer.info.render.triangles);
     if (model && state.hotspots && opts.hotspots !== false) {
       occlusionClock += dt;
@@ -907,6 +920,7 @@ export function createStudio(container, options = {}) {
       camera: cam,
       hotspots: Array.isArray(meta.hotspots) ? meta.hotspots.slice(0, 8) : [],
       sun: meta.sun || { azimuth: 135, elevation: 40 },
+      skyline: meta.skyline === true,
     };
   }
 
@@ -1074,6 +1088,7 @@ export function createStudio(container, options = {}) {
     sectionVis.visible = false;
     state.hour = homeHour;
     env.fitToBounds(model.shadowBounds);
+    env.setSkyline(model.meta.skyline);
     controls.maxDistance = Math.max(260, model.radius * 5.5);
     applyMaterials();
     applyTime();
@@ -1119,7 +1134,7 @@ export function createStudio(container, options = {}) {
   /* -------------------------------------------------------------- snapshot & thumbnails */
   /** Render now and return a copy of the frame as a 2D canvas (CSS-pixel size × scale). */
   function snapshot({ scale = 1 } = {}) {
-    renderer.render(scene, camera);
+    draw();
     const out = document.createElement('canvas');
     out.width = Math.round(canvas.width * scale);
     out.height = Math.round(canvas.height * scale);
@@ -1186,7 +1201,7 @@ export function createStudio(container, options = {}) {
     env.fitToBounds(model.shadowBounds);
     state.hour = prevHour;
     applyTime();
-    renderer.render(scene, camera); // restore the live frame in the same task
+    draw(); // restore the live frame in the same task
     try { built.dispose?.(); } catch { /* ignore */ }
     return url;
   }
@@ -1233,6 +1248,7 @@ export function createStudio(container, options = {}) {
     dprMedia?.removeEventListener?.('change', onDprChange);
     controls.dispose();
     modes.dispose();
+    bloom?.dispose();
     env.dispose();
     envMap.dispose();
     [hoverBox, selectBox, sectionVis].forEach((g) => g.traverse((o) => { o.geometry?.dispose(); o.material?.dispose(); }));

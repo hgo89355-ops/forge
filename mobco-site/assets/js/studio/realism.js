@@ -544,3 +544,103 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
 
   return { uniforms, GLSL_COMMON, VERT_DECL, VERT_BODY, AO_APPLY, patchMaterial, enhanceScene, setEnvironment, bakeAO, setAOEnabled, dispose };
 }
+
+/* ------------------------------------------------------------------ bloom (opt-in, engine option `bloom`)
+   Soft glow around the brightest pixels (lit interiors, lamps, signs after dusk): the scene renders into a
+   multisampled half-float target, bright parts are thresholded into a small mip chain, blurred and added back, then
+   tone mapping and sRGB output happen in the final pass. About 6 extra full-screen passes at reduced sizes. */
+export function createBloom(THREE, renderer, { strength = 0.55, threshold = 1.15, knee = 0.6, levels = 5 } = {}) {
+  const half = { type: THREE.HalfFloatType, depthBuffer: false, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, generateMipmaps: false };
+  const sceneRT = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
+  const mips = Array.from({ length: levels }, () => new THREE.WebGLRenderTarget(1, 1, half));
+  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const geo = new THREE.PlaneGeometry(2, 2);
+  const VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+  const mk = (fs, uniforms, extra = {}) => new THREE.ShaderMaterial({ vertexShader: VS, fragmentShader: fs, uniforms, depthTest: false, depthWrite: false, toneMapped: false, ...extra });
+  const prefilter = mk(/* glsl */`
+    uniform sampler2D tSrc; uniform vec2 uTexel; uniform float uTh; uniform float uKnee; varying vec2 vUv;
+    void main(){
+      vec3 c = texture2D(tSrc, vUv + uTexel * vec2(-0.5, -0.5)).rgb + texture2D(tSrc, vUv + uTexel * vec2(0.5, -0.5)).rgb
+             + texture2D(tSrc, vUv + uTexel * vec2(-0.5, 0.5)).rgb + texture2D(tSrc, vUv + uTexel * vec2(0.5, 0.5)).rgb;
+      c *= 0.25;
+      float br = max(c.r, max(c.g, c.b));
+      float w = smoothstep(uTh - uKnee, uTh + uKnee, br);
+      gl_FragColor = vec4(min(c * w, vec3(24.0)), 1.0);
+    }`, { tSrc: { value: null }, uTexel: { value: new THREE.Vector2() }, uTh: { value: threshold }, uKnee: { value: knee } });
+  const down = mk(/* glsl */`
+    uniform sampler2D tSrc; uniform vec2 uTexel; varying vec2 vUv;
+    void main(){
+      vec3 c = texture2D(tSrc, vUv).rgb * 0.25;
+      c += texture2D(tSrc, vUv + uTexel * vec2(-1.0, -1.0)).rgb * 0.1875;
+      c += texture2D(tSrc, vUv + uTexel * vec2(1.0, -1.0)).rgb * 0.1875;
+      c += texture2D(tSrc, vUv + uTexel * vec2(-1.0, 1.0)).rgb * 0.1875;
+      c += texture2D(tSrc, vUv + uTexel * vec2(1.0, 1.0)).rgb * 0.1875;
+      gl_FragColor = vec4(c, 1.0);
+    }`, { tSrc: { value: null }, uTexel: { value: new THREE.Vector2() } });
+  const up = mk(/* glsl */`
+    uniform sampler2D tSrc; uniform vec2 uTexel; varying vec2 vUv;
+    void main(){
+      vec3 c = texture2D(tSrc, vUv).rgb * 4.0;
+      c += (texture2D(tSrc, vUv + uTexel * vec2(-1.0, 0.0)).rgb + texture2D(tSrc, vUv + uTexel * vec2(1.0, 0.0)).rgb
+          + texture2D(tSrc, vUv + uTexel * vec2(0.0, -1.0)).rgb + texture2D(tSrc, vUv + uTexel * vec2(0.0, 1.0)).rgb) * 2.0;
+      c += texture2D(tSrc, vUv + uTexel * vec2(-1.0, -1.0)).rgb + texture2D(tSrc, vUv + uTexel * vec2(1.0, -1.0)).rgb
+         + texture2D(tSrc, vUv + uTexel * vec2(-1.0, 1.0)).rgb + texture2D(tSrc, vUv + uTexel * vec2(1.0, 1.0)).rgb;
+      gl_FragColor = vec4(c / 16.0 * 0.85, 1.0);
+    }`, { tSrc: { value: null }, uTexel: { value: new THREE.Vector2() } }, { blending: THREE.AdditiveBlending, transparent: true });
+  const composite = new THREE.ShaderMaterial({
+    vertexShader: VS,
+    fragmentShader: /* glsl */`
+      uniform sampler2D tScene; uniform sampler2D tBloom; uniform float uStrength; varying vec2 vUv;
+      void main(){
+        vec3 c = texture2D(tScene, vUv).rgb + texture2D(tBloom, vUv).rgb * uStrength;
+        gl_FragColor = vec4(c, 1.0);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+    uniforms: { tScene: { value: sceneRT.texture }, tBloom: { value: mips[0].texture }, uStrength: { value: strength } },
+    depthTest: false, depthWrite: false,
+  });
+  const quad = new THREE.Mesh(geo, prefilter);
+  quad.frustumCulled = false;
+  const qs = new THREE.Scene();
+  qs.add(quad);
+  let w = 1, h = 1;
+  function setSize(width, height) {
+    w = Math.max(1, Math.round(width)); h = Math.max(1, Math.round(height));
+    // multisampling replaces the canvas antialiasing; fewer samples on very large buffers
+    const samples = w * h > 2.6e6 ? 2 : 4;
+    if (sceneRT.samples !== samples) { sceneRT.samples = samples; sceneRT.dispose(); }
+    sceneRT.setSize(w, h);
+    let mw = w, mh = h;
+    for (const rt of mips) { mw = Math.max(1, Math.round(mw / 2)); mh = Math.max(1, Math.round(mh / 2)); rt.setSize(mw, mh); }
+  }
+  function pass(mat, src, dst, texel) {
+    quad.material = mat;
+    mat.uniforms.tSrc.value = src;
+    mat.uniforms.uTexel.value.set(1 / texel.width, 1 / texel.height);
+    renderer.setRenderTarget(dst);
+    renderer.render(qs, cam);
+  }
+  /** Render `scene` with bloom to the canvas. */
+  function render(scene, camera) {
+    const prevTarget = renderer.getRenderTarget();
+    const prevAuto = renderer.autoClear;
+    renderer.setRenderTarget(sceneRT);
+    renderer.render(scene, camera);
+    renderer.autoClear = true;
+    pass(prefilter, sceneRT.texture, mips[0], sceneRT);
+    for (let i = 1; i < mips.length; i++) pass(down, mips[i - 1].texture, mips[i], mips[i - 1]);
+    renderer.autoClear = false;
+    for (let i = mips.length - 1; i > 0; i--) pass(up, mips[i].texture, mips[i - 1], mips[i]);
+    renderer.autoClear = true;
+    quad.material = composite;
+    renderer.setRenderTarget(prevTarget);
+    renderer.render(qs, cam);
+    renderer.autoClear = prevAuto;
+  }
+  function dispose() {
+    sceneRT.dispose(); mips.forEach((m) => m.dispose());
+    [prefilter, down, up, composite].forEach((m) => m.dispose()); geo.dispose();
+  }
+  return { render, setSize, dispose, uniforms: composite.uniforms, prefilter };
+}

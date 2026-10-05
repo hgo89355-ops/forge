@@ -58,6 +58,8 @@ export const meta = {
   ],
   // Key-light direction: azimuth from +Z (plaza side) towards +X, elevation above the horizon.
   sun: { azimuth: 52, elevation: 40 },
+  // a city around the plaza: the engine draws a hazy distant skyline
+  skyline: true,
 };
 
 /* ================================================================== */
@@ -168,18 +170,6 @@ export function build(THREE, ctx = {}) {
     }
     return tex(c, { repeat: false, aniso: 4 });
   }
-  // Window grid for the distant blocks: lit and unlit windows (emissive map). One tile = 4 bays x 4 floors.
-  function windowsTexture() {
-    const S = 256, c = canvas(S, S), g = c.getContext('2d'), n = 8, s = S / n;
-    g.fillStyle = '#000'; g.fillRect(0, 0, S, S);
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-      const lit = rnd();
-      const k = lit < 0.4 ? rr(120, 220) : rr(6, 26);
-      g.fillStyle = `rgb(${k},${k * 0.84},${k * 0.64})`;
-      g.fillRect(x * s + 3, y * s + 4, s - 6, s - 11);
-    }
-    return tex(c, { aniso: 4 });
-  }
   // Geometric lattice screen (alpha) for the dark-framed block's crown.
   function screenTexture() {
     const S = 256, c = canvas(S, S), g = c.getContext('2d');
@@ -216,7 +206,6 @@ export function build(THREE, ctx = {}) {
   const mosaicTex = mosaicTexture();
   const leafTex = leavesTexture();
   const signTex = signTexture();
-  const winTex = windowsTexture();
   const screenTex = screenTexture();
   const ripple = rippleNormalTexture();
   ripple.repeat.set(6, 1.6);
@@ -230,19 +219,19 @@ export function build(THREE, ctx = {}) {
     alu:        std('metal-alu-dark', { color: 0x2a2e33, roughness: 0.34, metalness: 0.7 }),
     aluMid:     std('metal-alu', { color: 0x4a4f55, roughness: 0.38, metalness: 0.65 }),
     cladding:   std('metal-cladding', { color: 0x30353b, roughness: 0.42, metalness: 0.55 }),
-    stone:      std('stone-frame', { color: 0xc9c2b6, roughness: 0.78 }),
+    stone:      std('stone-frame', { color: 0xd9d2c5, roughness: 0.78 }),
     stoneLight: std('stone-light', { color: 0xddd7cc, roughness: 0.74 }),
     render:     std('render-wall', { color: 0xb8b1a5, roughness: 0.86 }),
     concrete:   std('concrete-slab', { color: 0x8d8c88, roughness: 0.9 }),
-    spandrel:   std('spandrel-dark', { color: 0x161b21, roughness: 0.08, metalness: 0.25, envMapIntensity: 1.6 }),
+    spandrel:   std('spandrel-dark', { color: 0x24303c, roughness: 0.06, metalness: 0.55, envMapIntensity: 2.4 }),
     plenum:     std('plenum-band', { color: 0x15181c, roughness: 0.9 }),
     soffit:     std('timber-soffit', { color: 0x9a6e48, roughness: 0.62 }),
     timberDeck: std('timber-deck', { color: 0x8e6a4a, roughness: 0.72 }),
     gravel:     std('roof-gravel', { color: 0x9b968c, roughness: 1 }),
     screen:     std('metal-screen', { color: 0x2b2f35, roughness: 0.45, metalness: 0.6, map: screenTex, alphaTest: 0.5, side: THREE.DoubleSide }),
     // glazing (physically shaped: reflections on top of a tinted, partly transparent body)
-    glassClear: std('glass-curtain-clear', { color: 0x203440, roughness: 0.03, metalness: 0.12, transparent: true, opacity: 0.08, depthWrite: false, envMapIntensity: 2.0 }),
-    glassRefl:  std('glass-curtain-reflective', { color: 0x8ea9c6, roughness: 0.02, metalness: 0.6, transparent: true, opacity: 0.5, depthWrite: false, envMapIntensity: 2.2 }),
+    glassClear: std('glass-curtain-clear', { color: 0x203440, roughness: 0.03, metalness: 0.04, transparent: true, opacity: 0.1, depthWrite: false, envMapIntensity: 2.0 }),
+    glassRefl:  std('glass-curtain-reflective', { color: 0x9db6d2, roughness: 0.02, metalness: 0.65, transparent: true, opacity: 0.62, depthWrite: false, envMapIntensity: 3.0 }),
     glassShop:  std('glass-shopfront', { color: 0x30383c, roughness: 0.03, metalness: 0, transparent: true, opacity: 0.06, depthWrite: false, envMapIntensity: 1.5 }),
     glassInt:   std('glass-partition', { color: 0xc8d4d8, roughness: 0.15, metalness: 0, transparent: true, opacity: 0.16, depthWrite: false, envMapIntensity: 0.8 }),
     glassRail:  std('glass-balustrade', { color: 0x2c3c44, roughness: 0.04, metalness: 0, transparent: true, opacity: 0.18, depthWrite: false, envMapIntensity: 1.6 }),
@@ -260,17 +249,16 @@ export function build(THREE, ctx = {}) {
     pendant:    std('light-pendant', { color: 0xe8e0d0, roughness: 0.5, emissive: 0xffffff, emissiveIntensity: 0 }, 1),
     lampHead:   std('light-lamp-head', { color: 0xe9e6de, roughness: 0.4, emissive: 0xffffff, emissiveIntensity: 0 }, 1),
     sign:       std('light-sign', { color: 0x30353b, roughness: 0.5, emissive: 0xffffff, emissiveMap: signTex, alphaMap: signTex, transparent: true, depthWrite: false, emissiveIntensity: 0 }, 1),
-    windows:    std('light-windows-far', { color: 0x8a8f96, roughness: 0.5, metalness: 0.1, emissive: 0xffffff, emissiveMap: winTex, emissiveIntensity: 0 }, 1),
     // site
     paving:     std('plaza-paving', { color: 0xffffff, map: paveTex, roughness: 0.48, envMapIntensity: 1 }),
     pavingDark: std('paving-band-dark', { color: 0x6c6862, roughness: 0.5 }),
     kerb:       std('kerb-stone', { color: 0xb5afa4, roughness: 0.8 }),
     asphalt:    std('asphalt', { color: 0x3b3e42, roughness: 0.92 }),
     marking:    std('road-marking', { color: 0xe8e6df, roughness: 0.8 }),
-    poolTile:   std('pool-tile', { color: 0xffffff, map: mosaicTex, roughness: 0.25, emissive: 0x3f9fd8, emissiveMap: mosaicTex, emissiveIntensity: 0 }, 0.22),
+    poolTile:   std('pool-tile', { color: 0xffffff, map: mosaicTex, roughness: 0.25, emissive: 0x3f9fd8, emissiveMap: mosaicTex, emissiveIntensity: 0 }, 0.4),
     poolEdge:   std('pool-coping-stone', { color: 0x2c3a52, roughness: 0.35 }),
-    water:      std('pool-water', { color: 0x0b2a3a, roughness: 0.02, metalness: 0, transparent: true, opacity: 0.4, depthWrite: false,
-      normalMap: ripple, normalScale: new THREE.Vector2(0.22, 0.22), envMapIntensity: 1.6 }),
+    water:      std('pool-water', { color: 0x0f3a56, roughness: 0.02, metalness: 0, transparent: true, opacity: 0.45, depthWrite: false,
+      normalMap: ripple, normalScale: new THREE.Vector2(0.22, 0.22), envMapIntensity: 2.4 }),
     jet:        std('fountain-jet', { color: 0xffffff, roughness: 0.2, transparent: true, opacity: 0.4, depthWrite: false, emissive: 0xbfeeff, emissiveIntensity: 0 }, 1.2),
     lawn:       std('lawn', { color: 0x5f7448, roughness: 1 }),
     soil:       std('planter-soil', { color: 0x3d3329, roughness: 1 }),
@@ -278,36 +266,42 @@ export function build(THREE, ctx = {}) {
     leaves:     std('tree-leaves', { color: 0xffffff, map: leafTex, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85 }),
     bark:       std('tree-bark', { color: 0x5d5046, roughness: 0.95 }),
     palmTrunk:  std('palm-trunk', { color: 0x8a7a66, roughness: 0.96 }),
-    frond:      std('palm-frond', { color: 0x4f6f38, roughness: 0.82, side: THREE.DoubleSide }),
+    frond:      std('palm-frond', { color: 0x6a8a46, roughness: 0.8, side: THREE.DoubleSide }),
     frondDry:   std('palm-frond-dry', { color: 0x7c6a48, roughness: 0.9, side: THREE.DoubleSide }),
     fabric:     std('parasol-fabric', { color: 0xf1ede4, roughness: 0.92, side: THREE.DoubleSide }),
     siteObj:    std('site-furniture', { color: 0xffffff, roughness: 0.6, vertexColors: true }),
     people:     std('people', { color: 0xffffff, roughness: 0.8 }),
     carBody:    std('car-paint', { color: 0xffffff, roughness: 0.28, metalness: 0.55, vertexColors: true }),
     carLight:   std('car-lights', { color: 0xffffff, roughness: 0.3, vertexColors: true, emissive: 0xffffff, emissiveIntensity: 0 }, 1),
-    farMass:    std('far-block-render', { color: 0x9a958d, roughness: 0.9 }),
   };
   // HDR emissive colours (linear, can exceed 1): warm 3000 K interiors, cooler screens
-  M.floorOffice.emissive.copy(warm(0xffc890, 0.16));
-  M.floorShop.emissive.copy(warm(0xffc58a, 0.42));
+  M.floorOffice.emissive.copy(warm(0xffc890, 0.3));
+  M.floorShop.emissive.copy(warm(0xffc58a, 0.85));
   M.ceiling.emissive.copy(warm(0xffd2a0, 0.5));
-  M.intWall.emissive.copy(warm(0xffc890, 0.28));
-  M.coreWall.emissive.copy(warm(0xffc890, 0.2));
-  M.shopBack.emissive.copy(warm(0xffbf80, 0.62));
-  M.furniture.emissive.copy(warm(0xffcf9a, 0.2));
-  M.goods.emissive.copy(warm(0xffd0a0, 0.35));
-  M.screens.emissive.copy(warm(0xa9c8ff, 0.5));
+  M.intWall.emissive.copy(warm(0xffc890, 0.45));
+  M.coreWall.emissive.copy(warm(0xffc890, 0.4));
+  M.shopBack.emissive.copy(warm(0xffbf80, 1.3));
+  M.furniture.emissive.copy(warm(0xffcf9a, 0.38));
+  M.goods.emissive.copy(warm(0xffd0a0, 0.8));
+  M.screens.emissive.copy(warm(0x9fbde8, 0.16));
   M.downlight.emissive.copy(warm(0xffe2bc, 6));
   M.pendant.emissive.copy(warm(0xffc27a, 4.5));
   M.lampHead.emissive.copy(warm(0xffd9a6, 5));
   M.sign.emissive.copy(warm(0xfff3e2, 2.4));
-  M.windows.emissive.copy(warm(0xffcf96, 0.55));
   M.carLight.emissive.copy(new THREE.Color(1, 1, 1));
+  // interior glow follows the surface colour (a cheap stand-in for light bouncing around a lit room), so dark
+  // chairs stay dark and white desks read white after dusk
+  for (const m of [M.floorOffice, M.floorShop, M.intWall, M.coreWall, M.shopBack, M.furniture, M.goods]) {
+    m.onBeforeCompile = (shader) => {
+      shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\ttotalEmissiveRadiance *= diffuseColor.rgb;');
+    };
+    m.customProgramCacheKey = () => 'eastmain-albedo-glow';
+  }
   // the plaza is a stone, not a lawn: keep the realism module on its paving branch
   M.paving.userData.realism = 'paving';
   // glazing uses the physically shaped glass of the realism module (reflection added over the tinted body)
   for (const g of [M.glassClear, M.glassRefl, M.glassShop, M.glassRail, M.water]) g.userData.physicalGlass = true;
-  M.glassRefl.userData.baseEnvMapIntensity = 2.2;
+  M.glassRefl.userData.baseEnvMapIntensity = 3.0;
   M.glassClear.userData.baseEnvMapIntensity = 2.0;
   // interior pieces never cast sun shadows (the facade does); keeps the shadow pass short
   for (const m of [M.floorOffice, M.floorShop, M.ceiling, M.intWall, M.coreWall, M.shopBack, M.furniture, M.goods, M.screens, M.downlight, M.pendant, M.sign, M.glassInt, M.plenum])
@@ -441,7 +435,7 @@ export function build(THREE, ctx = {}) {
     bx(0.56, 0.34, 0.03, 0, 1.07, 0, 0x1b1d21), bx(0.05, 0.22, 0.04, 0, 0.86, -0.04, C_ALU), bx(0.22, 0.015, 0.16, 0, 0.75, -0.06, C_ALU),
   ]);
   const screenGeo = G(new THREE.PlaneGeometry(0.52, 0.3));
-  const discGeo = G(new THREE.CylinderGeometry(0.2, 0.2, 0.03, 12));
+  const discGeo = G(new THREE.CylinderGeometry(0.2, 0.2, 0.03, 8, 1));
   const plantGeo = merge([
     cy(0.22, 0.17, 0.45, 10, 0, 0.225, 0, 0xd6d0c4),
     { g: T(new THREE.IcosahedronGeometry(0.42, 1)), c: 0x4c6b3a, m: mtx(0, 0.86, 0, 1, 1.25, 1) },
@@ -1024,7 +1018,7 @@ export function build(THREE, ctx = {}) {
     wg.setAttribute('position', new THREE.Float32BufferAttribute(wpos, 3));
     wg.setAttribute('uv', new THREE.Float32BufferAttribute(wuv, 2));
     wg.computeVertexNormals();
-    const poolWallMat = reg(M.poolTile.clone(), 'pool-tile-walls', 0.22);
+    const poolWallMat = reg(M.poolTile.clone(), 'pool-tile-walls', 0.4);
     poolWallMat.side = THREE.DoubleSide;
     mesh(site, 'pool-walls', wg, poolWallMat, { cast: false });
     const wm = mesh(site, 'pool-water', flat(poolShape(x0, z0, x1, z1, 2.0), 9), M.water, { cast: false, receive: false });
@@ -1055,7 +1049,7 @@ export function build(THREE, ctx = {}) {
   const bowls = [[-28, 4.6], [-12, 4.6], [4, 4.6], [27, 4.4], [27, -7.5], [55, 15], [-40, 18]];
   instanced(site, 'planter-bowls', bowlGeo, M.stone, bowls.map(([x, z]) => mtx(x, 0, z)));
   for (const [x, z] of bowls) for (let i = 0; i < 3; i++) shrubMs.push(mtx(x + rr(-0.5, 0.5), 0.8, z + rr(-0.5, 0.5), rr(0.6, 0.85), rr(0.5, 0.7), rr(0.6, 0.85), 0, rr(0, 6)));
-  const shrubGeo = (() => { const g = new THREE.IcosahedronGeometry(1, HIGH ? 2 : 1); const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const k = 0.82 + 0.3 * hash(Math.round(p.getX(i) * 9), Math.round(p.getY(i) * 9), Math.round(p.getZ(i) * 9)); p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); } g.computeVertexNormals(); return G(g); })();
+  const shrubGeo = (() => { const g = new THREE.IcosahedronGeometry(1, 1); const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const k = 0.82 + 0.3 * hash(Math.round(p.getX(i) * 9), Math.round(p.getY(i) * 9), Math.round(p.getZ(i) * 9)); p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); } g.computeVertexNormals(); return G(g); })();
 
   // deciduous trees: trunk + branches (merged), crown of leaf cards (alpha)
   const branchParts = [cy(0.07, 0.13, 3.2, 7, 0, 1.6, 0, 0x5d5046)];
@@ -1077,6 +1071,21 @@ export function build(THREE, ctx = {}) {
       cardMs.push(mtx(x + cx * s, cyy * s, z + cz * s, s * rr(0.8, 1.2), s * rr(0.8, 1.2), 1, rr(-1, 1), rr(0, 6.28), rr(-0.6, 0.6)));
     }
   }
+  // street trees along the boulevards and the far verges (simple rounded crowns, they read as a tree line)
+  const stTrunk = [], stCrown = [], stCrownCol = [];
+  const streetTree = (x, z) => {
+    const s = rr(0.85, 1.25);
+    stTrunk.push(mtx(x, 0, z, 0.9 * s, 1.0 * s, 0.9 * s));
+    for (let i = 0; i < 3; i++) {
+      stCrown.push(mtx(x + rr(-0.8, 0.8) * s, (4.4 + rr(-0.3, 0.9)) * s, z + rr(-0.8, 0.8) * s, rr(1.5, 2.1) * s, rr(1.2, 1.6) * s, rr(1.5, 2.1) * s, 0, rr(0, 6)));
+      stCrownCol.push(new THREE.Color().setHSL(rr(0.18, 0.3), rr(0.15, 0.35), rr(0.62, 0.86)));
+    }
+  };
+  for (let x = -136; x <= 136; x += rr(9, 13)) { streetTree(x, -36.2 + rr(-0.3, 0.3)); streetTree(x, -54 + rr(-0.3, 0.3)); streetTree(x, 62 + rr(-0.3, 0.3)); if (Math.abs(x) > 12) streetTree(x, 43.4); }
+  for (let z = -30; z <= 40; z += rr(9, 13)) { streetTree(-78.5, z); streetTree(78.5, z); streetTree(-100, z); streetTree(100, z); }
+  const stTrunkGeo = merge([cy(0.1, 0.16, 3.4, 6, 0, 1.7, 0, 0x5d5046)]);
+  instanced(site, 'street-tree-trunks', stTrunkGeo, M.siteObj, stTrunk);
+  instanced(site, 'street-tree-crowns', shrubGeo, M.shrub, stCrown, { colors: stCrownCol });
   instanced(site, 'tree-wood', treeWoodGeo, M.siteObj, woodMs);
   instanced(site, 'tree-leaves', cardGeo, M.leaves, cardMs);
   instanced(site, 'shrubs', shrubGeo, M.shrub, shrubMs);
@@ -1101,7 +1110,7 @@ export function build(THREE, ctx = {}) {
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
     return G(g);
   }
-  function frondGeometry(len = 3.4, n = HIGH ? 26 : 14) {
+  function frondGeometry(len = 3.8, n = HIGH ? 20 : 12) {
     const pos = [];
     const rib = (t) => [t * len, 0.55 * t * len * 0.5 - 0.9 * t * t * len * 0.5]; // rises then arches down
     for (let i = 0; i < n; i++) {
@@ -1113,11 +1122,12 @@ export function build(THREE, ctx = {}) {
     for (let i = 2; i < n; i++) {
       const t = i / n;
       const [x, y] = rib(t);
-      const L = (0.18 + 0.7 * Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.05)), 0.8)) * (len / 3.4);
+      const L = (0.2 + 0.85 * Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.05)), 0.7)) * (len / 3.8);
       for (const s of [-1, 1]) {
-        // leaflet: forward-swept, drooping, thin
-        const ax = Math.cos(0.9) * L * 0.55, az = s * Math.sin(0.9) * L, ay = -L * 0.45;
-        const bw = 0.045;
+        // leaflet: forward-swept, drooping, thin; alternate leaflets rise a little (the V of a date palm)
+        const up = (i % 2 ? 0.18 : -0.12);
+        const ax = Math.cos(0.8) * L * 0.6, az = s * Math.sin(0.8) * L * 0.95, ay = -L * (0.5 - up);
+        const bw = 0.035;
         pos.push(x, y, 0, x + ax, y + ay, az, x + bw, y + 0.01, 0);
         pos.push(x + bw, y + 0.01, 0, x + ax, y + ay, az, x + ax + 0.04, y + ay * 0.9, az * 0.92);
       }
@@ -1128,7 +1138,7 @@ export function build(THREE, ctx = {}) {
   const palmTrunkGeo = palmTrunkGeometry();
   const frondGeo = frondGeometry();
   const bootGeo = G(new THREE.CylinderGeometry(0.42, 0.2, 0.9, 10, 1));
-  const palms = [[30, 6.5], [50, 4], [62, 18], [-36, 6], [-20, 22], [16, 23], [38, 30], [-64, 24], [70, 30], [-6, 26]];
+  const palms = [[54, 2], [62, 18], [-36, 6], [-22, 22], [-4, 25.5], [66, 34], [-64, 24], [74, 22], [58, -14], [-52, 20], [30.5, -24]];
   const trunks = [], fronds = [], dry = [], boots = [];
   const qL = new THREE.Quaternion(), qF = new THREE.Quaternion(), vTop = new THREE.Vector3();
   for (const [x, z] of palms) {
@@ -1242,31 +1252,6 @@ export function build(THREE, ctx = {}) {
     for (let z = -30; z < 40; z += rr(10, 20)) { car(-92.5, z, Math.PI / 2); car(85.5, z, -Math.PI / 2); }
     instanced(site, 'cars', carGeo, M.carBody, cm, { colors: cc });
     instanced(site, 'car-lights', lightsGeo, M.carLight, cm.map((m) => m.clone()), { cast: false });
-  }
-
-  /* ---------- distant blocks: lit windows, frame the plaza from afar ---------- */
-  {
-    const parts = [];
-    const blocks = [];
-    // two loose rings of mid-rise blocks beyond the streets
-    for (let i = 0; i < 26; i++) {
-      const a = (i / 26) * Math.PI * 2 + rr(-0.06, 0.06);
-      const r = rr(150, 210);
-      const x = Math.sin(a) * r * 1.15, z = Math.cos(a) * r;
-      blocks.push([x, z, rr(18, 36), rr(14, 24), rr(10, 30)]);
-    }
-    for (const [x, z, w, d, h] of blocks) {
-      const g = T(new THREE.BoxGeometry(w, h, d));
-      const uv = g.attributes.uv, nrm = g.attributes.normal;
-      for (let i = 0; i < uv.count; i++) {
-        const top = Math.abs(nrm.getY(i)) > 0.5;
-        const sx = Math.abs(nrm.getX(i)) > 0.5 ? d : w;
-        uv.setXY(i, top ? 0.01 : uv.getX(i) * sx / 14, top ? 0.01 : uv.getY(i) * h / 30);
-      }
-      parts.push({ g, m: mtx(x, h / 2, z) });
-    }
-    const fg = merge(parts, { colors: false });
-    mesh(site, 'far-blocks', fg, M.windows, { cast: false });
   }
 
   /* ================================================================ */
