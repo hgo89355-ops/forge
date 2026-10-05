@@ -8,7 +8,6 @@ import { initMotion, scan, refresh } from './motion.js';
 import { initHeader } from './header.js';
 import { initUI, toast, openLightbox, openModal } from './ui.js';
 import { initSearch, openSearch } from './search.js';
-import { initCursor } from './cursor.js';
 import { initTransitions } from './transitions.js';
 
 const html = document.documentElement;
@@ -22,7 +21,6 @@ const steps = [
   ['header', initHeader],
   ['ui', initUI],
   ['search', initSearch],
-  ['cursor', initCursor],
   ['transitions', initTransitions],
 ];
 for (const [name, fn] of steps) {
