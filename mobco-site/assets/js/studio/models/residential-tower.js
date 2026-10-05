@@ -404,9 +404,9 @@ export function build(THREE, ctx = {}) {
     K.trees(site, trees, { seed: 11, name: 'site-trees', palette: [0x4c6a3a, 0x5a7a42, 0x3f5c33, 0x67844a, 0x52703f] });
     // woodland beyond the site: large low canopy masses (cheap stand-ins for distant trees)
     const far2 = [];
-    for (let i = 0; i < (high ? 70 : 30); i++) {
-      const a = rnd() * Math.PI * 2, r = 175 + rnd() * 50;
-      far2.push([Math.sin(a) * r, Math.cos(a) * r, 16 + rnd() * 6, 2.4 + rnd() * 1.2]);
+    for (let i = 0; i < (high ? 170 : 60); i++) {
+      const a = rnd() * Math.PI * 2, r = 165 + rnd() * 60;
+      far2.push([Math.sin(a) * r, Math.cos(a) * r, 12 + rnd() * 5, 1.2 + rnd() * 0.4]);
     }
     K.trees(site, far2, { seed: 19, name: 'woodland', palette: [0x3f5a33, 0x4a663a, 0x56723f] });
     site.add(K.mesh('woodland-ground-meadow-grass', K.flat([[-230, -230], [230, -230], [230, 230], [-230, 230]], 0.04), M.lawn, { cast: false }));

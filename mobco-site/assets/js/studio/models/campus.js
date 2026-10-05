@@ -128,7 +128,7 @@ export function build(THREE, ctx = {}) {
     rail: K.glass('campus-balustrade-glass', 0xb8cdd6, { opacity: 0.22, env: 1 }),
     mullion: K.std({ name: 'campus-mullion-metal', color: 0xdfe2e4, roughness: 0.35, metalness: 0.65 }),
     interior: K.interior('campus-interior', 0x6a645c, 0xffd6a6, 1.0),
-    interiorCool: K.interior('campus-interior-office', 0x7b7a76, 0xfff0d8, 0.9),
+    rooms: K.roomsMaterial('campus-rooms-interior', { seed: 23, lit: 0.62, nightMax: 1.5 }),
     water: K.water('campus-water-pool', 0x2f93b4, { emissive: 0x3cc8e0, nightMax: 0.5 }),
     paving: K.std({ name: 'campus-plaza-paving', color: 0xe9e5dc, roughness: 0.85 }),
     path: K.std({ name: 'campus-gravel-path', color: 0xc99a72, roughness: 0.95 }),
@@ -291,7 +291,7 @@ export function build(THREE, ctx = {}) {
       f.add(slab);
       const gm = K.mesh('tower-glass', glassGeo, M.glass, { cast: false });
       gm.scale.y = h - 0.85; gm.position.set(T.x, 0.85 + (h - 0.85) / 2, T.z); f.add(gm);
-      const core = K.mesh('tower-interior', coreGeo, lobby ? M.interior : M.interiorCool, { cast: false });
+      const core = K.mesh('tower-interior', lobby ? coreGeo : K.roomUV(K.g(coreGeo.clone()), level, { y0: -0.5, h: 1, cyl: { R: T.R - 1.4 }, bay: 3.4 }), lobby ? M.interior : M.rooms, { cast: false });
       core.scale.y = h - 0.9; core.position.set(T.x, 0.85 + (h - 0.9) / 2, T.z); f.add(core);
       const ms = [];
       for (let k = 0; k < nMull; k++) {
@@ -369,8 +369,8 @@ export function build(THREE, ctx = {}) {
       const span = K.mesh('bar-spandrel', K.box(w - inset * 2, 1.0, d - inset * 2), M.white); span.position.set(cx, 1.2, cz); f.add(span);
       const gl = K.mesh('bar-glass', K.box(w - 0.6 - inset * 2, B.fh - 1.7, d - 0.6 - inset * 2), top ? M.glassDark : M.glass, { cast: false });
       gl.position.set(cx, 1.7 + (B.fh - 1.7) / 2, cz); f.add(gl);
-      const inn = K.mesh('bar-interior', K.box(w - 2.4 - inset * 2, B.fh - 1.8, d - 2.4 - inset * 2), M.interiorCool, { cast: false });
-      inn.position.set(cx, 1.7 + (B.fh - 1.8) / 2, cz); f.add(inn);
+      const inn = K.mesh('bar-interior', K.roomBox(w - 2.4 - inset * 2, B.fh - 1.8, d - 2.4 - inset * 2, i, 3.2, 5), M.rooms, { cast: false });
+      inn.position.set(cx, 1.7, cz); f.add(inn);
       const ms = [];
       const step = top ? 3.2 : 1.6;
       for (let x = B.x0 + inset; x <= B.x1 - inset + 0.01; x += step) {
@@ -450,7 +450,7 @@ export function build(THREE, ctx = {}) {
     for (let i = 0; i < O.n; i++) {
       const f = fg('office', i, i === 0 ? 'Office block · ground level' : `Office block · level ${i}`, i === 0 ? 'مبنى المكاتب · الطابق الأرضي' : `مبنى المكاتب · الطابق ${i}`, i * O.fh);
       f.add(K.mesh('office-slab', slabGeo, M.slab));
-      const inn = K.mesh('office-interior', innerGeo, M.interiorCool, { cast: false }); inn.scale.y = O.fh - 0.7; inn.position.y = 0.55; f.add(inn);
+      const inn = K.mesh('office-interior', K.roomUV(K.g(innerGeo.clone()), i, { y0: 0, h: 1, shift: 9 }), M.rooms, { cast: false }); inn.scale.y = O.fh - 0.7; inn.position.y = 0.55; f.add(inn);
       // west end: curved solid wall with scattered small windows
       f.add(K.mesh('office-west-wall', K.sweep(westArc, () => [P(-0.35, 0.55, 1), P(0.35, 0.55, 1), P(0.35, O.fh, 1), P(-0.35, O.fh, 1)], { caps: true }), M.white));
       const wins = [];
@@ -772,7 +772,7 @@ export function build(THREE, ctx = {}) {
     sl.name = 'sail-uplight';
     sl.position.set(TOWER.x + 30, 0.6, TOWER.z + 30);
     sl.target.position.set(TOWER.x + 8, 40, TOWER.z + 8);
-    sl.userData.nightIntensity = 700;
+    sl.userData.nightIntensity = 350;
     site.add(sl, sl.target); K.lamps.push(sl);
   }
 

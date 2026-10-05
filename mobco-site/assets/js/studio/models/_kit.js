@@ -200,6 +200,26 @@ export function createKit(THREE, ctx = {}) {
     return g(geo);
   }
 
+  /**
+   * Remap any geometry's UVs to rooms-atlas cells: u = distance along the facade / bay, v = level + height
+   * fraction (y0..y0 + h in local units). cyl: { R } maps curved walls by arc length around the local y axis.
+   */
+  function roomUV(geo, level, { bay = 3.2, y0 = 0, h = 1, cyl = null, shift = 0 } = {}) {
+    const p = geo.attributes.position, n = geo.attributes.normal, uv = geo.attributes.uv;
+    if (!uv || !n) return geo;
+    const off = (level * 7 + shift) % ROOM_COLS;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+      let along;
+      if (cyl) along = (Math.atan2(x, z) + Math.PI) * cyl.R;
+      else along = Math.abs(n.getX(i)) > 0.5 ? z + (n.getX(i) > 0 ? 40 : 7) : x + (n.getZ(i) > 0 ? 0 : 23);
+      const v = Math.abs(n.getY(i)) > 0.7 ? level + 0.02 : level + 0.02 + clamp((y - y0) / h, 0, 1) * 0.96;
+      uv.setXY(i, along / bay + off, v);
+    }
+    uv.needsUpdate = true;
+    return geo;
+  }
+
   /* ------------------------------------------------------------ loft */
   /**
    * Loft a profile through a list of stations. Each station: { o:[x,y,z], U:[x,y,z], V:[x,y,z], prof:[[u,v,sharp,mat],...] }.
@@ -444,7 +464,7 @@ export function createKit(THREE, ctx = {}) {
         const leaf = canvasTex(256, 256, (c, w, h) => {
           const rnd = makeRng(611);
           c.clearRect(0, 0, w, h);
-          for (let i = 0; i < 1150; i++) {
+          for (let i = 0; i < 1350; i++) {
             const x = rnd() * w, y = rnd() * h, r = 3 + rnd() * 5, a = rnd() * Math.PI;
             const v = 150 + Math.round(rnd() * 105);
             c.fillStyle = `rgb(${v},${v},${v})`;
@@ -676,7 +696,7 @@ export function createKit(THREE, ctx = {}) {
   }
 
   return {
-    THREE, high, g, m, tx, std, phys, glass, interior, lampMat, water, canvasTex, waterNormal, roomsMaterial, roomBox,
+    THREE, high, g, m, tx, std, phys, glass, interior, lampMat, water, canvasTex, waterNormal, roomsMaterial, roomBox, roomUV,
     loft, planStations, sweep, arc, spline, merge, mat4, inst, mesh, box, flat, prism,
     crownGeo, trees, palms, shrubs, cars, lampPosts, light, floorGroup, batcher,
     nightMaterials, lamps, dispose,
