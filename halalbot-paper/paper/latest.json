@@ -1,0 +1,93 @@
+{
+ "run_time_utc": "2026-10-25 22:52",
+ "paper_start": "2026-10-26",
+ "last_stock_candle": "2026-10-23",
+ "last_crypto_candle": "2026-10-24",
+ "markets_missing": [],
+ "setups": {
+  "main": {
+   "account_value": 10000.0,
+   "total_profit": 0.0,
+   "total_return_pct": 0.0,
+   "last_day": "2026-10-25",
+   "last_day_pnl": 0.0,
+   "main_bucket": 7000.0,
+   "high_reward_bucket": 3000.0,
+   "worst_drop_pct": 0.0,
+   "open_trades": 0,
+   "orders_next_open": [
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "COP",
+     "strategy": "Bull flag",
+     "quantity": 4.637272,
+     "stop_loss": 147.1825,
+     "take_profit": 186.9755
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "EOG",
+     "strategy": "Bull flag",
+     "quantity": 4.289399,
+     "stop_loss": 159.0217,
+     "take_profit": 203.1128
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "ADI",
+     "strategy": "Breakout-retest",
+     "quantity": 1.788173,
+     "stop_loss": 378.0812,
+     "take_profit": 520.9585
+    }
+   ],
+   "closed_trades_total": 0,
+   "wins": 0,
+   "closed_last_day": [],
+   "left_on_table_total": 0.0,
+   "learn_from_mistakes": []
+  },
+  "setup5": {
+   "account_value": 10000.0,
+   "total_profit": 0.0,
+   "total_return_pct": 0.0,
+   "last_day": "2026-10-25",
+   "last_day_pnl": 0.0,
+   "main_bucket": 7000.0,
+   "high_reward_bucket": 3000.0,
+   "worst_drop_pct": 0.0,
+   "open_trades": 0,
+   "orders_next_open": [
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "COP",
+     "strategy": "Bull flag",
+     "quantity": 4.637272,
+     "stop_loss": 147.1825,
+     "take_profit": 186.9755
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "EOG",
+     "strategy": "Bull flag",
+     "quantity": 4.289399,
+     "stop_loss": 159.0217,
+     "take_profit": 203.1128
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "ADI",
+     "strategy": "Breakout-retest",
+     "quantity": 1.788173,
+     "stop_loss": 378.0812,
+     "take_profit": 520.9585
+    }
+   ],
+   "closed_trades_total": 0,
+   "wins": 0,
+   "closed_last_day": [],
+   "left_on_table_total": 0.0,
+   "learn_from_mistakes": []
+  }
+ }
+}

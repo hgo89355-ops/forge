@@ -1,0 +1,4 @@
+symbol,strategy,status,entry_date,entry_price,quantity,value_usd,stop_loss,take_profit,last_price,unrealised_pnl_usd,risk_usd
+COP,Bull flag,BUY AT NEXT OPEN,2026-10-26,150.9508,4.637272,699.3,147.1825,186.9755,150.8,0.0,17.47
+EOG,Bull flag,BUY AT NEXT OPEN,2026-10-26,163.193,4.289399,699.3,159.0217,203.1128,163.03,0.0,17.89
+ADI,Breakout-retest,BUY AT NEXT OPEN,2026-10-26,391.4611,1.788173,699.3,378.0812,520.9585,391.07,0.0,23.93
