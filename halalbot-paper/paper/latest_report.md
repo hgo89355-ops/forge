@@ -1,6 +1,6 @@
-# Paper trading report — 2026-10-25 22:52 UTC
+# Paper trading report — 2026-10-26 01:43 UTC
 
-Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-10-23, last crypto candle: 2026-10-24.
+Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-10-25, last crypto candle: 2026-10-24.
 
 ## Main setup
 

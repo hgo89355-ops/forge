@@ -1,7 +1,7 @@
 {
- "run_time_utc": "2026-10-25 22:52",
+ "run_time_utc": "2026-10-26 01:43",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-10-23",
+ "last_stock_candle": "2026-10-25",
  "last_crypto_candle": "2026-10-24",
  "markets_missing": [],
  "setups": {
@@ -45,7 +45,15 @@
    "wins": 0,
    "closed_last_day": [],
    "left_on_table_total": 0.0,
-   "learn_from_mistakes": []
+   "learn_from_mistakes": [],
+   "day": {
+    "date": "2026-10-25",
+    "bought": [],
+    "sold": [],
+    "profit_from_winners": 0,
+    "loss_from_losers": 0,
+    "left_on_table": 0
+   }
   },
   "setup5": {
    "account_value": 10000.0,
@@ -87,7 +95,15 @@
    "wins": 0,
    "closed_last_day": [],
    "left_on_table_total": 0.0,
-   "learn_from_mistakes": []
+   "learn_from_mistakes": [],
+   "day": {
+    "date": "2026-10-25",
+    "bought": [],
+    "sold": [],
+    "profit_from_winners": 0,
+    "loss_from_losers": 0,
+    "left_on_table": 0
+   }
   }
  }
 }
