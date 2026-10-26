@@ -162,7 +162,7 @@ def run_bucket(trades, data, risk, slots, max_open_risk, max_pos_pct, prio, eng_
     for t in trades:
         if t["entry_date"] < PAPER_START: continue
         if t["reason"] == "end_of_data":              # still open: keep it open, don't close at the last candle
-            t = dict(t, exit_date=pd.Timestamp("2100-01-01"))
+            t = dict(t, exit_date=pd.Timestamp("2100-01-01"), bars=max(int(t["bars"]), 2))   # not a same-day trade
         tr.append(t)
     if not tr:
         idx = pd.DatetimeIndex(sorted(set().union(*[set(d.index) for d in data.values()])))
@@ -258,6 +258,7 @@ def main():
     summary = dict(run_time_utc=dt.datetime.utcnow().strftime("%Y-%m-%d %H:%M"), paper_start=str(PAPER_START.date()),
                    last_stock_candle=str(last_real.date()), last_crypto_candle=str(last_crypto.date()),
                    markets_missing=bad, setups={})
+    orders_by_setup = {}
     for name, cfg in setups.items():
         core_tr = apply_status([t for k in cfg["keys"] for t in P[k]], status, name)
         cr_tr = apply_status(list(P["Crypto trend"]), status, name)
@@ -279,6 +280,7 @@ def main():
         val = float(real["account"].iat[-1]); prev = float(real["account"].iat[-2]) if len(real) > 1 else START_CASH
         last_day = real.index[-1]
         cl_today = closed[pd.to_datetime(closed["exit_date"]) == last_day] if len(closed) else closed
+        orders_by_setup[name] = pos[pos["status"] == "BUY AT NEXT OPEN"] if len(pos) else pos
         summary["setups"][name] = dict(
             account_value=round(val, 2), total_profit=round(val - START_CASH, 2), total_return_pct=round(100 * (val / START_CASH - 1), 2),
             last_day=str(last_day.date()), last_day_pnl=round(val - prev, 2),
@@ -292,6 +294,23 @@ def main():
             learn_from_mistakes=notes,
             day=day_detail(pos, closed, cl_today, last_day))
     json.dump(status, open(STATUS_FILE, "w"), indent=1, default=str)
+    # ---- record keeping, shadow signals on every Liquid market, alerts (never blocks the report)
+    try:
+        import recorder
+        used = set(k for cfg in setups.values() for k in cfg["keys"]) | {"Crypto trend"}
+        sigs, seen = [], set()
+        for k in used:
+            for t in P[k]:
+                if t["entry_date"] >= data[t["symbol"]].index[-1] and (t["symbol"], t["engine"]) not in seen:
+                    seen.add((t["symbol"], t["engine"]))
+                    sigs.append((t["symbol"], t["engine"], float(data[t["symbol"]]["close"].iat[-2]), float(t["stop"])))
+        taken = set()
+        for o in orders_by_setup.values():
+            if len(o): taken |= set(zip(o["symbol"], o["strategy"]))
+        last_day = max(v["last_day"] for v in summary["setups"].values())
+        summary["records"] = recorder.run(summary, data, sigs, taken, last_day)
+    except Exception as e:
+        summary["records"] = dict(error=f"record keeping failed: {e}", alerts=[])
     json.dump(summary, open(os.path.join(OUT, "latest.json"), "w"), indent=1, default=str)
     write_report(summary)
     print(open(os.path.join(OUT, "latest_report.md")).read())
@@ -301,6 +320,13 @@ def write_report(s):
     L_ = [f"# Paper trading report — {s['run_time_utc']} UTC", "",
           f"Paper start: {s['paper_start']} with $10,000 per setup. Last stock candle: {s['last_stock_candle']}, last crypto candle: {s['last_crypto_candle']}.", ""]
     if s["markets_missing"]: L_ += [f"Markets that failed to download: {', '.join(s['markets_missing'])}", ""]
+    rec = s.get("records") or {}
+    if rec.get("error"): L_ += [f"Record keeping problem: {rec['error']}", ""]
+    if rec.get("alerts"):
+        L_ += ["## Alerts", ""] + [f"- {a}" for a in rec["alerts"]] + [""]
+    if rec.get("markets_recorded"):
+        L_ += [f"Recorded {rec['markets_recorded']} Liquid markets; {rec['signals_today']} signals logged today "
+               f"({rec['bot_signals']} from the bot, {rec['shadow_signals']} shadow signals on other markets).", ""]
     for name, v in s["setups"].items():
         L_ += [f"## {'Main setup' if name == 'main' else 'Setup 5 (comparison)'}", "",
                f"- Account: ${v['account_value']:,.2f} ({v['total_return_pct']:+.2f}% since start)",
