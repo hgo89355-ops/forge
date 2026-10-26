@@ -226,6 +226,24 @@ def closed_table(sim, data, scale):
     return t[["symbol", "engine", "entry_date", "exit_date", "reason", "pnl_usd", "r_multiple", "left_on_table_usd"]]
 
 
+def day_detail(pos, closed, cl_today, last_day):
+    """Everything that happened on the last market day, for the daily log."""
+    ld = last_day.date()
+    bought = []
+    if len(pos):
+        for _, p in pos[(pos["status"] == "open") & (pd.to_datetime(pos["entry_date"]).dt.date == ld)].iterrows():
+            bought.append(dict(symbol=p["symbol"], strategy=p["strategy"], price=p["entry_price"], value_usd=p["value_usd"]))
+    if len(closed):
+        for _, c in closed[pd.to_datetime(closed["entry_date"]).dt.date == ld].iterrows():
+            bought.append(dict(symbol=c["symbol"], strategy=c["engine"], price=None, value_usd=None))
+    sold = [dict(symbol=c["symbol"], strategy=c["engine"], reason=c["reason"], pnl_usd=float(c["pnl_usd"]),
+                 left_on_table_usd=float(c["left_on_table_usd"])) for _, c in cl_today.iterrows()] if len(cl_today) else []
+    return dict(date=str(ld), bought=bought, sold=sold,
+                profit_from_winners=round(sum(s["pnl_usd"] for s in sold if s["pnl_usd"] > 0), 2),
+                loss_from_losers=round(sum(s["pnl_usd"] for s in sold if s["pnl_usd"] <= 0), 2),
+                left_on_table=round(sum(s["left_on_table_usd"] for s in sold), 2))
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     raw, bad = download(os.path.join(HERE, ".cache"))
@@ -271,7 +289,8 @@ def main():
             closed_trades_total=int(len(closed)), wins=int((closed["pnl_usd"] > 0).sum()) if len(closed) else 0,
             closed_last_day=cl_today[["symbol", "engine", "reason", "pnl_usd"]].to_dict("records") if len(cl_today) else [],
             left_on_table_total=round(float(closed["left_on_table_usd"].sum()), 2) if len(closed) else 0.0,
-            learn_from_mistakes=notes)
+            learn_from_mistakes=notes,
+            day=day_detail(pos, closed, cl_today, last_day))
     json.dump(status, open(STATUS_FILE, "w"), indent=1, default=str)
     json.dump(summary, open(os.path.join(OUT, "latest.json"), "w"), indent=1, default=str)
     write_report(summary)
