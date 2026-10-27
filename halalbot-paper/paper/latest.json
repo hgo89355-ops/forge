@@ -1,17 +1,17 @@
 {
- "run_time_utc": "2026-10-26 01:43",
+ "run_time_utc": "2026-10-27 00:43",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-10-25",
- "last_crypto_candle": "2026-10-24",
+ "last_stock_candle": "2026-10-26",
+ "last_crypto_candle": "2026-10-25",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 10000.0,
-   "total_profit": 0.0,
-   "total_return_pct": 0.0,
-   "last_day": "2026-10-25",
-   "last_day_pnl": 0.0,
-   "main_bucket": 7000.0,
+   "account_value": 9997.2,
+   "total_profit": -2.8,
+   "total_return_pct": -0.03,
+   "last_day": "2026-10-26",
+   "last_day_pnl": -2.8,
+   "main_bucket": 6997.2,
    "high_reward_bucket": 3000.0,
    "worst_drop_pct": 0.0,
    "open_trades": 0,
@@ -39,6 +39,14 @@
      "quantity": 1.788173,
      "stop_loss": 378.0812,
      "take_profit": 520.9585
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "SLB",
+     "strategy": "Triple MA",
+     "quantity": 13.179432,
+     "stop_loss": 48.0188,
+     "take_profit": ""
     }
    ],
    "closed_trades_total": 0,
@@ -47,7 +55,7 @@
    "left_on_table_total": 0.0,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-25",
+    "date": "2026-10-26",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -56,12 +64,12 @@
    }
   },
   "setup5": {
-   "account_value": 10000.0,
-   "total_profit": 0.0,
-   "total_return_pct": 0.0,
-   "last_day": "2026-10-25",
-   "last_day_pnl": 0.0,
-   "main_bucket": 7000.0,
+   "account_value": 9993.01,
+   "total_profit": -6.99,
+   "total_return_pct": -0.07,
+   "last_day": "2026-10-26",
+   "last_day_pnl": -6.99,
+   "main_bucket": 6993.01,
    "high_reward_bucket": 3000.0,
    "worst_drop_pct": 0.0,
    "open_trades": 0,
@@ -89,6 +97,70 @@
      "quantity": 1.788173,
      "stop_loss": 378.0812,
      "take_profit": 520.9585
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "SLB",
+     "strategy": "Triple MA",
+     "quantity": 13.179432,
+     "stop_loss": 48.0188,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "TXN",
+     "strategy": "X Engulfing tech",
+     "quantity": 2.456358,
+     "stop_loss": 276.27,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "NVDA",
+     "strategy": "X Hammer tech",
+     "quantity": 3.31485,
+     "stop_loss": 210.18,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "AVGO",
+     "strategy": "X Hammer tech",
+     "quantity": 2.173902,
+     "stop_loss": 320.23,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "XLP",
+     "strategy": "X MA cross 20/60",
+     "quantity": 7.923189,
+     "stop_loss": 84.4304,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "CSCO",
+     "strategy": "X Stochastic reversal",
+     "quantity": 6.566204,
+     "stop_loss": 102.1739,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "ORCL",
+     "strategy": "X Stochastic reversal",
+     "quantity": 3.510094,
+     "stop_loss": 116.3149,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "AMAT",
+     "strategy": "X Stochastic reversal",
+     "quantity": 0.679852,
+     "stop_loss": 347.4741,
+     "take_profit": ""
     }
    ],
    "closed_trades_total": 0,
@@ -97,7 +169,7 @@
    "left_on_table_total": 0.0,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-25",
+    "date": "2026-10-26",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -105,5 +177,20 @@
     "left_on_table": 0
    }
   }
+ },
+ "records": {
+  "date": "2026-10-26",
+  "markets_recorded": 343,
+  "signals_today": 43,
+  "bot_signals": 19,
+  "shadow_signals": 24,
+  "alerts": [
+   "Unusual move: xyz:EWZ -15.5% (6.8x its normal daily move)",
+   "Volume spike: xyz:EWZ traded 71.5x its usual volume (-15.5%)",
+   "Volume spike: para:MELI traded 15.0x its usual volume (-4.4%)",
+   "Volume spike: xyz:NCLD traded 6.0x its usual volume (+3.2%)",
+   "Volume spike: CHIP traded 4.4x its usual volume (+16.3%)",
+   "Volume spike: xyz:UNITREE traded 4.1x its usual volume (+1.2%)"
+  ]
  }
 }
