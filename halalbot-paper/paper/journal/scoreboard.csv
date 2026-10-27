@@ -1,0 +1,21 @@
+strategy,open_now,live_closed,live_wins,live_win_rate,backtest_trades,backtest_win_rate,updated_win_rate,live_avg_R,backtest_avg_R
+52-week high,0,0,0,,1745,20.0,20.0,,0.49
+Breakout-retest,2,0,0,,2369,18.1,18.1,,0.27
+Bull flag,4,0,0,,1138,22.0,22.0,,0.6
+Crypto trend,0,0,0,,264,24.6,24.6,,1.41
+Dip after bull flag,0,0,0,,613,22.5,22.5,,0.64
+"Dip after bull flag, quick exit",0,0,0,,726,67.5,67.5,,0.08
+Momentum 12-1,0,0,0,,182,43.4,43.4,,0.27
+Pullback in trend,0,0,0,,2757,19.0,19.0,,0.36
+Squeeze breakout,0,0,0,,430,18.6,18.6,,0.35
+Triple MA,2,0,0,,8307,39.9,39.9,,0.07
+Turtle breakout,0,0,0,,2106,20.3,20.3,,0.47
+X 20-day breakout + volume,0,0,0,,1922,43.4,43.4,,0.1
+X Engulfing tech,1,0,0,,1249,27.2,27.2,,0.28
+X Hammer tech,2,0,0,,3586,18.6,18.6,,0.36
+X Heikin Ashi reversal,0,0,0,,5966,37.7,37.7,,0.01
+X IBS on index futures,0,0,0,,380,68.4,68.4,,0.05
+X MA cross 20/60,1,0,0,,1726,38.1,38.1,,0.42
+X RSI2 momentum,0,0,0,,7969,40.1,40.1,,0.11
+X Stochastic reversal,3,0,0,,4386,40.1,40.1,,0.13
+X Swing contraction,0,0,0,,3709,37.5,37.5,,0.17

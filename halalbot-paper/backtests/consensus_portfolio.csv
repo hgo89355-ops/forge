@@ -1,0 +1,40 @@
+start,setup,per_year,worst_drop,losing_months
+2018,Current bot main bucket (10 strategies),0.265,-0.259,0.38
+2018,Consensus A all rules (10R) alone,0.028,-0.187,0.47
+2018,Bot + consensus A as 11th strategy,0.265,-0.248,0.38
+2018,"Bot + consensus A, consensus picked first",0.217,-0.228,0.41
+2018,Bot 80% + consensus A 20% (separate pots),0.218,-0.233,0.38
+2018,Bot 70% + consensus A 30% (separate pots),0.194,-0.22,0.37
+2018,Consensus B all rules (trailing) alone,0.004,-0.264,0.52
+2018,Bot + consensus B as 11th strategy,0.27,-0.24,0.36
+2018,"Bot + consensus B, consensus picked first",0.228,-0.245,0.34
+2018,Bot 80% + consensus B 20% (separate pots),0.212,-0.222,0.39
+2018,Bot 70% + consensus B 30% (separate pots),0.186,-0.203,0.4
+2018,Consensus C no leader filter alone,0.073,-0.191,0.45
+2018,Consensus D no tight-base filter alone,0.107,-0.161,0.42
+2022,Current bot main bucket (10 strategies),0.233,-0.209,0.35
+2022,Consensus A all rules (10R) alone,-0.002,-0.142,0.54
+2022,Bot + consensus A as 11th strategy,0.233,-0.209,0.35
+2022,"Bot + consensus A, consensus picked first",0.168,-0.21,0.44
+2022,Bot 80% + consensus A 20% (separate pots),0.184,-0.187,0.37
+2022,Bot 70% + consensus A 30% (separate pots),0.16,-0.177,0.4
+2022,Consensus B all rules (trailing) alone,0.005,-0.167,0.49
+2022,Bot + consensus B as 11th strategy,0.234,-0.21,0.39
+2022,"Bot + consensus B, consensus picked first",0.222,-0.201,0.37
+2022,Bot 80% + consensus B 20% (separate pots),0.185,-0.2,0.39
+2022,Bot 70% + consensus B 30% (separate pots),0.163,-0.195,0.4
+2022,Consensus C no leader filter alone,0.031,-0.191,0.53
+2022,Consensus D no tight-base filter alone,0.118,-0.143,0.49
+2024,Current bot main bucket (10 strategies),0.202,-0.21,0.3
+2024,Consensus A all rules (10R) alone,0.009,-0.134,0.58
+2024,Bot + consensus A as 11th strategy,0.178,-0.219,0.33
+2024,"Bot + consensus A, consensus picked first",0.115,-0.218,0.52
+2024,Bot 80% + consensus A 20% (separate pots),0.168,-0.186,0.33
+2024,Bot 70% + consensus A 30% (separate pots),0.148,-0.177,0.39
+2024,Consensus B all rules (trailing) alone,0.025,-0.167,0.52
+2024,Bot + consensus B as 11th strategy,0.192,-0.21,0.3
+2024,"Bot + consensus B, consensus picked first",0.213,-0.201,0.33
+2024,Bot 80% + consensus B 20% (separate pots),0.172,-0.201,0.33
+2024,Bot 70% + consensus B 30% (separate pots),0.154,-0.196,0.39
+2024,Consensus C no leader filter alone,0.02,-0.191,0.64
+2024,Consensus D no tight-base filter alone,0.133,-0.143,0.55

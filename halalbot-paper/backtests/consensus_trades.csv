@@ -1,0 +1,16 @@
+version,period,trades,per_month,win,avg_R,avg_pct
+A all rules (10R),2018-21,488,10.2,0.191,0.34,0.66
+A all rules (10R),2022-26,480,8.3,0.129,-0.06,-0.14
+A all rules (10R),2024-26,324,9.6,0.13,-0.03,-0.01
+B all rules (trailing),2018-21,442,9.2,0.38,0.07,0.35
+B all rules (trailing),2022-26,417,7.2,0.324,-0.01,0.03
+B all rules (trailing),2024-26,286,8.5,0.343,0.04,0.29
+C no leader filter,2018-21,1215,25.3,0.198,0.37,0.68
+C no leader filter,2022-26,1093,18.9,0.146,0.06,0.17
+C no leader filter,2024-26,775,23.0,0.139,0.01,0.11
+D no tight-base filter,2018-21,722,15.0,0.169,0.2,0.47
+D no tight-base filter,2022-26,711,12.3,0.18,0.4,1.21
+D no tight-base filter,2024-26,473,14.0,0.178,0.39,1.26
+A crypto version,2018-21,29,0.6,0.31,2.38,16.88
+A crypto version,2022-26,28,0.5,0.143,0.2,1.27
+A crypto version,2024-26,18,0.5,0.111,-0.32,-2.48
