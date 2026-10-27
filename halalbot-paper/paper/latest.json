@@ -1,51 +1,67 @@
 {
- "run_time_utc": "2026-10-27 00:43",
+ "run_time_utc": "2026-10-27 01:44",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-10-26",
- "last_crypto_candle": "2026-10-25",
+ "last_crypto_candle": "2026-10-26",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 9997.2,
-   "total_profit": -2.8,
-   "total_return_pct": -0.03,
+   "account_value": 10050.18,
+   "total_profit": 50.18,
+   "total_return_pct": 0.5,
    "last_day": "2026-10-26",
-   "last_day_pnl": -2.8,
-   "main_bucket": 6997.2,
+   "last_day_pnl": 50.18,
+   "main_bucket": 7050.18,
    "high_reward_bucket": 3000.0,
    "worst_drop_pct": 0.0,
-   "open_trades": 0,
+   "open_trades": 4,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "COP",
-     "strategy": "Bull flag",
-     "quantity": 4.637272,
-     "stop_loss": 147.1825,
-     "take_profit": 186.9755
+     "symbol": "TSLA",
+     "strategy": "Turtle breakout",
+     "quantity": 1.798463,
+     "stop_loss": 378.1521,
+     "take_profit": 526.2992
     },
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "EOG",
-     "strategy": "Bull flag",
-     "quantity": 4.289399,
-     "stop_loss": 159.0217,
-     "take_profit": 203.1128
+     "symbol": "QCOM",
+     "strategy": "Pullback in trend",
+     "quantity": 3.921571,
+     "stop_loss": 172.9006,
+     "take_profit": 246.5942
     },
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "ADI",
+     "symbol": "SNPS",
      "strategy": "Breakout-retest",
-     "quantity": 1.788173,
-     "stop_loss": 378.0812,
-     "take_profit": 520.9585
+     "quantity": 1.550226,
+     "stop_loss": 435.7303,
+     "take_profit": 640.3271
     },
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "SLB",
+     "symbol": "BMY",
      "strategy": "Triple MA",
-     "quantity": 13.179432,
-     "stop_loss": 48.0188,
+     "quantity": 11.431815,
+     "stop_loss": 56.3073,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "ABT",
+     "strategy": "Triple MA",
+     "quantity": 6.715428,
+     "stop_loss": 96.3382,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "XLRE",
+     "strategy": "Triple MA",
+     "quantity": 16.455938,
+     "stop_loss": 41.0016,
      "take_profit": ""
     }
    ],
@@ -56,7 +72,32 @@
    "learn_from_mistakes": [],
    "day": {
     "date": "2026-10-26",
-    "bought": [],
+    "bought": [
+     {
+      "symbol": "COP",
+      "strategy": "Bull flag",
+      "price": 149.3892,
+      "value_usd": 709.28
+     },
+     {
+      "symbol": "EOG",
+      "strategy": "Bull flag",
+      "price": 162.3522,
+      "value_usd": 705.72
+     },
+     {
+      "symbol": "ADI",
+      "strategy": "Breakout-retest",
+      "price": 393.4731,
+      "value_usd": 725.72
+     },
+     {
+      "symbol": "SLB",
+      "strategy": "Triple MA",
+      "price": 52.3723,
+      "value_usd": 709.46
+     }
+    ],
     "sold": [],
     "profit_from_winners": 0,
     "loss_from_losers": 0,
@@ -64,103 +105,23 @@
    }
   },
   "setup5": {
-   "account_value": 9993.01,
-   "total_profit": -6.99,
-   "total_return_pct": -0.07,
+   "account_value": 10105.26,
+   "total_profit": 105.26,
+   "total_return_pct": 1.05,
    "last_day": "2026-10-26",
-   "last_day_pnl": -6.99,
-   "main_bucket": 6993.01,
+   "last_day_pnl": 105.26,
+   "main_bucket": 7105.26,
    "high_reward_bucket": 3000.0,
    "worst_drop_pct": 0.0,
-   "open_trades": 0,
+   "open_trades": 11,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "COP",
-     "strategy": "Bull flag",
-     "quantity": 4.637272,
-     "stop_loss": 147.1825,
-     "take_profit": 186.9755
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "EOG",
-     "strategy": "Bull flag",
-     "quantity": 4.289399,
-     "stop_loss": 159.0217,
-     "take_profit": 203.1128
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "ADI",
+     "symbol": "SNPS",
      "strategy": "Breakout-retest",
-     "quantity": 1.788173,
-     "stop_loss": 378.0812,
-     "take_profit": 520.9585
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "SLB",
-     "strategy": "Triple MA",
-     "quantity": 13.179432,
-     "stop_loss": 48.0188,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "TXN",
-     "strategy": "X Engulfing tech",
-     "quantity": 2.456358,
-     "stop_loss": 276.27,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "NVDA",
-     "strategy": "X Hammer tech",
-     "quantity": 3.31485,
-     "stop_loss": 210.18,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "AVGO",
-     "strategy": "X Hammer tech",
-     "quantity": 2.173902,
-     "stop_loss": 320.23,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "XLP",
-     "strategy": "X MA cross 20/60",
-     "quantity": 7.923189,
-     "stop_loss": 84.4304,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "CSCO",
-     "strategy": "X Stochastic reversal",
-     "quantity": 6.566204,
-     "stop_loss": 102.1739,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "ORCL",
-     "strategy": "X Stochastic reversal",
-     "quantity": 3.510094,
-     "stop_loss": 116.3149,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "AMAT",
-     "strategy": "X Stochastic reversal",
-     "quantity": 0.679852,
-     "stop_loss": 347.4741,
-     "take_profit": ""
+     "quantity": 0.231442,
+     "stop_loss": 435.7303,
+     "take_profit": 640.3271
     }
    ],
    "closed_trades_total": 0,
@@ -170,7 +131,74 @@
    "learn_from_mistakes": [],
    "day": {
     "date": "2026-10-26",
-    "bought": [],
+    "bought": [
+     {
+      "symbol": "COP",
+      "strategy": "Bull flag",
+      "price": 149.3892,
+      "value_usd": 709.28
+     },
+     {
+      "symbol": "EOG",
+      "strategy": "Bull flag",
+      "price": 162.3522,
+      "value_usd": 705.72
+     },
+     {
+      "symbol": "ADI",
+      "strategy": "Breakout-retest",
+      "price": 393.4731,
+      "value_usd": 725.72
+     },
+     {
+      "symbol": "SLB",
+      "strategy": "Triple MA",
+      "price": 52.3723,
+      "value_usd": 709.46
+     },
+     {
+      "symbol": "TXN",
+      "strategy": "X Engulfing tech",
+      "price": 289.2089,
+      "value_usd": 721.57
+     },
+     {
+      "symbol": "NVDA",
+      "strategy": "X Hammer tech",
+      "price": 213.3231,
+      "value_usd": 708.78
+     },
+     {
+      "symbol": "AVGO",
+      "strategy": "X Hammer tech",
+      "price": 324.8545,
+      "value_usd": 709.3
+     },
+     {
+      "symbol": "XLP",
+      "strategy": "X MA cross 20/60",
+      "price": 88.1681,
+      "value_usd": 698.35
+     },
+     {
+      "symbol": "CSCO",
+      "strategy": "X Stochastic reversal",
+      "price": 108.2582,
+      "value_usd": 712.81
+     },
+     {
+      "symbol": "ORCL",
+      "strategy": "X Stochastic reversal",
+      "price": 126.1861,
+      "value_usd": 442.49
+     },
+     {
+      "symbol": "AMAT",
+      "strategy": "X Stochastic reversal",
+      "price": 380.6302,
+      "value_usd": 261.77
+     }
+    ],
     "sold": [],
     "profit_from_winners": 0,
     "loss_from_losers": 0,
@@ -181,16 +209,19 @@
  "records": {
   "date": "2026-10-26",
   "markets_recorded": 343,
-  "signals_today": 43,
-  "bot_signals": 19,
-  "shadow_signals": 24,
+  "signals_today": 16,
+  "bot_signals": 16,
+  "shadow_signals": 0,
   "alerts": [
    "Unusual move: xyz:EWZ -15.5% (6.8x its normal daily move)",
    "Volume spike: xyz:EWZ traded 71.5x its usual volume (-15.5%)",
    "Volume spike: para:MELI traded 15.0x its usual volume (-4.4%)",
    "Volume spike: xyz:NCLD traded 6.0x its usual volume (+3.2%)",
    "Volume spike: CHIP traded 4.4x its usual volume (+16.3%)",
-   "Volume spike: xyz:UNITREE traded 4.1x its usual volume (+1.2%)"
+   "Volume spike: xyz:UNITREE traded 4.1x its usual volume (+1.2%)",
+   "Signal skipped: TSLA (TU rest); its outcome will be tracked",
+   "Signal skipped: QCOM (PB tech); its outcome will be tracked",
+   "Signal skipped: TSLA (Triple MA); its outcome will be tracked"
   ]
  }
 }

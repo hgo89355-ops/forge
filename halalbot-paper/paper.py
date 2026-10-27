@@ -30,31 +30,98 @@ FIN = set("BRK-B JPM V MA BAC WFC C GS MS BLK".split())
 
 
 # ----------------------------------------------------------------------------- data
-def download(cache_dir):
+def _yf_one(s, **kw):
     import yfinance as yf
+    for k in range(3):
+        try:
+            d = yf.download(s, interval="1d", progress=False, auto_adjust=True, **kw)
+            if d is not None and len(d):
+                if isinstance(d.columns, pd.MultiIndex): d.columns = d.columns.get_level_values(0)
+                d.columns = [c.lower() for c in d.columns]
+                d.index = pd.to_datetime(d.index).tz_localize(None).normalize()
+                return d[["open", "high", "low", "close", "volume"]].dropna()
+        except Exception:
+            pass
+        import time; time.sleep(2 * (k + 1))
+    return None
+
+
+def hl_daily_recent(coin):
+    """Last 40 daily candles from Hyperliquid's public API (used when Yahoo is behind on crypto)."""
+    import requests, time
+    try:
+        end = int(time.time() * 1000)
+        r = requests.post("https://api.hyperliquid.xyz/info", timeout=30, json={"type": "candleSnapshot",
+            "req": {"coin": coin, "interval": "1d", "startTime": end - 40 * 86_400_000, "endTime": end}}).json()
+        d = pd.DataFrame(r)
+        d.index = pd.to_datetime(d["t"], unit="ms").dt.normalize()
+        d = d.rename(columns={"o": "open", "h": "high", "l": "low", "c": "close", "v": "volume"})
+        return d[["open", "high", "low", "close", "volume"]].astype(float)
+    except Exception:
+        return None
+
+
+def expected_last_days():
+    """Last finished daily candle we should have: crypto = yesterday (UTC); US markets = the last
+    weekday whose New York session has closed (holidays are caught by the majority check below)."""
+    now = pd.Timestamp.utcnow().tz_localize(None)
+    crypto = now.normalize() - pd.Timedelta(days=1)
+    ny = now - pd.Timedelta(hours=4 if 3 <= now.month <= 10 else 5)
+    d = ny.normalize() if ny.hour * 60 + ny.minute >= 16 * 60 + 15 else ny.normalize() - pd.Timedelta(days=1)
+    while d.weekday() >= 5: d -= pd.Timedelta(days=1)
+    return d, crypto
+
+
+def download(cache_dir):
     os.makedirs(cache_dir, exist_ok=True)
     syms = config.STOCKS + config.ETFS + config.FUTURES + config.CRYPTO
     today = pd.Timestamp.utcnow().tz_localize(None).normalize()
     data, bad = {}, []
     for s in syms:
-        d = None
-        for _ in range(3):
-            try:
-                d = yf.download(s, start="2015-01-01", interval="1d", progress=False, auto_adjust=True)
-                if len(d): break
-            except Exception:
-                d = None
+        d = _yf_one(s, start="2015-01-01")
         if d is None or not len(d):
             bad.append(s); continue
-        if isinstance(d.columns, pd.MultiIndex): d.columns = d.columns.get_level_values(0)
-        d.columns = [c.lower() for c in d.columns]
-        d.index = pd.to_datetime(d.index).tz_localize(None).normalize()
+        data[s] = d
+    # Yahoo sometimes returns stale history (it rate-limits). Check every market has the latest
+    # finished candle; re-download recent days for any that don't.
+    exp_stock, exp_crypto = expected_last_days()
+    def recent(sym):
+        import yfinance as yf, time
+        for k in range(4):
+            try:
+                r = yf.Ticker(sym).history(period="1mo", interval="1d", auto_adjust=True)
+                if r is not None and len(r):
+                    r.columns = [c.lower() for c in r.columns]
+                    r.index = pd.to_datetime(r.index).tz_localize(None).normalize()
+                    return r[["open", "high", "low", "close", "volume"]].dropna()
+            except Exception:
+                pass
+            time.sleep(10 * (k + 1))
+        return None
+    # a market holiday only if SPY itself, fetched fresh, has no candle for the expected day
+    spy = recent("SPY")
+    if spy is not None and len(spy) and spy.index[-1] < exp_stock:
+        exp_stock = spy.index[-1]
+    stale = []
+    for s, d in list(data.items()):
+        want = exp_crypto if s.endswith("-USD") else exp_stock
+        if "=F" in s: want = min(want, d.index[-1])          # futures calendars differ; don't chase them
+        tries = 0
+        while d[d.index < today].index[-1] < want and tries < 2:
+            r = recent(s) if not (s.endswith("-USD") and tries == 1) else hl_daily_recent(s[:-4])
+            if r is not None and len(r):
+                d = pd.concat([d[~d.index.isin(r.index)], r]).sort_index()
+            tries += 1
+        if d[d.index < today].index[-1] < want:
+            stale.append(s)
+        data[s] = d
+    out = {}
+    for s, d in data.items():
         d = d[d.index < today]                       # drop today's unfinished candle
-        d = d[["open", "high", "low", "close", "volume"]].dropna()
         d = d[~d.index.duplicated()].sort_index()
         if len(d) > 300:
-            data[s] = d
-    return data, bad
+            out[s] = d
+    return out, bad + [f"{s} (stale)" for s in stale]
 
 
 def add_next_bar(raw):
@@ -247,7 +314,7 @@ def day_detail(pos, closed, cl_today, last_day):
 def main():
     os.makedirs(OUT, exist_ok=True)
     raw, bad = download(os.path.join(HERE, ".cache"))
-    last_real = max(d.index[-1] for s, d in raw.items() if not s.endswith("-USD"))
+    last_real = pd.Series([d.index[-1] for s, d in raw.items() if not s.endswith("-USD") and "=F" not in s]).mode().iat[0]
     last_crypto = max(d.index[-1] for s, d in raw.items() if s.endswith("-USD"))
     data = add_next_bar(raw)
     P = L.build(data, extras=True)

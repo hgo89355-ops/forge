@@ -1,15 +1,18 @@
 {
  "date": "2026-10-26",
  "markets_recorded": 343,
- "signals_today": 43,
- "bot_signals": 19,
- "shadow_signals": 24,
+ "signals_today": 16,
+ "bot_signals": 16,
+ "shadow_signals": 0,
  "alerts": [
   "Unusual move: xyz:EWZ -15.5% (6.8x its normal daily move)",
   "Volume spike: xyz:EWZ traded 71.5x its usual volume (-15.5%)",
   "Volume spike: para:MELI traded 15.0x its usual volume (-4.4%)",
   "Volume spike: xyz:NCLD traded 6.0x its usual volume (+3.2%)",
   "Volume spike: CHIP traded 4.4x its usual volume (+16.3%)",
-  "Volume spike: xyz:UNITREE traded 4.1x its usual volume (+1.2%)"
+  "Volume spike: xyz:UNITREE traded 4.1x its usual volume (+1.2%)",
+  "Signal skipped: TSLA (TU rest); its outcome will be tracked",
+  "Signal skipped: QCOM (PB tech); its outcome will be tracked",
+  "Signal skipped: TSLA (Triple MA); its outcome will be tracked"
  ]
 }

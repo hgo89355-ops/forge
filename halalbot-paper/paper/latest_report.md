@@ -1,6 +1,6 @@
-# Paper trading report — 2026-10-27 00:43 UTC
+# Paper trading report — 2026-10-27 01:44 UTC
 
-Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-10-26, last crypto candle: 2026-10-25.
+Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-10-26, last crypto candle: 2026-10-26.
 
 ## Alerts
 
@@ -10,23 +10,26 @@ Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-10-26, l
 - Volume spike: xyz:NCLD traded 6.0x its usual volume (+3.2%)
 - Volume spike: CHIP traded 4.4x its usual volume (+16.3%)
 - Volume spike: xyz:UNITREE traded 4.1x its usual volume (+1.2%)
+- Signal skipped: TSLA (TU rest); its outcome will be tracked
+- Signal skipped: QCOM (PB tech); its outcome will be tracked
+- Signal skipped: TSLA (Triple MA); its outcome will be tracked
 
-Recorded 343 Liquid markets; 43 signals logged today (19 from the bot, 24 shadow signals on other markets).
+Recorded 343 Liquid markets; 16 signals logged today (16 from the bot, 0 shadow signals on other markets).
 
 ## Main setup
 
-- Account: $9,997.20 (-0.03% since start)
-- Last day (2026-10-26): -2.80 USD
-- Main bucket $6,997.20, high-reward bucket $3,000.00
-- Open trades: 0; closed so far: 0 (0 wins)
+- Account: $10,050.18 (+0.50% since start)
+- Last day (2026-10-26): +50.18 USD
+- Main bucket $7,050.18, high-reward bucket $3,000.00
+- Open trades: 4; closed so far: 0 (0 wins)
 - Worst drop so far: 0.0%; left on the table (closed trades): $0.00
-- Orders for the next open: BUY COP (Bull flag), stop 147.1825; BUY EOG (Bull flag), stop 159.0217; BUY ADI (Breakout-retest), stop 378.0812; BUY SLB (Triple MA), stop 48.0188
+- Orders for the next open: BUY TSLA (Turtle breakout), stop 378.1521; BUY QCOM (Pullback in trend), stop 172.9006; BUY SNPS (Breakout-retest), stop 435.7303; BUY BMY (Triple MA), stop 56.3073; BUY ABT (Triple MA), stop 96.3382; BUY XLRE (Triple MA), stop 41.0016
 
 ## Setup 5 (comparison)
 
-- Account: $9,993.01 (-0.07% since start)
-- Last day (2026-10-26): -6.99 USD
-- Main bucket $6,993.01, high-reward bucket $3,000.00
-- Open trades: 0; closed so far: 0 (0 wins)
+- Account: $10,105.26 (+1.05% since start)
+- Last day (2026-10-26): +105.26 USD
+- Main bucket $7,105.26, high-reward bucket $3,000.00
+- Open trades: 11; closed so far: 0 (0 wins)
 - Worst drop so far: 0.0%; left on the table (closed trades): $0.00
-- Orders for the next open: BUY COP (Bull flag), stop 147.1825; BUY EOG (Bull flag), stop 159.0217; BUY ADI (Breakout-retest), stop 378.0812; BUY SLB (Triple MA), stop 48.0188; BUY TXN (X Engulfing tech), stop 276.27; BUY NVDA (X Hammer tech), stop 210.18; BUY AVGO (X Hammer tech), stop 320.23; BUY XLP (X MA cross 20/60), stop 84.4304; BUY CSCO (X Stochastic reversal), stop 102.1739; BUY ORCL (X Stochastic reversal), stop 116.3149; BUY AMAT (X Stochastic reversal), stop 347.4741
+- Orders for the next open: BUY SNPS (Breakout-retest), stop 435.7303
