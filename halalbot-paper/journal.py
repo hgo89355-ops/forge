@@ -56,13 +56,14 @@ def main():
     bt = bt[bt["period"] == "All 2018–2026"].set_index("strategy") if len(bt) else pd.DataFrame()
     rows = []
     for strat in sorted(set(T["strategy"]) | set(bt.index if len(bt) else [])):
-        live = T[(T["strategy"] == strat) & (T["status"] == "closed") & (T["setup"] == "Setup 5" if strat.startswith("X ") else T["setup"] == "Main setup")]
+        mine = T[(T["strategy"] == strat) & (T["setup"] == ("Setup 5" if strat.startswith("X ") else "Main setup"))]
+        live = mine[mine["status"] == "closed"]
         if strat in ("PB tech", "PB rest", "TU fin", "TU rest"):
             continue
         n, w = len(live), int((live["won"] == "yes").sum())
         bn = int(bt.loc[strat, "trades"]) if strat in bt.index else 0
         bw = round(bn * bt.loc[strat, "win_rate"] / 100) if bn else 0
-        rows.append(dict(strategy=strat, open_now=int(((T["strategy"] == strat) & (T["status"] == "open")).sum()),
+        rows.append(dict(strategy=strat, open_now=int((mine["status"] == "open").sum()),
                          live_closed=n, live_wins=w, live_win_rate=round(100 * w / n, 1) if n else None,
                          backtest_trades=bn, backtest_win_rate=round(bt.loc[strat, "win_rate"], 1) if bn else None,
                          updated_win_rate=round(100 * (bw + w) / (bn + n), 1) if bn + n else None,
