@@ -61,6 +61,14 @@ def hl_daily_recent(coin):
         return None
 
 
+# NYSE full-day holidays. A missing candle on any other weekday means stale data, never a holiday.
+NYSE_HOLIDAYS = {pd.Timestamp(x) for x in (
+    "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25", "2026-06-19", "2026-07-03",
+    "2026-09-07", "2026-11-26", "2026-12-25",
+    "2027-01-01", "2027-01-18", "2027-02-15", "2027-03-26", "2027-05-31", "2027-06-18", "2027-07-05",
+    "2027-09-06", "2027-11-25", "2027-12-24")}
+
+
 def expected_last_days():
     """Last finished daily candle we should have: crypto = yesterday (UTC); US markets = the last
     weekday whose New York session has closed (holidays are caught by the majority check below)."""
@@ -68,7 +76,7 @@ def expected_last_days():
     crypto = now.normalize() - pd.Timedelta(days=1)
     ny = now - pd.Timedelta(hours=4 if 3 <= now.month <= 10 else 5)
     d = ny.normalize() if ny.hour * 60 + ny.minute >= 16 * 60 + 15 else ny.normalize() - pd.Timedelta(days=1)
-    while d.weekday() >= 5: d -= pd.Timedelta(days=1)
+    while d.weekday() >= 5 or d in NYSE_HOLIDAYS: d -= pd.Timedelta(days=1)
     return d, crypto
 
 
@@ -98,23 +106,29 @@ def download(cache_dir):
                 pass
             time.sleep(10 * (k + 1))
         return None
-    # a market holiday only if SPY itself, fetched fresh, has no candle for the expected day
-    spy = recent("SPY")
-    if spy is not None and len(spy) and spy.index[-1] < exp_stock:
-        exp_stock = spy.index[-1]
-    stale = []
-    for s, d in list(data.items()):
-        want = exp_crypto if s.endswith("-USD") else exp_stock
-        if "=F" in s: want = min(want, d.index[-1])          # futures calendars differ; don't chase them
-        tries = 0
-        while d[d.index < today].index[-1] < want and tries < 2:
-            r = recent(s) if not (s.endswith("-USD") and tries == 1) else hl_daily_recent(s[:-4])
-            if r is not None and len(r):
-                d = pd.concat([d[~d.index.isin(r.index)], r]).sort_index()
-            tries += 1
-        if d[d.index < today].index[-1] < want:
-            stale.append(s)
-        data[s] = d
+    # Holidays come from the NYSE calendar above, never from Yahoo itself: on 28 Oct 2026 Yahoo served
+    # stale history for SPY too, and the old "SPY has no candle = holiday" rule accepted it.
+    import time as _t
+    stale = list(data)
+    for rnd in range(4):                               # up to 4 rounds, waiting 5 minutes between them
+        if rnd: _t.sleep(300)
+        still = []
+        for s in stale:
+            d = data[s]
+            want = exp_crypto if s.endswith("-USD") else exp_stock
+            if "=F" in s: want = min(want, d.index[-1])          # futures calendars differ; don't chase them
+            tries = 0
+            while d[d.index < today].index[-1] < want and tries < 2:
+                r = recent(s) if not (s.endswith("-USD") and tries == 1) else hl_daily_recent(s[:-4])
+                if r is not None and len(r):
+                    d = pd.concat([d[~d.index.isin(r.index)], r]).sort_index()
+                tries += 1
+            data[s] = d
+            if d[d.index < today].index[-1] < want:
+                still.append(s)
+        stale = still
+        if len([x for x in stale if not x.endswith("-USD")]) <= 2:
+            break
     out = {}
     for s, d in data.items():
         d = d[d.index < today]                       # drop today's unfinished candle
@@ -324,7 +338,9 @@ def main():
     today = str(dt.date.today())
     summary = dict(run_time_utc=dt.datetime.utcnow().strftime("%Y-%m-%d %H:%M"), paper_start=str(PAPER_START.date()),
                    last_stock_candle=str(last_real.date()), last_crypto_candle=str(last_crypto.date()),
-                   markets_missing=bad, setups={})
+                   markets_missing=bad, setups={},
+                   data_ok=sum(1 for x in bad if x.endswith("(stale)") and "-USD" not in x) <= 2,
+                   expected_stock_candle=str(expected_last_days()[0].date()))
     orders_by_setup = {}
     for name, cfg in setups.items():
         core_tr = apply_status([t for k in cfg["keys"] for t in P[k]], status, name)
@@ -386,6 +402,9 @@ def main():
 def write_report(s):
     L_ = [f"# Paper trading report — {s['run_time_utc']} UTC", "",
           f"Paper start: {s['paper_start']} with $10,000 per setup. Last stock candle: {s['last_stock_candle']}, last crypto candle: {s['last_crypto_candle']}.", ""]
+    if not s.get("data_ok", True):
+        L_ += [f"**STALE PRICES:** stock data stops at {s['last_stock_candle']} but {s['expected_stock_candle']} was expected. "
+               "Results are not up to date and no Alpaca orders should be sent tonight.", ""]
     if s["markets_missing"]: L_ += [f"Markets that failed to download: {', '.join(s['markets_missing'])}", ""]
     rec = s.get("records") or {}
     if rec.get("error"): L_ += [f"Record keeping problem: {rec['error']}", ""]

@@ -1,9 +1,9 @@
 {
  "date": "2026-10-27",
- "markets_recorded": 346,
- "signals_today": 34,
- "bot_signals": 16,
- "shadow_signals": 18,
+ "markets_recorded": 348,
+ "signals_today": 24,
+ "bot_signals": 24,
+ "shadow_signals": 0,
  "alerts": [
   "Unusual move: para:SOFI +14.6% (6.3x its normal daily move)",
   "Unusual move: xyz:USAR +16.5% (5.0x its normal daily move)",
@@ -12,8 +12,13 @@
   "Volume spike: xyz:GLW traded 8.3x its usual volume (-2.4%)",
   "Volume spike: xyz:XBI traded 6.1x its usual volume (+2.7%)",
   "Volume spike: xyz:HOOD traded 5.9x its usual volume (-6.7%)",
-  "Signal skipped: TSLA (Triple MA); its outcome will be tracked",
-  "Signal skipped: TSLA (TU rest); its outcome will be tracked",
-  "Signal skipped: QCOM (PB tech); its outcome will be tracked"
+  "Signal skipped: CSCO (Breakout-retest); its outcome will be tracked",
+  "Signal skipped: ES=F (PB rest); its outcome will be tracked",
+  "Signal skipped: ES=F (Pullback in trend); its outcome will be tracked",
+  "Signal skipped: JNJ (Triple MA); its outcome will be tracked",
+  "Signal skipped: UPS (Triple MA); its outcome will be tracked",
+  "Signal skipped: ADI (TU rest); its outcome will be tracked",
+  "Signal skipped: TXN (TU rest); its outcome will be tracked",
+  "Signal skipped: ADI (Turtle breakout); its outcome will be tracked"
  ]
 }

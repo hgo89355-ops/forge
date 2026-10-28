@@ -69,6 +69,14 @@ def main():
         return
 
     summ = json.load(open(os.path.join(HERE, "paper", "latest.json")))
+    if not summ.get("data_ok", True):
+        msg = (f"NOT TRADING: stock prices are stale (last candle {summ.get('last_stock_candle')}, "
+               f"expected {summ.get('expected_stock_candle')}). No orders sent.")
+        print(msg)
+        json.dump(dict(at=dt.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), equity=float(acct["equity"]),
+                       cash=float(acct["cash"]), last_equity=float(acct.get("last_equity", acct["equity"])),
+                       sent=[], skipped=[dict(symbol="all", why=msg)]), open(os.path.join(OUT, "latest.json"), "w"), indent=1)
+        return
     bot_value = float(summ["setups"]["main"]["account_value"])
     scale = float(acct["equity"]) / bot_value
     f = os.path.join(HERE, "paper", "main", "positions_and_orders.csv")

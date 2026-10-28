@@ -1,54 +1,54 @@
 date,market,prospect,close,atr,status,days,R,why,bot_also
-2026-10-22,BMY,Inside-day breakout,63.0,2.0514,open,2,-0.573,open,False
-2026-10-22,DE,Inside-day breakout,643.62,18.9821,open,2,-0.094,open,False
-2026-10-22,FDX,Inside-day breakout,303.92,5.6021,open,2,-0.202,open,False
-2026-10-22,PFE,Inside-day breakout,30.42,0.5821,open,2,-0.946,open,False
+2026-10-22,BMY,Inside-day breakout,63.0,2.0514,open,3,-0.602,open,False
+2026-10-22,DE,Inside-day breakout,643.62,18.9821,open,3,-0.182,open,False
+2026-10-22,FDX,Inside-day breakout,303.92,5.6021,open,3,0.962,open,False
+2026-10-22,PFE,Inside-day breakout,30.42,0.5821,finished,3,-1.375,stop,False
 2026-10-22,UNH,Inside-day breakout,424.98,13.2414,finished,2,-1.064,stop,False
-2026-10-22,XLV,Inside-day breakout,181.3,3.1157,open,2,-0.475,open,False
+2026-10-22,XLV,Inside-day breakout,181.3,3.1157,open,3,-0.507,open,False
 2026-10-22,AAPL,Strong on a red day,348.22,6.0836,finished,2,-1.115,stop,False
 2026-10-22,ADBE,Strong on a red day,270.55,8.6714,finished,2,-1.062,stop,False
-2026-10-22,BMY,Strong on a red day,63.0,2.0514,open,2,-0.573,open,False
-2026-10-22,BRK-B,Strong on a red day,546.97,6.3586,open,2,0.33,open,False
+2026-10-22,BMY,Strong on a red day,63.0,2.0514,open,3,-0.602,open,False
+2026-10-22,BRK-B,Strong on a red day,546.97,6.3586,open,3,-0.546,open,False
 2026-10-22,COST,Strong on a red day,1018.21,15.8186,finished,2,-1.128,stop,False
-2026-10-22,CRM,Strong on a red day,250.29,8.6843,open,2,-0.17,open,False
+2026-10-22,CRM,Strong on a red day,250.29,8.6843,open,3,-0.944,open,False
 2026-10-22,DIS,Strong on a red day,113.13,2.0321,finished,2,-1.11,stop,False
 2026-10-22,HD,Strong on a red day,327.73,7.1493,finished,1,-1.091,stop,False
-2026-10-22,HON,Strong on a red day,218.31,4.905,open,2,0.607,open,False
-2026-10-22,IEF,Strong on a red day,91.2,0.5121,open,2,-0.571,open,False
+2026-10-22,HON,Strong on a red day,218.31,4.905,open,3,0.511,open,False
+2026-10-22,IEF,Strong on a red day,91.2,0.5121,open,3,-0.61,open,False
 2026-10-22,INTU,Strong on a red day,354.9,12.3964,finished,2,-1.057,stop,False
-2026-10-22,ISRG,Strong on a red day,443.85,13.1479,open,2,0.539,open,False
-2026-10-22,JNJ,Strong on a red day,267.61,6.9221,open,2,-0.007,open,False
+2026-10-22,ISRG,Strong on a red day,443.85,13.1479,open,3,0.102,open,False
+2026-10-22,JNJ,Strong on a red day,267.61,6.9221,open,3,0.344,open,False
 2026-10-22,KO,Strong on a red day,95.34,1.5921,finished,1,-1.119,stop,False
-2026-10-22,LIN,Strong on a red day,510.36,7.7386,open,2,-0.408,open,False
+2026-10-22,LIN,Strong on a red day,510.36,7.7386,open,3,-0.267,open,False
 2026-10-22,LLY,Strong on a red day,1306.6899,39.6179,finished,1,-1.066,stop,False
 2026-10-22,LOW,Strong on a red day,204.37,4.9063,finished,2,-1.082,stop,False
 2026-10-22,MA,Strong on a red day,633.21,10.4526,finished,2,-1.12,stop,False
-2026-10-22,MCD,Strong on a red day,252.63,4.3507,open,2,-0.046,open,False
-2026-10-22,MDT,Strong on a red day,96.59,2.6829,open,2,-0.56,open,False
-2026-10-22,NKE,Strong on a red day,38.32,1.0671,open,2,0.023,open,False
-2026-10-22,NOW,Strong on a red day,157.0,6.0636,open,2,0.245,open,False
+2026-10-22,MCD,Strong on a red day,252.63,4.3507,open,3,-0.359,open,False
+2026-10-22,MDT,Strong on a red day,96.59,2.6829,open,3,-0.873,open,False
+2026-10-22,NKE,Strong on a red day,38.32,1.0671,open,3,-0.305,open,False
+2026-10-22,NOW,Strong on a red day,157.0,6.0636,open,3,-0.315,open,False
 2026-10-22,PEP,Strong on a red day,138.83,3.0657,finished,1,-1.09,stop,False
-2026-10-22,PFE,Strong on a red day,30.42,0.5821,open,2,-0.946,open,False
+2026-10-22,PFE,Strong on a red day,30.42,0.5821,finished,3,-1.375,stop,False
 2026-10-22,PG,Strong on a red day,164.501,3.1321,finished,1,-1.105,stop,False
-2026-10-22,SBUX,Strong on a red day,101.91,2.6721,open,2,0.414,open,False
-2026-10-22,TLT,Strong on a red day,81.74,0.8471,open,2,-0.323,open,False
+2026-10-22,SBUX,Strong on a red day,101.91,2.6721,open,3,0.545,open,False
+2026-10-22,TLT,Strong on a red day,81.74,0.8471,open,3,-0.382,open,False
 2026-10-22,UNH,Strong on a red day,424.98,13.2414,finished,2,-1.064,stop,False
-2026-10-22,UPS,Strong on a red day,101.52,1.9436,open,2,-0.402,open,False
+2026-10-22,UPS,Strong on a red day,101.52,1.9436,open,3,2.567,open,False
 2026-10-22,V,Strong on a red day,414.34,7.4364,finished,2,-1.11,stop,False
-2026-10-22,WMT,Strong on a red day,121.12,2.5229,open,2,-0.608,open,False
-2026-10-22,XLF,Strong on a red day,56.65,0.7021,open,2,-0.402,open,False
+2026-10-22,WMT,Strong on a red day,121.12,2.5229,finished,3,-1.096,stop,False
+2026-10-22,XLF,Strong on a red day,56.65,0.7021,open,3,-0.602,open,False
 2026-10-22,XLP,Strong on a red day,89.99,1.3014,finished,1,-1.138,stop,False
-2026-10-22,XLU,Strong on a red day,42.87,0.6986,open,2,-0.38,open,False
-2026-10-22,XLV,Strong on a red day,181.3,3.1157,open,2,-0.475,open,False
+2026-10-22,XLU,Strong on a red day,42.87,0.6986,open,3,0.049,open,False
+2026-10-22,XLV,Strong on a red day,181.3,3.1157,open,3,-0.507,open,False
 2026-10-24,liquid:ANIME,Big jump on volume,0.0035,0.0004,finished,1,-1.019,stop,False
 2026-10-24,liquid:INIT,Big jump on volume,0.1591,0.015,finished,2,-1.021,stop,False
 2026-10-24,liquid:REZ,Big jump on volume,0.0042,0.0004,open,3,2.525,open,False
-2026-10-26,AMD,Inside-day breakout,531.28,28.485,open,0,,waiting for entry,False
-2026-10-26,INTC,Inside-day breakout,90.47,5.4064,open,0,,waiting for entry,False
-2026-10-26,XLK,Inside-day breakout,186.32,4.2393,open,0,,waiting for entry,False
+2026-10-26,AMD,Inside-day breakout,531.28,28.485,open,1,0.691,open,True
+2026-10-26,INTC,Inside-day breakout,90.47,5.4064,open,1,0.201,open,False
+2026-10-26,XLK,Inside-day breakout,186.32,4.2393,open,1,0.364,open,True
 2026-10-26,liquid:POL,Inside-day breakout,0.0912,0.0048,open,1,0.194,open,False
 2026-10-27,SLB,Inside-day breakout,54.08,1.5443,open,0,,waiting for entry,True
-2026-10-27,XLB,Inside-day breakout,51.78,0.6436,open,0,,waiting for entry,False
+2026-10-27,XLB,Inside-day breakout,51.78,0.6436,open,0,,waiting for entry,True
 2026-10-27,liquid:AXS,Inside-day breakout,0.9634,0.0581,open,0,,waiting for entry,False
 2026-10-27,liquid:GRASS,Inside-day breakout,0.7519,0.0798,open,0,,waiting for entry,False
 2026-10-27,liquid:REZ,Inside-day breakout,0.0052,0.0005,open,0,,waiting for entry,False
