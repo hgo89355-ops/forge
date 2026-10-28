@@ -1,0 +1,6 @@
+{
+ "at": "2026-10-28 19:27 UTC",
+ "mode": "--check",
+ "ok": false,
+ "error": "GET /account -> 401: {\"message\": \"unauthorized.\"}\n"
+}
