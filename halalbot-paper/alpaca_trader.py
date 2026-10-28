@@ -56,7 +56,14 @@ def snapshot():
 def main():
     os.makedirs(OUT, exist_ok=True)
     mode = sys.argv[1] if len(sys.argv) > 1 else "--trade"
-    acct, pos = snapshot()
+    stamp = dt.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    try:
+        acct, pos = snapshot()
+    except Exception as e:                     # record why, so the repo shows what happened
+        json.dump(dict(at=stamp, mode=mode, ok=False, error=str(e)[:500]), open(os.path.join(OUT, "check.json"), "w"), indent=1)
+        print("ALPACA ERROR:", str(e)[:500]); sys.exit(1)
+    json.dump(dict(at=stamp, mode=mode, ok=True, equity=float(acct["equity"]), positions=len(pos)),
+              open(os.path.join(OUT, "check.json"), "w"), indent=1)
     print(f"Alpaca paper account {acct.get('account_number')}: equity ${float(acct['equity']):,.2f}, cash ${float(acct['cash']):,.2f}, {len(pos)} positions")
     if mode == "--check":
         return
