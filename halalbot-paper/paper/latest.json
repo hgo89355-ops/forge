@@ -1,73 +1,34 @@
 {
- "run_time_utc": "2026-10-28 12:29",
+ "run_time_utc": "2026-10-29 01:36",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-10-27",
- "last_crypto_candle": "2026-10-27",
+ "last_stock_candle": "2026-10-28",
+ "last_crypto_candle": "2026-10-28",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 10122.25,
-   "total_profit": 122.25,
-   "total_return_pct": 1.22,
-   "last_day": "2026-10-27",
-   "last_day_pnl": 72.07,
-   "main_bucket": 7122.25,
+   "account_value": 10109.15,
+   "total_profit": 109.15,
+   "total_return_pct": 1.09,
+   "last_day": "2026-10-28",
+   "last_day_pnl": -13.11,
+   "main_bucket": 7109.15,
    "high_reward_bucket": 3000.0,
-   "worst_drop_pct": 0.0,
-   "open_trades": 10,
-   "orders_next_open": [
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "TXN",
-     "strategy": "Turtle breakout",
-     "quantity": 0.297988,
-     "stop_loss": 299.2237,
-     "take_profit": 405.7735
-    }
-   ],
+   "worst_drop_pct": -0.13,
+   "open_trades": 11,
+   "orders_next_open": [],
    "closed_trades_total": 0,
    "wins": 0,
    "closed_last_day": [],
    "left_on_table_total": 0.0,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-27",
+    "date": "2026-10-28",
     "bought": [
      {
-      "symbol": "TSLA",
+      "symbol": "TXN",
       "strategy": "Turtle breakout",
-      "price": 398.1578,
-      "value_usd": 721.49
-     },
-     {
-      "symbol": "QCOM",
-      "strategy": "Pullback in trend",
-      "price": 181.151,
-      "value_usd": 716.77
-     },
-     {
-      "symbol": "SNPS",
-      "strategy": "Breakout-retest",
-      "price": 458.458,
-      "value_usd": 729.56
-     },
-     {
-      "symbol": "BMY",
-      "strategy": "Triple MA",
-      "price": 61.2712,
-      "value_usd": 708.23
-     },
-     {
-      "symbol": "ABT",
-      "strategy": "Triple MA",
-      "price": 102.9128,
-      "value_usd": 706.3
-     },
-     {
-      "symbol": "XLRE",
-      "strategy": "Triple MA",
-      "price": 42.5875,
-      "value_usd": 702.58
+      "price": 309.0988,
+      "value_usd": 92.36
      }
     ],
     "sold": [],
@@ -77,23 +38,23 @@
    }
   },
   "setup5": {
-   "account_value": 10209.28,
-   "total_profit": 209.28,
-   "total_return_pct": 2.09,
-   "last_day": "2026-10-27",
-   "last_day_pnl": 104.02,
-   "main_bucket": 7209.28,
+   "account_value": 10285.52,
+   "total_profit": 285.52,
+   "total_return_pct": 2.86,
+   "last_day": "2026-10-28",
+   "last_day_pnl": 76.24,
+   "main_bucket": 7285.52,
    "high_reward_bucket": 3000.0,
    "worst_drop_pct": 0.0,
-   "open_trades": 12,
+   "open_trades": 13,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "CRM",
+     "symbol": "DIA",
      "strategy": "Breakout-retest",
-     "quantity": 0.431391,
-     "stop_loss": 232.2871,
-     "take_profit": 326.9194
+     "quantity": 0.145158,
+     "stop_loss": 519.7795,
+     "take_profit": 573.6847
     }
    ],
    "closed_trades_total": 0,
@@ -102,13 +63,13 @@
    "left_on_table_total": 0.0,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-27",
+    "date": "2026-10-28",
     "bought": [
      {
-      "symbol": "SNPS",
+      "symbol": "CRM",
       "strategy": "Breakout-retest",
-      "price": 458.458,
-      "value_usd": 108.92
+      "price": 237.7575,
+      "value_usd": 105.93
      }
     ],
     "sold": [],
@@ -118,28 +79,39 @@
    }
   }
  },
+ "data_ok": true,
+ "expected_stock_candle": "2026-10-28",
  "records": {
-  "date": "2026-10-27",
+  "date": "2026-10-28",
   "markets_recorded": 348,
-  "signals_today": 24,
-  "bot_signals": 24,
+  "signals_today": 41,
+  "bot_signals": 41,
   "shadow_signals": 0,
   "alerts": [
-   "Unusual move: para:SOFI +14.6% (6.3x its normal daily move)",
-   "Unusual move: xyz:USAR +16.5% (5.0x its normal daily move)",
-   "Volume spike: para:SOFI traded 17.0x its usual volume (+14.6%)",
-   "Volume spike: xyz:KSTR traded 15.9x its usual volume (-3.6%)",
-   "Volume spike: xyz:GLW traded 8.3x its usual volume (-2.4%)",
-   "Volume spike: xyz:XBI traded 6.1x its usual volume (+2.7%)",
-   "Volume spike: xyz:HOOD traded 5.9x its usual volume (-6.7%)",
-   "Signal skipped: CSCO (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: ES=F (PB rest); its outcome will be tracked",
-   "Signal skipped: ES=F (Pullback in trend); its outcome will be tracked",
-   "Signal skipped: JNJ (Triple MA); its outcome will be tracked",
-   "Signal skipped: UPS (Triple MA); its outcome will be tracked",
-   "Signal skipped: ADI (TU rest); its outcome will be tracked",
-   "Signal skipped: TXN (TU rest); its outcome will be tracked",
-   "Signal skipped: ADI (Turtle breakout); its outcome will be tracked"
+   "Unusual move: xyz:NOW -20.2% (8.9x its normal daily move)",
+   "Unusual move: xyz:GOOGL -9.5% (7.3x its normal daily move)",
+   "Unusual move: INIT +34.4% (6.3x its normal daily move)",
+   "Volume spike: xyz:NOW traded 11.3x its usual volume (-20.2%)",
+   "Volume spike: xyz:GEV traded 9.2x its usual volume (-4.5%)",
+   "Volume spike: xyz:GOOGL traded 7.0x its usual volume (-9.5%)",
+   "Volume spike: xyz:KSTR traded 6.8x its usual volume (-1.3%)",
+   "Volume spike: INIT traded 6.4x its usual volume (+34.4%)",
+   "Volume spike: xyz:HOOD traded 5.8x its usual volume (+3.2%)",
+   "Volume spike: xyz:ORCL traded 5.0x its usual volume (+7.1%)",
+   "Volume spike: BLUR traded 4.6x its usual volume (+12.1%)",
+   "Volume spike: xyz:XBI traded 4.2x its usual volume (+2.0%)",
+   "Volume spike: xyz:TWST traded 4.2x its usual volume (+7.7%)",
+   "Signal skipped: MSFT (Triple MA); its outcome will be tracked",
+   "Signal skipped: JPM (Triple MA); its outcome will be tracked",
+   "Signal skipped: WFC (Triple MA); its outcome will be tracked",
+   "Signal skipped: TXN (Triple MA); its outcome will be tracked",
+   "Signal skipped: TMO (Triple MA); its outcome will be tracked",
+   "Signal skipped: AMD (PB tech); its outcome will be tracked",
+   "Signal skipped: AMD (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: QQQ (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: XLK (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: QQQ (PB rest); its outcome will be tracked",
+   "Signal skipped: XLK (PB rest); its outcome will be tracked"
   ]
  }
 }
