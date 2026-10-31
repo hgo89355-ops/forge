@@ -1,7 +1,7 @@
 prospect,rule,status,seen_today,live_logged,live_new,live_finished,live_open,live_win_rate,live_avg_R,live_open_avg_R,bt_trades,bt_win_rate,bt_avg_R,bt_edge_2018_21,bt_edge_2022_26,bt_overlap_pct,bt_new_trades,bt_new_avg_R,bt_with_bot_avg_R,bot_avg_R
 Gap and go,"Opens 3%+ above yesterday's high, closes at or above its open, volume 2x+ normal, above the 50-day average",WEAK,0,0,0,0,0,,,,291,19.2,0.37,0.14,0.16,78.0,65,-0.06,0.5,0.28
-Big jump on volume,Closes up 5%+ on 3x+ normal volume while above the 200-day average (like a strong earnings reaction),BOOSTER IDEA,2,6,6,2,4,0.0,-1.02,-0.48,348,21.6,0.65,0.31,0.52,82.0,62,-0.21,0.84,0.28
-Strong on a red day,"The S&P 500 falls 1%+ but this market rises 1%+, while above its 50-day average",BOOSTER IDEA,0,35,35,24,11,0.0,-1.13,0.89,899,19.7,0.37,0.63,-0.03,54.0,412,-0.08,0.76,0.28
-Inside-day breakout,"After an inside day, closes above the bar before it, in an uptrend (50-day above 200-day)",WATCHING,4,23,15,11,12,0.0,-1.08,0.45,3078,18.3,0.23,-0.18,0.16,46.0,1647,0.02,0.47,0.28
+Big jump on volume,Closes up 5%+ on 3x+ normal volume while above the 200-day average (like a strong earnings reaction),BOOSTER IDEA,3,9,9,5,4,0.0,-1.04,0.18,348,21.6,0.65,0.31,0.52,82.0,62,-0.21,0.84,0.28
+Strong on a red day,"The S&P 500 falls 1%+ but this market rises 1%+, while above its 50-day average",BOOSTER IDEA,29,64,53,24,40,0.0,-1.13,0.77,899,19.7,0.37,0.63,-0.03,54.0,412,-0.08,0.76,0.28
+Inside-day breakout,"After an inside day, closes above the bar before it, in an uptrend (50-day above 200-day)",WATCHING,0,23,15,13,5,0.0,-1.08,1.25,3078,18.3,0.23,-0.18,0.16,46.0,1647,0.02,0.47,0.28
 Quiet then breakout,"5-day volume under 60% of normal, then a close above the 20-day high on 1.5x+ volume",BOOSTER IDEA,0,0,0,0,0,,,,99,17.2,0.32,0.01,0.14,64.0,36,-0.19,0.61,0.28
-Drop bounce in uptrend,"Falls 3+ ATR in a day while above the 200-day average, then the next day closes green",BOOSTER IDEA,0,0,0,0,0,,,,103,20.4,0.19,-0.35,0.27,40.0,62,-0.12,0.65,0.28
+Drop bounce in uptrend,"Falls 3+ ATR in a day while above the 200-day average, then the next day closes green",BOOSTER IDEA,0,1,0,0,1,,,,103,20.4,0.19,-0.35,0.27,40.0,62,-0.12,0.65,0.28

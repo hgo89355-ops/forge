@@ -1,2 +1,6 @@
 symbol,engine,entry_date,exit_date,reason,pnl_usd,r_multiple,left_on_table_usd
-CRM,Breakout-retest,2026-10-28,2026-10-29,stop,-3.97,-1.0266133903204842,6.01
+CRM,Breakout-retest,2026-10-28,2026-10-29,stop,-3.97,-1.0266133903204493,6.01
+NVDA,X Hammer tech,2026-10-26,2026-10-30,stop_gap,-15.09,-1.4628311728521273,50.37
+AVGO,X Hammer tech,2026-10-26,2026-10-30,stop,-10.67,-1.0711692586597326,56.71
+CSCO,X Stochastic reversal,2026-10-26,2026-10-30,stop,-29.36,-1.0240644669718244,52.96
+DIA,Breakout-retest,2026-10-29,2026-10-30,stop,-0.87,-1.0981752854685236,0.92

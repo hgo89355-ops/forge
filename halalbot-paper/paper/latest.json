@@ -1,137 +1,238 @@
 {
- "run_time_utc": "2026-10-30 01:37",
+ "run_time_utc": "2026-10-31 01:24",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-10-29",
- "last_crypto_candle": "2026-10-29",
+ "last_stock_candle": "2026-10-30",
+ "last_crypto_candle": "2026-10-30",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 10188.6,
-   "total_profit": 188.6,
-   "total_return_pct": 1.89,
-   "last_day": "2026-10-29",
-   "last_day_pnl": 79.45,
-   "main_bucket": 7188.6,
+   "account_value": 10128.1,
+   "total_profit": 128.1,
+   "total_return_pct": 1.28,
+   "last_day": "2026-10-30",
+   "last_day_pnl": -60.5,
+   "main_bucket": 7128.1,
    "high_reward_bucket": 3000.0,
-   "worst_drop_pct": -0.13,
-   "open_trades": 11,
+   "worst_drop_pct": -0.59,
+   "open_trades": 10,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "IBM",
-     "strategy": "Bull flag",
-     "quantity": 0.256625,
-     "stop_loss": 250.9664,
-     "take_profit": 331.4162
-    }
-   ],
-   "closed_trades_total": 0,
-   "wins": 0,
-   "closed_last_day": [],
-   "left_on_table_total": 0.0,
-   "learn_from_mistakes": [],
-   "day": {
-    "date": "2026-10-29",
-    "bought": [],
-    "sold": [],
-    "profit_from_winners": 0,
-    "loss_from_losers": 0,
-    "left_on_table": 0
-   }
-  },
-  "setup5": {
-   "account_value": 10274.46,
-   "total_profit": 274.46,
-   "total_return_pct": 2.74,
-   "last_day": "2026-10-29",
-   "last_day_pnl": -11.06,
-   "main_bucket": 7274.46,
-   "high_reward_bucket": 3000.0,
-   "worst_drop_pct": -0.11,
-   "open_trades": 13,
-   "orders_next_open": [
+     "symbol": "TXN",
+     "strategy": "Momentum 12-1",
+     "quantity": 1.824718,
+     "stop_loss": 262.0767,
+     "take_profit": ""
+    },
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "IBM",
-     "strategy": "Bull flag",
-     "quantity": 0.359581,
-     "stop_loss": 250.9664,
-     "take_profit": 331.4162
+     "symbol": "MRK",
+     "strategy": "Momentum 12-1",
+     "quantity": 1.25053,
+     "stop_loss": 131.1148,
+     "take_profit": ""
     }
    ],
-   "closed_trades_total": 1,
+   "closed_trades_total": 2,
    "wins": 0,
    "closed_last_day": [
     {
-     "symbol": "CRM",
-     "engine": "Breakout-retest",
+     "symbol": "QCOM",
+     "engine": "Pullback in trend",
      "reason": "stop",
-     "pnl_usd": -3.97
+     "pnl_usd": -27.47
+    },
+    {
+     "symbol": "TXN",
+     "engine": "Turtle breakout",
+     "reason": "stop",
+     "pnl_usd": -3.07
     }
    ],
-   "left_on_table_total": 6.01,
+   "left_on_table_total": 84.16,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-29",
+    "date": "2026-10-30",
     "bought": [
      {
-      "symbol": "DIA",
-      "strategy": "Breakout-retest",
-      "price": 523.483,
-      "value_usd": 76.13
+      "symbol": "IBM",
+      "strategy": "Bull flag",
+      "price": 258.5383,
+      "value_usd": 66.16
      }
     ],
     "sold": [
      {
-      "symbol": "CRM",
-      "strategy": "Breakout-retest",
+      "symbol": "QCOM",
+      "strategy": "Pullback in trend",
       "reason": "stop",
-      "pnl_usd": -3.97,
-      "left_on_table_usd": 6.01
+      "pnl_usd": -27.47,
+      "left_on_table_usd": 80.95
+     },
+     {
+      "symbol": "TXN",
+      "strategy": "Turtle breakout",
+      "reason": "stop",
+      "pnl_usd": -3.07,
+      "left_on_table_usd": 3.21
      }
     ],
     "profit_from_winners": 0,
-    "loss_from_losers": -3.97,
-    "left_on_table": 6.01
+    "loss_from_losers": -30.54,
+    "left_on_table": 84.16
+   }
+  },
+  "setup5": {
+   "account_value": 10101.38,
+   "total_profit": 101.38,
+   "total_return_pct": 1.01,
+   "last_day": "2026-10-30",
+   "last_day_pnl": -173.08,
+   "main_bucket": 7101.38,
+   "high_reward_bucket": 3000.0,
+   "worst_drop_pct": -1.79,
+   "open_trades": 10,
+   "orders_next_open": [
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "MRK",
+     "strategy": "Momentum 12-1",
+     "quantity": 3.827265,
+     "stop_loss": 131.1148,
+     "take_profit": ""
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "BMY",
+     "strategy": "Breakout-retest",
+     "quantity": 11.354485,
+     "stop_loss": 60.7561,
+     "take_profit": 79.7191
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "COST",
+     "strategy": "Breakout-retest",
+     "quantity": 0.700822,
+     "stop_loss": 995.8177,
+     "take_profit": 1176.9035
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "MSFT",
+     "strategy": "Breakout-retest",
+     "quantity": 0.019245,
+     "stop_loss": 510.0318,
+     "take_profit": 640.6915
+    }
+   ],
+   "closed_trades_total": 5,
+   "wins": 0,
+   "closed_last_day": [
+    {
+     "symbol": "NVDA",
+     "engine": "X Hammer tech",
+     "reason": "stop_gap",
+     "pnl_usd": -15.09
+    },
+    {
+     "symbol": "AVGO",
+     "engine": "X Hammer tech",
+     "reason": "stop",
+     "pnl_usd": -10.67
+    },
+    {
+     "symbol": "CSCO",
+     "engine": "X Stochastic reversal",
+     "reason": "stop",
+     "pnl_usd": -29.36
+    },
+    {
+     "symbol": "DIA",
+     "engine": "Breakout-retest",
+     "reason": "stop",
+     "pnl_usd": -0.87
+    }
+   ],
+   "left_on_table_total": 166.97,
+   "learn_from_mistakes": [],
+   "day": {
+    "date": "2026-10-30",
+    "bought": [
+     {
+      "symbol": "IBM",
+      "strategy": "Bull flag",
+      "price": 258.5383,
+      "value_usd": 92.7
+     }
+    ],
+    "sold": [
+     {
+      "symbol": "NVDA",
+      "strategy": "X Hammer tech",
+      "reason": "stop_gap",
+      "pnl_usd": -15.09,
+      "left_on_table_usd": 50.37
+     },
+     {
+      "symbol": "AVGO",
+      "strategy": "X Hammer tech",
+      "reason": "stop",
+      "pnl_usd": -10.67,
+      "left_on_table_usd": 56.71
+     },
+     {
+      "symbol": "CSCO",
+      "strategy": "X Stochastic reversal",
+      "reason": "stop",
+      "pnl_usd": -29.36,
+      "left_on_table_usd": 52.96
+     },
+     {
+      "symbol": "DIA",
+      "strategy": "Breakout-retest",
+      "reason": "stop",
+      "pnl_usd": -0.87,
+      "left_on_table_usd": 0.92
+     }
+    ],
+    "profit_from_winners": 0,
+    "loss_from_losers": -55.99,
+    "left_on_table": 160.96
    }
   }
  },
  "data_ok": true,
- "expected_stock_candle": "2026-10-29",
+ "expected_stock_candle": "2026-10-30",
  "records": {
-  "date": "2026-10-29",
+  "date": "2026-10-30",
   "markets_recorded": 345,
-  "signals_today": 27,
-  "bot_signals": 27,
-  "shadow_signals": 0,
+  "signals_today": 48,
+  "bot_signals": 34,
+  "shadow_signals": 14,
   "alerts": [
-   "Unusual move: TRX +7.0% (8.9x its normal daily move)",
-   "Unusual move: xyz:RDDT -20.1% (7.6x its normal daily move)",
-   "Unusual move: para:RDDT -20.0% (7.6x its normal daily move)",
-   "Unusual move: xyz:AMZN -10.9% (7.5x its normal daily move)",
-   "Unusual move: xyz:INTC -23.7% (6.8x its normal daily move)",
-   "Unusual move: mkts:BVIV +13.9% (6.4x its normal daily move)",
-   "Unusual move: BNB -8.2% (4.2x its normal daily move)",
-   "Unusual move: xyz:LLY +5.4% (4.1x its normal daily move)",
-   "Volume spike: BNB traded 50.7x its usual volume (-8.2%)",
-   "Volume spike: xyz:NOW traded 31.7x its usual volume (-12.1%)",
-   "Volume spike: TRX traded 20.2x its usual volume (+7.0%)",
-   "Volume spike: para:RDDT traded 20.1x its usual volume (-20.0%)",
-   "Volume spike: BSV traded 17.1x its usual volume (-7.0%)",
-   "Volume spike: xyz:RDDT traded 16.8x its usual volume (-20.1%)",
-   "Volume spike: xyz:PURRDAT traded 9.3x its usual volume (+13.9%)",
-   "Volume spike: xyz:AMZN traded 8.7x its usual volume (-10.9%)",
-   "Volume spike: POL traded 7.3x its usual volume (-4.8%)",
-   "Volume spike: xyz:GOOGL traded 7.0x its usual volume (-4.1%)",
-   "Signal skipped: EFA (Triple MA); its outcome will be tracked",
-   "Signal skipped: LLY (TU rest); its outcome will be tracked",
-   "Signal skipped: UPS (TU rest); its outcome will be tracked",
-   "Signal skipped: LLY (Bull flag); its outcome will be tracked",
-   "Signal skipped: LOW (Bull flag); its outcome will be tracked",
-   "Signal skipped: SBUX (Bull flag); its outcome will be tracked",
-   "Signal skipped: LLY (52-week high); its outcome will be tracked",
-   "Signal skipped: LLY (Turtle breakout); its outcome will be tracked",
-   "Signal skipped: UPS (Turtle breakout); its outcome will be tracked"
+   "Unusual move: SOPH +53.9% (6.7x its normal daily move)",
+   "Unusual move: TRX -6.7% (5.6x its normal daily move)",
+   "Volume spike: xyz:RDDT traded 15.6x its usual volume (-13.0%)",
+   "Volume spike: TRX traded 10.3x its usual volume (-6.7%)",
+   "Volume spike: SUPER traded 10.1x its usual volume (-1.8%)",
+   "Volume spike: xyz:INTC traded 9.3x its usual volume (-8.6%)",
+   "Volume spike: para:RDDT traded 7.8x its usual volume (-13.3%)",
+   "Volume spike: xyz:BX traded 7.6x its usual volume (-0.9%)",
+   "Volume spike: xyz:KSTR traded 7.5x its usual volume (-3.9%)",
+   "Volume spike: para:CIEN traded 6.6x its usual volume (-4.4%)",
+   "Volume spike: para:AAOI traded 6.0x its usual volume (-6.6%)",
+   "Volume spike: RUNE traded 5.9x its usual volume (+4.8%)",
+   "Signal skipped: XLP (Breakout-retest); its outcome will be tracked",
+   "Signal skipped: ADI (Momentum 12-1); its outcome will be tracked",
+   "Signal skipped: V (Triple MA); its outcome will be tracked",
+   "Signal skipped: MA (Triple MA); its outcome will be tracked",
+   "Signal skipped: MRK (Triple MA); its outcome will be tracked",
+   "Signal skipped: PFE (Triple MA); its outcome will be tracked",
+   "Signal skipped: MDT (Triple MA); its outcome will be tracked",
+   "Signal skipped: PYPL (Triple MA); its outcome will be tracked",
+   "Signal skipped: IWM (Triple MA); its outcome will be tracked",
+   "Signal skipped: XLP (Triple MA); its outcome will be tracked"
   ]
  }
 }

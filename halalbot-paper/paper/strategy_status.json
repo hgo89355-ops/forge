@@ -1,7 +1,20 @@
 {
- "main": {},
+ "main": {
+  "Pullback in trend": {
+   "reviewed": 0
+  },
+  "Turtle breakout": {
+   "reviewed": 0
+  }
+ },
  "setup5": {
   "Breakout-retest": {
+   "reviewed": 0
+  },
+  "X Hammer tech": {
+   "reviewed": 0
+  },
+  "X Stochastic reversal": {
    "reviewed": 0
   }
  }

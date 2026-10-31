@@ -1,54 +1,50 @@
-# Paper trading report — 2026-10-30 01:37 UTC
+# Paper trading report — 2026-10-31 01:24 UTC
 
-Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-10-29, last crypto candle: 2026-10-29.
+Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-10-30, last crypto candle: 2026-10-30.
 
 ## Alerts
 
-- Unusual move: TRX +7.0% (8.9x its normal daily move)
-- Unusual move: xyz:RDDT -20.1% (7.6x its normal daily move)
-- Unusual move: para:RDDT -20.0% (7.6x its normal daily move)
-- Unusual move: xyz:AMZN -10.9% (7.5x its normal daily move)
-- Unusual move: xyz:INTC -23.7% (6.8x its normal daily move)
-- Unusual move: mkts:BVIV +13.9% (6.4x its normal daily move)
-- Unusual move: BNB -8.2% (4.2x its normal daily move)
-- Unusual move: xyz:LLY +5.4% (4.1x its normal daily move)
-- Volume spike: BNB traded 50.7x its usual volume (-8.2%)
-- Volume spike: xyz:NOW traded 31.7x its usual volume (-12.1%)
-- Volume spike: TRX traded 20.2x its usual volume (+7.0%)
-- Volume spike: para:RDDT traded 20.1x its usual volume (-20.0%)
-- Volume spike: BSV traded 17.1x its usual volume (-7.0%)
-- Volume spike: xyz:RDDT traded 16.8x its usual volume (-20.1%)
-- Volume spike: xyz:PURRDAT traded 9.3x its usual volume (+13.9%)
-- Volume spike: xyz:AMZN traded 8.7x its usual volume (-10.9%)
-- Volume spike: POL traded 7.3x its usual volume (-4.8%)
-- Volume spike: xyz:GOOGL traded 7.0x its usual volume (-4.1%)
-- Signal skipped: EFA (Triple MA); its outcome will be tracked
-- Signal skipped: LLY (TU rest); its outcome will be tracked
-- Signal skipped: UPS (TU rest); its outcome will be tracked
-- Signal skipped: LLY (Bull flag); its outcome will be tracked
-- Signal skipped: LOW (Bull flag); its outcome will be tracked
-- Signal skipped: SBUX (Bull flag); its outcome will be tracked
-- Signal skipped: LLY (52-week high); its outcome will be tracked
-- Signal skipped: LLY (Turtle breakout); its outcome will be tracked
-- Signal skipped: UPS (Turtle breakout); its outcome will be tracked
+- Unusual move: SOPH +53.9% (6.7x its normal daily move)
+- Unusual move: TRX -6.7% (5.6x its normal daily move)
+- Volume spike: xyz:RDDT traded 15.6x its usual volume (-13.0%)
+- Volume spike: TRX traded 10.3x its usual volume (-6.7%)
+- Volume spike: SUPER traded 10.1x its usual volume (-1.8%)
+- Volume spike: xyz:INTC traded 9.3x its usual volume (-8.6%)
+- Volume spike: para:RDDT traded 7.8x its usual volume (-13.3%)
+- Volume spike: xyz:BX traded 7.6x its usual volume (-0.9%)
+- Volume spike: xyz:KSTR traded 7.5x its usual volume (-3.9%)
+- Volume spike: para:CIEN traded 6.6x its usual volume (-4.4%)
+- Volume spike: para:AAOI traded 6.0x its usual volume (-6.6%)
+- Volume spike: RUNE traded 5.9x its usual volume (+4.8%)
+- Signal skipped: XLP (Breakout-retest); its outcome will be tracked
+- Signal skipped: ADI (Momentum 12-1); its outcome will be tracked
+- Signal skipped: V (Triple MA); its outcome will be tracked
+- Signal skipped: MA (Triple MA); its outcome will be tracked
+- Signal skipped: MRK (Triple MA); its outcome will be tracked
+- Signal skipped: PFE (Triple MA); its outcome will be tracked
+- Signal skipped: MDT (Triple MA); its outcome will be tracked
+- Signal skipped: PYPL (Triple MA); its outcome will be tracked
+- Signal skipped: IWM (Triple MA); its outcome will be tracked
+- Signal skipped: XLP (Triple MA); its outcome will be tracked
 
-Recorded 345 Liquid markets; 27 signals logged today (27 from the bot, 0 shadow signals on other markets).
+Recorded 345 Liquid markets; 48 signals logged today (34 from the bot, 14 shadow signals on other markets).
 
 ## Main setup
 
-- Account: $10,188.60 (+1.89% since start)
-- Last day (2026-10-29): +79.45 USD
-- Main bucket $7,188.60, high-reward bucket $3,000.00
-- Open trades: 11; closed so far: 0 (0 wins)
-- Worst drop so far: -0.13%; left on the table (closed trades): $0.00
-- Orders for the next open: BUY IBM (Bull flag), stop 250.9664
+- Account: $10,128.10 (+1.28% since start)
+- Last day (2026-10-30): -60.50 USD
+- Main bucket $7,128.10, high-reward bucket $3,000.00
+- Open trades: 10; closed so far: 2 (0 wins)
+- Worst drop so far: -0.59%; left on the table (closed trades): $84.16
+- Closed last day: QCOM (Pullback in trend, stop) -27.47; TXN (Turtle breakout, stop) -3.07
+- Orders for the next open: BUY TXN (Momentum 12-1), stop 262.0767; BUY MRK (Momentum 12-1), stop 131.1148
 
 ## Setup 5 (comparison)
 
-- Account: $10,274.46 (+2.74% since start)
-- Last day (2026-10-29): -11.06 USD
-- Main bucket $7,274.46, high-reward bucket $3,000.00
-- Open trades: 13; closed so far: 1 (0 wins)
-- Worst drop so far: -0.11%; left on the table (closed trades): $6.01
-- Closed last day: CRM (Breakout-retest, stop) -3.97
-- Orders for the next open: BUY IBM (Bull flag), stop 250.9664
+- Account: $10,101.38 (+1.01% since start)
+- Last day (2026-10-30): -173.08 USD
+- Main bucket $7,101.38, high-reward bucket $3,000.00
+- Open trades: 10; closed so far: 5 (0 wins)
+- Worst drop so far: -1.79%; left on the table (closed trades): $166.97
+- Closed last day: NVDA (X Hammer tech, stop_gap) -15.09; AVGO (X Hammer tech, stop) -10.67; CSCO (X Stochastic reversal, stop) -29.36; DIA (Breakout-retest, stop) -0.87
+- Orders for the next open: BUY MRK (Momentum 12-1), stop 131.1148; BUY BMY (Breakout-retest), stop 60.7561; BUY COST (Breakout-retest), stop 995.8177; BUY MSFT (Breakout-retest), stop 510.0318
