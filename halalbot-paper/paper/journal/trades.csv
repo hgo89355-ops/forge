@@ -1,5 +1,5 @@
 setup,strategy,market,status,entry_date,entry_price,stop,target,exit_date,exit_reason,pnl_usd,R,won,left_on_table_usd
-Main setup,Momentum 12-1,TXN,buy at next open,2026-11-02,301.14,262.08,,,,0.0,,,
+Main setup,Momentum 12-1,TXN,buy at next open,2026-11-02,301.14,262.1,,,,0.0,,,
 Main setup,Momentum 12-1,MRK,buy at next open,2026-11-02,149.67,131.11,,,,0.0,,,
 Main setup,Bull flag,IBM,open,2026-10-30,258.54,250.97,331.42,,,-0.19,,,
 Main setup,Turtle breakout,TXN,closed,2026-10-28,,,,2026-10-30,stop,-3.07,-1.03,no,3.21
@@ -14,7 +14,7 @@ Main setup,Bull flag,COP,open,2026-10-26,149.39,145.62,185.42,,,21.75,,,
 Main setup,Bull flag,EOG,open,2026-10-26,162.35,158.18,202.27,,,13.74,,,
 Main setup,Triple MA,SLB,open,2026-10-26,52.37,47.28,,,,18.28,,,
 Setup 5,Breakout-retest,BMY,buy at next open,2026-11-02,62.54,60.76,79.72,,,0.0,,,
-Setup 5,Breakout-retest,COST,buy at next open,2026-11-02,1013.29,995.82,1176.9,,,0.0,,,
+Setup 5,Breakout-retest,COST,buy at next open,2026-11-02,1013.29,995.83,1176.81,,,0.0,,,
 Setup 5,Breakout-retest,MSFT,buy at next open,2026-11-02,522.43,510.03,640.69,,,0.0,,,
 Setup 5,Momentum 12-1,MRK,buy at next open,2026-11-02,149.67,131.11,,,,0.0,,,
 Setup 5,Bull flag,IBM,open,2026-10-30,258.54,250.97,331.42,,,-0.26,,,

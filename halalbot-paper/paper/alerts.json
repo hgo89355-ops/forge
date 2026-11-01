@@ -1,24 +1,15 @@
 {
- "date": "2026-10-30",
+ "date": "2026-10-31",
  "markets_recorded": 345,
- "signals_today": 48,
+ "signals_today": 44,
  "bot_signals": 34,
- "shadow_signals": 14,
+ "shadow_signals": 10,
  "alerts": [
-  "Unusual move: SOPH +53.9% (6.7x its normal daily move)",
-  "Unusual move: TRX -6.7% (5.6x its normal daily move)",
-  "Volume spike: xyz:RDDT traded 15.6x its usual volume (-13.0%)",
-  "Volume spike: TRX traded 10.3x its usual volume (-6.7%)",
-  "Volume spike: SUPER traded 10.1x its usual volume (-1.8%)",
-  "Volume spike: xyz:INTC traded 9.3x its usual volume (-8.6%)",
-  "Volume spike: para:RDDT traded 7.8x its usual volume (-13.3%)",
-  "Volume spike: xyz:BX traded 7.6x its usual volume (-0.9%)",
-  "Volume spike: xyz:KSTR traded 7.5x its usual volume (-3.9%)",
-  "Volume spike: para:CIEN traded 6.6x its usual volume (-4.4%)",
-  "Volume spike: para:AAOI traded 6.0x its usual volume (-6.6%)",
-  "Volume spike: RUNE traded 5.9x its usual volume (+4.8%)",
+  "Unusual move: TRX -7.9% (5.4x its normal daily move)",
+  "Volume spike: ORDI traded 40.0x its usual volume (-0.8%)",
+  "Volume spike: PROVE traded 5.2x its usual volume (+1.4%)",
+  "Volume spike: para:2Y traded 5.0x its usual volume (+1.2%)",
   "Signal skipped: XLP (Breakout-retest); its outcome will be tracked",
-  "Signal skipped: ADI (Momentum 12-1); its outcome will be tracked",
   "Signal skipped: V (Triple MA); its outcome will be tracked",
   "Signal skipped: MA (Triple MA); its outcome will be tracked",
   "Signal skipped: MRK (Triple MA); its outcome will be tracked",
@@ -26,6 +17,7 @@
   "Signal skipped: MDT (Triple MA); its outcome will be tracked",
   "Signal skipped: PYPL (Triple MA); its outcome will be tracked",
   "Signal skipped: IWM (Triple MA); its outcome will be tracked",
-  "Signal skipped: XLP (Triple MA); its outcome will be tracked"
+  "Signal skipped: XLP (Triple MA); its outcome will be tracked",
+  "Signal skipped: ADI (Momentum 12-1); its outcome will be tracked"
  ]
 }

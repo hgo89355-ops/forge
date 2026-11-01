@@ -1,17 +1,19 @@
 {
- "run_time_utc": "2026-10-31 01:24",
+ "run_time_utc": "2026-11-01 00:43",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-10-30",
- "last_crypto_candle": "2026-10-30",
- "markets_missing": [],
+ "last_crypto_candle": "2026-10-31",
+ "markets_missing": [
+  "ETH-USD (stale)"
+ ],
  "setups": {
   "main": {
-   "account_value": 10128.1,
-   "total_profit": 128.1,
+   "account_value": 10128.11,
+   "total_profit": 128.11,
    "total_return_pct": 1.28,
-   "last_day": "2026-10-30",
-   "last_day_pnl": -60.5,
-   "main_bucket": 7128.1,
+   "last_day": "2026-10-31",
+   "last_day_pnl": 0.0,
+   "main_bucket": 7128.11,
    "high_reward_bucket": 3000.0,
    "worst_drop_pct": -0.59,
    "open_trades": 10,
@@ -20,74 +22,39 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "TXN",
      "strategy": "Momentum 12-1",
-     "quantity": 1.824718,
-     "stop_loss": 262.0767,
+     "quantity": 1.826036,
+     "stop_loss": 262.1049,
      "take_profit": ""
     },
     {
      "status": "BUY AT NEXT OPEN",
      "symbol": "MRK",
      "strategy": "Momentum 12-1",
-     "quantity": 1.25053,
+     "quantity": 1.247896,
      "stop_loss": 131.1148,
      "take_profit": ""
     }
    ],
    "closed_trades_total": 2,
    "wins": 0,
-   "closed_last_day": [
-    {
-     "symbol": "QCOM",
-     "engine": "Pullback in trend",
-     "reason": "stop",
-     "pnl_usd": -27.47
-    },
-    {
-     "symbol": "TXN",
-     "engine": "Turtle breakout",
-     "reason": "stop",
-     "pnl_usd": -3.07
-    }
-   ],
+   "closed_last_day": [],
    "left_on_table_total": 84.16,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-30",
-    "bought": [
-     {
-      "symbol": "IBM",
-      "strategy": "Bull flag",
-      "price": 258.5383,
-      "value_usd": 66.16
-     }
-    ],
-    "sold": [
-     {
-      "symbol": "QCOM",
-      "strategy": "Pullback in trend",
-      "reason": "stop",
-      "pnl_usd": -27.47,
-      "left_on_table_usd": 80.95
-     },
-     {
-      "symbol": "TXN",
-      "strategy": "Turtle breakout",
-      "reason": "stop",
-      "pnl_usd": -3.07,
-      "left_on_table_usd": 3.21
-     }
-    ],
+    "date": "2026-10-31",
+    "bought": [],
+    "sold": [],
     "profit_from_winners": 0,
-    "loss_from_losers": -30.54,
-    "left_on_table": 84.16
+    "loss_from_losers": 0,
+    "left_on_table": 0
    }
   },
   "setup5": {
    "account_value": 10101.38,
    "total_profit": 101.38,
    "total_return_pct": 1.01,
-   "last_day": "2026-10-30",
-   "last_day_pnl": -173.08,
+   "last_day": "2026-10-31",
+   "last_day_pnl": 0.0,
    "main_bucket": 7101.38,
    "high_reward_bucket": 3000.0,
    "worst_drop_pct": -1.79,
@@ -114,8 +81,8 @@
      "symbol": "COST",
      "strategy": "Breakout-retest",
      "quantity": 0.700822,
-     "stop_loss": 995.8177,
-     "take_profit": 1176.9035
+     "stop_loss": 995.8274,
+     "take_profit": 1176.806
     },
     {
      "status": "BUY AT NEXT OPEN",
@@ -128,103 +95,33 @@
    ],
    "closed_trades_total": 5,
    "wins": 0,
-   "closed_last_day": [
-    {
-     "symbol": "NVDA",
-     "engine": "X Hammer tech",
-     "reason": "stop_gap",
-     "pnl_usd": -15.09
-    },
-    {
-     "symbol": "AVGO",
-     "engine": "X Hammer tech",
-     "reason": "stop",
-     "pnl_usd": -10.67
-    },
-    {
-     "symbol": "CSCO",
-     "engine": "X Stochastic reversal",
-     "reason": "stop",
-     "pnl_usd": -29.36
-    },
-    {
-     "symbol": "DIA",
-     "engine": "Breakout-retest",
-     "reason": "stop",
-     "pnl_usd": -0.87
-    }
-   ],
+   "closed_last_day": [],
    "left_on_table_total": 166.97,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-30",
-    "bought": [
-     {
-      "symbol": "IBM",
-      "strategy": "Bull flag",
-      "price": 258.5383,
-      "value_usd": 92.7
-     }
-    ],
-    "sold": [
-     {
-      "symbol": "NVDA",
-      "strategy": "X Hammer tech",
-      "reason": "stop_gap",
-      "pnl_usd": -15.09,
-      "left_on_table_usd": 50.37
-     },
-     {
-      "symbol": "AVGO",
-      "strategy": "X Hammer tech",
-      "reason": "stop",
-      "pnl_usd": -10.67,
-      "left_on_table_usd": 56.71
-     },
-     {
-      "symbol": "CSCO",
-      "strategy": "X Stochastic reversal",
-      "reason": "stop",
-      "pnl_usd": -29.36,
-      "left_on_table_usd": 52.96
-     },
-     {
-      "symbol": "DIA",
-      "strategy": "Breakout-retest",
-      "reason": "stop",
-      "pnl_usd": -0.87,
-      "left_on_table_usd": 0.92
-     }
-    ],
+    "date": "2026-10-31",
+    "bought": [],
+    "sold": [],
     "profit_from_winners": 0,
-    "loss_from_losers": -55.99,
-    "left_on_table": 160.96
+    "loss_from_losers": 0,
+    "left_on_table": 0
    }
   }
  },
  "data_ok": true,
  "expected_stock_candle": "2026-10-30",
  "records": {
-  "date": "2026-10-30",
+  "date": "2026-10-31",
   "markets_recorded": 345,
-  "signals_today": 48,
+  "signals_today": 44,
   "bot_signals": 34,
-  "shadow_signals": 14,
+  "shadow_signals": 10,
   "alerts": [
-   "Unusual move: SOPH +53.9% (6.7x its normal daily move)",
-   "Unusual move: TRX -6.7% (5.6x its normal daily move)",
-   "Volume spike: xyz:RDDT traded 15.6x its usual volume (-13.0%)",
-   "Volume spike: TRX traded 10.3x its usual volume (-6.7%)",
-   "Volume spike: SUPER traded 10.1x its usual volume (-1.8%)",
-   "Volume spike: xyz:INTC traded 9.3x its usual volume (-8.6%)",
-   "Volume spike: para:RDDT traded 7.8x its usual volume (-13.3%)",
-   "Volume spike: xyz:BX traded 7.6x its usual volume (-0.9%)",
-   "Volume spike: xyz:KSTR traded 7.5x its usual volume (-3.9%)",
-   "Volume spike: para:CIEN traded 6.6x its usual volume (-4.4%)",
-   "Volume spike: para:AAOI traded 6.0x its usual volume (-6.6%)",
-   "Volume spike: RUNE traded 5.9x its usual volume (+4.8%)",
+   "Unusual move: TRX -7.9% (5.4x its normal daily move)",
+   "Volume spike: ORDI traded 40.0x its usual volume (-0.8%)",
+   "Volume spike: PROVE traded 5.2x its usual volume (+1.4%)",
+   "Volume spike: para:2Y traded 5.0x its usual volume (+1.2%)",
    "Signal skipped: XLP (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: ADI (Momentum 12-1); its outcome will be tracked",
    "Signal skipped: V (Triple MA); its outcome will be tracked",
    "Signal skipped: MA (Triple MA); its outcome will be tracked",
    "Signal skipped: MRK (Triple MA); its outcome will be tracked",
@@ -232,7 +129,8 @@
    "Signal skipped: MDT (Triple MA); its outcome will be tracked",
    "Signal skipped: PYPL (Triple MA); its outcome will be tracked",
    "Signal skipped: IWM (Triple MA); its outcome will be tracked",
-   "Signal skipped: XLP (Triple MA); its outcome will be tracked"
+   "Signal skipped: XLP (Triple MA); its outcome will be tracked",
+   "Signal skipped: ADI (Momentum 12-1); its outcome will be tracked"
   ]
  }
 }
