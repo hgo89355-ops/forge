@@ -38,10 +38,10 @@ date,market,source,strategy,ref_price,stop,target,status,days_followed,best_gain
 2026-10-26,SKY,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.067771,0.0638815714285714,0.1066652857142857,not traded (shadow),3.0,2.06,-5.74,stop hit,-1.0
 2026-10-26,AERO,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.67835,0.6014321428571429,1.4475285714285715,not traded (shadow),4.0,5.48,-11.34,stop hit,-1.0
 2026-10-26,xyz:PLTR,shadow (Liquid market),Pullback in trend,198.81,190.88285714285715,278.0814285714286,not traded (shadow),3.0,1.51,-3.99,stop hit,-1.0
-2026-10-26,xyz:META,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",632.49,601.5542857142857,941.8471428571428,not traded (shadow),5.0,0.4,-2.94,open,-0.6
+2026-10-26,xyz:META,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",632.49,601.5542857142857,941.8471428571428,not traded (shadow),6.0,0.4,-2.57,open,-0.52
 2026-10-26,xyz:MSFT,shadow (Liquid market),Pullback in trend,532.86,522.465,636.8100000000002,not traded (shadow),3.0,6.56,-1.95,stop hit,-1.0
-2026-10-26,xyz:UNITREE,shadow (Liquid market),Turtle breakout,96.707,90.26971428571429,161.07985714285712,not traded (shadow),5.0,7.49,0.22,open,0.03
-2026-10-26,para:UNITREE,shadow (Liquid market),Turtle breakout,96.566,90.24178571428573,159.8081428571429,not traded (shadow),5.0,7.7,0.29,open,0.04
+2026-10-26,xyz:UNITREE,shadow (Liquid market),Turtle breakout,96.707,90.26971428571429,161.07985714285712,not traded (shadow),6.0,7.49,-0.44,open,-0.07
+2026-10-26,para:UNITREE,shadow (Liquid market),Turtle breakout,96.566,90.24178571428573,159.8081428571429,not traded (shadow),6.0,7.7,-0.14,open,-0.02
 2026-10-26,IBM,bot,X Hammer tech,253.44000244140625,250.8000030517578,279.8399963378906,skipped (no free slot/cash or rule limit),1.0,-0.1,-1.04,stop hit,-1.0
 2026-10-26,TSLA,bot,TU rest,391.6199951171875,378.15207503066665,526.299195982396,skipped (no free slot/cash or rule limit),4.0,4.91,2.09,open,0.61
 2026-10-26,SNPS,bot,Breakout-retest,454.3299865722656,435.7302742512674,640.3271097822477,bought,4.0,8.16,2.92,open,0.71
@@ -90,7 +90,7 @@ date,market,source,strategy,ref_price,stop,target,status,days_followed,best_gain
 2026-10-27,MEGA,shadow (Liquid market),Crypto trend,0.049447,0.0453408571428571,0.0905084285714285,not traded (shadow),2.0,4.69,-8.3,stop hit,-1.0
 2026-10-27,ICP,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",2.6039,2.4461,4.1819,not traded (shadow),2.0,3.1,-6.06,stop hit,-1.0
 2026-10-27,xyz:TSLA,shadow (Liquid market),Turtle breakout,408.18,391.69,573.08,not traded (shadow),3.0,1.06,-4.04,stop hit,-1.0
-2026-10-27,xyz:AAPL,shadow (Liquid market),Pullback in trend,347.03,341.41214285714284,403.2085714285715,not traded (shadow),4.0,1.63,-0.68,open,-0.42
+2026-10-27,xyz:AAPL,shadow (Liquid market),Pullback in trend,347.03,341.41214285714284,403.2085714285715,not traded (shadow),5.0,1.63,-0.65,open,-0.4
 2026-10-27,xyz:SP500,shadow (Liquid market),Pullback in trend,7722.4,7644.921428571428,8497.185714285713,not traded (shadow),3.0,0.8,-1.0,stop hit,-1.0
 2026-10-27,CRM,bot,Breakout-retest,240.88999938964844,232.28706003871093,326.9193928990235,bought,2.0,1.56,-4.45,stop hit,-1.25
 2026-10-27,CSCO,bot,Breakout-retest,111.37999725341797,108.41839090955844,140.99606069201326,skipped (no free slot/cash or rule limit),2.0,0.66,-2.66,stop hit,-1.0
@@ -200,7 +200,7 @@ date,market,source,strategy,ref_price,stop,target,status,days_followed,best_gain
 2026-10-29,TXN,bot,X Hammer tech,309.8299865722656,304.989990234375,358.2299499511719,skipped (no free slot/cash or rule limit),1.0,-0.59,-1.56,stop hit,-1.0
 2026-10-29,SNPS,bot,X Hammer tech,481.8900146484375,467.239990234375,628.3902587890625,skipped (no free slot/cash or rule limit),1.0,0.18,-3.04,stop hit,-1.0
 2026-10-29,CDNS,bot,X Hammer tech,342.4599914550781,333.29998779296875,434.0600280761719,skipped (no free slot/cash or rule limit),1.0,-1.31,-2.67,stop hit,-1.0
-2026-10-29,NQ=F,bot,X IBS on index futures,29047.25,27617.399303344664,43345.75696655336,skipped (no free slot/cash or rule limit),1.0,0.46,-1.77,open,-0.36
+2026-10-29,NQ=F,bot,X IBS on index futures,29047.25,27617.399303344664,43345.75696655336,skipped (no free slot/cash or rule limit),2.0,0.46,-1.31,open,-0.27
 2026-10-29,DIA,bot,Breakout-retest,524.6799926757812,519.7795183995157,573.6847354384365,bought,1.0,-0.51,-0.93,stop hit,-1.0
 2026-10-29,AVGO,bot,X RSI2 momentum,351.80999755859375,317.4028061506903,695.8819116376281,skipped (no free slot/cash or rule limit),1.0,-5.64,-7.31,open,-0.75
 2026-10-29,WFC,bot,X RSI2 momentum,83.66999816894531,78.0764093573872,139.60588628452638,skipped (no free slot/cash or rule limit),1.0,1.84,-0.32,open,-0.05
@@ -235,43 +235,43 @@ date,market,source,strategy,ref_price,stop,target,status,days_followed,best_gain
 2026-10-29,QQQ,bot,Pullback in trend,725.6099853515625,714.5769644721597,835.9401941455903,skipped (no free slot/cash or rule limit),1.0,-3.72,-3.91,stop hit,-2.57
 2026-10-29,XLK,bot,Pullback in trend,191.0,187.25145725494764,228.48542745052362,skipped (no free slot/cash or rule limit),1.0,-4.56,-4.65,stop hit,-2.37
 2026-10-29,BA,bot,X Stochastic reversal,167.13999938964844,158.09694096697817,257.57058361635114,skipped (no free slot/cash or rule limit),1.0,4.0,2.64,open,0.49
-2026-10-29,ETH-USD,bot,X Stochastic reversal,2251.9,2114.2946540359494,3627.953459640507,skipped (no free slot/cash or rule limit),1.0,0.27,-0.48,open,-0.08
-2026-10-29,ADA-USD,bot,X Stochastic reversal,0.19028,0.17040783896707914,0.3890016103292086,skipped (no free slot/cash or rule limit),2.0,3.37,1.28,open,0.12
-2026-10-29,LINK-USD,bot,X Stochastic reversal,10.604,9.568182332556198,20.962176674438012,skipped (no free slot/cash or rule limit),2.0,12.6,9.88,open,1.01
+2026-10-29,ETH-USD,bot,X Stochastic reversal,2251.9,2114.2946540359494,3627.953459640507,skipped (no free slot/cash or rule limit),3.0,1.11,1.01,open,0.16
+2026-10-29,ADA-USD,bot,X Stochastic reversal,0.19028,0.17040783896707914,0.3890016103292086,skipped (no free slot/cash or rule limit),3.0,3.37,1.39,open,0.13
+2026-10-29,LINK-USD,bot,X Stochastic reversal,10.604,9.568182332556198,20.962176674438012,skipped (no free slot/cash or rule limit),3.0,12.6,7.49,open,0.77
 2026-10-29,MU,bot,X Swing contraction,983.22998046875,849.25,2323.02978515625,skipped (no free slot/cash or rule limit),1.0,-7.8,-10.02,open,-0.74
-2026-10-29,ETH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",2251.9,2162.9928571428572,3140.971428571429,not traded (shadow),2.0,0.63,0.13,open,0.03
-2026-10-29,SOL,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",95.611,91.57042857142858,136.01671428571427,not traded (shadow),2.0,3.03,-0.22,open,-0.05
-2026-10-29,AVAX,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",8.2736,7.783814285714286,13.171457142857143,not traded (shadow),2.0,4.85,3.47,open,0.59
+2026-10-29,ETH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",2251.9,2162.9928571428572,3140.971428571429,not traded (shadow),3.0,1.11,1.01,open,0.26
+2026-10-29,SOL,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",95.611,91.57042857142858,136.01671428571427,not traded (shadow),3.0,3.03,-1.17,open,-0.28
+2026-10-29,AVAX,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",8.2736,7.783814285714286,13.171457142857143,not traded (shadow),3.0,9.38,5.16,open,0.87
 2026-10-29,CRV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.30622,0.2815307142857143,0.5531128571428572,not traded (shadow),1.0,0.0,-8.06,stop hit,-1.0
-2026-10-29,STX,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.27869,0.24962499999999999,0.56934,not traded (shadow),2.0,21.85,16.13,open,1.55
-2026-10-29,AAVE,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",119.18,109.89142857142858,212.06571428571428,not traded (shadow),2.0,14.47,12.07,open,1.55
+2026-10-29,STX,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.27869,0.24962499999999999,0.56934,not traded (shadow),3.0,21.85,17.94,open,1.72
+2026-10-29,AAVE,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",119.18,109.89142857142858,212.06571428571428,not traded (shadow),3.0,18.16,12.98,open,1.67
 2026-10-29,TRX,shadow (Liquid market),Turtle breakout,0.35286,0.3473357142857143,0.40810285714285716,not traded (shadow),1.0,2.26,-1.57,stop hit,-1.0
 2026-10-29,TRX,shadow (Liquid market),Crypto trend,0.35286,0.3473357142857143,0.40810285714285716,not traded (shadow),1.0,2.26,-1.57,stop hit,-1.0
-2026-10-29,PENDLE,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",1.7477,1.6084928571428572,3.139771428571428,not traded (shadow),2.0,8.22,5.49,open,0.69
-2026-10-29,PYTH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.062867,0.05572228571428572,0.13431414285714288,not traded (shadow),2.0,7.01,5.2,open,0.46
+2026-10-29,PENDLE,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",1.7477,1.6084928571428572,3.139771428571428,not traded (shadow),3.0,9.42,5.83,open,0.73
+2026-10-29,PYTH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.062867,0.05572228571428572,0.13431414285714288,not traded (shadow),3.0,8.03,4.05,open,0.36
 2026-10-29,SUPER,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.16645,0.15102285714285713,0.3207214285714286,not traded (shadow),1.0,-0.01,-9.27,stop hit,-1.0
-2026-10-29,JUP,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.24972,0.2278757142857143,0.468162857142857,not traded (shadow),2.0,4.92,3.48,open,0.4
-2026-10-29,ONDO,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.38029,0.35187357142857145,0.6644542857142859,not traded (shadow),2.0,11.15,7.77,open,1.04
-2026-10-29,W,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.01131,0.010025000000000001,0.02416,not traded (shadow),2.0,3.63,1.59,open,0.14
-2026-10-29,STRK,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.04228,0.03587,0.10638,not traded (shadow),2.0,9.01,4.64,open,0.31
-2026-10-29,AR,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",3.1493,2.886421428571429,5.778085714285715,not traded (shadow),2.0,2.78,0.22,open,0.03
-2026-10-29,ENA,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.17534,0.15462785714285715,0.3824614285714285,not traded (shadow),2.0,12.42,7.65,open,0.65
-2026-10-29,HYPE,shadow (Liquid market),Crypto trend,88.957,84.29378571428572,135.5891428571428,not traded (shadow),2.0,5.8,-1.15,open,-0.22
-2026-10-29,S,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.041216,0.036945500000000006,0.083921,not traded (shadow),2.0,6.94,-2.89,open,-0.28
-2026-10-29,VVV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",22.287,19.98185714285714,45.33842857142857,not traded (shadow),2.0,5.75,4.93,open,0.48
-2026-10-29,NIL,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.071758,0.05876050000000001,0.201733,not traded (shadow),2.0,14.08,1.33,open,0.07
+2026-10-29,JUP,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.24972,0.2278757142857143,0.468162857142857,not traded (shadow),3.0,5.78,3.4,open,0.39
+2026-10-29,ONDO,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.38029,0.35187357142857145,0.6644542857142859,not traded (shadow),3.0,11.15,6.35,open,0.85
+2026-10-29,W,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.01131,0.010025000000000001,0.02416,not traded (shadow),3.0,3.63,-0.35,open,-0.03
+2026-10-29,STRK,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.04228,0.03587,0.10638,not traded (shadow),3.0,9.01,1.32,open,0.09
+2026-10-29,AR,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",3.1493,2.886421428571429,5.778085714285715,not traded (shadow),3.0,2.78,-0.66,open,-0.08
+2026-10-29,ENA,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.17534,0.15462785714285715,0.3824614285714285,not traded (shadow),3.0,12.42,4.51,open,0.38
+2026-10-29,HYPE,shadow (Liquid market),Crypto trend,88.957,84.29378571428572,135.5891428571428,not traded (shadow),3.0,5.8,-1.25,open,-0.24
+2026-10-29,S,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.041216,0.036945500000000006,0.083921,not traded (shadow),3.0,6.94,-4.19,open,-0.4
+2026-10-29,VVV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",22.287,19.98185714285714,45.33842857142857,not traded (shadow),3.0,7.69,2.83,open,0.27
+2026-10-29,NIL,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.071758,0.05876050000000001,0.201733,not traded (shadow),3.0,14.08,-2.82,open,-0.16
 2026-10-29,INIT,shadow (Liquid market),Squeeze breakout,0.21774,0.19062714285714286,0.4888685714285714,not traded (shadow),1.0,4.63,-12.45,stop hit,-1.0
 2026-10-29,ASTER,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.68871,0.6642771428571429,0.9330385714285714,not traded (shadow),1.0,1.19,-3.55,stop hit,-1.0
-2026-10-29,MET,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.27339,0.24674000000000001,0.53989,not traded (shadow),2.0,5.98,3.8,open,0.39
-2026-10-29,AERO,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.62421,0.55372,1.32911,not traded (shadow),2.0,4.68,3.36,open,0.3
-2026-10-29,LIT,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",2.7017,2.359321428571429,6.125485714285713,not traded (shadow),2.0,18.01,16.76,open,1.32
-2026-10-29,XMR,shadow (Liquid market),Pullback in trend,606.66,566.2971428571428,1010.2885714285715,not traded (shadow),2.0,6.04,-1.2,open,-0.18
-2026-10-29,DASH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",47.517,44.00628571428572,82.62414285714286,not traded (shadow),2.0,6.01,1.23,open,0.17
+2026-10-29,MET,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.27339,0.24674000000000001,0.53989,not traded (shadow),3.0,5.98,4.05,open,0.42
+2026-10-29,AERO,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.62421,0.55372,1.32911,not traded (shadow),3.0,4.68,0.55,open,0.05
+2026-10-29,LIT,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",2.7017,2.359321428571429,6.125485714285713,not traded (shadow),3.0,23.17,16.91,open,1.33
+2026-10-29,XMR,shadow (Liquid market),Pullback in trend,606.66,566.2971428571428,1010.2885714285715,not traded (shadow),3.0,6.04,-1.07,open,-0.16
+2026-10-29,DASH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",47.517,44.00628571428572,82.62414285714286,not traded (shadow),3.0,6.01,1.57,open,0.21
 2026-10-29,xyz:PLTR,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",194.0,186.5142857142857,268.85714285714283,not traded (shadow),1.0,0.41,-3.86,stop hit,-1.0
 2026-10-29,xyz:AAPL,shadow (Liquid market),Turtle breakout,351.87,346.5042857142857,405.52714285714296,not traded (shadow),1.0,0.24,-1.52,stop hit,-1.0
 2026-10-29,xyz:AAPL,shadow (Liquid market),52-week high,351.87,346.5042857142857,405.52714285714296,not traded (shadow),1.0,0.24,-1.52,stop hit,-1.0
-2026-10-29,xyz:LLY,shadow (Liquid market),Turtle breakout,1383.0,1347.8785714285714,1734.2142857142858,not traded (shadow),2.0,5.08,2.73,open,1.07
-2026-10-29,xyz:LLY,shadow (Liquid market),Bull flag,1383.0,1347.8785714285714,1734.2142857142858,not traded (shadow),2.0,5.08,2.73,open,1.07
+2026-10-29,xyz:LLY,shadow (Liquid market),Turtle breakout,1383.0,1347.8785714285714,1734.2142857142858,not traded (shadow),3.0,5.08,3.33,open,1.31
+2026-10-29,xyz:LLY,shadow (Liquid market),Bull flag,1383.0,1347.8785714285714,1734.2142857142858,not traded (shadow),3.0,5.08,3.33,open,1.31
 2026-10-29,para:BTCD,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",60.48,60.196642857142855,63.31357142857142,not traded (shadow),1.0,0.11,-0.47,stop hit,-1.0
 2026-10-29,GOOG,bot,X Hammer tech,282.32000732421875,278.2900085449219,322.6199951171875,skipped (no free slot/cash or rule limit),1.0,-0.16,-1.43,stop hit,-1.0
 2026-10-29,BAC,bot,X RSI2 momentum,51.13999938964844,47.75541104433827,84.98588284275014,skipped (no free slot/cash or rule limit),1.0,0.39,-2.21,open,-0.33
@@ -287,7 +287,7 @@ date,market,source,strategy,ref_price,stop,target,status,days_followed,best_gain
 2026-10-29,UPS,bot,TU rest,107.33000183105469,104.91034973918562,131.52652274974537,skipped (no free slot/cash or rule limit),1.0,1.67,0.86,open,0.38
 2026-10-29,F,bot,X Heikin Ashi reversal,12.359999656677246,11.666265795241367,19.297338271036036,skipped (no free slot/cash or rule limit),1.0,-0.16,-0.89,open,-0.16
 2026-10-29,XLV,bot,X 20-day breakout + volume,184.0399932861328,179.50538874246533,229.38603872280765,skipped (no free slot/cash or rule limit),1.0,2.15,0.45,open,0.18
-2026-10-29,ES=F,bot,X IBS on index futures,7676.0,7467.954396548946,9756.456034510544,skipped (no free slot/cash or rule limit),1.0,0.48,-0.81,open,-0.3
+2026-10-29,ES=F,bot,X IBS on index futures,7676.0,7467.954396548946,9756.456034510544,skipped (no free slot/cash or rule limit),2.0,0.48,-0.47,open,-0.17
 2026-10-29,IBM,bot,Bull flag,258.2799987792969,250.96638087829047,331.416177789361,bought,1.0,0.51,-0.18,open,-0.06
 2026-10-29,LLY,bot,Bull flag,1373.699951171875,1331.180216082242,1798.8973020682056,skipped (no free slot/cash or rule limit),1.0,5.53,3.19,open,1.03
 2026-10-29,LOW,bot,Bull flag,207.27999877929688,202.30843835522563,256.9956030200093,skipped (no free slot/cash or rule limit),1.0,2.14,0.86,open,0.36
@@ -334,20 +334,20 @@ date,market,source,strategy,ref_price,stop,target,status,days_followed,best_gain
 2026-10-30,BLK,bot,X MA cross 20/60,1147.5400390625,1068.8108463633937,1934.831966053563,skipped (no free slot/cash or rule limit),,,,,
 2026-10-30,XLU,bot,X MA cross 20/60,43.43000030517578,41.61236724775415,61.60633087939209,skipped (no free slot/cash or rule limit),,,,,
 2026-10-30,T,bot,X Heikin Ashi reversal,21.40999984741211,19.961037578750762,35.89962253402558,skipped (no free slot/cash or rule limit),,,,,
-2026-10-30,BTC,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",77338.0,75332.78571428571,97390.14285714286,not traded (shadow),1.0,0.53,0.25,open,0.1
-2026-10-30,ETH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",2243.5,2155.5714285714284,3122.7857142857147,not traded (shadow),1.0,1.01,0.5,open,0.13
-2026-10-30,INJ,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",7.1805,6.501971428571429,13.965785714285715,not traded (shadow),1.0,5.11,0.56,open,0.06
-2026-10-30,CRV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.28879,0.26227142857142854,0.5539757142857142,not traded (shadow),1.0,0.85,-1.91,open,-0.21
-2026-10-30,TIA,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.47555,0.4213221428571428,1.0178285714285715,not traded (shadow),1.0,3.34,-0.43,open,-0.04
-2026-10-30,SUPER,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.16343,0.14786,0.31913,not traded (shadow),1.0,3.48,2.79,open,0.29
-2026-10-30,MERL,shadow (Liquid market),Pullback in trend,0.02938,0.027216214285714285,0.05101785714285715,not traded (shadow),1.0,7.96,2.71,open,0.37
-2026-10-30,S,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.041147,0.03690521428571429,0.08356485714285715,not traded (shadow),1.0,1.0,-2.73,open,-0.26
-2026-10-30,ASTER,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.68552,0.6599571428571429,0.9411485714285713,not traded (shadow),1.0,3.56,2.09,open,0.56
-2026-10-30,AERO,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.61902,0.5542992857142858,1.2662271428571428,not traded (shadow),1.0,5.56,4.23,open,0.4
-2026-10-30,xyz:PLTR,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",184.59,177.67714285714285,253.71857142857144,not traded (shadow),1.0,0.57,0.43,open,0.11
-2026-10-30,xyz:LLY,shadow (Liquid market),Turtle breakout,1419.3,1380.55,1806.8000000000002,not traded (shadow),1.0,0.78,0.1,open,0.04
-2026-10-30,xyz:SP500,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",7588.5,7514.65,8327.0,not traded (shadow),1.0,0.03,-0.0,open,-0.0
-2026-10-30,para:BTCD,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",60.191,59.897000000000006,63.131,not traded (shadow),1.0,0.26,0.26,open,0.53
+2026-10-30,BTC,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",77338.0,75332.78571428571,97390.14285714286,not traded (shadow),2.0,1.39,1.28,open,0.49
+2026-10-30,ETH,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",2243.5,2155.5714285714284,3122.7857142857147,not traded (shadow),2.0,1.49,1.39,open,0.35
+2026-10-30,INJ,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",7.1805,6.501971428571429,13.965785714285715,not traded (shadow),2.0,5.11,0.07,open,0.01
+2026-10-30,CRV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.28879,0.26227142857142854,0.5539757142857142,not traded (shadow),2.0,0.85,-3.47,open,-0.38
+2026-10-30,TIA,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.47555,0.4213221428571428,1.0178285714285715,not traded (shadow),2.0,3.34,-0.23,open,-0.02
+2026-10-30,SUPER,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.16343,0.14786,0.31913,not traded (shadow),2.0,14.51,5.65,open,0.59
+2026-10-30,MERL,shadow (Liquid market),Pullback in trend,0.02938,0.027216214285714285,0.05101785714285715,not traded (shadow),2.0,7.96,4.81,open,0.65
+2026-10-30,S,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.041147,0.03690521428571429,0.08356485714285715,not traded (shadow),2.0,1.0,-4.03,open,-0.39
+2026-10-30,ASTER,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.68552,0.6599571428571429,0.9411485714285713,not traded (shadow),2.0,3.56,2.08,open,0.56
+2026-10-30,AERO,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.61902,0.5542992857142858,1.2662271428571428,not traded (shadow),2.0,5.56,1.39,open,0.13
+2026-10-30,xyz:PLTR,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",184.59,177.67714285714285,253.71857142857144,not traded (shadow),2.0,0.57,0.3,open,0.08
+2026-10-30,xyz:LLY,shadow (Liquid market),Turtle breakout,1419.3,1380.55,1806.8000000000002,not traded (shadow),2.0,0.78,0.69,open,0.25
+2026-10-30,xyz:SP500,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",7588.5,7514.65,8327.0,not traded (shadow),2.0,0.35,0.32,open,0.33
+2026-10-30,para:BTCD,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",60.191,59.897000000000006,63.131,not traded (shadow),2.0,1.1,0.35,open,0.71
 2026-10-31,BMY,bot,Breakout-retest,62.47999954223633,60.75608920478857,79.71910291671388,bought,,,,,
 2026-10-31,COST,bot,Breakout-retest,1012.280029296875,995.8274350488932,1176.8059717766928,bought,,,,,
 2026-10-31,MSFT,bot,Breakout-retest,521.9099731445312,510.0318219808564,640.6914847812795,bought,,,,,
@@ -382,13 +382,54 @@ date,market,source,strategy,ref_price,stop,target,status,days_followed,best_gain
 2026-10-31,XLC,bot,X Stochastic reversal,99.9000015258789,97.23178886731381,126.58212811152987,skipped (no free slot/cash or rule limit),,,,,
 2026-10-31,DE,bot,X Swing contraction,675.47998046875,625.239990234375,1177.8798828125,skipped (no free slot/cash or rule limit),,,,,
 2026-10-31,ABT,bot,X Swing contraction,106.19999694824219,101.54000091552734,152.79995727539062,skipped (no free slot/cash or rule limit),,,,,
-2026-10-31,CRV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.28328,0.2573885714285714,0.5421942857142856,not traded (shadow),,,,,
-2026-10-31,ZRO,shadow (Liquid market),Pullback in trend,1.8549,1.6546714285714286,3.8571857142857144,not traded (shadow),,,,,
-2026-10-31,TIA,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.47351,0.4265742857142857,0.9428671428571429,not traded (shadow),,,,,
-2026-10-31,MERL,shadow (Liquid market),Pullback in trend,0.030176,0.027879428571428572,0.05314171428571429,not traded (shadow),,,,,
-2026-10-31,REZ,shadow (Liquid market),Pullback in trend,0.004192,0.0035932142857142864,0.010179857142857143,not traded (shadow),,,,,
-2026-10-31,S,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.040023,0.035993357142857146,0.08031942857142857,not traded (shadow),,,,,
-2026-10-31,PROVE,shadow (Liquid market),Crypto trend,0.20874,0.19611285714285714,0.3350114285714285,not traded (shadow),,,,,
-2026-10-31,xyz:LLY,shadow (Liquid market),Squeeze breakout,1420.7,1381.3214285714287,1814.485714285715,not traded (shadow),,,,,
-2026-10-31,xyz:SP500,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",7588.4,7517.257142857143,8299.82857142857,not traded (shadow),,,,,
-2026-10-31,xyz:XLE,shadow (Liquid market),Turtle breakout,70.199,68.85778571428571,83.61114285714285,not traded (shadow),,,,,
+2026-10-31,CRV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.28328,0.2573885714285714,0.5421942857142856,not traded (shadow),1.0,1.25,-1.6,open,-0.17
+2026-10-31,ZRO,shadow (Liquid market),Pullback in trend,1.8549,1.6546714285714286,3.8571857142857144,not traded (shadow),1.0,3.94,-2.2,open,-0.2
+2026-10-31,TIA,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.47351,0.4265742857142857,0.9428671428571429,not traded (shadow),1.0,2.69,0.2,open,0.02
+2026-10-31,MERL,shadow (Liquid market),Pullback in trend,0.030176,0.027879428571428572,0.05314171428571429,not traded (shadow),1.0,2.72,2.04,open,0.27
+2026-10-31,REZ,shadow (Liquid market),Pullback in trend,0.004192,0.0035932142857142864,0.010179857142857143,not traded (shadow),1.0,9.26,-0.6,open,-0.04
+2026-10-31,S,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.040023,0.035993357142857146,0.08031942857142857,not traded (shadow),1.0,0.71,-1.33,open,-0.13
+2026-10-31,PROVE,shadow (Liquid market),Crypto trend,0.20874,0.19611285714285714,0.3350114285714285,not traded (shadow),1.0,1.11,-3.49,open,-0.58
+2026-10-31,xyz:LLY,shadow (Liquid market),Squeeze breakout,1420.7,1381.3214285714287,1814.485714285715,not traded (shadow),1.0,0.59,0.59,open,0.21
+2026-10-31,xyz:SP500,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",7588.4,7517.257142857143,8299.82857142857,not traded (shadow),1.0,0.35,0.32,open,0.34
+2026-10-31,xyz:XLE,shadow (Liquid market),Turtle breakout,70.199,68.85778571428571,83.61114285714285,not traded (shadow),1.0,0.43,-0.1,open,-0.05
+2026-11-01,LLY,bot,X 20-day breakout + volume,1417.5400390625,1350.1753970570812,2091.1864591166877,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,XOM,bot,X 20-day breakout + volume,187.25,181.29693990147078,246.7806009852922,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,FDX,bot,X 20-day breakout + volume,313.2799987792969,302.355842032305,422.5215662492154,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,PFE,bot,X 20-day breakout + volume,30.520000457763672,29.658189532535587,39.13810971004452,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,GOOGL,bot,X Stochastic reversal,279.8399963378906,264.23096971949275,435.9302625218694,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,GOOG,bot,X Stochastic reversal,278.2200012207031,262.8943372405199,431.4766410225352,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,CAT,bot,X Stochastic reversal,622.75,577.282487017836,1077.4251298216395,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,XLC,bot,X Stochastic reversal,99.9000015258789,97.23178886733662,126.58212811130178,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,SOL-USD,bot,X Stochastic reversal,94.494,88.07229900253786,158.7110099746214,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,DE,bot,X Swing contraction,675.47998046875,625.239990234375,1177.8798828125,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,ABT,bot,X Swing contraction,106.19999694824219,101.54000091552734,152.79995727539062,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,BMY,bot,Breakout-retest,62.47999954223633,60.7560892058068,79.71910290653159,bought,,,,,
+2026-11-01,COST,bot,Breakout-retest,1012.280029296875,995.8274350031207,1176.8059722344176,bought,,,,,
+2026-11-01,MSFT,bot,Breakout-retest,521.9099731445312,510.03182198086097,640.6914847812341,bought,,,,,
+2026-11-01,XLP,bot,Breakout-retest,89.41999816894531,88.1223809168214,102.39617069018445,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,ADI,bot,Momentum 12-1,417.1099853515625,359.96597418516785,988.550097015509,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,TXN,bot,Momentum 12-1,300.8399963378906,262.1048776700692,688.191183016105,bought,,,,,
+2026-11-01,MRK,bot,Momentum 12-1,149.52000427246094,131.11482249763077,333.5718220207626,bought,,,,,
+2026-11-01,MRK,bot,X RSI2 momentum,149.52000427246094,135.7161179413383,287.55886758368734,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,GOOGL,bot,X Hammer tech,279.8399963378906,276.9200134277344,309.0398254394531,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,META,bot,X Hammer tech,614.989990234375,610.1300048828125,663.58984375,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,IBM,bot,X Hammer tech,257.80999755859375,254.7100067138672,288.8099060058594,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,MU,bot,X Hammer tech,884.739990234375,861.5900268554688,1116.2396240234375,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,T,bot,X Heikin Ashi reversal,21.40999984741211,19.961037577928685,35.89962254224635,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,V,bot,Triple MA,413.5899963378906,391.9154775221678,630.3351844951188,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,MA,bot,Triple MA,638.010009765625,603.0760470216776,987.349637205099,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,MRK,bot,Triple MA,149.52000427246094,135.7161179413383,287.55886758368734,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,PFE,bot,Triple MA,30.520000457763672,28.796378607307503,47.75621896232536,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,MDT,bot,Triple MA,96.54000091552734,89.8186276305893,163.75373376490774,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,PYPL,bot,Triple MA,57.0099983215332,52.82330052334026,98.87697630346265,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,IWM,bot,Triple MA,279.3299865722656,267.89112666927224,393.7185856021995,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,XLP,bot,Triple MA,89.41999816894531,85.52714641257359,128.34851573266258,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,PYPL,bot,X MA cross 20/60,57.0099983215332,52.82330052334026,98.87697630346265,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,BLK,bot,X MA cross 20/60,1147.5400390625,1068.810846327252,1934.8319664149803,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,XLU,bot,X MA cross 20/60,43.43000030517578,41.612367247747486,61.60633087945874,skipped (no free slot/cash or rule limit),,,,,
+2026-11-01,SOL,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",94.494,90.637,133.064,not traded (shadow),,,,,
+2026-11-01,CRV,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.27876,0.2537785714285714,0.5285742857142858,not traded (shadow),,,,,
+2026-11-01,RUNE,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.555,0.5019800000000001,1.0852,not traded (shadow),,,,,
+2026-11-01,S,shadow (Liquid market),"Dip (RSI2 < 10, uptrend)",0.03949,0.03589228571428571,0.07546714285714284,not traded (shadow),,,,,
+2026-11-01,xyz:AAPL,shadow (Liquid market),Pullback in trend,344.79,339.4971428571429,397.7185714285715,not traded (shadow),,,,,
+2026-11-01,xyz:LLY,shadow (Liquid market),Squeeze breakout,1429.1,1389.442857142857,1825.6714285714288,not traded (shadow),,,,,

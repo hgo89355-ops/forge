@@ -57,16 +57,16 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-10-28,liquid:MINA,Inside-day breakout,0.065,0.0049,finished,1,-1.026,stop,False
 2026-10-28,liquid:RSR,Inside-day breakout,0.0016,0.0001,finished,1,-1.024,stop,False
 2026-10-28,liquid:TIA,Inside-day breakout,0.5531,0.0622,finished,1,-1.018,stop,False
-2026-10-29,liquid:HYPE,Big jump on volume,88.957,4.6632,open,2,-0.254,open,False
+2026-10-29,liquid:HYPE,Big jump on volume,88.957,4.6632,open,3,-0.273,open,False
 2026-10-29,liquid:TRX,Big jump on volume,0.3529,0.0055,finished,1,-1.128,stop,False
 2026-10-29,AAPL,Inside-day breakout,348.91,6.0643,finished,1,-1.114,stop,False
 2026-10-29,DE,Inside-day breakout,660.0,17.4821,open,1,0.753,open,True
 2026-10-29,QCOM,Inside-day breakout,185.41,6.0157,finished,1,-1.058,stop,True
 2026-10-29,XLF,Inside-day breakout,56.94,0.7207,finished,1,-1.159,stop,True
-2026-10-30,liquid:ENA,Big jump on volume,0.1898,0.022,open,1,-0.065,open,False
-2026-10-30,liquid:POL,Big jump on volume,0.0948,0.0048,open,1,-0.69,open,False
-2026-10-30,liquid:UNI,Big jump on volume,7.1468,0.5381,open,1,-0.145,open,False
-2026-10-30,BNB-USD,Drop bounce in uptrend,703.3541,21.7037,open,1,-0.039,open,True
+2026-10-30,liquid:ENA,Big jump on volume,0.1898,0.022,open,2,-0.315,open,False
+2026-10-30,liquid:POL,Big jump on volume,0.0948,0.0048,finished,2,-1.04,stop,False
+2026-10-30,liquid:UNI,Big jump on volume,7.1468,0.5381,open,2,0.111,open,False
+2026-10-30,BNB-USD,Drop bounce in uptrend,703.3541,21.7037,open,2,0.29,open,True
 2026-10-30,ABBV,Strong on a red day,294.89,6.9695,open,0,,waiting for entry,False
 2026-10-30,ABT,Strong on a red day,106.2,3.0192,open,0,,waiting for entry,True
 2026-10-30,BMY,Strong on a red day,62.48,1.8879,open,0,,waiting for entry,True
@@ -88,13 +88,14 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-10-30,XLE,Strong on a red day,70.02,1.4257,open,0,,waiting for entry,False
 2026-10-30,XLP,Strong on a red day,89.42,1.4707,open,0,,waiting for entry,True
 2026-10-30,XOM,Strong on a red day,187.25,4.1364,open,0,,waiting for entry,True
-2026-10-30,liquid:BCH,Strong on a red day,294.0,15.9721,open,1,-0.588,open,False
-2026-10-30,liquid:GRASS,Strong on a red day,0.5916,0.0765,open,1,-0.146,open,False
-2026-10-30,liquid:HYPE,Strong on a red day,89.964,4.7692,open,1,-0.464,open,False
-2026-10-30,liquid:MERL,Strong on a red day,0.0294,0.0022,open,1,0.337,open,False
-2026-10-30,liquid:NIL,Strong on a red day,0.0804,0.0136,open,1,-0.574,open,False
-2026-10-30,liquid:PROVE,Strong on a red day,0.2059,0.0115,open,1,0.225,open,False
-2026-10-30,liquid:REZ,Strong on a red day,0.0041,0.0005,open,1,0.168,open,False
-2026-10-30,liquid:ZRO,Strong on a red day,1.7112,0.2016,open,1,0.697,open,False
-2026-10-31,BNB-USD,Drop bounce in uptrend,705.62,19.9042,open,0,,waiting for entry,True
-2026-10-31,liquid:MERL,Inside-day breakout,0.0302,0.0023,open,0,,waiting for entry,False
+2026-10-30,liquid:BCH,Strong on a red day,294.0,15.9721,open,2,-0.63,open,False
+2026-10-30,liquid:GRASS,Strong on a red day,0.5916,0.0765,open,2,0.153,open,False
+2026-10-30,liquid:HYPE,Strong on a red day,89.964,4.7692,open,2,-0.483,open,False
+2026-10-30,liquid:MERL,Strong on a red day,0.0294,0.0022,open,2,0.622,open,False
+2026-10-30,liquid:NIL,Strong on a red day,0.0804,0.0136,open,2,-0.792,open,False
+2026-10-30,liquid:PROVE,Strong on a red day,0.2059,0.0115,open,2,-0.407,open,False
+2026-10-30,liquid:REZ,Strong on a red day,0.0041,0.0005,open,2,0.122,open,False
+2026-10-30,liquid:ZRO,Strong on a red day,1.7112,0.2016,open,2,0.495,open,False
+2026-10-31,BNB-USD,Drop bounce in uptrend,705.62,19.9042,open,1,-0.104,open,True
+2026-10-31,liquid:MERL,Inside-day breakout,0.0302,0.0023,open,1,0.252,open,False
+2026-11-02,AVAX-USD,Inside-day breakout,8.669,0.4007,open,0,,waiting for entry,False

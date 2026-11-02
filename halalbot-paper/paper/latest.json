@@ -1,20 +1,18 @@
 {
- "run_time_utc": "2026-11-01 00:43",
+ "run_time_utc": "2026-11-02 00:43",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-10-30",
- "last_crypto_candle": "2026-10-31",
- "markets_missing": [
-  "ETH-USD (stale)"
- ],
+ "last_crypto_candle": "2026-11-01",
+ "markets_missing": [],
  "setups": {
   "main": {
    "account_value": 10128.11,
    "total_profit": 128.11,
    "total_return_pct": 1.28,
-   "last_day": "2026-10-31",
+   "last_day": "2026-11-01",
    "last_day_pnl": 0.0,
-   "main_bucket": 7128.11,
-   "high_reward_bucket": 3000.0,
+   "main_bucket": 7000.0,
+   "high_reward_bucket": 3128.11,
    "worst_drop_pct": -0.59,
    "open_trades": 10,
    "orders_next_open": [
@@ -22,7 +20,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "TXN",
      "strategy": "Momentum 12-1",
-     "quantity": 1.826036,
+     "quantity": 1.793218,
      "stop_loss": 262.1049,
      "take_profit": ""
     },
@@ -30,7 +28,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "MRK",
      "strategy": "Momentum 12-1",
-     "quantity": 1.247896,
+     "quantity": 1.225469,
      "stop_loss": 131.1148,
      "take_profit": ""
     }
@@ -38,10 +36,10 @@
    "closed_trades_total": 2,
    "wins": 0,
    "closed_last_day": [],
-   "left_on_table_total": 84.16,
+   "left_on_table_total": 82.65,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -53,10 +51,10 @@
    "account_value": 10101.38,
    "total_profit": 101.38,
    "total_return_pct": 1.01,
-   "last_day": "2026-10-31",
+   "last_day": "2026-11-01",
    "last_day_pnl": 0.0,
-   "main_bucket": 7101.38,
-   "high_reward_bucket": 3000.0,
+   "main_bucket": 7000.0,
+   "high_reward_bucket": 3101.38,
    "worst_drop_pct": -1.79,
    "open_trades": 10,
    "orders_next_open": [
@@ -64,7 +62,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "MRK",
      "strategy": "Momentum 12-1",
-     "quantity": 3.827265,
+     "quantity": 3.772629,
      "stop_loss": 131.1148,
      "take_profit": ""
     },
@@ -72,7 +70,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "BMY",
      "strategy": "Breakout-retest",
-     "quantity": 11.354485,
+     "quantity": 11.192393,
      "stop_loss": 60.7561,
      "take_profit": 79.7191
     },
@@ -80,7 +78,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "COST",
      "strategy": "Breakout-retest",
-     "quantity": 0.700822,
+     "quantity": 0.690817,
      "stop_loss": 995.8274,
      "take_profit": 1176.806
     },
@@ -88,7 +86,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "MSFT",
      "strategy": "Breakout-retest",
-     "quantity": 0.019245,
+     "quantity": 0.01897,
      "stop_loss": 510.0318,
      "take_profit": 640.6915
     }
@@ -96,10 +94,10 @@
    "closed_trades_total": 5,
    "wins": 0,
    "closed_last_day": [],
-   "left_on_table_total": 166.97,
+   "left_on_table_total": 164.59,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -111,17 +109,17 @@
  "data_ok": true,
  "expected_stock_candle": "2026-10-30",
  "records": {
-  "date": "2026-10-31",
+  "date": "2026-11-01",
   "markets_recorded": 345,
-  "signals_today": 44,
-  "bot_signals": 34,
-  "shadow_signals": 10,
+  "signals_today": 41,
+  "bot_signals": 35,
+  "shadow_signals": 6,
   "alerts": [
-   "Unusual move: TRX -7.9% (5.4x its normal daily move)",
-   "Volume spike: ORDI traded 40.0x its usual volume (-0.8%)",
-   "Volume spike: PROVE traded 5.2x its usual volume (+1.4%)",
-   "Volume spike: para:2Y traded 5.0x its usual volume (+1.2%)",
+   "Volume spike: xyz:KSTR traded 8.7x its usual volume (+3.7%)",
+   "Volume spike: XPL traded 6.9x its usual volume (-12.6%)",
+   "Volume spike: BIO traded 5.1x its usual volume (+4.9%)",
    "Signal skipped: XLP (Breakout-retest); its outcome will be tracked",
+   "Signal skipped: ADI (Momentum 12-1); its outcome will be tracked",
    "Signal skipped: V (Triple MA); its outcome will be tracked",
    "Signal skipped: MA (Triple MA); its outcome will be tracked",
    "Signal skipped: MRK (Triple MA); its outcome will be tracked",
@@ -129,8 +127,7 @@
    "Signal skipped: MDT (Triple MA); its outcome will be tracked",
    "Signal skipped: PYPL (Triple MA); its outcome will be tracked",
    "Signal skipped: IWM (Triple MA); its outcome will be tracked",
-   "Signal skipped: XLP (Triple MA); its outcome will be tracked",
-   "Signal skipped: ADI (Momentum 12-1); its outcome will be tracked"
+   "Signal skipped: XLP (Triple MA); its outcome will be tracked"
   ]
  }
 }
