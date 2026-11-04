@@ -1,4 +1,6 @@
 symbol,engine,entry_date,exit_date,reason,pnl_usd,r_multiple,left_on_table_usd
-QCOM,Pullback in trend,2026-10-27,2026-10-30,stop,-26.98,-1.0260320140365773,79.5
-TXN,Turtle breakout,2026-10-28,2026-10-30,stop,-3.02,-1.0307559968066045,3.15
-EOG,Bull flag,2026-10-26,2026-11-02,stop,-18.35,-1.0389823298075789,34.04
+QCOM,Pullback in trend,2026-10-27,2026-10-30,stop,-26.98,-1.0260320140365768,79.5
+TXN,Turtle breakout,2026-10-28,2026-10-30,stop,-3.02,-1.0307559968066113,3.15
+EOG,Bull flag,2026-10-26,2026-11-02,stop,-18.35,-1.0389823298061343,34.04
+COP,Bull flag,2026-10-26,2026-11-03,stop_gap,-20.06,-1.1570774782062752,45.46
+IBM,Bull flag,2026-10-30,2026-11-03,stop_gap,-2.33,-1.2196112744027656,2.48

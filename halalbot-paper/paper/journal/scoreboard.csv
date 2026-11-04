@@ -1,7 +1,7 @@
 strategy,open_now,live_closed,live_wins,live_win_rate,backtest_trades,backtest_win_rate,updated_win_rate,live_avg_R,backtest_avg_R
 52-week high,0,0,0,,1745,20.0,20.0,,0.49
 Breakout-retest,2,0,0,,2369,18.1,18.1,,0.27
-Bull flag,2,1,0,0.0,1138,22.0,21.9,-1.04,0.6
+Bull flag,1,3,0,0.0,1138,22.0,21.9,-1.14,0.6
 Crypto trend,0,0,0,,264,24.6,24.6,,1.41
 Dip after bull flag,0,0,0,,613,22.5,22.5,,0.64
 "Dip after bull flag, quick exit",0,0,0,,726,67.5,67.5,,0.08
