@@ -1,179 +1,217 @@
 {
- "run_time_utc": "2026-11-04 00:43",
+ "run_time_utc": "2026-11-05 00:45",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-11-03",
- "last_crypto_candle": "2026-11-03",
+ "last_stock_candle": "2026-11-04",
+ "last_crypto_candle": "2026-11-04",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 10055.26,
-   "total_profit": 55.26,
-   "total_return_pct": 0.55,
-   "last_day": "2026-11-03",
-   "last_day_pnl": -20.42,
-   "main_bucket": 6927.15,
-   "high_reward_bucket": 3128.11,
-   "worst_drop_pct": -1.31,
+   "account_value": 10081.6,
+   "total_profit": 81.6,
+   "total_return_pct": 0.82,
+   "last_day": "2026-11-04",
+   "last_day_pnl": 72.35,
+   "main_bucket": 6991.42,
+   "high_reward_bucket": 3090.18,
+   "worst_drop_pct": -1.79,
    "open_trades": 10,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "BRK-B",
-     "strategy": "Triple MA",
-     "quantity": 1.242255,
-     "stop_loss": 535.1904,
-     "take_profit": ""
+     "symbol": "EOG",
+     "strategy": "Dip after bull flag",
+     "quantity": 4.749377,
+     "stop_loss": 142.7597,
+     "take_profit": 190.0625
     },
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "DE",
+     "symbol": "BLK",
+     "strategy": "52-week high",
+     "quantity": 0.056512,
+     "stop_loss": 1195.1537,
+     "take_profit": 1516.5334
+    },
+    {
+     "status": "SELL AT NEXT OPEN",
+     "symbol": "SLB",
      "strategy": "Triple MA",
-     "quantity": 0.059177,
-     "stop_loss": 610.3093,
+     "quantity": 13.195838,
+     "stop_loss": "",
      "take_profit": ""
     }
    ],
-   "closed_trades_total": 5,
+   "closed_trades_total": 7,
    "wins": 0,
    "closed_last_day": [
     {
-     "symbol": "COP",
-     "engine": "Bull flag",
+     "symbol": "TSLA",
+     "engine": "Turtle breakout",
      "reason": "stop_gap",
-     "pnl_usd": -20.06
-    },
-    {
-     "symbol": "IBM",
-     "engine": "Bull flag",
-     "reason": "stop_gap",
-     "pnl_usd": -2.33
+     "pnl_usd": -32.78
     }
    ],
-   "left_on_table_total": 164.63,
+   "left_on_table_total": 245.58,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-03",
+    "date": "2026-11-04",
     "bought": [
      {
-      "symbol": "UPS",
-      "strategy": "Bull flag",
-      "price": 109.4994,
-      "value_usd": 633.08
+      "symbol": "BRK-B",
+      "strategy": "Triple MA",
+      "price": 566.8663,
+      "value_usd": 706.83
+     },
+     {
+      "symbol": "DE",
+      "strategy": "Triple MA",
+      "price": 675.675,
+      "value_usd": 131.89
      }
     ],
     "sold": [
      {
-      "symbol": "COP",
-      "strategy": "Bull flag",
+      "symbol": "TSLA",
+      "strategy": "Turtle breakout",
       "reason": "stop_gap",
-      "pnl_usd": -20.06,
-      "left_on_table_usd": 45.46
-     },
-     {
-      "symbol": "IBM",
-      "strategy": "Bull flag",
-      "reason": "stop_gap",
-      "pnl_usd": -2.33,
-      "left_on_table_usd": 2.48
+      "pnl_usd": -32.78,
+      "left_on_table_usd": 50.77
      }
     ],
     "profit_from_winners": 0,
-    "loss_from_losers": -22.39,
-    "left_on_table": 47.94
+    "loss_from_losers": -32.78,
+    "left_on_table": 50.77
    }
   },
   "setup5": {
-   "account_value": 9984.9,
-   "total_profit": -15.1,
-   "total_return_pct": -0.15,
-   "last_day": "2026-11-03",
-   "last_day_pnl": -6.02,
-   "main_bucket": 6883.52,
-   "high_reward_bucket": 3101.38,
+   "account_value": 10068.58,
+   "total_profit": 68.58,
+   "total_return_pct": 0.69,
+   "last_day": "2026-11-04",
+   "last_day_pnl": 83.61,
+   "main_bucket": 6967.14,
+   "high_reward_bucket": 3101.44,
    "worst_drop_pct": -2.92,
-   "open_trades": 11,
+   "open_trades": 12,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "BRK-B",
-     "strategy": "Triple MA",
-     "quantity": 1.234432,
-     "stop_loss": 535.1904,
-     "take_profit": ""
+     "symbol": "EOG",
+     "strategy": "Dip after bull flag",
+     "quantity": 0.567999,
+     "stop_loss": 142.7597,
+     "take_profit": 190.0625
     },
     {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "DE",
+     "status": "SELL AT NEXT OPEN",
+     "symbol": "SLB",
      "strategy": "Triple MA",
-     "quantity": 0.130942,
-     "stop_loss": 610.3093,
+     "quantity": 13.174911,
+     "stop_loss": "",
      "take_profit": ""
     }
    ],
    "closed_trades_total": 9,
    "wins": 0,
-   "closed_last_day": [
-    {
-     "symbol": "COP",
-     "engine": "Bull flag",
-     "reason": "stop_gap",
-     "pnl_usd": -20.13
-    },
-    {
-     "symbol": "IBM",
-     "engine": "Bull flag",
-     "reason": "stop_gap",
-     "pnl_usd": -3.27
-    }
-   ],
+   "closed_last_day": [],
    "left_on_table_total": 248.41,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-03",
+    "date": "2026-11-04",
     "bought": [
      {
-      "symbol": "UPS",
-      "strategy": "Bull flag",
-      "price": 109.4994,
-      "value_usd": 590.3
-     }
-    ],
-    "sold": [
-     {
-      "symbol": "COP",
-      "strategy": "Bull flag",
-      "reason": "stop_gap",
-      "pnl_usd": -20.13,
-      "left_on_table_usd": 45.63
+      "symbol": "BRK-B",
+      "strategy": "Triple MA",
+      "price": 566.8663,
+      "value_usd": 703.2
      },
      {
-      "symbol": "IBM",
-      "strategy": "Bull flag",
-      "reason": "stop_gap",
-      "pnl_usd": -3.27,
-      "left_on_table_usd": 3.48
+      "symbol": "DE",
+      "strategy": "Triple MA",
+      "price": 675.675,
+      "value_usd": 87.37
      }
     ],
+    "sold": [],
     "profit_from_winners": 0,
-    "loss_from_losers": -23.4,
-    "left_on_table": 49.11
+    "loss_from_losers": 0,
+    "left_on_table": 0
    }
   }
  },
  "data_ok": true,
- "expected_stock_candle": "2026-11-03",
+ "expected_stock_candle": "2026-11-04",
  "records": {
-  "date": "2026-11-03",
+  "date": "2026-11-04",
   "markets_recorded": 347,
-  "signals_today": 31,
-  "bot_signals": 21,
+  "signals_today": 87,
+  "bot_signals": 77,
   "shadow_signals": 10,
   "alerts": [
-   "Volume spike: RUNE traded 22.3x its usual volume (+13.2%)",
-   "Volume spike: para:SMCI traded 10.0x its usual volume (+11.0%)",
-   "Volume spike: io:GPRO traded 5.2x its usual volume (-7.0%)",
-   "Volume spike: xyz:PLTR traded 4.5x its usual volume (+0.8%)",
-   "Volume spike: xyz:AMD traded 4.1x its usual volume (+9.0%)"
+   "Unusual move: xyz:MSFT +7.1% (5.6x its normal daily move)",
+   "Unusual move: xyz:AAPL +5.9% (5.3x its normal daily move)",
+   "Unusual move: para:TTWO +7.4% (4.9x its normal daily move)",
+   "Unusual move: para:VST -13.7% (4.7x its normal daily move)",
+   "Unusual move: xyz:BRENTOIL -9.0% (4.3x its normal daily move)",
+   "Unusual move: xyz:PALLADIUM +6.8% (4.2x its normal daily move)",
+   "Unusual move: xyz:COST +4.0% (4.2x its normal daily move)",
+   "Unusual move: xyz:CL -8.6% (4.0x its normal daily move)",
+   "Volume spike: APEX traded 28.8x its usual volume (+3.8%)",
+   "Volume spike: xyz:QCOM traded 16.6x its usual volume (-2.2%)",
+   "Volume spike: para:CIFR traded 12.7x its usual volume (-19.2%)",
+   "Volume spike: WLFI traded 10.9x its usual volume (-6.5%)",
+   "Volume spike: xyz:ARM traded 10.6x its usual volume (-9.4%)",
+   "Volume spike: STABLE traded 9.8x its usual volume (-0.8%)",
+   "Volume spike: para:VST traded 7.0x its usual volume (-13.7%)",
+   "Volume spike: TNSR traded 6.4x its usual volume (+1.1%)",
+   "Volume spike: para:TOTAL2 traded 5.9x its usual volume (+2.5%)",
+   "Volume spike: para:CRDO traded 5.8x its usual volume (-10.8%)",
+   "Signal skipped: BLK (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: HD (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: LOW (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: MCD (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: MSFT (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: SBUX (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: XLF (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: XLRE (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: XLY (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: HD (TU rest); its outcome will be tracked",
+   "Signal skipped: LOW (TU rest); its outcome will be tracked",
+   "Signal skipped: MCD (TU rest); its outcome will be tracked",
+   "Signal skipped: MSFT (TU rest); its outcome will be tracked",
+   "Signal skipped: SBUX (TU rest); its outcome will be tracked",
+   "Signal skipped: XLF (TU rest); its outcome will be tracked",
+   "Signal skipped: XLRE (TU rest); its outcome will be tracked",
+   "Signal skipped: XLY (TU rest); its outcome will be tracked",
+   "Signal skipped: COP (Dip after bull flag, quick exit); its outcome will be tracked",
+   "Signal skipped: EOG (Dip after bull flag, quick exit); its outcome will be tracked",
+   "Signal skipped: AAPL (PB tech); its outcome will be tracked",
+   "Signal skipped: AAPL (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: SPY (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: UNH (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: LOW (Triple MA); its outcome will be tracked",
+   "Signal skipped: MS (Triple MA); its outcome will be tracked",
+   "Signal skipped: MCD (Triple MA); its outcome will be tracked",
+   "Signal skipped: ISRG (Triple MA); its outcome will be tracked",
+   "Signal skipped: VZ (Triple MA); its outcome will be tracked",
+   "Signal skipped: INTU (Triple MA); its outcome will be tracked",
+   "Signal skipped: GM (Triple MA); its outcome will be tracked",
+   "Signal skipped: DIA (Triple MA); its outcome will be tracked",
+   "Signal skipped: DIS (52-week high); its outcome will be tracked",
+   "Signal skipped: GM (52-week high); its outcome will be tracked",
+   "Signal skipped: MDT (52-week high); its outcome will be tracked",
+   "Signal skipped: MSFT (52-week high); its outcome will be tracked",
+   "Signal skipped: PG (52-week high); its outcome will be tracked",
+   "Signal skipped: XLF (52-week high); its outcome will be tracked",
+   "Signal skipped: BLK (TU fin); its outcome will be tracked",
+   "Signal skipped: LOW (Squeeze breakout); its outcome will be tracked",
+   "Signal skipped: MCD (Squeeze breakout); its outcome will be tracked",
+   "Signal skipped: UPS (Squeeze breakout); its outcome will be tracked",
+   "Signal skipped: XLV (Squeeze breakout); its outcome will be tracked",
+   "Signal skipped: SPY (PB rest); its outcome will be tracked",
+   "Signal skipped: UNH (PB rest); its outcome will be tracked",
+   "Signal skipped: AAPL (Breakout-retest); its outcome will be tracked",
+   "Signal skipped: SLB (Breakout-retest); its outcome will be tracked"
   ]
  }
 }
