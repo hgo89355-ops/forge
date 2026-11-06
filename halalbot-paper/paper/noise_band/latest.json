@@ -3,25 +3,6 @@
  "pnl": -83.99,
  "trades": 5,
  "wins": 1,
- "last_day": "2026-11-04",
- "today": [
-  {
-   "date": "2026-11-04",
-   "bought": "10:00",
-   "buy_price": 697.68,
-   "sold": "11:00",
-   "sell_price": 693.14,
-   "ret_pct": -0.661,
-   "why": "fell below band/VWAP"
-  },
-  {
-   "date": "2026-11-04",
-   "bought": "11:00",
-   "buy_price": 693.14,
-   "sold": "14:00",
-   "sell_price": 693.01,
-   "ret_pct": -0.029,
-   "why": "fell below band/VWAP"
-  }
- ]
+ "last_day": "2026-11-05",
+ "today": []
 }
