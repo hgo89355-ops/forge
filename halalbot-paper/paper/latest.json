@@ -1,34 +1,34 @@
 {
- "run_time_utc": "2026-11-07 00:43",
+ "run_time_utc": "2026-11-08 00:43",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-11-06",
- "last_crypto_candle": "2026-11-06",
+ "last_crypto_candle": "2026-11-07",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 9819.59,
-   "total_profit": -180.41,
-   "total_return_pct": -1.8,
-   "last_day": "2026-11-06",
-   "last_day_pnl": -40.31,
-   "main_bucket": 6729.41,
-   "high_reward_bucket": 3090.18,
-   "worst_drop_pct": -3.65,
+   "account_value": 9864.99,
+   "total_profit": -135.01,
+   "total_return_pct": -1.35,
+   "last_day": "2026-11-07",
+   "last_day_pnl": 0.0,
+   "main_bucket": 6736.88,
+   "high_reward_bucket": 3128.11,
+   "worst_drop_pct": -3.18,
    "open_trades": 9,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
      "symbol": "JNJ",
      "strategy": "Breakout-retest",
-     "quantity": 2.433815,
+     "quantity": 2.436519,
      "stop_loss": 268.8058,
-     "take_profit": 350.3624
+     "take_profit": 350.3621
     },
     {
      "status": "BUY AT NEXT OPEN",
      "symbol": "AAPL",
      "strategy": "Triple MA",
-     "quantity": 1.963573,
+     "quantity": 1.965754,
      "stop_loss": 316.0583,
      "take_profit": ""
     },
@@ -36,18 +36,18 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "GE",
      "strategy": "Triple MA",
-     "quantity": 1.667723,
-     "stop_loss": 290.5236,
+     "quantity": 1.611287,
+     "stop_loss": 290.5193,
      "take_profit": ""
     }
    ],
-   "closed_trades_total": 11,
+   "closed_trades_total": 10,
    "wins": 1,
    "closed_last_day": [],
-   "left_on_table_total": 520.29,
+   "left_on_table_total": 488.45,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-06",
+    "date": "2026-11-07",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -56,29 +56,21 @@
    }
   },
   "setup5": {
-   "account_value": 9834.48,
-   "total_profit": -165.52,
-   "total_return_pct": -1.66,
-   "last_day": "2026-11-06",
-   "last_day_pnl": -39.51,
-   "main_bucket": 6733.04,
-   "high_reward_bucket": 3101.44,
-   "worst_drop_pct": -4.39,
+   "account_value": 9844.53,
+   "total_profit": -155.47,
+   "total_return_pct": -1.55,
+   "last_day": "2026-11-07",
+   "last_day_pnl": -0.01,
+   "main_bucket": 6743.15,
+   "high_reward_bucket": 3101.38,
+   "worst_drop_pct": -4.29,
    "open_trades": 12,
    "orders_next_open": [
     {
      "status": "SELL AT NEXT OPEN",
      "symbol": "EFA",
      "strategy": "Triple MA",
-     "quantity": 6.678957,
-     "stop_loss": "",
-     "take_profit": ""
-    },
-    {
-     "status": "SELL AT NEXT OPEN",
-     "symbol": "GOOGL",
-     "strategy": "X Heikin Ashi reversal",
-     "quantity": 0.904871,
+     "quantity": 6.678955,
      "stop_loss": "",
      "take_profit": ""
     }
@@ -89,33 +81,8 @@
    "left_on_table_total": 733.15,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-06",
-    "bought": [
-     {
-      "symbol": "XOM",
-      "strategy": "Breakout-retest",
-      "price": 164.4142,
-      "value_usd": 683.25
-     },
-     {
-      "symbol": "NKE",
-      "strategy": "X MA cross 20/60",
-      "price": 38.3083,
-      "value_usd": 355.41
-     },
-     {
-      "symbol": "AMD",
-      "strategy": "X Stochastic reversal",
-      "price": 444.8744,
-      "value_usd": 285.88
-     },
-     {
-      "symbol": "CAT",
-      "strategy": "X Stochastic reversal",
-      "price": 572.3918,
-      "value_usd": 410.45
-     }
-    ],
+    "date": "2026-11-07",
+    "bought": [],
     "sold": [],
     "profit_from_winners": 0,
     "loss_from_losers": 0,
@@ -126,24 +93,16 @@
  "data_ok": true,
  "expected_stock_candle": "2026-11-06",
  "records": {
-  "date": "2026-11-06",
+  "date": "2026-11-07",
   "markets_recorded": 347,
-  "signals_today": 29,
-  "bot_signals": 26,
+  "signals_today": 27,
+  "bot_signals": 24,
   "shadow_signals": 3,
   "alerts": [
-   "Unusual move: xyz:QNT +24.0% (5.7x its normal daily move)",
-   "Unusual move: io:IONQ +18.9% (4.4x its normal daily move)",
-   "Unusual move: xyz:RKLB +18.9% (4.4x its normal daily move)",
-   "Unusual move: io:ANTH -11.2% (4.2x its normal daily move)",
-   "Volume spike: xyz:DKNG traded 7.0x its usual volume (+3.7%)",
-   "Volume spike: xyz:SMSN traded 6.0x its usual volume (+7.5%)",
-   "Volume spike: para:IGV traded 5.4x its usual volume (+0.8%)",
-   "Volume spike: xyz:NATGAS traded 5.4x its usual volume (+4.4%)",
-   "Volume spike: xyz:KORU traded 4.6x its usual volume (+9.6%)",
-   "Volume spike: S traded 4.5x its usual volume (+4.0%)",
-   "Signal skipped: DE (PB rest); its outcome will be tracked",
-   "Signal skipped: DE (Pullback in trend); its outcome will be tracked"
+   "Volume spike: xyz:UMC traded 17.2x its usual volume (+1.3%)",
+   "Volume spike: xyz:GEV traded 17.0x its usual volume (-0.0%)",
+   "Signal skipped: DE (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: DE (PB rest); its outcome will be tracked"
   ]
  }
 }

@@ -1,21 +1,13 @@
 {
- "date": "2026-11-06",
+ "date": "2026-11-07",
  "markets_recorded": 347,
- "signals_today": 29,
- "bot_signals": 26,
+ "signals_today": 27,
+ "bot_signals": 24,
  "shadow_signals": 3,
  "alerts": [
-  "Unusual move: xyz:QNT +24.0% (5.7x its normal daily move)",
-  "Unusual move: io:IONQ +18.9% (4.4x its normal daily move)",
-  "Unusual move: xyz:RKLB +18.9% (4.4x its normal daily move)",
-  "Unusual move: io:ANTH -11.2% (4.2x its normal daily move)",
-  "Volume spike: xyz:DKNG traded 7.0x its usual volume (+3.7%)",
-  "Volume spike: xyz:SMSN traded 6.0x its usual volume (+7.5%)",
-  "Volume spike: para:IGV traded 5.4x its usual volume (+0.8%)",
-  "Volume spike: xyz:NATGAS traded 5.4x its usual volume (+4.4%)",
-  "Volume spike: xyz:KORU traded 4.6x its usual volume (+9.6%)",
-  "Volume spike: S traded 4.5x its usual volume (+4.0%)",
-  "Signal skipped: DE (PB rest); its outcome will be tracked",
-  "Signal skipped: DE (Pullback in trend); its outcome will be tracked"
+  "Volume spike: xyz:UMC traded 17.2x its usual volume (+1.3%)",
+  "Volume spike: xyz:GEV traded 17.0x its usual volume (-0.0%)",
+  "Signal skipped: DE (Pullback in trend); its outcome will be tracked",
+  "Signal skipped: DE (PB rest); its outcome will be tracked"
  ]
 }
