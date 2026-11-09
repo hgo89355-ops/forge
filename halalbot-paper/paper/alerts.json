@@ -1,13 +1,12 @@
 {
- "date": "2026-11-07",
+ "date": "2026-11-08",
  "markets_recorded": 347,
- "signals_today": 27,
- "bot_signals": 24,
- "shadow_signals": 3,
+ "signals_today": 37,
+ "bot_signals": 25,
+ "shadow_signals": 12,
  "alerts": [
-  "Volume spike: xyz:UMC traded 17.2x its usual volume (+1.3%)",
-  "Volume spike: xyz:GEV traded 17.0x its usual volume (-0.0%)",
-  "Signal skipped: DE (Pullback in trend); its outcome will be tracked",
-  "Signal skipped: DE (PB rest); its outcome will be tracked"
+  "Volume spike: HMSTR traded 6.9x its usual volume (-4.5%)",
+  "Signal skipped: DE (PB rest); its outcome will be tracked",
+  "Signal skipped: DE (Pullback in trend); its outcome will be tracked"
  ]
 }

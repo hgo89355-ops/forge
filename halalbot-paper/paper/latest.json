@@ -1,15 +1,15 @@
 {
- "run_time_utc": "2026-11-08 00:43",
+ "run_time_utc": "2026-11-09 00:43",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-11-06",
- "last_crypto_candle": "2026-11-07",
+ "last_crypto_candle": "2026-11-08",
  "markets_missing": [],
  "setups": {
   "main": {
    "account_value": 9864.99,
    "total_profit": -135.01,
    "total_return_pct": -1.35,
-   "last_day": "2026-11-07",
+   "last_day": "2026-11-08",
    "last_day_pnl": 0.0,
    "main_bucket": 6736.88,
    "high_reward_bucket": 3128.11,
@@ -47,7 +47,7 @@
    "left_on_table_total": 488.45,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-07",
+    "date": "2026-11-08",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -56,12 +56,12 @@
    }
   },
   "setup5": {
-   "account_value": 9844.53,
-   "total_profit": -155.47,
+   "account_value": 9844.52,
+   "total_profit": -155.48,
    "total_return_pct": -1.55,
-   "last_day": "2026-11-07",
+   "last_day": "2026-11-08",
    "last_day_pnl": -0.01,
-   "main_bucket": 6743.15,
+   "main_bucket": 6743.14,
    "high_reward_bucket": 3101.38,
    "worst_drop_pct": -4.29,
    "open_trades": 12,
@@ -81,7 +81,7 @@
    "left_on_table_total": 733.15,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-07",
+    "date": "2026-11-08",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -93,16 +93,15 @@
  "data_ok": true,
  "expected_stock_candle": "2026-11-06",
  "records": {
-  "date": "2026-11-07",
+  "date": "2026-11-08",
   "markets_recorded": 347,
-  "signals_today": 27,
-  "bot_signals": 24,
-  "shadow_signals": 3,
+  "signals_today": 37,
+  "bot_signals": 25,
+  "shadow_signals": 12,
   "alerts": [
-   "Volume spike: xyz:UMC traded 17.2x its usual volume (+1.3%)",
-   "Volume spike: xyz:GEV traded 17.0x its usual volume (-0.0%)",
-   "Signal skipped: DE (Pullback in trend); its outcome will be tracked",
-   "Signal skipped: DE (PB rest); its outcome will be tracked"
+   "Volume spike: HMSTR traded 6.9x its usual volume (-4.5%)",
+   "Signal skipped: DE (PB rest); its outcome will be tracked",
+   "Signal skipped: DE (Pullback in trend); its outcome will be tracked"
   ]
  }
 }

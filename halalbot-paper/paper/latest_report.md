@@ -1,20 +1,19 @@
-# Paper trading report — 2026-11-08 00:43 UTC
+# Paper trading report — 2026-11-09 00:43 UTC
 
-Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-11-06, last crypto candle: 2026-11-07.
+Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-11-06, last crypto candle: 2026-11-08.
 
 ## Alerts
 
-- Volume spike: xyz:UMC traded 17.2x its usual volume (+1.3%)
-- Volume spike: xyz:GEV traded 17.0x its usual volume (-0.0%)
-- Signal skipped: DE (Pullback in trend); its outcome will be tracked
+- Volume spike: HMSTR traded 6.9x its usual volume (-4.5%)
 - Signal skipped: DE (PB rest); its outcome will be tracked
+- Signal skipped: DE (Pullback in trend); its outcome will be tracked
 
-Recorded 347 Liquid markets; 27 signals logged today (24 from the bot, 3 shadow signals on other markets).
+Recorded 347 Liquid markets; 37 signals logged today (25 from the bot, 12 shadow signals on other markets).
 
 ## Main setup
 
 - Account: $9,864.99 (-1.35% since start)
-- Last day (2026-11-07): +0.00 USD
+- Last day (2026-11-08): +0.00 USD
 - Main bucket $6,736.88, high-reward bucket $3,128.11
 - Open trades: 9; closed so far: 10 (1 wins)
 - Worst drop so far: -3.18%; left on the table (closed trades): $488.45
@@ -22,9 +21,9 @@ Recorded 347 Liquid markets; 27 signals logged today (24 from the bot, 3 shadow 
 
 ## Setup 5 (comparison)
 
-- Account: $9,844.53 (-1.55% since start)
-- Last day (2026-11-07): -0.01 USD
-- Main bucket $6,743.15, high-reward bucket $3,101.38
+- Account: $9,844.52 (-1.55% since start)
+- Last day (2026-11-08): -0.01 USD
+- Main bucket $6,743.14, high-reward bucket $3,101.38
 - Open trades: 12; closed so far: 15 (1 wins)
 - Worst drop so far: -4.29%; left on the table (closed trades): $733.15
 - Orders for the next open: SELL EFA (Triple MA)
