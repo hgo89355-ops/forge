@@ -1,12 +1,26 @@
 {
- "date": "2026-11-08",
- "markets_recorded": 347,
- "signals_today": 37,
- "bot_signals": 25,
- "shadow_signals": 12,
+ "date": "2026-11-09",
+ "markets_recorded": 349,
+ "signals_today": 26,
+ "bot_signals": 15,
+ "shadow_signals": 11,
  "alerts": [
-  "Volume spike: HMSTR traded 6.9x its usual volume (-4.5%)",
-  "Signal skipped: DE (PB rest); its outcome will be tracked",
-  "Signal skipped: DE (Pullback in trend); its outcome will be tracked"
+  "Unusual move: INIT +53.8% (6.4x its normal daily move)",
+  "Unusual move: xyz:AVGO +10.0% (4.4x its normal daily move)",
+  "Unusual move: xyz:AMAT +12.8% (4.0x its normal daily move)",
+  "Volume spike: TNSR traded 309.5x its usual volume (+1.7%)",
+  "Volume spike: HMSTR traded 103.5x its usual volume (+4.0%)",
+  "Volume spike: NOT traded 101.4x its usual volume (+3.6%)",
+  "Volume spike: NXPC traded 48.9x its usual volume (+11.0%)",
+  "Volume spike: SAGA traded 30.3x its usual volume (+0.7%)",
+  "Volume spike: xyz:IBM traded 29.3x its usual volume (+1.0%)",
+  "Volume spike: RESOLV traded 28.4x its usual volume (+2.5%)",
+  "Volume spike: GMT traded 26.8x its usual volume (+4.1%)",
+  "Volume spike: ME traded 21.1x its usual volume (+2.7%)",
+  "Volume spike: xyz:EWT traded 15.4x its usual volume (+7.5%)",
+  "Signal skipped: JNJ (TU rest); its outcome will be tracked",
+  "Signal skipped: TXN (Pullback in trend); its outcome will be tracked",
+  "Signal skipped: JNJ (Turtle breakout); its outcome will be tracked",
+  "Signal skipped: TXN (PB tech); its outcome will be tracked"
  ]
 }

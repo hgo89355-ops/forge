@@ -1,44 +1,28 @@
 {
- "run_time_utc": "2026-11-09 00:43",
+ "run_time_utc": "2026-11-10 00:43",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-11-06",
- "last_crypto_candle": "2026-11-08",
+ "last_stock_candle": "2026-11-09",
+ "last_crypto_candle": "2026-11-09",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 9864.99,
-   "total_profit": -135.01,
-   "total_return_pct": -1.35,
-   "last_day": "2026-11-08",
-   "last_day_pnl": 0.0,
-   "main_bucket": 6736.88,
+   "account_value": 9967.66,
+   "total_profit": -32.34,
+   "total_return_pct": -0.32,
+   "last_day": "2026-11-09",
+   "last_day_pnl": 102.67,
+   "main_bucket": 6839.55,
    "high_reward_bucket": 3128.11,
    "worst_drop_pct": -3.18,
-   "open_trades": 9,
+   "open_trades": 12,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "JNJ",
-     "strategy": "Breakout-retest",
-     "quantity": 2.436519,
-     "stop_loss": 268.8058,
-     "take_profit": 350.3621
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "AAPL",
-     "strategy": "Triple MA",
-     "quantity": 1.965754,
-     "stop_loss": 316.0583,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "GE",
-     "strategy": "Triple MA",
-     "quantity": 1.611287,
-     "stop_loss": 290.5193,
-     "take_profit": ""
+     "symbol": "SNPS",
+     "strategy": "Pullback in trend",
+     "quantity": 0.219647,
+     "stop_loss": 447.7981,
+     "take_profit": 658.6886
     }
    ],
    "closed_trades_total": 10,
@@ -47,8 +31,27 @@
    "left_on_table_total": 488.45,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-08",
-    "bought": [],
+    "date": "2026-11-09",
+    "bought": [
+     {
+      "symbol": "JNJ",
+      "strategy": "Breakout-retest",
+      "price": 278.278,
+      "value_usd": 682.97
+     },
+     {
+      "symbol": "AAPL",
+      "strategy": "Triple MA",
+      "price": 345.2799,
+      "value_usd": 684.24
+     },
+     {
+      "symbol": "GE",
+      "strategy": "Triple MA",
+      "price": 332.2644,
+      "value_usd": 526.49
+     }
+    ],
     "sold": [],
     "profit_from_winners": 0,
     "loss_from_losers": 0,
@@ -56,52 +59,89 @@
    }
   },
   "setup5": {
-   "account_value": 9844.52,
-   "total_profit": -155.48,
-   "total_return_pct": -1.55,
-   "last_day": "2026-11-08",
-   "last_day_pnl": -0.01,
-   "main_bucket": 6743.14,
+   "account_value": 9947.93,
+   "total_profit": -52.07,
+   "total_return_pct": -0.52,
+   "last_day": "2026-11-09",
+   "last_day_pnl": 103.42,
+   "main_bucket": 6846.56,
    "high_reward_bucket": 3101.38,
    "worst_drop_pct": -4.29,
    "open_trades": 12,
    "orders_next_open": [
     {
-     "status": "SELL AT NEXT OPEN",
-     "symbol": "EFA",
-     "strategy": "Triple MA",
-     "quantity": 6.678955,
-     "stop_loss": "",
-     "take_profit": ""
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "JNJ",
+     "strategy": "52-week high",
+     "quantity": 2.424487,
+     "stop_loss": 274.7589,
+     "take_profit": 355.6204
+    },
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "SNPS",
+     "strategy": "PB tech",
+     "quantity": 0.145463,
+     "stop_loss": 447.7981,
+     "take_profit": 658.6886
     }
    ],
-   "closed_trades_total": 15,
-   "wins": 1,
-   "closed_last_day": [],
-   "left_on_table_total": 733.15,
+   "closed_trades_total": 16,
+   "wins": 2,
+   "closed_last_day": [
+    {
+     "symbol": "EFA",
+     "engine": "Triple MA",
+     "reason": "signal",
+     "pnl_usd": 15.64
+    }
+   ],
+   "left_on_table_total": 734.85,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-08",
+    "date": "2026-11-09",
     "bought": [],
-    "sold": [],
-    "profit_from_winners": 0,
+    "sold": [
+     {
+      "symbol": "EFA",
+      "strategy": "Triple MA",
+      "reason": "signal",
+      "pnl_usd": 15.64,
+      "left_on_table_usd": 1.7
+     }
+    ],
+    "profit_from_winners": 15.64,
     "loss_from_losers": 0,
-    "left_on_table": 0
+    "left_on_table": 1.7
    }
   }
  },
  "data_ok": true,
- "expected_stock_candle": "2026-11-06",
+ "expected_stock_candle": "2026-11-09",
  "records": {
-  "date": "2026-11-08",
-  "markets_recorded": 347,
-  "signals_today": 37,
-  "bot_signals": 25,
-  "shadow_signals": 12,
+  "date": "2026-11-09",
+  "markets_recorded": 349,
+  "signals_today": 26,
+  "bot_signals": 15,
+  "shadow_signals": 11,
   "alerts": [
-   "Volume spike: HMSTR traded 6.9x its usual volume (-4.5%)",
-   "Signal skipped: DE (PB rest); its outcome will be tracked",
-   "Signal skipped: DE (Pullback in trend); its outcome will be tracked"
+   "Unusual move: INIT +53.8% (6.4x its normal daily move)",
+   "Unusual move: xyz:AVGO +10.0% (4.4x its normal daily move)",
+   "Unusual move: xyz:AMAT +12.8% (4.0x its normal daily move)",
+   "Volume spike: TNSR traded 309.5x its usual volume (+1.7%)",
+   "Volume spike: HMSTR traded 103.5x its usual volume (+4.0%)",
+   "Volume spike: NOT traded 101.4x its usual volume (+3.6%)",
+   "Volume spike: NXPC traded 48.9x its usual volume (+11.0%)",
+   "Volume spike: SAGA traded 30.3x its usual volume (+0.7%)",
+   "Volume spike: xyz:IBM traded 29.3x its usual volume (+1.0%)",
+   "Volume spike: RESOLV traded 28.4x its usual volume (+2.5%)",
+   "Volume spike: GMT traded 26.8x its usual volume (+4.1%)",
+   "Volume spike: ME traded 21.1x its usual volume (+2.7%)",
+   "Volume spike: xyz:EWT traded 15.4x its usual volume (+7.5%)",
+   "Signal skipped: JNJ (TU rest); its outcome will be tracked",
+   "Signal skipped: TXN (Pullback in trend); its outcome will be tracked",
+   "Signal skipped: JNJ (Turtle breakout); its outcome will be tracked",
+   "Signal skipped: TXN (PB tech); its outcome will be tracked"
   ]
  }
 }

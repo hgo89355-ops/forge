@@ -5,3 +5,4 @@ date,bought,buy_price,sold,sell_price,ret_pct,why
 2026-11-04,10:00,697.68,11:00,693.14,-0.661,fell below band/VWAP
 2026-11-04,11:00,693.14,14:00,693.01,-0.029,fell below band/VWAP
 2026-11-06,10:00,662.61,11:00,659.87,-0.424,fell below band/VWAP
+2026-11-09,10:00,673.34,16:00 close,678.76,0.795,close
