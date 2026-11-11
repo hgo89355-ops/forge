@@ -39,8 +39,8 @@ const KICK_DEG = 30;          // a turn button coasts this far
 const KEY_DEG = 9;            // one arrow key press coasts this far
 const HANDOVER = 3;           // dive frames over which the orbit's front frame crossfades into the dive
 // decoded frames kept (both sequences); fewer on touch devices, which crop the 16:9 frames and have less memory
-const CACHE = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches ? 28 : 48;
-const FETCHES = 6, DECODES = 3;
+const CACHE_PX = 56 * 1280 * 720; // decoded pixels kept (both sequences): 56 frames at 1280 x 720, fewer when larger
+const FETCHES = 6, DECODES = 4;
 
 const S = {
   view: { en: 'Eastmain, New Cairo. Drag sideways to turn round the building, scroll to go inside.', ar: 'إيست مين، القاهرة الجديدة. اسحب جانبيًا للدوران حول المبنى، ومرّر الصفحة للدخول إليه.' },
@@ -87,6 +87,7 @@ function setupVideo(root, man) {
     zin: $('[data-hx-zoom="in"]', root),
     zout: $('[data-hx-zoom="out"]', root),
     reset: $('[data-hx-reset]', root),
+    skip: $('[data-hx-skip]', root),
     left: $('[data-hx-turn="left"]', root),
     right: $('[data-hx-turn="right"]', root),
   };
@@ -128,7 +129,7 @@ function setupVideo(root, man) {
   }
   SEQ.forEach(resetSeq);
   const url = (q, i) => `${BASE}${q.dir}${set.prefix}${String(i).padStart(3, '0')}.${set.ext || 'webp'}`;
-  let fetchesOn = 0, decodesOn = 0, gen = 0;
+  let fetchesOn = 0, decodesOn = 0, gen = 0, cacheMax = 48;
   let focus = O;              // the sequence in use
   let loadAll = !reduced;     // reduced motion and QA only load key frames
   let started = false;        // nothing loads before the page itself has
@@ -209,7 +210,13 @@ function setupVideo(root, man) {
       }
     };
     if (reduced) { for (const w of wanted) out.push(w); add(O, orb.pos, 1, 1); add(D, dCur, 1, 1); return out; }
-    if (focus === O) { add(O, orb.pos, 7, Math.sign(orb.vel) || 1); add(D, 0, HANDOVER + 1, 1); }
+    if (focus === O) {
+      // turning: reach further ahead in the direction of travel (a fast drag outruns a symmetric window)
+      const dir = Math.sign(orb.vel) || Math.sign(drag?.dir || 0) || 1;
+      add(O, orb.pos, 4, dir);
+      add(O, orb.pos + dir * 5, 14, dir);
+      add(D, 0, HANDOVER + 1, 1);
+    }
     else { add(D, dCur, 8, Math.sign(dT - dCur) || 1); add(O, 0, 1, 1); }
     return out;
   }
@@ -234,7 +241,7 @@ function setupVideo(root, man) {
   }
   function evict() {
     let total = O.bm.size + D.bm.size;
-    if (total <= CACHE) return;
+    if (total <= cacheMax) return;
     const dist = (q, i) => {
       const p = q === O ? orb.pos : dCur;
       let d = Math.abs(i - p);
@@ -246,7 +253,7 @@ function setupVideo(root, man) {
     for (const q of SEQ) for (const i of q.bm.keys()) all.push([dist(q, i), q, i]);
     all.sort((a, b) => b[0] - a[0]);
     for (const [, q, i] of all) {
-      if (total <= CACHE) break;
+      if (total <= cacheMax) break;
       q.bm.get(i)?.close?.();
       q.bm.delete(i);
       total--;
@@ -281,6 +288,7 @@ function setupVideo(root, man) {
     if (key === setKey) return;
     setKey = key;
     set = { prefix: 'f-', size: [1600, 900], ...(man.sets?.[key] || {}) };
+    cacheMax = clamp(Math.round(CACHE_PX / (set.size[0] * set.size[1])), 32, 64);
     gen++;
     for (const q of SEQ) { for (const b of q.bm.values()) b.close?.(); resetSeq(q); }
     fetchesOn = 0; decodesOn = 0;
@@ -320,6 +328,7 @@ function setupVideo(root, man) {
     if (pk.w > 0.002 && pk.b !== pk.a) draw(q.bm.get(pk.b), alpha * pk.w);
     return true;
   }
+  const smooth = { draws: 0, gaps: 0 };  // orbit draws, and those that had to blend frames more than one step apart
   function paint() {
     if (!ctx) return;
     const h = clamp(dCur / HANDOVER, 0, 1);
@@ -328,7 +337,7 @@ function setupVideo(root, man) {
     if (!po && !pd) return;
     ctx.globalAlpha = 1;
     let ok = false;
-    if (po) ok = drawSeq(O, po, 1);
+    if (po) { ok = drawSeq(O, po, 1); smooth.draws++; if (po.a !== po.b && Math.abs(po.b - po.a) % (O.n - 1) > 1) smooth.gaps++; }
     if (pd && (h > 0 || !ok)) ok = drawSeq(D, pd, ok ? ss5(h) : 1) || ok;
     ctx.globalAlpha = 1;
     if (ok && !drawn) { drawn = true; requestAnimationFrame(() => root.classList.add('is-live')); }
@@ -538,6 +547,14 @@ function setupVideo(root, man) {
   btn.zin?.addEventListener('click', () => stepDive(1));
   btn.zout?.addEventListener('click', () => stepDive(-1));
   btn.reset?.addEventListener('click', reset);
+  // skip the dive: straight to the section after the hero
+  if (btn.skip && scrollMode) {
+    btn.skip.hidden = false;
+    btn.skip.addEventListener('click', () => {
+      stopIdle();
+      scrollPage(Math.round(window.scrollY + root.getBoundingClientRect().bottom));
+    });
+  }
   btn.left?.addEventListener('click', () => turn(-1));
   btn.right?.addEventListener('click', () => turn(1));
 
@@ -570,6 +587,7 @@ function setupVideo(root, man) {
     }
     const dx = e.clientX - drag.x;
     drag.x = e.clientX;
+    if (dx) drag.dir = Math.sign(dx) * TURN;
     const now = performance.now();
     drag.hist.push([now, e.clientX]);
     while (drag.hist.length > 2 && now - drag.hist[0][0] > 90) drag.hist.shift();
@@ -624,6 +642,7 @@ function setupVideo(root, man) {
     dive: dCur, target: dT, run: runPx(), live: drawn,
     loaded: { orbit: O.blob.filter(Boolean).length, dive: D.blob.filter(Boolean).length },
     decoded: { orbit: O.bm.size, dive: D.bm.size },
+    smooth: { ...smooth },
     chapter: shownChapter,
   });
   root.hxScrollForDive = (f) => pOfDive(f);

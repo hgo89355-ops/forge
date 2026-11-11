@@ -495,11 +495,14 @@ function wireMagnetic(root) {
 function initProgress() {
   const bar = document.querySelector('.scroll-progress > span');
   const toTop = document.querySelector('[data-to-top]');
+  const pinHero = document.querySelector('[data-hx]');
   const update = ({ y, progress }) => {
     if (bar) bar.style.setProperty('--p', progress.toFixed(4));
     if (toTop) {
       toTop.style.setProperty('--p', progress.toFixed(4));
-      toTop.classList.toggle('is-visible', y > window.innerHeight * 0.8);
+      // not over a pinned hero (its own controls sit in that corner)
+      const pinned = pinHero && pinHero.getBoundingClientRect().bottom > window.innerHeight * 0.6;
+      toTop.classList.toggle('is-visible', y > window.innerHeight * 0.8 && !pinned);
     }
   };
   onScroll(update);

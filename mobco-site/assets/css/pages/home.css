@@ -24,8 +24,8 @@
 @media (prefers-reduced-motion: no-preference) {
   html.js:not(.qa) .hx:not(.is-static) {
     --hx-scroll: 1;
-    block-size: calc(100vh + 460vh);
-    block-size: calc(100svh + 460svh);
+    block-size: calc(100vh + 230vh);
+    block-size: calc(100svh + 230svh);
   }
 }
 .hx__pin {
@@ -251,8 +251,8 @@ html.js .hx:not(.is-ready) .hx__copy > * { opacity: 0; animation: hx-failsafe 1m
    The still-stage fallback never shows the turn buttons or the line (they stay [hidden]). */
 @media (prefers-reduced-motion: no-preference) {
   html.js:not(.qa) .hx.is-video:not(.is-static) {
-    block-size: calc(100vh + 400vh);
-    block-size: calc(100svh + 400svh);
+    block-size: calc(100vh + 200vh);
+    block-size: calc(100svh + 200svh);
   }
 }
 .hx.is-video .hx__poster { object-position: 50% 50%; }

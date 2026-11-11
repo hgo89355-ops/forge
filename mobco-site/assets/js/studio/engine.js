@@ -221,7 +221,9 @@ export function createStudio(container, options = {}) {
   /* -------------------------------------------------------------- controls */
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = !lowPower;
-  controls.dampingFactor = 0.075;
+  // damping per 60 Hz frame; rescaled every frame so the feel is the same at 30, 60 or 120 fps
+  const DAMP_60 = 0.16;
+  controls.dampingFactor = DAMP_60;
   controls.screenSpacePanning = true;
   controls.minDistance = 8;
   controls.maxDistance = 520;
@@ -401,14 +403,18 @@ export function createStudio(container, options = {}) {
   }
 
   /* -------------------------------------------------------------- adaptive quality */
+  // keeps turning fluid: below about 45 fps the render resolution steps down (never under 0.65 of the screen's;
+  // a CPU rasteriser may go to 0.5)
   const perf = { frames: 0, acc: 0, checks: 0 };
+  const dprFloor = lowPower ? 0.5 : 0.65;
   function samplePerf(dt) {
-    if (perf.checks >= 3 || dprScale <= 0.5 || hq) return;
+    if (perf.checks >= 6 || dprScale <= dprFloor || hq) return;
+    if (dt > 0.25) return; // a stall (tab switch, shader compile) says nothing about the steady frame rate
     perf.frames++; perf.acc += dt;
-    if (perf.frames >= 45) {
+    if (perf.frames >= 40) {
       const avg = perf.acc / perf.frames;
       perf.frames = 0; perf.acc = 0; perf.checks++;
-      if (avg > 0.045) { dprScale = Math.max(0.5, dprScale * 0.8); resize(); }
+      if (avg > 0.022) { dprScale = Math.max(dprFloor, dprScale * (avg > 0.04 ? 0.75 : 0.87)); resize(); }
     }
   }
 
@@ -427,6 +433,7 @@ export function createStudio(container, options = {}) {
 
     if (tween) { stepTween(t); dirty = true; }
     if (revealTween) { stepReveal(t); dirty = true; }
+    if (controls.enableDamping) controls.dampingFactor = 1 - Math.pow(1 - DAMP_60, Math.max(0.25, dt * 60));
     if (controls.update(dt)) dirty = true;
     if (keepOut()) dirty = true;
 
