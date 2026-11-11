@@ -1,0 +1,191 @@
+/* ==========================================================================
+   assets/css/components/accordion-gallery.css: image accordion (behaviour: assets/js/components/accordion-gallery.js).
+   Theme with custom properties on the root, using tokens:
+     --ag-accent   bar colour / focus ring          --ag-overlay  scrim colour (deep brand tone)
+     --ag-text     label colour                      --ag-height   row height (desktop)
+     --ag-gap      space between panels              --ag-radius   panel corner radius
+     --ag-row      closed row height when stacked    --ag-open     extra height of the open row when stacked
+   Logical properties throughout (RTL: the row and the labels mirror; JS mirrors tilt and drift).
+   ========================================================================== */
+.accordion-gallery {
+  --ag-accent: var(--teal-400);
+  --ag-overlay: var(--navy-950);
+  --ag-text: var(--white);
+  --ag-gap: 10px;
+  --ag-radius: var(--radius-lg, 4px);
+  --ag-height: clamp(420px, 34vw + 120px, 640px);
+  --ag-row: 76px;
+  --ag-open: 260px;
+  --ag-media-size: 320px;
+  display: flex;
+  flex-direction: row;
+  gap: var(--ag-gap);
+  inline-size: 100%;
+  block-size: var(--ag-height);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+}
+
+.ag-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: hidden;
+  border-radius: var(--ag-radius);
+  background: var(--ag-overlay);
+  box-shadow: 0 16px 36px -22px color-mix(in srgb, var(--ag-overlay) 80%, transparent);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: flex-grow, transform;
+}
+.ag-panel__link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  color: var(--ag-text);
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.ag-panel__link:focus-visible { box-shadow: inset 0 0 0 2px var(--ag-accent); border-radius: inherit; }
+
+.ag-panel__frame { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.ag-panel__media {
+  --ag-gray: 0;
+  --ag-dim: 0;
+  position: absolute;
+  inset-block-start: 50%;
+  left: 50%;                       /* physical on purpose: JS centres it with translate(-50%, -50%) */
+  inline-size: var(--ag-media-size);
+  block-size: 100%;
+  transform: translate(-50%, -50%);
+  filter: grayscale(var(--ag-gray));
+  will-change: transform, filter;
+}
+.ag-panel__media picture,
+.ag-panel__media img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ag-panel__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 38%, color-mix(in srgb, var(--ag-overlay) 86%, transparent) 100%);
+}
+/* closed panels dim: the value is tweened on the media element */
+.ag-panel__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ag-overlay);
+  opacity: var(--ag-dim, 0);
+  pointer-events: none;
+}
+
+/* open label: accent bar + name (+ any extra lines the page adds) */
+.ag-panel__label {
+  position: absolute;
+  inset-inline: clamp(1.25rem, .8rem + 1.2vw, 2rem);
+  inset-block-end: clamp(1.25rem, .8rem + 1.2vw, 2rem);
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  pointer-events: none;
+}
+.ag-panel__bar {
+  flex: none;
+  inline-size: 3px;
+  block-size: 1.6em;
+  margin-block-start: .1em;
+  border-radius: 3px;
+  background: var(--ag-accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--ag-accent) 60%, transparent);
+}
+.ag-panel__copy {
+  display: grid;
+  gap: .5rem;
+  inline-size: min(30rem, calc(var(--ag-media-size) * .66));
+  min-inline-size: 0;
+}
+.ag-panel__text {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(1.125rem, .9rem + .9vw, 1.625rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: .01em;
+  color: var(--ag-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 14px color-mix(in srgb, var(--ag-overlay) 55%, transparent);
+}
+
+/* closed panels: the name runs up the side */
+.ag-panel__tag {
+  /* physical offsets on purpose: logical ones would follow this element's vertical writing mode */
+  position: absolute;
+  bottom: clamp(1.25rem, .8rem + 1.2vw, 2rem);
+  left: 50%;
+  z-index: 2;
+  max-height: calc(100% - 2.5rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: translateX(-50%) rotate(180deg);
+  font-family: var(--font-display, inherit);
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ag-text);
+  text-shadow: 0 1px 10px color-mix(in srgb, var(--ag-overlay) 70%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+html[lang='ar'] .ag-panel__tag { letter-spacing: 0; text-transform: none; font-size: .9375rem; font-weight: 600; }
+
+/* JS ready but no GSAP: the inline values still animate through CSS transitions */
+.accordion-gallery.is-css .ag-panel { transition: flex-grow 700ms var(--ease-out, ease), transform 700ms var(--ease-out, ease); }
+.accordion-gallery.is-css .ag-panel__media { transition: transform 700ms var(--ease-out, ease), filter 700ms var(--ease-out, ease); }
+.accordion-gallery.is-css :is(.ag-panel__bar, .ag-panel__copy, .ag-panel__tag) { transition: opacity 420ms var(--ease-soft, ease), transform 420ms var(--ease-out, ease); }
+
+/* stacked rows (JS adds .is-stacked under its stackAt width; the media query covers no-JS phones) */
+.accordion-gallery.is-stacked {
+  flex-direction: column;
+  perspective: none;
+  block-size: calc(var(--ag-count, 6) * var(--ag-row) + var(--ag-open));
+}
+.accordion-gallery.is-stacked .ag-panel__media { inline-size: 100%; block-size: var(--ag-media-size); left: 50%; }
+.accordion-gallery.is-stacked .ag-panel__tag { display: none; }
+.accordion-gallery.is-stacked .ag-panel__label { inset-block-end: 50%; transform: translateY(50%); }
+.accordion-gallery.is-stacked .ag-panel.is-active .ag-panel__label { inset-block-end: 1.25rem; transform: none; }
+.accordion-gallery.is-stacked .ag-panel:not(.is-active) .ag-panel__copy > :not(.ag-panel__text) { display: none; }
+.accordion-gallery.is-stacked .ag-panel:not(.is-active) .ag-panel__overlay {
+  background: color-mix(in srgb, var(--ag-overlay) 45%, transparent);
+}
+.accordion-gallery.is-stacked .ag-panel__copy { inline-size: auto; }
+@media (max-width: 520px) {
+  .accordion-gallery:not(.is-ready) { flex-direction: column; perspective: none; block-size: auto; }
+  .accordion-gallery:not(.is-ready) .ag-panel { flex: none; min-block-size: 200px; }
+  .accordion-gallery:not(.is-ready) .ag-panel__media { inline-size: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ag-panel, .ag-panel__media { will-change: auto; }
+  .accordion-gallery.is-css :is(.ag-panel, .ag-panel__media, .ag-panel__bar, .ag-panel__copy, .ag-panel__tag) { transition: none; }
+}

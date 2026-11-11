@@ -1,0 +1,4 @@
+/* assets/css/pages/_template.css: example page stylesheet. Copy to assets/css/pages/<page>.css.
+   Page CSS may only use classes prefixed with the page name (e.g. .home-…, .about-…) or scoped under
+   body[data-page="<page>"]. Use the tokens from main.css (var(--space-6), var(--navy-900)…). */
+body[data-page='template'] .template-note { color: var(--fg-muted); }

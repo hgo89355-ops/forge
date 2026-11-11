@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title data-ar-title="الصفحة غير موجودة | مجموعة موبكو">Page not found | MOBCO Group</title>
+  <meta name="description" content="This page is still under construction. Search the MOBCO Group website or go back to the home page." data-ar-content="هذه الصفحة قيد الإنشاء. ابحث في موقع مجموعة موبكو أو عُد إلى الصفحة الرئيسية.">
+  <!-- Error page: keep out of search indexes. TODO(deploy): configure the host to serve this file for 404s
+       (relative asset URLs assume it is served from the site root). -->
+  <meta name="robots" content="noindex">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MOBCO Group">
+  <meta property="og:title" content="Page not found | MOBCO Group" data-ar-content="الصفحة غير موجودة | مجموعة موبكو">
+  <meta property="og:description" content="This page is still under construction." data-ar-content="هذه الصفحة قيد الإنشاء.">
+  <meta property="og:image" content="https://mobco-group.com/assets/img/og-default.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Page not found | MOBCO Group" data-ar-content="الصفحة غير موجودة | مجموعة موبكو">
+  <meta name="twitter:description" content="This page is still under construction." data-ar-content="هذه الصفحة قيد الإنشاء.">
+  <meta name="theme-color" content="#1f1f38">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/vendor/lenis/lenis.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/pages/404.css">
+  <!-- Boot (keep verbatim in every page): js class, early lang/dir, first-visit preloader, transition, QA mode -->
+  <script>
+    (function (d) {
+      var h = d.documentElement, c = h.classList;
+      c.add('js'); c.remove('no-js');
+      try {
+        var u = new URLSearchParams(location.search), l = u.get('lang') || localStorage.getItem('mobco-lang');
+        var qa = u.get('qa') === '1', rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (l === 'ar') { h.lang = 'ar'; h.dir = 'rtl'; c.add('i18n-pending'); }
+        if (qa) c.add('qa');
+        if (!qa && !rm && !sessionStorage.getItem('mobco-visited')) c.add('preload');
+        if (sessionStorage.getItem('mobco-transition')) { sessionStorage.removeItem('mobco-transition'); if (!qa && !rm) c.add('is-entering'); }
+      } catch (e) {}
+    })(document);
+  </script>
+  <script src="assets/vendor/gsap/gsap.min.js" defer></script>
+  <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/gsap/SplitText.min.js" defer></script>
+  <script src="assets/vendor/lenis/lenis.min.js" defer></script>
+  <script type="module" src="assets/js/core/main.js"></script>
+</head>
+<body data-page="404" data-hero="dark">
+  <!-- @include header -->
+<!-- partials/header.html: shared, foundation-owned. Inlined into pages by tools/build.mjs; edit here, never in pages. -->
+<a class="skip-link" href="#main" data-ar="تخطَّ إلى المحتوى الرئيسي">Skip to main content</a>
+<div class="scroll-progress" aria-hidden="true"><span></span></div>
+<header class="site-header" id="site-header" data-header>
+  <div class="container container--wide site-header__inner">
+    <a class="site-header__logo" href="index.html" aria-label="MOBCO Group home" data-ar-aria-label="الصفحة الرئيسية لمجموعة موبكو">
+      <svg class="logo" viewBox="8 6 226 166" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path class="logo__bars" d="M9.03,148.95C8.67,148.56 8.67,148.54 8.67,140.65C8.67,131.84 8.65,132.00 9.73,132.00C10.03,132.00 11.36,132.18 12.68,132.41C14.00,132.63 15.83,132.90 16.75,133.00C17.67,133.10 19.28,133.29 20.33,133.42C21.39,133.55 23.71,133.81 25.50,134.00C27.29,134.19 29.50,134.46 30.42,134.60C31.33,134.74 33.13,135.00 34.42,135.17C39.09,135.78 43.60,136.48 44.06,136.66C44.32,136.76 45.25,136.95 46.13,137.10C47.01,137.24 48.18,137.46 48.74,137.59C49.29,137.71 50.69,137.97 51.83,138.16C54.41,138.57 56.49,139.11 56.88,139.46C57.14,139.69 57.17,140.08 57.16,143.07C57.14,147.35 57.01,148.79 56.58,149.10C56.32,149.30 52.52,149.33 32.83,149.33L9.39,149.33L9.03,148.95ZM53.75,132.65C52.05,132.32 44.60,131.13 42.33,130.82C41.65,130.73 40.59,130.55 39.99,130.42C39.38,130.28 37.85,130.02 36.57,129.84C35.29,129.66 33.74,129.43 33.11,129.33C32.48,129.24 30.80,129.05 29.36,128.92C27.93,128.79 25.93,128.53 24.92,128.35C22.75,127.96 19.11,127.44 15.42,127.00C13.96,126.82 12.39,126.60 11.92,126.51C11.46,126.41 10.65,126.26 10.13,126.16C8.56,125.86 8.67,126.58 8.67,116.08C8.67,108.05 8.70,106.86 8.93,106.54C9.24,106.10 9.85,106.06 11.17,106.40C12.74,106.81 16.57,107.64 18.45,107.99C20.30,108.33 24.83,109.26 27.33,109.83C28.95,110.19 31.85,110.78 33.60,111.09C34.25,111.21 35.37,111.46 36.10,111.65C36.82,111.84 38.35,112.18 39.50,112.41C41.65,112.84 43.32,113.23 45.50,113.80C46.19,113.98 47.61,114.33 48.67,114.58C49.72,114.83 51.11,115.21 51.75,115.42C52.39,115.63 53.93,116.08 55.17,116.42C58.70,117.40 58.61,117.26 58.26,121.06C58.13,122.54 57.93,125.66 57.83,128.00C57.60,133.00 57.60,133.01 56.29,132.98C55.81,132.97 54.67,132.82 53.75,132.65ZM56.83,110.81C51.26,109.13 40.16,106.42 34.75,105.42C32.92,105.08 31.00,104.67 30.50,104.49C30.00,104.32 29.06,104.10 28.42,104.00C26.69,103.74 21.61,102.70 21.13,102.52C20.90,102.43 19.82,102.20 18.73,102.01C16.42,101.60 14.41,101.18 11.45,100.47C9.72,100.05 9.26,99.88 9.00,99.54C8.68,99.14 8.67,98.83 8.67,90.25C8.67,81.87 8.68,81.37 8.97,81.11C9.41,80.71 9.84,80.76 11.73,81.41C12.66,81.72 14.45,82.25 15.72,82.59C16.99,82.92 18.32,83.30 18.69,83.43C19.40,83.68 22.94,84.59 25.38,85.16C26.19,85.35 26.99,85.57 27.15,85.66C27.32,85.75 28.76,86.12 30.35,86.49C31.95,86.86 33.85,87.35 34.58,87.58C36.02,88.02 36.96,88.29 39.67,89.01C40.63,89.26 42.28,89.77 43.33,90.13C44.39,90.50 46.00,91.03 46.92,91.33C49.03,92.01 52.66,93.34 54.50,94.11C55.28,94.43 56.78,95.03 57.83,95.44C58.89,95.85 60.03,96.37 60.38,96.60C61.35,97.24 61.43,97.54 61.02,99.36C60.55,101.49 60.05,104.36 59.91,105.67C59.85,106.26 59.70,107.46 59.57,108.33C59.10,111.42 59.03,111.48 56.83,110.81ZM60.09,89.99C59.09,89.54 58.11,89.12 57.92,89.06C57.25,88.86 54.57,87.79 54.00,87.50C53.68,87.34 52.40,86.86 51.16,86.45C49.93,86.04 48.54,85.55 48.08,85.36C47.62,85.17 46.43,84.78 45.42,84.50C44.41,84.21 42.83,83.73 41.92,83.42C40.08,82.80 38.44,82.35 36.42,81.92C35.68,81.76 34.95,81.56 34.79,81.47C34.45,81.29 31.16,80.42 29.25,80.01C28.52,79.85 27.32,79.53 26.58,79.29C25.09,78.81 23.41,78.34 21.42,77.84C20.68,77.65 19.41,77.31 18.58,77.08C17.76,76.84 15.85,76.32 14.33,75.93C10.01,74.79 9.63,74.66 9.13,74.16L8.67,73.69L8.67,65.09C8.67,59.47 8.73,56.37 8.84,56.16C8.94,55.96 9.19,55.83 9.44,55.83C9.82,55.83 14.41,57.25 18.67,58.67C19.45,58.93 21.55,59.61 23.33,60.17C25.12,60.73 27.60,61.53 28.83,61.94C30.07,62.35 32.17,63.02 33.50,63.44C34.83,63.85 36.18,64.31 36.50,64.45C36.82,64.59 38.17,65.06 39.50,65.50C41.94,66.31 45.61,67.72 49.58,69.38C52.40,70.55 60.56,74.63 61.83,75.49C62.06,75.65 62.70,76.02 63.25,76.33C64.57,77.06 66.49,78.29 66.96,78.72C67.46,79.17 67.43,79.68 66.82,80.97C66.54,81.57 66.13,82.51 65.92,83.07C65.71,83.63 65.20,84.91 64.78,85.92C64.36,86.92 63.91,88.17 63.77,88.68C63.43,89.90 62.85,90.74 62.33,90.78C62.10,90.80 61.09,90.44 60.09,89.99ZM69.24,73.11C68.86,72.89 68.34,72.57 68.07,72.38C65.46,70.58 58.63,66.92 54.75,65.25C53.83,64.85 52.86,64.42 52.58,64.28C51.85,63.91 50.01,63.16 49.25,62.91C48.88,62.79 47.87,62.38 47.00,62.00C45.53,61.35 39.11,59.03 36.42,58.17C35.77,57.97 34.76,57.63 34.17,57.42C33.57,57.20 32.30,56.79 31.33,56.50C30.37,56.21 29.02,55.76 28.33,55.50C27.65,55.24 26.15,54.75 25.00,54.40C23.85,54.06 22.65,53.65 22.33,53.50C22.01,53.34 21.19,53.05 20.50,52.85C18.31,52.24 16.63,51.71 14.92,51.11C14.00,50.79 12.37,50.25 11.30,49.93C8.38,49.03 8.67,50.12 8.67,39.84C8.67,30.54 8.67,30.51 9.52,30.71C10.22,30.87 13.64,32.15 14.36,32.51C14.73,32.70 16.02,33.20 17.21,33.60C18.40,34.01 19.61,34.47 19.89,34.61C20.18,34.76 21.54,35.28 22.92,35.77C24.29,36.26 26.62,37.10 28.08,37.65C31.96,39.09 34.31,39.94 35.17,40.22C35.58,40.35 36.60,40.73 37.43,41.05C38.26,41.37 39.76,41.91 40.76,42.25C41.75,42.59 42.98,43.05 43.49,43.28C44.00,43.51 45.32,44.06 46.42,44.51C48.62,45.40 53.47,47.88 56.58,49.70C61.65,52.66 66.24,56.15 70.18,60.02C73.16,62.95 75.50,65.89 75.50,66.72C75.50,66.99 75.05,67.75 74.28,68.78C73.62,69.68 72.81,70.79 72.50,71.25C71.61,72.54 70.66,73.50 70.27,73.50C70.08,73.50 69.61,73.32 69.24,73.11ZM79.61,61.96C79.29,61.57 78.50,60.58 77.85,59.77C71.89,52.25 60.71,44.36 48.83,39.29C47.96,38.92 47.10,38.52 46.91,38.39C46.72,38.27 46.16,38.03 45.66,37.85C45.16,37.67 44.15,37.28 43.42,36.99C41.88,36.38 37.15,34.73 33.17,33.42C28.08,31.74 24.59,30.53 24.06,30.26C23.77,30.11 22.53,29.63 21.31,29.18C20.08,28.73 18.48,28.13 17.75,27.84C17.02,27.55 15.93,27.13 15.33,26.92C12.18,25.78 9.56,24.61 9.13,24.15L8.67,23.66L8.67,15.68C8.67,8.64 8.70,7.66 8.93,7.43C9.07,7.28 9.30,7.17 9.43,7.17C9.72,7.17 12.92,8.24 15.42,9.17C16.43,9.55 17.89,10.08 18.67,10.36C19.45,10.63 20.68,11.11 21.42,11.42C22.15,11.73 23.45,12.25 24.31,12.58C25.17,12.92 26.22,13.36 26.65,13.58C27.07,13.79 27.98,14.21 28.67,14.49C29.35,14.78 30.52,15.31 31.26,15.68C31.99,16.04 32.65,16.33 32.71,16.33C32.77,16.33 34.30,17.07 36.12,17.97C42.32,21.04 42.13,20.93 48.50,24.73C51.69,26.64 52.76,27.32 55.15,28.96C67.15,37.20 76.73,46.98 81.63,55.99C82.96,58.43 83.24,59.22 83.01,59.88C82.77,60.56 80.87,62.67 80.49,62.67C80.32,62.67 79.92,62.35 79.61,61.96Z"/><path class="logo__wing" d="M66.34,106.51C65.67,106.09 68.34,104.64 71.17,103.89C76.49,102.48 77.18,102.32 81.42,101.59C84.89,101.00 91.00,100.10 92.83,99.92C93.43,99.87 94.67,99.71 95.58,99.57C96.50,99.44 98.34,99.18 99.67,99.00C101.00,98.82 102.46,98.56 102.92,98.42C104.97,97.80 105.03,97.90 104.97,101.95C104.91,105.70 104.96,105.59 103.28,105.73C102.71,105.78 97.38,105.91 91.42,106.00C85.46,106.10 78.33,106.29 75.58,106.42C69.84,106.70 66.69,106.73 66.34,106.51ZM66.83,102.46C66.83,102.08 69.14,100.25 70.61,99.47C71.33,99.09 72.11,98.64 72.34,98.48C72.58,98.32 73.55,97.88 74.51,97.49C75.47,97.11 76.48,96.66 76.75,96.50C77.79,95.89 82.07,94.57 86.17,93.60C87.59,93.26 89.69,92.73 90.83,92.42C91.98,92.11 93.78,91.62 94.83,91.33C95.89,91.04 97.65,90.50 98.75,90.13C99.85,89.76 101.09,89.35 101.50,89.22C101.91,89.09 102.65,88.80 103.13,88.57C104.93,87.74 105.00,87.85 105.00,91.51C105.00,94.08 104.96,94.51 104.71,94.80C104.40,95.17 102.71,95.72 101.08,95.98C100.53,96.07 99.75,96.26 99.34,96.41C98.65,96.66 95.34,97.22 91.33,97.76C90.37,97.90 88.83,98.15 87.92,98.33C87.00,98.51 84.90,98.82 83.25,99.01C81.60,99.20 80.21,99.39 80.16,99.42C80.11,99.45 79.32,99.60 78.41,99.75C76.50,100.05 70.98,101.45 69.17,102.09C67.51,102.67 66.83,102.78 66.83,102.46ZM68.33,98.40C68.33,97.51 71.19,94.59 74.16,92.46C75.58,91.44 79.24,89.32 80.00,89.08C80.22,89.01 81.22,88.57 82.24,88.09C83.25,87.61 85.02,86.93 86.17,86.58C87.31,86.23 88.51,85.82 88.83,85.66C89.15,85.50 89.94,85.21 90.58,85.02C93.13,84.26 100.83,80.65 102.61,79.38C103.27,78.90 104.09,78.88 104.33,79.32C104.42,79.50 104.50,80.69 104.50,82.00C104.50,85.20 104.39,85.39 102.00,86.41C101.22,86.74 100.13,87.23 99.58,87.49C97.57,88.45 90.19,90.83 89.21,90.83C88.60,90.84 83.72,92.02 81.94,92.59C79.27,93.45 73.64,95.90 72.89,96.52C72.53,96.82 68.80,98.67 68.56,98.67C68.43,98.67 68.33,98.55 68.33,98.40ZM70.50,92.91C70.50,92.22 71.44,91.05 74.14,88.35C76.86,85.62 78.17,84.53 80.88,82.72C81.45,82.34 82.33,81.73 82.83,81.37C83.34,81.01 84.01,80.58 84.33,80.42C84.65,80.26 85.52,79.73 86.26,79.24C87.00,78.76 87.88,78.25 88.23,78.10C88.57,77.96 89.05,77.70 89.30,77.53C89.55,77.35 90.39,76.87 91.17,76.46C95.62,74.10 99.83,71.58 102.05,69.96C104.22,68.37 104.41,68.27 104.74,68.60C104.95,68.81 105.00,69.33 105.00,71.58C105.00,74.25 104.99,74.32 104.58,74.81C103.73,75.82 94.11,81.14 90.70,82.49C90.23,82.67 89.33,83.08 88.71,83.39C88.09,83.70 87.40,84.01 87.17,84.08C86.52,84.27 80.58,87.27 79.08,88.17C77.46,89.14 75.11,90.63 73.41,91.75C71.22,93.19 70.50,93.48 70.50,92.91ZM71.25,88.49C71.19,88.40 71.28,88.04 71.46,87.70C72.57,85.59 73.09,84.70 73.43,84.33C73.64,84.10 74.09,83.49 74.45,82.97C74.80,82.45 75.38,81.70 75.75,81.30C76.12,80.91 76.62,80.33 76.88,80.03C77.96,78.71 82.02,75.21 84.56,73.40C87.44,71.35 88.01,70.94 89.42,69.97C90.89,68.96 96.09,65.23 98.34,63.58C99.53,62.71 101.14,61.41 103.05,59.79C104.87,58.25 105.05,58.45 104.97,61.95L104.92,64.38L103.83,65.38C102.31,66.78 98.82,69.47 95.60,71.71C91.43,74.62 89.86,75.69 89.25,76.02C88.88,76.21 88.13,76.69 87.58,77.07C87.03,77.45 86.06,78.05 85.42,78.40C84.77,78.76 84.10,79.18 83.92,79.34C83.73,79.50 83.01,79.93 82.30,80.30C81.60,80.66 80.74,81.19 80.39,81.46C80.04,81.73 79.29,82.28 78.74,82.68C76.82,84.07 75.78,84.92 73.73,86.79C71.67,88.66 71.45,88.82 71.25,88.49ZM72.26,83.52C72.05,83.18 72.80,81.37 74.06,79.17C76.97,74.06 81.47,69.08 87.23,64.58C95.64,58.01 99.39,54.66 103.46,50.08C104.45,48.97 104.50,48.93 104.75,49.24C104.94,49.49 105.00,50.03 105.00,51.57C105.00,54.07 105.08,53.92 101.87,57.21C97.85,61.31 93.85,64.71 90.00,67.28C83.94,71.32 78.63,76.24 74.96,81.20C74.43,81.91 73.78,82.60 73.51,82.75C73.23,82.89 72.93,83.15 72.83,83.34C72.65,83.68 72.41,83.76 72.26,83.52Z"/><path class="logo__word" d="M116.42,147.82C115.22,147.68 112.63,146.83 111.20,146.10C108.78,144.88 105.89,141.73 104.83,139.17C104.59,138.57 104.13,137.22 103.82,136.17C103.27,134.30 103.25,134.17 103.25,131.25C103.25,128.47 103.29,128.13 103.72,126.61C105.31,121.02 107.55,118.09 111.87,115.95C114.32,114.74 115.75,114.44 119.00,114.46C122.14,114.47 123.69,114.83 126.23,116.11C127.88,116.95 128.27,117.24 129.78,118.75C131.37,120.34 131.54,120.58 132.49,122.53C133.69,125.01 134.11,126.53 134.37,129.37C134.69,132.87 134.25,135.97 133.02,138.80C132.21,140.68 131.46,141.85 130.17,143.22C126.81,146.82 121.89,148.46 116.42,147.82ZM213.47,147.81C212.28,147.66 209.79,146.82 208.32,146.08C205.83,144.82 203.55,142.34 202.13,139.37C200.65,136.26 200.14,133.25 200.46,129.48C200.70,126.59 201.09,125.14 202.32,122.59C203.27,120.63 203.43,120.40 205.04,118.79C206.64,117.18 206.88,117.01 208.83,116.05C211.48,114.75 212.85,114.45 216.08,114.46C219.22,114.47 220.82,114.83 223.34,116.12C224.91,116.93 225.46,117.31 226.67,118.50C229.03,120.82 230.15,122.85 231.10,126.53C231.73,129.01 231.77,133.12 231.19,135.58C230.15,139.95 227.96,143.28 224.68,145.47C221.75,147.42 217.44,148.33 213.47,147.81ZM180.09,147.65C173.02,145.91 168.43,140.17 168.05,132.58C167.86,128.61 168.53,125.23 170.11,122.21C170.93,120.65 171.27,120.20 172.74,118.74C174.27,117.23 174.64,116.96 176.43,116.05C178.88,114.81 180.37,114.48 183.55,114.46C186.53,114.44 188.22,114.83 190.66,116.10C193.45,117.54 195.30,119.55 196.50,122.43C197.06,123.79 197.16,124.98 196.74,125.40C196.52,125.62 196.02,125.67 193.92,125.67C190.93,125.67 190.98,125.69 190.02,123.92C188.37,120.85 184.71,119.49 181.02,120.56C176.83,121.77 174.62,125.95 174.88,132.16C174.98,134.54 175.26,135.72 176.13,137.50C178.41,142.18 184.15,143.63 188.20,140.54C189.23,139.76 189.69,139.04 190.41,137.13C191.22,134.97 191.17,135.00 194.27,135.00C196.61,135.00 196.86,135.03 197.17,135.33C197.58,135.74 197.58,135.93 197.17,137.49C196.19,141.25 193.61,144.75 190.75,146.17C187.81,147.63 187.38,147.73 183.92,147.77C182.17,147.80 180.45,147.74 180.09,147.65ZM65.47,146.99C65.23,146.89 64.98,146.69 64.91,146.53C64.75,146.14 64.63,125.40 64.76,120.05C64.84,116.86 64.93,115.60 65.09,115.38C65.29,115.11 65.67,115.08 69.65,115.08C74.74,115.08 74.44,114.97 75.17,117.12C75.41,117.83 76.41,120.82 77.40,123.75C81.25,135.21 81.62,136.17 82.26,136.17C82.64,136.17 82.87,135.66 83.67,132.97C84.11,131.47 84.74,129.46 85.06,128.50C85.38,127.54 86.14,125.17 86.74,123.25C88.70,116.99 89.07,115.93 89.44,115.51L89.80,115.08L93.44,115.03C97.37,114.97 98.36,115.05 98.75,115.44C99.12,115.81 99.13,146.34 98.76,146.72C98.44,147.04 97.47,147.15 95.30,147.11C93.68,147.09 93.47,147.05 93.13,146.70L92.75,146.32L92.67,136.68C92.62,131.37 92.53,126.97 92.47,126.91C92.28,126.72 91.88,126.94 91.58,127.39C91.14,128.07 88.21,136.28 85.58,144.21C84.61,147.14 84.67,147.10 81.88,147.05C80.76,147.03 79.69,146.94 79.52,146.84C79.17,146.66 78.68,145.47 77.42,141.75C76.98,140.47 75.95,137.50 75.12,135.17C74.30,132.83 73.42,130.32 73.16,129.58C72.10,126.52 71.55,125.74 71.16,126.76C71.06,127.02 71.00,130.96 71.00,136.82C71.00,146.35 71.00,146.45 70.65,146.76C70.36,147.03 69.99,147.08 68.11,147.12C66.89,147.14 65.72,147.08 65.47,146.99ZM139.54,146.96C138.63,146.72 138.67,147.42 138.67,131.07C138.67,116.35 138.68,115.86 138.99,115.48L139.30,115.08L146.78,115.03C154.90,114.98 156.01,115.05 158.46,115.82C161.02,116.62 162.22,117.65 163.28,119.93C163.70,120.82 163.74,121.10 163.74,122.83C163.75,124.70 163.73,124.78 163.14,126.00C162.71,126.89 162.23,127.56 161.44,128.33C160.83,128.92 160.33,129.50 160.33,129.62C160.33,129.73 160.71,130.11 161.18,130.46C163.54,132.20 164.45,133.40 164.91,135.34C165.21,136.61 165.24,138.96 164.98,140.20C164.25,143.63 161.15,146.19 157.00,146.82C155.58,147.03 140.26,147.16 139.54,146.96ZM120.76,141.99C123.07,141.56 125.23,139.80 126.34,137.45C127.31,135.38 127.56,134.04 127.56,131.08C127.55,128.17 127.25,126.77 126.17,124.56C125.49,123.18 124.10,121.65 123.01,121.09C120.68,119.89 117.14,119.91 114.72,121.14C113.75,121.64 112.16,123.29 111.54,124.45C110.45,126.50 109.84,130.19 110.15,132.84C110.67,137.21 112.20,139.83 115.06,141.28C116.78,142.15 118.62,142.38 120.76,141.99ZM219.56,141.37C222.16,140.12 223.57,138.18 224.42,134.64C224.83,132.92 224.86,132.56 224.78,130.67C224.47,124.02 221.23,120.17 215.94,120.17C214.79,120.17 212.71,120.64 211.82,121.09C210.96,121.53 209.22,123.40 208.69,124.45C207.62,126.58 207.29,128.12 207.27,131.08C207.25,133.42 207.30,133.93 207.65,135.17C208.49,138.16 210.07,140.27 212.28,141.32C213.79,142.04 214.43,142.16 216.46,142.09C218.06,142.04 218.27,141.99 219.56,141.37ZM155.36,141.50C157.57,140.82 158.46,139.43 158.30,136.91C158.20,135.46 157.71,134.47 156.75,133.79C155.58,132.97 154.66,132.84 150.30,132.84C145.09,132.83 145.52,132.49 145.49,136.75C145.47,141.19 145.45,140.96 145.91,141.42L146.32,141.83L150.31,141.83C153.81,141.83 154.43,141.79 155.36,141.50ZM154.58,127.85C157.17,126.79 157.99,123.78 156.23,121.83C155.20,120.70 154.65,120.58 150.14,120.58C146.50,120.58 146.18,120.61 145.85,120.90C145.52,121.20 145.50,121.38 145.50,124.33C145.50,127.68 145.54,127.82 146.42,128.05C147.10,128.24 154.07,128.07 154.58,127.85Z"/><text class="logo__group" x="233" y="168" text-anchor="end" font-family="Manrope, Arial, Helvetica, sans-serif" font-weight="700" font-size="14.5" letter-spacing="10.5">GROUP</text></svg>
+    </a>
+    <nav class="site-nav" aria-label="Primary" data-ar-aria-label="القائمة الرئيسية" data-nav-bar>
+      <ul class="site-nav__list" role="list" data-nav-scroller>
+        <li class="site-nav__item"><a class="site-nav__link" href="index.html" data-nav="home" data-ar="الرئيسية">Home</a></li>
+        <li class="site-nav__item"><a class="site-nav__link" href="about.html" data-nav="about" data-ar="من نحن">About</a></li>
+        <li class="site-nav__item site-nav__item--menu" data-mega>
+          <a class="site-nav__link" href="subsidiaries.html" data-nav="subsidiaries" data-ar="الشركات التابعة">Subsidiaries</a>
+          <button class="site-nav__toggle" type="button" data-mega-toggle aria-expanded="false" aria-controls="menu-subsidiaries" aria-label="Subsidiaries menu" data-ar-aria-label="قائمة الشركات التابعة"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-down"></use></svg></button>
+          <div class="nav-menu" id="menu-subsidiaries" data-mega-panel>
+            <ul class="nav-menu__list" role="list">
+              <li><a class="nav-menu__link" href="mobco-construction.html"><span class="nav-menu__name" data-ar="موبكو للإنشاءات">MOBCO Construction</span><span class="nav-menu__meta" data-ar="نرتقي بمعايير الصناعة">Elevating industry standards</span></a></li>
+              <li><a class="nav-menu__link" href="mobco-developments.html"><span class="nav-menu__name" data-ar="موبكو للتطوير">MOBCO Developments</span><span class="nav-menu__meta" data-ar="نصنع المعالم ونرسم ملامح التميّز">Creating landmarks, defining excellence</span></a></li>
+              <li><a class="nav-menu__link" href="mobco-real-estate.html"><span class="nav-menu__name" data-ar="موبكو للتطوير العقاري">MOBCO Real Estate</span><span class="nav-menu__meta" data-ar="نُبسّط إدارة العقارات">Simplifying property management</span></a></li>
+              <li><a class="nav-menu__link" href="subsidiaries.html#education"><span class="nav-menu__name" data-ar="مجموعة النخبة التعليمية">Elite Education Group</span><span class="nav-menu__meta" data-ar="التعليم">Education</span></a></li>
+            </ul>
+            <div class="nav-menu__foot">
+              <a class="nav-menu__more" href="subsidiaries.html"><span data-ar="جميع الشركات التابعة">All subsidiaries</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
+            </div>
+          </div>
+        </li>
+        <li class="site-nav__item site-nav__item--menu" data-mega>
+          <a class="site-nav__link" href="projects.html" data-nav="projects" data-ar="المشاريع">Projects</a>
+          <button class="site-nav__toggle" type="button" data-mega-toggle aria-expanded="false" aria-controls="menu-projects" aria-label="Projects menu" data-ar-aria-label="قائمة المشاريع"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-down"></use></svg></button>
+          <div class="nav-menu nav-menu--projects" id="menu-projects" data-mega-panel>
+            <p class="nav-menu__label" data-ar="مشاريع مختارة">Featured projects</p>
+            <ul class="nav-menu__list" role="list">
+              <li><a class="nav-menu__link nav-menu__link--thumb" href="projects.html#eastmain"><span class="nav-menu__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/eastmain.webp"><img src="assets/img/thumbs/eastmain.jpg" alt="" width="480" height="431" loading="lazy" decoding="async"></picture></span><span class="nav-menu__text"><span class="nav-menu__name" data-ar="إيست مين">Eastmain</span><span class="nav-menu__meta" data-ar="القاهرة الجديدة، مصر">New Cairo, Egypt</span></span></a></li>
+              <li><a class="nav-menu__link nav-menu__link--thumb" href="projects.html#victoria-101"><span class="nav-menu__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/victoria-101.webp"><img src="assets/img/thumbs/victoria-101.jpg" alt="" width="480" height="431" loading="lazy" decoding="async"></picture></span><span class="nav-menu__text"><span class="nav-menu__name" data-ar="فيكتوريا 101">Victoria 101</span><span class="nav-menu__meta" data-ar="بورت ويتبي، كندا">Port Whitby, Canada</span></span></a></li>
+              <li><a class="nav-menu__link nav-menu__link--thumb" href="projects.html#neom-bay-airport"><span class="nav-menu__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/neom-bay-airport.webp"><img src="assets/img/thumbs/neom-bay-airport.jpg" alt="" width="480" height="324" loading="lazy" decoding="async"></picture></span><span class="nav-menu__text"><span class="nav-menu__name" data-ar="مطار خليج نيوم">NEOM Bay Airport</span><span class="nav-menu__meta" data-ar="نيوم، السعودية">NEOM, Saudi Arabia</span></span></a></li>
+              <li><a class="nav-menu__link nav-menu__link--thumb" href="projects.html#raffles-hotel-residence"><span class="nav-menu__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/raffles-hotel-residence.webp"><img src="assets/img/thumbs/raffles-hotel-residence.jpg" alt="" width="480" height="312" loading="lazy" decoding="async"></picture></span><span class="nav-menu__text"><span class="nav-menu__name" data-ar="فندق رافلز والمساكن الفاخرة">Raffles Hotel &amp; Branded Residence</span><span class="nav-menu__meta" data-ar="الضيافة، السعودية">Hospitality, Saudi Arabia</span></span></a></li>
+              <li><a class="nav-menu__link nav-menu__link--thumb" href="projects.html#sulaiman-fakeeh-hospital"><span class="nav-menu__thumb"><picture><source type="image/webp" srcset="assets/img/thumbs/sulaiman-fakeeh-hospital.webp"><img src="assets/img/thumbs/sulaiman-fakeeh-hospital.jpg" alt="" width="480" height="301" loading="lazy" decoding="async"></picture></span><span class="nav-menu__text"><span class="nav-menu__name" data-ar="مستشفى سليمان فقيه">Sulaiman Fakeeh Hospital</span><span class="nav-menu__meta" data-ar="الرعاية الصحية، السعودية">Medical, Saudi Arabia</span></span></a></li>
+            </ul>
+            <div class="nav-menu__foot">
+              <a class="nav-menu__more" href="projects.html"><span data-ar="عرض جميع المشاريع (33)">View all 33 projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
+              <a class="nav-menu__more" href="studio.html"><span data-ar="تجوّل ثلاثي الأبعاد">Explore in 3D</span><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></a>
+            </div>
+          </div>
+        </li>
+        <li class="site-nav__item"><a class="site-nav__link" href="studio.html" data-nav="studio" data-ar="تجوّل ثلاثي الأبعاد">Explore in 3D</a></li>
+        <li class="site-nav__item"><a class="site-nav__link" href="media.html" data-nav="media" data-ar="الإعلام">Media</a></li>
+        <li class="site-nav__item"><a class="site-nav__link" href="careers.html" data-nav="careers" data-ar="الوظائف">Careers</a></li>
+        <li class="site-nav__item"><a class="site-nav__link" href="contact.html" data-nav="contact" data-ar="تواصل معنا">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="site-header__tools">
+      <button class="header-btn" type="button" data-search-open aria-label="Search the site" data-ar-aria-label="ابحث في الموقع"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#search"></use></svg><kbd data-search-kbd aria-hidden="true">⌘K</kbd></button>
+      <button class="lang-toggle" type="button" data-lang-toggle aria-label="التبديل إلى العربية" lang="ar"><span class="lang-toggle__opt" data-lang-opt="en" lang="en">EN</span><span class="lang-toggle__sep" aria-hidden="true"></span><span class="lang-toggle__opt" data-lang-opt="ar" lang="ar">ع</span></button>
+      <a class="site-header__cta" href="contact.html#inquiry"><span class="site-header__cta-label" data-ar="ابدأ مشروعك">Start a project</span><span class="site-header__cta-icon" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span></a>
+    </div>
+  </div>
+</header>
+  <!-- /@include header -->
+
+  <main id="main" tabindex="-1">
+    <section class="notfound section--deep" aria-labelledby="nf-title">
+      <div class="notfound__grid" aria-hidden="true"></div>
+      <div class="container notfound__inner">
+        <div class="notfound__copy">
+          <p class="eyebrow" data-reveal="fade"><span class="eyebrow__num">404</span><span data-ar="الصفحة غير موجودة">Page not found</span></p>
+          <h1 class="h1 notfound__title" id="nf-title" data-split data-ar-html="هذه الصفحة &lt;em&gt;قيد الإنشاء&lt;/em&gt;">This page is still <em>under construction</em></h1>
+          <p class="lead notfound__lead" data-reveal="up" data-reveal-delay="300" data-ar="ربما نُقلت هذه الصفحة، أو لم تُبنَ بعد. ابحث في الموقع أو اختر إحدى الصفحات أدناه.">This page may have moved, or it has not been built yet. Search the site or pick a page below.</p>
+          <div class="notfound__actions" data-reveal="up" data-reveal-delay="420">
+            <button class="btn btn--primary" type="button" data-search-open data-magnetic="0.2"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#search"></use></svg><span data-ar="ابحث في الموقع">Search the site</span></button>
+            <a class="btn btn--ghost" href="index.html"><span data-ar="العودة إلى الرئيسية">Back to home</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
+          </div>
+          <nav class="notfound__links" aria-labelledby="nf-links-title" data-reveal="up" data-reveal-delay="540">
+            <p class="notfound__links-title" id="nf-links-title" data-ar="صفحات مقترحة">Popular pages</p>
+            <ul role="list">
+              <li>
+                <a class="notfound__link" href="projects.html">
+                  <span class="notfound__link-num" aria-hidden="true">01</span>
+                  <span class="notfound__link-body"><span class="notfound__link-title" data-ar="المشاريع">Projects</span><span class="notfound__link-text" data-ar="أعمالنا في ثلاث قارات">Our work across three continents</span></span>
+                  <svg class="icon icon--dir notfound__link-icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg>
+                </a>
+              </li>
+              <li>
+                <a class="notfound__link" href="subsidiaries.html">
+                  <span class="notfound__link-num" aria-hidden="true">02</span>
+                  <span class="notfound__link-body"><span class="notfound__link-title" data-ar="الشركات التابعة">Subsidiaries</span><span class="notfound__link-text" data-ar="الإنشاءات والتطوير والعقارات والتعليم">Construction, development, real estate and education</span></span>
+                  <svg class="icon icon--dir notfound__link-icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg>
+                </a>
+              </li>
+              <li>
+                <a class="notfound__link" href="contact.html#inquiry">
+                  <span class="notfound__link-num" aria-hidden="true">03</span>
+                  <span class="notfound__link-body"><span class="notfound__link-title" data-ar="ابدأ مشروعك">Start a project</span><span class="notfound__link-text" data-ar="أرسل طلبك في ثلاث خطوات قصيرة">Send an inquiry in three short steps</span></span>
+                  <svg class="icon icon--dir notfound__link-icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <!-- Animated tower crane lowering the "404" block into place (pure SVG + CSS; final frame when motion is reduced) -->
+        <figure class="notfound__art" aria-hidden="true">
+          <svg class="nf-crane" viewBox="0 0 560 600" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <defs>
+              <pattern id="nf-hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="rgba(255,255,255,.14)" stroke-width="1"/></pattern>
+              <linearGradient id="nf-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fb2b8" stop-opacity=".22"/><stop offset="1" stop-color="#5fb2b8" stop-opacity="0"/></linearGradient>
+            </defs>
+
+            <!-- ground -->
+            <g class="nf-ground">
+              <rect x="0" y="560" width="560" height="22" fill="url(#nf-hatch)"/>
+              <line x1="0" y1="560" x2="560" y2="560" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/>
+            </g>
+
+            <!-- landing guide (blueprint) -->
+            <g class="nf-guide">
+              <line x1="360" y1="170" x2="360" y2="404" stroke="rgba(95,178,184,.45)" stroke-width="1" stroke-dasharray="4 6"/>
+              <rect x="285" y="404" width="150" height="76" fill="none" stroke="rgba(95,178,184,.55)" stroke-width="1" stroke-dasharray="5 5"/>
+              <path d="M276 404h-10M276 480h-10M271 404v76" stroke="rgba(95,178,184,.55)" stroke-width="1" fill="none"/>
+            </g>
+
+            <!-- the stack the block lands on -->
+            <g class="nf-stack" stroke="rgba(255,255,255,.4)" stroke-width="1.25">
+              <rect x="262" y="520" width="94" height="40" fill="#2b2b4a"/>
+              <rect x="360" y="520" width="98" height="40" fill="#2b2b4a"/>
+              <rect x="300" y="480" width="122" height="40" fill="#3a3a5e"/>
+              <path d="M276 532h66M374 532h70M314 492h94" stroke="rgba(255,255,255,.16)"/>
+            </g>
+            <ellipse class="nf-shadow" cx="360" cy="481" rx="80" ry="4" fill="rgba(0,0,0,.45)"/>
+
+            <!-- tower mast (lattice) -->
+            <g class="nf-mast" stroke="rgba(255,255,255,.62)" stroke-width="1.5" fill="none">
+              <path d="M120 150V560M150 150V560"/>
+              <path d="M120 180h30M120 210h30M120 240h30M120 270h30M120 300h30M120 330h30M120 360h30M120 390h30M120 420h30M120 450h30M120 480h30M120 510h30M120 540h30" stroke-width="1"/>
+              <path d="M120 150L150 180L120 210L150 240L120 270L150 300L120 330L150 360L120 390L150 420L120 450L150 480L120 510L150 540L120 560" stroke-width="1" stroke="rgba(255,255,255,.4)"/>
+              <rect x="100" y="548" width="70" height="12" fill="#1f1f38" stroke="rgba(255,255,255,.62)"/>
+            </g>
+
+            <!-- slewing unit, cab, apex -->
+            <g class="nf-top">
+              <path d="M124 132L135 66L146 132" fill="none" stroke="rgba(255,255,255,.62)" stroke-width="1.5"/>
+              <path d="M135 66L44 132M135 66L430 132" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <rect x="108" y="132" width="54" height="20" fill="#1f1f38" stroke="rgba(255,255,255,.62)" stroke-width="1.5"/>
+              <rect x="152" y="152" width="22" height="18" fill="#2b2b4a" stroke="rgba(255,255,255,.62)" stroke-width="1.25"/>
+              <rect x="156" y="156" width="14" height="8" fill="rgba(95,178,184,.35)"/>
+              <circle class="nf-beacon" cx="135" cy="62" r="3.5" fill="#5fb2b8"/>
+              <circle class="nf-beacon-halo" cx="135" cy="62" r="10" fill="none" stroke="#5fb2b8" stroke-width="1"/>
+            </g>
+
+            <!-- jib + counter-jib (lattice) -->
+            <g class="nf-jib" stroke="rgba(255,255,255,.62)" fill="none">
+              <path d="M162 132H528M162 150H520L528 132" stroke-width="1.5"/>
+              <path d="M162 150L180 132L198 150L216 132L234 150L252 132L270 150L288 132L306 150L324 132L342 150L360 132L378 150L396 132L414 150L432 132L450 150L468 132L486 150L504 132L520 150" stroke-width="1" stroke="rgba(255,255,255,.4)"/>
+              <path d="M108 132H34M108 146H40L34 132" stroke-width="1.5"/>
+              <path d="M108 146L94 132L80 146L66 132L52 146L40 132" stroke-width="1" stroke="rgba(255,255,255,.4)"/>
+              <rect x="34" y="146" width="40" height="34" fill="#3a3a5e" stroke-width="1.25"/>
+              <path d="M34 157h40M34 168h40" stroke="rgba(255,255,255,.22)" stroke-width="1"/>
+            </g>
+
+            <!-- trolley travels in, cable pays out, load lowers and settles -->
+            <g class="nf-travel">
+              <path class="nf-beam" d="M346 158L300 404H420L374 158Z" fill="url(#nf-beam)"/>
+              <g class="nf-trolley">
+                <rect x="344" y="150" width="32" height="10" fill="#5fb2b8"/>
+                <circle cx="350" cy="150" r="3" fill="#1f1f38" stroke="#5fb2b8" stroke-width="1.25"/>
+                <circle cx="370" cy="150" r="3" fill="#1f1f38" stroke="#5fb2b8" stroke-width="1.25"/>
+              </g>
+              <rect class="nf-cable" x="359.25" y="160" width="1.5" height="216" fill="rgba(255,255,255,.75)"/>
+              <g class="nf-load">
+                <g class="nf-sway">
+                  <path d="M352 376h16l-3 8h-10z" fill="#dddde6"/>
+                  <path d="M360 384c0 6 -6 6 -6 2" fill="none" stroke="#dddde6" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M360 386L292 404M360 386L428 404" stroke="rgba(255,255,255,.6)" stroke-width="1.25" fill="none"/>
+                  <rect x="285" y="404" width="150" height="76" fill="#5fb2b8"/>
+                  <rect x="285" y="404" width="150" height="76" fill="none" stroke="#8fcbd0" stroke-width="1"/>
+                  <path d="M285 470h150" stroke="rgba(22, 22, 42,.18)" stroke-width="1"/>
+                  <text x="360" y="458" text-anchor="middle" font-family="Manrope, Inter, Arial, sans-serif" font-size="46" font-weight="800" letter-spacing="4" fill="#16162a">404</text>
+                </g>
+              </g>
+            </g>
+
+            <!-- landing dust -->
+            <g class="nf-dust" fill="rgba(255,255,255,.35)">
+              <circle cx="282" cy="478" r="3"/><circle cx="272" cy="474" r="2"/><circle cx="438" cy="478" r="3"/><circle cx="449" cy="473" r="2"/>
+            </g>
+          </svg>
+          <figcaption class="notfound__caption"><span class="notfound__caption-dot"></span><span data-ar="العمل جارٍ في الموقع">Work in progress</span></figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <!-- @include footer -->
+<!-- partials/footer.html: shared, foundation-owned. Inlined into pages by tools/build.mjs; edit here, never in pages. -->
+<footer class="site-footer" id="site-footer">
+  <div class="site-footer__panorama" aria-hidden="true">
+    <picture><source type="image/webp" srcset="assets/img/aerial-panorama.webp"><img src="assets/img/aerial-panorama.jpg" alt="" width="2000" height="233" loading="lazy" decoding="async"></picture>
+  </div>
+  <div class="container">
+    <div class="site-footer__cta">
+      <p class="site-footer__cta-title" data-reveal="up" data-ar-html="لنتحدّث عن <em>مشروعك</em>">Let’s talk about <em>your project</em></p>
+      <a class="cta-circle" href="contact.html#inquiry" data-magnetic="0.25"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg><span data-ar="ابدأ مشروعك">Start a project</span></a>
+    </div>
+    <div class="site-footer__main">
+      <div class="site-footer__brand">
+        <a href="index.html" class="site-header__logo" aria-label="MOBCO Group home" data-ar-aria-label="الصفحة الرئيسية لمجموعة موبكو"><svg class="logo" viewBox="8 6 226 166" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path class="logo__bars" d="M9.03,148.95C8.67,148.56 8.67,148.54 8.67,140.65C8.67,131.84 8.65,132.00 9.73,132.00C10.03,132.00 11.36,132.18 12.68,132.41C14.00,132.63 15.83,132.90 16.75,133.00C17.67,133.10 19.28,133.29 20.33,133.42C21.39,133.55 23.71,133.81 25.50,134.00C27.29,134.19 29.50,134.46 30.42,134.60C31.33,134.74 33.13,135.00 34.42,135.17C39.09,135.78 43.60,136.48 44.06,136.66C44.32,136.76 45.25,136.95 46.13,137.10C47.01,137.24 48.18,137.46 48.74,137.59C49.29,137.71 50.69,137.97 51.83,138.16C54.41,138.57 56.49,139.11 56.88,139.46C57.14,139.69 57.17,140.08 57.16,143.07C57.14,147.35 57.01,148.79 56.58,149.10C56.32,149.30 52.52,149.33 32.83,149.33L9.39,149.33L9.03,148.95ZM53.75,132.65C52.05,132.32 44.60,131.13 42.33,130.82C41.65,130.73 40.59,130.55 39.99,130.42C39.38,130.28 37.85,130.02 36.57,129.84C35.29,129.66 33.74,129.43 33.11,129.33C32.48,129.24 30.80,129.05 29.36,128.92C27.93,128.79 25.93,128.53 24.92,128.35C22.75,127.96 19.11,127.44 15.42,127.00C13.96,126.82 12.39,126.60 11.92,126.51C11.46,126.41 10.65,126.26 10.13,126.16C8.56,125.86 8.67,126.58 8.67,116.08C8.67,108.05 8.70,106.86 8.93,106.54C9.24,106.10 9.85,106.06 11.17,106.40C12.74,106.81 16.57,107.64 18.45,107.99C20.30,108.33 24.83,109.26 27.33,109.83C28.95,110.19 31.85,110.78 33.60,111.09C34.25,111.21 35.37,111.46 36.10,111.65C36.82,111.84 38.35,112.18 39.50,112.41C41.65,112.84 43.32,113.23 45.50,113.80C46.19,113.98 47.61,114.33 48.67,114.58C49.72,114.83 51.11,115.21 51.75,115.42C52.39,115.63 53.93,116.08 55.17,116.42C58.70,117.40 58.61,117.26 58.26,121.06C58.13,122.54 57.93,125.66 57.83,128.00C57.60,133.00 57.60,133.01 56.29,132.98C55.81,132.97 54.67,132.82 53.75,132.65ZM56.83,110.81C51.26,109.13 40.16,106.42 34.75,105.42C32.92,105.08 31.00,104.67 30.50,104.49C30.00,104.32 29.06,104.10 28.42,104.00C26.69,103.74 21.61,102.70 21.13,102.52C20.90,102.43 19.82,102.20 18.73,102.01C16.42,101.60 14.41,101.18 11.45,100.47C9.72,100.05 9.26,99.88 9.00,99.54C8.68,99.14 8.67,98.83 8.67,90.25C8.67,81.87 8.68,81.37 8.97,81.11C9.41,80.71 9.84,80.76 11.73,81.41C12.66,81.72 14.45,82.25 15.72,82.59C16.99,82.92 18.32,83.30 18.69,83.43C19.40,83.68 22.94,84.59 25.38,85.16C26.19,85.35 26.99,85.57 27.15,85.66C27.32,85.75 28.76,86.12 30.35,86.49C31.95,86.86 33.85,87.35 34.58,87.58C36.02,88.02 36.96,88.29 39.67,89.01C40.63,89.26 42.28,89.77 43.33,90.13C44.39,90.50 46.00,91.03 46.92,91.33C49.03,92.01 52.66,93.34 54.50,94.11C55.28,94.43 56.78,95.03 57.83,95.44C58.89,95.85 60.03,96.37 60.38,96.60C61.35,97.24 61.43,97.54 61.02,99.36C60.55,101.49 60.05,104.36 59.91,105.67C59.85,106.26 59.70,107.46 59.57,108.33C59.10,111.42 59.03,111.48 56.83,110.81ZM60.09,89.99C59.09,89.54 58.11,89.12 57.92,89.06C57.25,88.86 54.57,87.79 54.00,87.50C53.68,87.34 52.40,86.86 51.16,86.45C49.93,86.04 48.54,85.55 48.08,85.36C47.62,85.17 46.43,84.78 45.42,84.50C44.41,84.21 42.83,83.73 41.92,83.42C40.08,82.80 38.44,82.35 36.42,81.92C35.68,81.76 34.95,81.56 34.79,81.47C34.45,81.29 31.16,80.42 29.25,80.01C28.52,79.85 27.32,79.53 26.58,79.29C25.09,78.81 23.41,78.34 21.42,77.84C20.68,77.65 19.41,77.31 18.58,77.08C17.76,76.84 15.85,76.32 14.33,75.93C10.01,74.79 9.63,74.66 9.13,74.16L8.67,73.69L8.67,65.09C8.67,59.47 8.73,56.37 8.84,56.16C8.94,55.96 9.19,55.83 9.44,55.83C9.82,55.83 14.41,57.25 18.67,58.67C19.45,58.93 21.55,59.61 23.33,60.17C25.12,60.73 27.60,61.53 28.83,61.94C30.07,62.35 32.17,63.02 33.50,63.44C34.83,63.85 36.18,64.31 36.50,64.45C36.82,64.59 38.17,65.06 39.50,65.50C41.94,66.31 45.61,67.72 49.58,69.38C52.40,70.55 60.56,74.63 61.83,75.49C62.06,75.65 62.70,76.02 63.25,76.33C64.57,77.06 66.49,78.29 66.96,78.72C67.46,79.17 67.43,79.68 66.82,80.97C66.54,81.57 66.13,82.51 65.92,83.07C65.71,83.63 65.20,84.91 64.78,85.92C64.36,86.92 63.91,88.17 63.77,88.68C63.43,89.90 62.85,90.74 62.33,90.78C62.10,90.80 61.09,90.44 60.09,89.99ZM69.24,73.11C68.86,72.89 68.34,72.57 68.07,72.38C65.46,70.58 58.63,66.92 54.75,65.25C53.83,64.85 52.86,64.42 52.58,64.28C51.85,63.91 50.01,63.16 49.25,62.91C48.88,62.79 47.87,62.38 47.00,62.00C45.53,61.35 39.11,59.03 36.42,58.17C35.77,57.97 34.76,57.63 34.17,57.42C33.57,57.20 32.30,56.79 31.33,56.50C30.37,56.21 29.02,55.76 28.33,55.50C27.65,55.24 26.15,54.75 25.00,54.40C23.85,54.06 22.65,53.65 22.33,53.50C22.01,53.34 21.19,53.05 20.50,52.85C18.31,52.24 16.63,51.71 14.92,51.11C14.00,50.79 12.37,50.25 11.30,49.93C8.38,49.03 8.67,50.12 8.67,39.84C8.67,30.54 8.67,30.51 9.52,30.71C10.22,30.87 13.64,32.15 14.36,32.51C14.73,32.70 16.02,33.20 17.21,33.60C18.40,34.01 19.61,34.47 19.89,34.61C20.18,34.76 21.54,35.28 22.92,35.77C24.29,36.26 26.62,37.10 28.08,37.65C31.96,39.09 34.31,39.94 35.17,40.22C35.58,40.35 36.60,40.73 37.43,41.05C38.26,41.37 39.76,41.91 40.76,42.25C41.75,42.59 42.98,43.05 43.49,43.28C44.00,43.51 45.32,44.06 46.42,44.51C48.62,45.40 53.47,47.88 56.58,49.70C61.65,52.66 66.24,56.15 70.18,60.02C73.16,62.95 75.50,65.89 75.50,66.72C75.50,66.99 75.05,67.75 74.28,68.78C73.62,69.68 72.81,70.79 72.50,71.25C71.61,72.54 70.66,73.50 70.27,73.50C70.08,73.50 69.61,73.32 69.24,73.11ZM79.61,61.96C79.29,61.57 78.50,60.58 77.85,59.77C71.89,52.25 60.71,44.36 48.83,39.29C47.96,38.92 47.10,38.52 46.91,38.39C46.72,38.27 46.16,38.03 45.66,37.85C45.16,37.67 44.15,37.28 43.42,36.99C41.88,36.38 37.15,34.73 33.17,33.42C28.08,31.74 24.59,30.53 24.06,30.26C23.77,30.11 22.53,29.63 21.31,29.18C20.08,28.73 18.48,28.13 17.75,27.84C17.02,27.55 15.93,27.13 15.33,26.92C12.18,25.78 9.56,24.61 9.13,24.15L8.67,23.66L8.67,15.68C8.67,8.64 8.70,7.66 8.93,7.43C9.07,7.28 9.30,7.17 9.43,7.17C9.72,7.17 12.92,8.24 15.42,9.17C16.43,9.55 17.89,10.08 18.67,10.36C19.45,10.63 20.68,11.11 21.42,11.42C22.15,11.73 23.45,12.25 24.31,12.58C25.17,12.92 26.22,13.36 26.65,13.58C27.07,13.79 27.98,14.21 28.67,14.49C29.35,14.78 30.52,15.31 31.26,15.68C31.99,16.04 32.65,16.33 32.71,16.33C32.77,16.33 34.30,17.07 36.12,17.97C42.32,21.04 42.13,20.93 48.50,24.73C51.69,26.64 52.76,27.32 55.15,28.96C67.15,37.20 76.73,46.98 81.63,55.99C82.96,58.43 83.24,59.22 83.01,59.88C82.77,60.56 80.87,62.67 80.49,62.67C80.32,62.67 79.92,62.35 79.61,61.96Z"/><path class="logo__wing" d="M66.34,106.51C65.67,106.09 68.34,104.64 71.17,103.89C76.49,102.48 77.18,102.32 81.42,101.59C84.89,101.00 91.00,100.10 92.83,99.92C93.43,99.87 94.67,99.71 95.58,99.57C96.50,99.44 98.34,99.18 99.67,99.00C101.00,98.82 102.46,98.56 102.92,98.42C104.97,97.80 105.03,97.90 104.97,101.95C104.91,105.70 104.96,105.59 103.28,105.73C102.71,105.78 97.38,105.91 91.42,106.00C85.46,106.10 78.33,106.29 75.58,106.42C69.84,106.70 66.69,106.73 66.34,106.51ZM66.83,102.46C66.83,102.08 69.14,100.25 70.61,99.47C71.33,99.09 72.11,98.64 72.34,98.48C72.58,98.32 73.55,97.88 74.51,97.49C75.47,97.11 76.48,96.66 76.75,96.50C77.79,95.89 82.07,94.57 86.17,93.60C87.59,93.26 89.69,92.73 90.83,92.42C91.98,92.11 93.78,91.62 94.83,91.33C95.89,91.04 97.65,90.50 98.75,90.13C99.85,89.76 101.09,89.35 101.50,89.22C101.91,89.09 102.65,88.80 103.13,88.57C104.93,87.74 105.00,87.85 105.00,91.51C105.00,94.08 104.96,94.51 104.71,94.80C104.40,95.17 102.71,95.72 101.08,95.98C100.53,96.07 99.75,96.26 99.34,96.41C98.65,96.66 95.34,97.22 91.33,97.76C90.37,97.90 88.83,98.15 87.92,98.33C87.00,98.51 84.90,98.82 83.25,99.01C81.60,99.20 80.21,99.39 80.16,99.42C80.11,99.45 79.32,99.60 78.41,99.75C76.50,100.05 70.98,101.45 69.17,102.09C67.51,102.67 66.83,102.78 66.83,102.46ZM68.33,98.40C68.33,97.51 71.19,94.59 74.16,92.46C75.58,91.44 79.24,89.32 80.00,89.08C80.22,89.01 81.22,88.57 82.24,88.09C83.25,87.61 85.02,86.93 86.17,86.58C87.31,86.23 88.51,85.82 88.83,85.66C89.15,85.50 89.94,85.21 90.58,85.02C93.13,84.26 100.83,80.65 102.61,79.38C103.27,78.90 104.09,78.88 104.33,79.32C104.42,79.50 104.50,80.69 104.50,82.00C104.50,85.20 104.39,85.39 102.00,86.41C101.22,86.74 100.13,87.23 99.58,87.49C97.57,88.45 90.19,90.83 89.21,90.83C88.60,90.84 83.72,92.02 81.94,92.59C79.27,93.45 73.64,95.90 72.89,96.52C72.53,96.82 68.80,98.67 68.56,98.67C68.43,98.67 68.33,98.55 68.33,98.40ZM70.50,92.91C70.50,92.22 71.44,91.05 74.14,88.35C76.86,85.62 78.17,84.53 80.88,82.72C81.45,82.34 82.33,81.73 82.83,81.37C83.34,81.01 84.01,80.58 84.33,80.42C84.65,80.26 85.52,79.73 86.26,79.24C87.00,78.76 87.88,78.25 88.23,78.10C88.57,77.96 89.05,77.70 89.30,77.53C89.55,77.35 90.39,76.87 91.17,76.46C95.62,74.10 99.83,71.58 102.05,69.96C104.22,68.37 104.41,68.27 104.74,68.60C104.95,68.81 105.00,69.33 105.00,71.58C105.00,74.25 104.99,74.32 104.58,74.81C103.73,75.82 94.11,81.14 90.70,82.49C90.23,82.67 89.33,83.08 88.71,83.39C88.09,83.70 87.40,84.01 87.17,84.08C86.52,84.27 80.58,87.27 79.08,88.17C77.46,89.14 75.11,90.63 73.41,91.75C71.22,93.19 70.50,93.48 70.50,92.91ZM71.25,88.49C71.19,88.40 71.28,88.04 71.46,87.70C72.57,85.59 73.09,84.70 73.43,84.33C73.64,84.10 74.09,83.49 74.45,82.97C74.80,82.45 75.38,81.70 75.75,81.30C76.12,80.91 76.62,80.33 76.88,80.03C77.96,78.71 82.02,75.21 84.56,73.40C87.44,71.35 88.01,70.94 89.42,69.97C90.89,68.96 96.09,65.23 98.34,63.58C99.53,62.71 101.14,61.41 103.05,59.79C104.87,58.25 105.05,58.45 104.97,61.95L104.92,64.38L103.83,65.38C102.31,66.78 98.82,69.47 95.60,71.71C91.43,74.62 89.86,75.69 89.25,76.02C88.88,76.21 88.13,76.69 87.58,77.07C87.03,77.45 86.06,78.05 85.42,78.40C84.77,78.76 84.10,79.18 83.92,79.34C83.73,79.50 83.01,79.93 82.30,80.30C81.60,80.66 80.74,81.19 80.39,81.46C80.04,81.73 79.29,82.28 78.74,82.68C76.82,84.07 75.78,84.92 73.73,86.79C71.67,88.66 71.45,88.82 71.25,88.49ZM72.26,83.52C72.05,83.18 72.80,81.37 74.06,79.17C76.97,74.06 81.47,69.08 87.23,64.58C95.64,58.01 99.39,54.66 103.46,50.08C104.45,48.97 104.50,48.93 104.75,49.24C104.94,49.49 105.00,50.03 105.00,51.57C105.00,54.07 105.08,53.92 101.87,57.21C97.85,61.31 93.85,64.71 90.00,67.28C83.94,71.32 78.63,76.24 74.96,81.20C74.43,81.91 73.78,82.60 73.51,82.75C73.23,82.89 72.93,83.15 72.83,83.34C72.65,83.68 72.41,83.76 72.26,83.52Z"/><path class="logo__word" d="M116.42,147.82C115.22,147.68 112.63,146.83 111.20,146.10C108.78,144.88 105.89,141.73 104.83,139.17C104.59,138.57 104.13,137.22 103.82,136.17C103.27,134.30 103.25,134.17 103.25,131.25C103.25,128.47 103.29,128.13 103.72,126.61C105.31,121.02 107.55,118.09 111.87,115.95C114.32,114.74 115.75,114.44 119.00,114.46C122.14,114.47 123.69,114.83 126.23,116.11C127.88,116.95 128.27,117.24 129.78,118.75C131.37,120.34 131.54,120.58 132.49,122.53C133.69,125.01 134.11,126.53 134.37,129.37C134.69,132.87 134.25,135.97 133.02,138.80C132.21,140.68 131.46,141.85 130.17,143.22C126.81,146.82 121.89,148.46 116.42,147.82ZM213.47,147.81C212.28,147.66 209.79,146.82 208.32,146.08C205.83,144.82 203.55,142.34 202.13,139.37C200.65,136.26 200.14,133.25 200.46,129.48C200.70,126.59 201.09,125.14 202.32,122.59C203.27,120.63 203.43,120.40 205.04,118.79C206.64,117.18 206.88,117.01 208.83,116.05C211.48,114.75 212.85,114.45 216.08,114.46C219.22,114.47 220.82,114.83 223.34,116.12C224.91,116.93 225.46,117.31 226.67,118.50C229.03,120.82 230.15,122.85 231.10,126.53C231.73,129.01 231.77,133.12 231.19,135.58C230.15,139.95 227.96,143.28 224.68,145.47C221.75,147.42 217.44,148.33 213.47,147.81ZM180.09,147.65C173.02,145.91 168.43,140.17 168.05,132.58C167.86,128.61 168.53,125.23 170.11,122.21C170.93,120.65 171.27,120.20 172.74,118.74C174.27,117.23 174.64,116.96 176.43,116.05C178.88,114.81 180.37,114.48 183.55,114.46C186.53,114.44 188.22,114.83 190.66,116.10C193.45,117.54 195.30,119.55 196.50,122.43C197.06,123.79 197.16,124.98 196.74,125.40C196.52,125.62 196.02,125.67 193.92,125.67C190.93,125.67 190.98,125.69 190.02,123.92C188.37,120.85 184.71,119.49 181.02,120.56C176.83,121.77 174.62,125.95 174.88,132.16C174.98,134.54 175.26,135.72 176.13,137.50C178.41,142.18 184.15,143.63 188.20,140.54C189.23,139.76 189.69,139.04 190.41,137.13C191.22,134.97 191.17,135.00 194.27,135.00C196.61,135.00 196.86,135.03 197.17,135.33C197.58,135.74 197.58,135.93 197.17,137.49C196.19,141.25 193.61,144.75 190.75,146.17C187.81,147.63 187.38,147.73 183.92,147.77C182.17,147.80 180.45,147.74 180.09,147.65ZM65.47,146.99C65.23,146.89 64.98,146.69 64.91,146.53C64.75,146.14 64.63,125.40 64.76,120.05C64.84,116.86 64.93,115.60 65.09,115.38C65.29,115.11 65.67,115.08 69.65,115.08C74.74,115.08 74.44,114.97 75.17,117.12C75.41,117.83 76.41,120.82 77.40,123.75C81.25,135.21 81.62,136.17 82.26,136.17C82.64,136.17 82.87,135.66 83.67,132.97C84.11,131.47 84.74,129.46 85.06,128.50C85.38,127.54 86.14,125.17 86.74,123.25C88.70,116.99 89.07,115.93 89.44,115.51L89.80,115.08L93.44,115.03C97.37,114.97 98.36,115.05 98.75,115.44C99.12,115.81 99.13,146.34 98.76,146.72C98.44,147.04 97.47,147.15 95.30,147.11C93.68,147.09 93.47,147.05 93.13,146.70L92.75,146.32L92.67,136.68C92.62,131.37 92.53,126.97 92.47,126.91C92.28,126.72 91.88,126.94 91.58,127.39C91.14,128.07 88.21,136.28 85.58,144.21C84.61,147.14 84.67,147.10 81.88,147.05C80.76,147.03 79.69,146.94 79.52,146.84C79.17,146.66 78.68,145.47 77.42,141.75C76.98,140.47 75.95,137.50 75.12,135.17C74.30,132.83 73.42,130.32 73.16,129.58C72.10,126.52 71.55,125.74 71.16,126.76C71.06,127.02 71.00,130.96 71.00,136.82C71.00,146.35 71.00,146.45 70.65,146.76C70.36,147.03 69.99,147.08 68.11,147.12C66.89,147.14 65.72,147.08 65.47,146.99ZM139.54,146.96C138.63,146.72 138.67,147.42 138.67,131.07C138.67,116.35 138.68,115.86 138.99,115.48L139.30,115.08L146.78,115.03C154.90,114.98 156.01,115.05 158.46,115.82C161.02,116.62 162.22,117.65 163.28,119.93C163.70,120.82 163.74,121.10 163.74,122.83C163.75,124.70 163.73,124.78 163.14,126.00C162.71,126.89 162.23,127.56 161.44,128.33C160.83,128.92 160.33,129.50 160.33,129.62C160.33,129.73 160.71,130.11 161.18,130.46C163.54,132.20 164.45,133.40 164.91,135.34C165.21,136.61 165.24,138.96 164.98,140.20C164.25,143.63 161.15,146.19 157.00,146.82C155.58,147.03 140.26,147.16 139.54,146.96ZM120.76,141.99C123.07,141.56 125.23,139.80 126.34,137.45C127.31,135.38 127.56,134.04 127.56,131.08C127.55,128.17 127.25,126.77 126.17,124.56C125.49,123.18 124.10,121.65 123.01,121.09C120.68,119.89 117.14,119.91 114.72,121.14C113.75,121.64 112.16,123.29 111.54,124.45C110.45,126.50 109.84,130.19 110.15,132.84C110.67,137.21 112.20,139.83 115.06,141.28C116.78,142.15 118.62,142.38 120.76,141.99ZM219.56,141.37C222.16,140.12 223.57,138.18 224.42,134.64C224.83,132.92 224.86,132.56 224.78,130.67C224.47,124.02 221.23,120.17 215.94,120.17C214.79,120.17 212.71,120.64 211.82,121.09C210.96,121.53 209.22,123.40 208.69,124.45C207.62,126.58 207.29,128.12 207.27,131.08C207.25,133.42 207.30,133.93 207.65,135.17C208.49,138.16 210.07,140.27 212.28,141.32C213.79,142.04 214.43,142.16 216.46,142.09C218.06,142.04 218.27,141.99 219.56,141.37ZM155.36,141.50C157.57,140.82 158.46,139.43 158.30,136.91C158.20,135.46 157.71,134.47 156.75,133.79C155.58,132.97 154.66,132.84 150.30,132.84C145.09,132.83 145.52,132.49 145.49,136.75C145.47,141.19 145.45,140.96 145.91,141.42L146.32,141.83L150.31,141.83C153.81,141.83 154.43,141.79 155.36,141.50ZM154.58,127.85C157.17,126.79 157.99,123.78 156.23,121.83C155.20,120.70 154.65,120.58 150.14,120.58C146.50,120.58 146.18,120.61 145.85,120.90C145.52,121.20 145.50,121.38 145.50,124.33C145.50,127.68 145.54,127.82 146.42,128.05C147.10,128.24 154.07,128.07 154.58,127.85Z"/><text class="logo__group" x="233" y="168" text-anchor="end" font-family="Manrope, Arial, Helvetica, sans-serif" font-weight="700" font-size="14.5" letter-spacing="10.5">GROUP</text></svg></a>
+        <p class="site-footer__about" data-ar="مجموعة خاصة تعمل في الإنشاءات والتطوير العقاري والتعليم، تأسست في المملكة العربية السعودية عام 2001.">A privately owned group in construction, real estate development and education, founded in Saudi Arabia in 2001.</p>
+      </div>
+      <div class="site-footer__office">
+        <h2 class="site-footer__office-name" data-ar="المقر الرئيسي، الرياض">Headquarters, Riyadh</h2>
+        <address>
+          <span data-ar="الطابق 16، برج الإبداع، طريق الملك فهد">16th floor, Al Ebdaa Tower, King Fahd Road</span><br>
+          <span data-ar="حي العليا، ص.ب ⁦19481-11435⁩">Olaya District, P.O. Box 19481-11435</span><br>
+          <span data-ar="الرياض، المملكة العربية السعودية">Riyadh, Saudi Arabia</span>
+        </address>
+        <ul class="site-footer__lines" role="list">
+          <li><a href="tel:+966112935966"><span dir="ltr">+966 11 293 5966</span></a></li>
+          <li><a href="mailto:info.ksa@mobco-group.com">info.ksa@mobco-group.com</a></li>
+          <li><a href="mailto:careers@mobco-group.com"><span class="site-footer__k" data-ar="الوظائف">Careers</span> careers@mobco-group.com</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__office">
+        <h2 class="site-footer__office-name" data-ar="مكتب مصر، القاهرة">Egypt Office, Cairo</h2>
+        <address>
+          <span data-ar="مبنى B1، كمبوند ميفيدا، القاهرة الجديدة، مصر">B1 Building, Mivida Compound, New Cairo, Egypt</span><br>
+          <span data-ar="2 بلوك C شارع أحمد حسن، الحي التاسع، مدينة نصر، القاهرة، مصر">2 Block C Ahmed Hassan St., Ninth District, Nasr City, Cairo, Egypt</span>
+        </address>
+        <ul class="site-footer__lines" role="list">
+          <li><a href="tel:+20223866591"><span dir="ltr">02-23866591</span></a> <span class="site-footer__sep" aria-hidden="true">/</span> <a href="tel:+20223866592"><span dir="ltr">02-23866592</span></a></li>
+          <li><a href="mailto:info.egy@mobco-group.com">info.egy@mobco-group.com</a></li>
+          <li><a href="mailto:hr.egy@mobco-group.com"><span class="site-footer__k" data-ar="الوظائف">Careers</span> hr.egy@mobco-group.com</a></li>
+        </ul>
+      </div>
+      <nav class="site-footer__nav" aria-label="Footer" data-ar-aria-label="روابط التذييل">
+        <ul class="site-footer__links" role="list">
+          <li><a href="about.html" data-ar="من نحن">About</a></li>
+          <li><a href="subsidiaries.html" data-ar="الشركات التابعة">Subsidiaries</a></li>
+          <li><a href="projects.html" data-ar="المشاريع">Projects</a></li>
+          <li><a href="studio.html" data-ar="تجوّل ثلاثي الأبعاد">Explore in 3D</a></li>
+          <li><a href="media.html" data-ar="المركز الإعلامي">Media</a></li>
+          <li><a href="careers.html" data-ar="الوظائف">Careers</a></li>
+          <li><a href="contact.html" data-ar="تواصل معنا">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+    <ul class="site-footer__subs" role="list" aria-label="Group companies" data-ar-aria-label="شركات المجموعة">
+      <li><a class="site-footer__sub" href="mobco-construction.html" aria-label="MOBCO Construction" data-ar-aria-label="موبكو للإنشاءات"><img src="assets/img/logos/mobco-construction-white.png" alt="" width="675" height="497" loading="lazy" decoding="async"></a></li>
+      <li><a class="site-footer__sub" href="mobco-developments.html" aria-label="MOBCO Developments" data-ar-aria-label="موبكو للتطوير"><img src="assets/img/logos/mobco-developments-white.png" alt="" width="638" height="209" loading="lazy" decoding="async"></a></li>
+      <li><a class="site-footer__sub site-footer__sub--tile" href="mobco-real-estate.html" aria-label="MOBCO Real Estate Development" data-ar-aria-label="موبكو للتطوير العقاري"><img src="assets/img/logos/mobco-real-estate.png" alt="" width="652" height="147" loading="lazy" decoding="async"></a></li>
+      <li><a class="site-footer__sub" href="subsidiaries.html#education" aria-label="Elite Education Group" data-ar-aria-label="مجموعة النخبة التعليمية"><img src="assets/img/logos/elite-education-white.png" alt="" width="508" height="498" loading="lazy" decoding="async"></a></li>
+    </ul>
+    <div class="site-footer__bottom">
+      <p data-ar="© 2026 مجموعة موبكو. جميع الحقوق محفوظة.">© 2026 MOBCO Group. All Rights Reserved.</p>
+      <div class="site-footer__legal">
+        <button type="button" data-search-open data-ar="البحث في الموقع">Search the site</button>
+      </div>
+    </div>
+  </div>
+</footer>
+<a class="to-top" href="#main" data-to-top aria-label="Back to top" data-ar-aria-label="العودة إلى الأعلى">
+  <svg class="to-top__ring" viewBox="0 0 52 52" aria-hidden="true"><circle class="to-top__track" cx="26" cy="26" r="24"/><circle class="to-top__bar" cx="26" cy="26" r="24"/></svg>
+  <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up"></use></svg>
+</a>
+  <!-- /@include footer -->
+</body>
+</html>
