@@ -3,16 +3,6 @@
  "pnl": -47.53,
  "trades": 7,
  "wins": 2,
- "last_day": "2026-11-09",
- "today": [
-  {
-   "date": "2026-11-09",
-   "bought": "10:00",
-   "buy_price": 673.34,
-   "sold": "16:00 close",
-   "sell_price": 678.76,
-   "ret_pct": 0.795,
-   "why": "close"
-  }
- ]
+ "last_day": "2026-11-10",
+ "today": []
 }
