@@ -248,7 +248,7 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
   scene.add(contact);
 
   /* ------------------------------------------------------------ lights */
-  const hemi = new THREE.HemisphereLight('#cfe0f2', '#a3967f', 0.5);
+  const hemi = new THREE.HemisphereLight('#cfe0f2', '#a8987c', 0.5);
   hemi.name = 'studio-hemi';
   scene.add(hemi);
   const sun = new THREE.DirectionalLight('#ffe9cc', 2.6);
@@ -256,10 +256,10 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
   sun.castShadow = true;
   const mapSize = quality === 'low' ? 1024 : 2048;
   sun.shadow.mapSize.set(mapSize, mapSize);
-  sun.shadow.radius = quality === 'low' ? 2.5 : 4;
+  sun.shadow.radius = quality === 'low' ? 3 : 5; // slightly soft edged, like a real sun's penumbra
   sun.shadow.bias = -0.0003;
   sun.shadow.normalBias = 0.045;
-  sun.shadow.intensity = 0.92; // a little sky light always reaches into the shade
+  sun.shadow.intensity = 0.9; // a little sky light always reaches into the shade
   scene.add(sun, sun.target);
 
   const fog = new THREE.Fog('#dfe8ef', 200, 900);
@@ -355,10 +355,11 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
       sun.color.set('#9fb2d8');
       sun.intensity = 0.38 * smoothstep(-2.5, -9, elevation);
     } else {
-      dirFromAngles(THREE, azimuth, Math.max(elevation, 1.5), lightDir);
+      // the key light sits a little lower than the sky's sun disc: slightly longer, more modelled shadows
+      dirFromAngles(THREE, azimuth, Math.max(elevation * 0.9, 1.5), lightDir);
       const warm = smoothstep(3, 34, elevation);
-      sun.color.copy(tmpA.set('#ff9f62')).lerp(tmpB.set('#ffeacf'), warm);
-      sun.intensity = 2.75 * day + 0.6 * golden;
+      sun.color.copy(tmpA.set('#ff9f62')).lerp(tmpB.set('#ffe6c6'), warm);
+      sun.intensity = 2.65 * day + 0.6 * golden;
     }
     placeLight();
     skyUniforms.uSunDir.value.copy(dirFromAngles(THREE, azimuth, elevation, new THREE.Vector3()));
@@ -366,10 +367,10 @@ export function createEnvironment(THREE, { scene, quality = 'high' }) {
     skyUniforms.uSunGlow.value = moon ? 0 : 0.35 + 0.65 * day;
     // fill: sky above, warm bounce from the ground below
     hemi.color.copy(skyUniforms.uTop.value).lerp(tmpB.set('#ffffff'), 0.5);
-    hemi.groundColor.copy(tmpA.set(night > 0.5 ? '#16161f' : '#a3967f')).lerp(tmpB.set('#c48a5c'), golden * 0.5);
+    hemi.groundColor.copy(tmpA.set(night > 0.5 ? '#16161f' : '#a8987c')).lerp(tmpB.set('#c48a5c'), golden * 0.5);
     // blue hour (sun 3 to 9 degrees below the horizon): the sky itself is the light, cool and soft
     const blue = smoothstep(-13, -6.5, elevation) * (1 - smoothstep(-3, 4, elevation));
-    hemi.intensity = 0.07 + 0.55 * day + 0.42 * blue;
+    hemi.intensity = 0.07 + 0.59 * day + 0.42 * blue;
     if (blue > 0.01) hemi.color.lerp(tmpA.set('#5b7fc0'), blue * 0.7);
     // very low at night: bright reflections on glass would wash out the lit interiors; the blue hour keeps a
     // share of sky reflection so glazing still reads as glass

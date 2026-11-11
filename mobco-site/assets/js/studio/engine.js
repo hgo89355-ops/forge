@@ -155,6 +155,24 @@ export function createStudio(container, options = {}) {
   scene.environmentIntensity = 0.8;
 
   const env = createEnvironment(THREE, { scene, quality });
+  // A very light lens vignette (Realistic only): one full-screen quad drawn last, no extra render pass
+  const vignette = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+    name: 'studio-vignette',
+    uniforms: { uAmount: { value: 0.14 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+    fragmentShader: /* glsl */`
+      uniform float uAmount; varying vec2 vUv;
+      void main(){
+        vec2 d = (vUv - 0.5) * vec2(1.0, 0.82);
+        gl_FragColor = vec4(0.0, 0.0, 0.0, smoothstep(0.32, 0.82, length(d)) * uAmount);
+      }`,
+    transparent: true, depthTest: false, depthWrite: false, toneMapped: false, fog: false,
+  }));
+  vignette.name = 'studio-vignette';
+  vignette.frustumCulled = false;
+  vignette.renderOrder = 1e6;
+  vignette.raycast = () => {};
+  scene.add(vignette);
   // optional bloom (needs half-float render targets; never on CPU rasterisers)
   let bloom = null;
   if (opts.bloom && !lowPower) {
@@ -680,6 +698,7 @@ export function createStudio(container, options = {}) {
     if (!MODES.includes(mode)) return;
     state.mode = mode;
     env.setTheme(themeFor(mode));
+    vignette.visible = mode === 'realistic';
     capUniform.value.set(...(mode === 'blueprint' ? [0.86, 0.93, 0.98] : [111 / 255, 209 / 255, 197 / 255]));
     applyMaterials();
     applyTime();
@@ -1309,6 +1328,7 @@ export function createStudio(container, options = {}) {
     bloom?.dispose();
     env.dispose();
     envMap.dispose();
+    vignette.geometry.dispose(); vignette.material.dispose();
     [hoverBox, selectBox, sectionVis].forEach((g) => g.traverse((o) => { o.geometry?.dispose(); o.material?.dispose(); }));
     renderer.dispose();
     renderer.forceContextLoss?.();

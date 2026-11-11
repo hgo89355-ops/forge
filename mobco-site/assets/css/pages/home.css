@@ -2,76 +2,101 @@
    assets/css/pages/home.css: HOME page, part A (hero, who we are, companies,
    plan / build / manage, stats). Selectors are prefixed `hx-` (hero) or `ha-`
    (part B uses `hb-`) or scoped to body[data-page='home'].
-   Tokens from main.css; logical properties throughout (RTL-safe). The hero's 3D view,
-   its still, pins and detail card use physical coordinates (the model is never mirrored).
+   Tokens from main.css; logical properties throughout (RTL-safe). The hero's photo layers,
+   canvas and pins use physical coordinates (the photo is never mirrored).
    ========================================================================== */
 
 /* -------------------------------------------------------------------------
-   01 · HERO: Eastmain as a detailed 3D building (spin and zoom, product-viewer style)
-   The view, its still, pins and the card use physical coordinates (the model is never mirrored).
+   01 · HERO: turn round Eastmain, then dive inside (home-hero.js; still stages fallback: home-hero-stills.js)
+   The photo layers, canvas and pins use physical coordinates (the photo is never mirrored); the dots and the line mirror.
    ------------------------------------------------------------------------- */
 .hx {
   --hx-glass: color-mix(in srgb, var(--navy-950) 58%, transparent);
   --hx-glass-strong: color-mix(in srgb, var(--navy-950) 86%, transparent);
   --hx-line: rgba(255, 255, 255, .16);
+  --hx-scroll: 0;
   position: relative;
-  isolation: isolate;
-  display: grid;
-  min-block-size: 100vh;
-  min-block-size: max(100svh, 620px);
-  overflow: hidden;
   background: var(--navy-950);
   color: var(--white);
 }
-.hx:fullscreen { min-block-size: 100vh; inline-size: 100vw; }
+/* scroll-driven dive: the section is tall and the photo stays pinned while scrolling zooms through the stages
+   (home-hero.js reads --hx-scroll to know). Reduced motion and ?qa=1 keep a single screen. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.qa) .hx:not(.is-static) {
+    --hx-scroll: 1;
+    block-size: calc(100vh + 460vh);
+    block-size: calc(100svh + 460svh);
+  }
+}
+.hx__pin {
+  position: sticky;
+  top: 0;
+  isolation: isolate;
+  display: grid;
+  block-size: 100vh;
+  block-size: 100svh;
+  min-block-size: 520px;
+  overflow: hidden;
+}
 .hx__stage {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  /* blue-hour sky tone while the still decodes */
-  background: linear-gradient(180deg, #14295a 0%, #2a4a85 55%, #1b2233 100%);
+  /* dusk sky tone while the photo decodes */
+  background: linear-gradient(180deg, #1c2f5c 0%, #2c4a80 55%, #1b2233 100%);
 }
-.hx__poster { position: absolute; inset: 0; overflow: hidden; }
-/* JS sizes and moves the still so its camera centre matches the live view; without JS it simply covers */
-.hx__poster img {
+.hx__layers { position: absolute; inset: 0; overflow: hidden; transition: opacity 140ms var(--ease-soft); }
+/* without JS the photo simply covers; JS sizes it to its pixels and moves it with transforms */
+.hx__poster, .hx__layer {
   position: absolute;
   left: 0;
   top: 0;
   display: block;
-  inline-size: 100%;
-  block-size: 100%;
   max-inline-size: none;
-  object-fit: cover;
-  object-position: 50% 50%;
   transform-origin: 0 0;
   user-select: none;
   -webkit-user-drag: none;
+  pointer-events: none;
+}
+.hx__poster {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 47% 53%;
+}
+.hx__layer { opacity: 0; visibility: hidden; }
+.hx__layer.is-on { opacity: 1; visibility: visible; }
+/* the incoming stage fades in with soft edges (CSS mode; WebGL feathers in the shader) */
+.hx__layer.is-over {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent), linear-gradient(180deg, transparent, #000 3%, #000 97%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent), linear-gradient(180deg, transparent, #000 3%, #000 97%, transparent);
+  mask-composite: intersect;
 }
 .hx__view {
   position: absolute;
   inset: 0;
+  cursor: grab;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
+.hx.is-dragging .hx__view { cursor: grabbing; }
+.hx.is-waiting .hx__view { cursor: progress; }
+.hx__view:focus { outline: none; }
+.hx__view:focus-visible { outline: 2px solid var(--teal-400); outline-offset: -6px; }
 .hx__view canvas {
   display: block;
   inline-size: 100%;
   block-size: 100%;
-  cursor: grab;
   opacity: 0;
-  transition: opacity 900ms var(--ease-soft);
+  transition: opacity 600ms var(--ease-soft);
 }
-.hx__view canvas:active { cursor: grabbing; }
-.hx__view canvas:focus { outline: none; }
-.hx__view canvas:focus-visible { outline: 2px solid var(--teal-400); outline-offset: -6px; }
 .hx.is-live .hx__view canvas { opacity: 1; }
-.hx.is-static .hx__view { display: none; }
-/* still renderer (?poster=1): the bare view, no overlays */
-.hx.is-poster :is(.hx__inner, .hx__shade, .hx__pins, .hx__hint, .hx-card) { display: none !important; }
-.hx__fallback[hidden] { display: none; }
+/* reduced motion: a stage jump is a short crossfade through the background */
+.hx.is-jump .hx__layers, .hx.is-jump.is-live .hx__view canvas { opacity: 0; transition: opacity 140ms var(--ease-soft); }
 
-/* legibility: header band, copy side, dock band (mirrored in RTL); fades out while exploring */
+/* legibility: header band, copy side, dock band (mirrored in RTL); fades while exploring */
 .hx__shade {
   position: absolute;
   inset: 0;
@@ -89,32 +114,6 @@
     linear-gradient(0deg, color-mix(in srgb, var(--navy-950) 62%, transparent) 0, color-mix(in srgb, var(--navy-950) 22%, transparent) 110px, color-mix(in srgb, var(--navy-950) 0%, transparent) 200px);
 }
 .hx.is-zoomed .hx__shade { opacity: .35; }
-
-/* wheel hint: shown when someone scrolls over the photo before clicking into it */
-.hx__hint {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  padding: .625rem 1rem;
-  border-radius: var(--radius-pill);
-  background: var(--hx-glass-strong);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  font-size: var(--fs-sm);
-  color: var(--white);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(.96);
-  transition: opacity 260ms var(--ease-soft), transform 260ms var(--ease-out);
-}
-.hx__hint .icon { --icon-size: 18px; }
-.hx.is-hint .hx__hint { opacity: 1; transform: translate(-50%, -50%); }
 
 /* copy + dock sit above the photo; only their links and buttons take the pointer, so drags pass through */
 .hx__inner {
@@ -210,107 +209,85 @@ html.js .hx:not(.is-ready) .hx__copy > * { opacity: 0; animation: hx-failsafe 1m
 .hx-tool:not(:disabled):active { transform: scale(.92); }
 .hx-tool:disabled { opacity: .4; cursor: default; }
 .hx-tool:focus-visible { outline: 2px solid var(--teal-400); outline-offset: 1px; }
-.hx-tool__min { display: none; }
-.hx-tool[aria-pressed='true'] .hx-tool__min { display: block; }
-.hx-tool[aria-pressed='true'] .hx-tool__max { display: none; }
+.hx-tool[aria-pressed='true'] { background: rgba(255, 255, 255, .16); color: var(--white); }
 
-/* detail pins (placed by JS in stage pixels) */
-.hx__pins { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.hx-pin {
+/* level dots: a thin rail on the far side from the copy */
+.hx__depth {
   position: absolute;
-  left: 0;
-  top: 0;
-  display: grid;
-  place-items: center;
-  inline-size: 44px;
-  block-size: 44px;
-  margin: -22px 0 0 -22px;
-  border-radius: 50%;
-  pointer-events: auto;
-  transition: opacity 320ms var(--ease-soft), visibility 0s;
-  will-change: transform;
-}
-.hx-pin::before { /* soft halo */
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, .85);
-  animation: hx-halo 2.8s var(--ease-out) infinite;
-}
-@keyframes hx-halo { 0% { transform: scale(.7); opacity: .9; } 70%, 100% { transform: scale(1.45); opacity: 0; } }
-.hx-pin__dot {
-  position: relative;
-  display: block;
-  inline-size: 24px;
-  block-size: 24px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .96);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, .22), 0 6px 16px color-mix(in srgb, var(--navy-950) 38%, transparent);
-  transition: transform 360ms var(--ease-out), background var(--dur) var(--ease-soft);
-}
-.hx-pin__dot::before, .hx-pin__dot::after {
-  content: '';
-  position: absolute;
-  left: 50%;
+  inset-inline-end: calc(var(--gutter) - 10px);
   top: 50%;
-  inline-size: 10px;
-  block-size: 2px;
-  margin: -1px 0 0 -5px;
-  border-radius: 1px;
-  background: var(--navy-950);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform: translateY(-50%);
 }
-.hx-pin__dot::after { transform: rotate(90deg); }
-@media (hover: hover) { .hx-pin:hover .hx-pin__dot { transform: scale(1.14); } }
-.hx-pin:focus-visible { outline: 2px solid var(--teal-400); outline-offset: 0; }
-.hx-pin.is-active .hx-pin__dot { background: var(--teal-400); transform: rotate(45deg) scale(1.08); }
-.hx-pin.is-active::before { animation: none; opacity: 0; }
-.hx-pin.is-off { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 200ms var(--ease-soft), visibility 0s linear 200ms; }
-.hx:not(.is-ready) .hx-pin { opacity: 0; }
-
-/* detail card */
-.hx-card {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 4;
-  display: grid;
-  gap: var(--space-3);
-  inline-size: min(320px, calc(100% - 32px));
-  padding: var(--space-4) var(--space-5) var(--space-4);
-  border: 1px solid var(--hx-line);
-  border-radius: var(--radius-lg);
-  background: var(--hx-glass-strong);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 18px 48px color-mix(in srgb, var(--navy-950) 35%, transparent);
-  color: var(--white);
-  transition: opacity 240ms var(--ease-soft);
-}
-.hx-card[hidden] { display: none; }
-.hx-card.is-open { animation: hx-card-in 520ms var(--ease-out) both; }
-.hx-card.is-away { opacity: 0; pointer-events: none; }
-@keyframes hx-card-in { from { opacity: 0; } }
-.hx-card__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-block: -.25rem; }
-.hx-card__count { margin: 0; font-family: 'Manrope', var(--font-display); font-size: .6875rem; font-weight: 700; letter-spacing: .2em; color: var(--teal-300); direction: ltr; unicode-bidi: isolate; }
-.hx-card__close, .hx-card__step {
+.hx__depth[hidden] { display: none; }
+.hx-dot {
   display: grid;
   place-items: center;
-  inline-size: 36px;
-  block-size: 36px;
+  inline-size: 28px;
+  block-size: 28px;
   border-radius: 50%;
-  color: rgba(255, 255, 255, .8);
-  transition: background var(--dur) var(--ease-soft), color var(--dur);
 }
-.hx-card__close { margin-inline-end: -.5rem; }
-.hx-card__close .icon, .hx-card__step .icon { --icon-size: 17px; }
-@media (hover: hover) { .hx-card__close:hover, .hx-card__step:hover { background: rgba(255, 255, 255, .12); color: var(--white); } }
-@media (pointer: coarse) { .hx-card__close, .hx-card__step { inline-size: 44px; block-size: 44px; } }
-.hx-card__body { display: grid; gap: var(--space-2); }
-.hx-card__title { margin: 0; font-family: var(--font-display); font-size: 1.125rem; font-weight: 600; line-height: 1.3; letter-spacing: .01em; }
-.hx-card__text { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: rgba(255, 255, 255, .78); }
-html[lang='ar'] .hx-card__text { line-height: 1.8; }
-.hx-card__nav { display: flex; gap: var(--space-1); margin-inline-start: -.5rem; border-block-start: 1px solid var(--hx-line); padding-block-start: var(--space-2); }
+.hx-dot span {
+  display: block;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, .45);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--navy-950) 25%, transparent);
+  transition: block-size 380ms var(--ease-out), background var(--dur) var(--ease-soft);
+}
+.hx-dot.is-past span { background: rgba(255, 255, 255, .8); }
+.hx-dot.is-active span { block-size: 20px; background: var(--teal-300); }
+@media (hover: hover) { .hx-dot:hover span { background: var(--white); } }
+.hx-dot:focus-visible { outline: 2px solid var(--teal-400); outline-offset: -2px; }
+
+/* video mode (home-hero.js with assets/img/hero/video.json): orbit buttons, dive progress line, headline fade.
+   The still-stage fallback never shows the turn buttons or the line (they stay [hidden]). */
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.qa) .hx.is-video:not(.is-static) {
+    block-size: calc(100vh + 400vh);
+    block-size: calc(100svh + 400svh);
+  }
+}
+.hx.is-video .hx__poster { object-position: 50% 50%; }
+.hx__turns { display: flex; align-items: center; gap: 2px; }
+.hx__turns[hidden] { display: none; }
+.hx.is-video .hx__copy {
+  opacity: calc(1 - var(--hx-out, 0));
+  transform: translate3d(0, calc(var(--hx-out, 0) * -14px), 0);
+  transition: none;
+}
+.hx.is-video.is-zoomed .hx__copy { visibility: hidden; }
+.hx.is-video .hx__shade { opacity: calc(1 - .65 * var(--hx-out, 0)); transition: none; }
+.hx__progress {
+  position: absolute;
+  inset-inline-end: var(--gutter);
+  top: 50%;
+  z-index: 3;
+  inline-size: 2px;
+  block-size: clamp(96px, 18vh, 160px);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, .24);
+  overflow: hidden;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: calc(.5 + .5 * var(--hx-out, 0));
+}
+.hx__progress[hidden] { display: none; }
+.hx__progress span {
+  display: block;
+  block-size: 100%;
+  background: var(--teal-300);
+  transform-origin: 50% 0;
+  transform: scaleY(var(--hx-p, 0));
+}
+@media (max-width: 767.98px) { .hx__progress { top: 56%; block-size: 88px; } }
 
 /* tablets: a little narrower copy */
 @media (min-width: 768px) and (max-width: 1199.98px) {
@@ -334,36 +311,30 @@ html[lang='ar'] .hx-card__text { line-height: 1.8; }
   .hx__caption span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hx__bar { flex: none; }
   .hx-tool { inline-size: 40px; block-size: 40px; }
-  .hx-tool[data-hx-full] { display: none; }
   .hx__shade, [dir='rtl'] .hx__shade {
     background:
       linear-gradient(180deg, color-mix(in srgb, var(--navy-950) 88%, transparent) 0%, color-mix(in srgb, var(--navy-950) 70%, transparent) 26%, color-mix(in srgb, var(--navy-950) 22%, transparent) 40%, color-mix(in srgb, var(--navy-950) 0%, transparent) 50%),
       linear-gradient(0deg, color-mix(in srgb, var(--navy-950) 80%, transparent) 0%, color-mix(in srgb, var(--navy-950) 36%, transparent) 12%, color-mix(in srgb, var(--navy-950) 0%, transparent) 22%);
   }
-  .hx-card {
-    left: var(--gutter);
-    right: var(--gutter);
-    top: auto;
-    bottom: calc(var(--hx-dock, 76px) + var(--space-3));
-    inline-size: auto;
-    transform: none !important;
-  }
-  .hx-card__text { font-size: var(--fs-xs); }
-  .hx__hint { display: none; }
+  .hx__depth { top: 58%; }
+}
+@media (max-width: 440px) {
+  .hx__caption .icon { display: none; }
+  .hx__bar { padding: 3px; }
+  .hx__sep { margin-inline: 2px; }
+  .hx-tool { inline-size: 37px; }
 }
 @media (max-width: 380px) {
   .hx__sep { display: none; }
-  .hx-tool { inline-size: 38px; }
+  .hx-tool { inline-size: 36px; }
 }
 /* short landscape screens: let the hero grow instead of squeezing */
-@media (max-height: 560px) and (orientation: landscape) { .hx { min-block-size: 620px; } }
+@media (max-height: 560px) and (orientation: landscape) { .hx__pin { min-block-size: 420px; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .hx-pin::before { animation: none; opacity: 0; }
   .hx.is-ready .hx__copy > * { animation: none; }
   .hx__copy, .hx.is-zoomed .hx__copy { transition: none; transform: none; }
 }
-html.qa .hx-pin::before { animation: none; opacity: 0; }
 
 /* -------------------------------------------------------------------------
    02 · WHO WE ARE

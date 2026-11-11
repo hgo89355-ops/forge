@@ -1,7 +1,7 @@
 /**
  * MOBCO Explore in 3D · model: "campus"
  * ---------------------------------------------------------------------------
- * Innovation Campus, modelled from the aerial render (assets/img/campus.jpg). Illustrative: the layout,
+ * STC Headquarters, modelled from the aerial render (assets/img/campus.jpg). Illustrative: the layout,
  * shapes and proportions follow the render, sizes are estimated (no published dimensions).
  *
  * North part: a sculpted white horseshoe building wrapped around a garden court, open to the south where a
@@ -19,8 +19,8 @@ import { createKit, makeRng, clamp, smoothstep, P, bandProfile } from './_kit.js
 
 export const meta = {
   id: 'campus',
-  name: { en: 'Innovation Campus', ar: 'حرم الابتكار' },
-  projectSlug: 'innovation-campus',
+  name: { en: 'STC Headquarters', ar: 'المقر الرئيسي لشركة stc' },
+  projectSlug: 'stc-headquarters',
   tagline: {
     en: 'A white horseshoe around a garden court, a glass tower wrapped by a sail, and two perforated pavilions linked by a sky bridge.',
     ar: 'مبنى أبيض على شكل حدوة حول فناء مزروع، وبرج زجاجي يلتفّ حوله شراع، وجناحان بغلاف مثقّب يربطهما جسر معلّق.',

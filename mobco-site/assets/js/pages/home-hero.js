@@ -1,528 +1,685 @@
-// assets/js/pages/home-hero.js: HOME hero, Eastmain as a detailed 3D building you can spin and zoom (product-viewer style).
+// assets/js/pages/home-hero.js: HOME hero, Eastmain as one continuous camera: turn round the building, then dive in.
 //
-// · A still rendered from this same viewer (assets/img/hero/eastmain-3d-*) paints first, aligned to the live camera.
-//   After first paint the studio engine (assets/js/studio/engine.js) is imported, the Eastmain model is built at the
-//   blue hour, and the live canvas crossfades in on its first frame.
-// · Drag to orbit (limited above the ground). The mouse wheel zooms towards the pointer only after a click inside the
-//   viewer; wheeling before that shows a small hint and the page scrolls normally. Esc or leaving the hero gives the
-//   wheel back. Touch: horizontal drags orbit, one-finger vertical swipes scroll the page, pinch zooms.
-// · Close zoom reaches the facade, so the lit floors are visible through the glass.
-// · "+" pins on real features fly the camera there and open a small card. Plus / minus, reset, full screen,
-//   Explore in 3D. Slow auto-rotate until the visitor interacts (off for reduced motion, low-power renderers, ?qa=1).
-// · The copy fades while zoomed in. Arabic mirrors the layout (copy on the right), never the model.
-// · No WebGL2: the still stays, with the Explore in 3D link. CPU rasterisers (no GPU): the still stays until the
-//   pointer reaches the hero. ?poster=1 renders the bare view for the stills.
+// HOW IT WORKS (video mode, the default)
+// · assets/img/hero/video.json (written by tools/hero_video.py) describes two frame sequences cut from two videos:
+//   ORBIT, a full 360 degree drone orbit that starts and ends on the front view (it loops), and DIVE, one continuous
+//   push-in from the whole building (same front view) to the man working at his desk.
+// · A 2D canvas draws the current frame with cover fit (device pixel ratio capped at 2, and never more pixels than
+//   the frames have). Between two frames it crossfades, so a slow turn or a slow scroll never steps.
+// · DIVE: the section is tall and the picture is pinned (position: sticky). Scroll progress maps to the dive frame;
+//   the view follows with a critically damped spring, so wheel ticks, flicks and jumps become one smooth move.
+//   Scrolling up plays it backwards; after the last frame the page continues. The headline fades out as the dive
+//   starts; a slim line shows how deep the dive is. + and - scroll by a step, the reset button goes back to the top.
+// · ORBIT: at the top, dragging sideways (mouse or touch), the arrow keys and the two round buttons turn the building
+//   through the orbit frames, looping round, with momentum after release (gentle friction). Until the visitor does
+//   anything the building turns very slowly by itself (about 1 degree per second). Scrolling down while turned first
+//   turns back to the front the short way round (about 0.6 s); the dive starts from the front frame, and its first
+//   frames crossfade from the orbit's front frame.
+// · Loading: the page's <img> is the poster. Then every 4th frame of the orbit and the dive, then every 2nd, then
+//   the rest (the sequence in use first, and the frames near the view before anything else). Frames are kept as
+//   compressed blobs; only the frames near the view are decoded (a capped cache), so memory stays low. A missing
+//   frame is drawn from the nearest loaded ones.
+// · Reduced motion: no pinning, no idle turn, no momentum; the poster, and the buttons step through a few key
+//   frames (8 angles, the dive chapters) with a short fade. ?qa=1: the static poster, no pinning.
+// · Without video.json the still-stage version (home-hero-stills.js) runs instead.
 
 import { t, onLang } from '../core/i18n.js';
-import { $, $$, clamp, isQA, isRTL, prefersReducedMotion, rafThrottle } from '../core/utils.js';
+import { $, clamp, isQA, prefersReducedMotion } from '../core/utils.js';
 import { whenLoaded } from '../core/preloader.js';
+import { scrollTo as scrollPage } from '../core/motion.js';
 
-const MODEL = 'mixed-use';
-const HOUR = 19.8;           // blue hour: sun about 5.5 degrees below the horizon
-// Home cameras (world metres). Desktop keeps the corner of the glass box in a three-quarter view from the plaza;
-// phones stand further back so the whole building fits the narrow frame.
-const VIEWS = {
-  desk: { position: [50, 8.5, 44], target: [8, 9.2, -10] },
-  mob: { position: [56, 10, 54], target: [4, 9, -10] },
-};
-// The stills are rendered with no side insets: the camera target sits at the image centre.
-const POSTER = { desk: { w: 2800, h: 1080 }, mob: { w: 400, h: 1200 } };
-const PIN_DIST = { offices: 30, shops: 26, plaza: 46, roof: 44 };
+const BASE = 'assets/img/hero/';
+const OMEGA = 8.5;            // dive spring (per second, critically damped)
+const HOLD = [0.012, 0.06];   // share of the scroll held at the top (orbit) and after the last dive frame
+const EASE = 0.4;             // the dive eases in and out over the scroll (0: linear)
+const IDLE_DEG = 1;           // idle turn, degrees per second
+const FRICTION = 2.2;         // orbit momentum decay, per second
+const TURN_MAX = 240;         // fastest turn, degrees per second
+const KICK_DEG = 30;          // a turn button coasts this far
+const KEY_DEG = 9;            // one arrow key press coasts this far
+const HANDOVER = 3;           // dive frames over which the orbit's front frame crossfades into the dive
+// decoded frames kept (both sequences); fewer on touch devices, which crop the 16:9 frames and have less memory
+const CACHE = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches ? 28 : 48;
+const FETCHES = 6, DECODES = 3;
+
 const S = {
-  canvas: { en: 'Eastmain, New Cairo. Interactive 3D model.', ar: 'إيست مين، القاهرة الجديدة. نموذج تفاعلي ثلاثي الأبعاد.' },
-  role: { en: '3D viewer', ar: 'عارض ثلاثي الأبعاد' },
-  pin: { en: 'Show: {name}', ar: 'عرض: {name}' },
-  home: { en: 'Full view', ar: 'العرض الكامل' },
-  fsIn: { en: 'Full screen', ar: 'ملء الشاشة' },
-  fsOut: { en: 'Exit full screen', ar: 'الخروج من ملء الشاشة' },
+  view: { en: 'Eastmain, New Cairo. Drag sideways to turn round the building, scroll to go inside.', ar: 'إيست مين، القاهرة الجديدة. اسحب جانبيًا للدوران حول المبنى، ومرّر الصفحة للدخول إليه.' },
+  angle: { en: 'Turned {d} degrees', ar: 'دوران {d} درجة' },
+  front: { en: 'Front view', ar: 'المنظر الأمامي' },
 };
 const fmt = (v, o) => t(v).replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');
-const pad = (n) => String(n).padStart(2, '0');
-
-function hasWebGL2() {
-  try {
-    if (new URLSearchParams(location.search).get('nogl') === '1') return false;
-    const gl = document.createElement('canvas').getContext('webgl2');
-    gl?.getExtension('WEBGL_lose_context')?.loseContext();
-    return !!gl;
-  } catch { return false; }
-}
+const ss5 = (x) => { const c = clamp(x, 0, 1); return c * c * c * (c * (c * 6 - 15) + 10); };
+const mod = (a, n) => ((a % n) + n) % n;
 
 export function initHero() {
   const root = $('[data-hx]');
   if (!root) return;
+  fetch(`${BASE}video.json`)
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null)
+    .then((man) => {
+      if (!(man?.orbit?.count > 1 && man?.dive?.count > 1)) return false;
+      return (man.sets?.desktop?.ext === 'avif' ? avifOk() : Promise.resolve(true)).then((ok) => ok && (setupVideo(root, man), true));
+    })
+    .then((ok) => { if (!ok) import('./home-hero-stills.js').then((m) => m.initStills(root)); });
+}
+
+// AVIF frames need a browser that decodes AVIF (Safari 16+, Chrome 85+, Firefox 93+); others keep the still photo
+const AVIF_2PX = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAHgAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAAgAAAAIAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAJm1kYXQSAAoIGAA2iAhoNCAyEB7Hh4VZ3///4sAAAJA1l/A=';
+function avifOk() {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => res(img.naturalWidth === 2);
+    img.onerror = () => res(false);
+    img.src = AVIF_2PX;
+  });
+}
+
+function setupVideo(root, man) {
+  const pin = $('[data-hx-pin]', root) || root;
   const stage = $('[data-hx-stage]', root);
   const view = $('[data-hx-view]', root);
-  const posterImg = $('[data-hx-poster] img', root);
-  const pinsLayer = $('[data-hx-pins]', root);
-  const hint = $('[data-hx-hint]', root);
-  const copy = $('[data-hx-copy]', root);
-  const dock = $('[data-hx-dock]', root);
-  const bar = $('[data-hx-bar]', root);
-  const card = $('[data-hx-card]', root);
+  const poster = $('[data-hx-poster]', root);
+  const label = $('[data-hx-label]', root);
   const live = $('[data-hx-live]', root);
-  const fallbackLink = $('[data-hx-fallback]', root);
+  const progress = $('[data-hx-progress]', root);
   const btn = {
     zin: $('[data-hx-zoom="in"]', root),
     zout: $('[data-hx-zoom="out"]', root),
     reset: $('[data-hx-reset]', root),
-    full: $('[data-hx-full]', root),
+    left: $('[data-hx-turn="left"]', root),
+    right: $('[data-hx-turn="right"]', root),
   };
-  const cardEls = {
-    count: $('[data-hx-card-count]', card),
-    title: $('[data-hx-card-title]', card),
-    text: $('[data-hx-card-text]', card),
-    close: $('[data-hx-card-close]', card),
-  };
+  // the still version's controls are not used here
+  $('[data-hx-above]', root)?.remove();
+  $('[data-hx-depth]', root)?.remove();
+  $('[data-hx-turns]', root)?.removeAttribute('hidden');
+  progress?.removeAttribute('hidden');
 
-  const params = new URLSearchParams(location.search);
-  const posterMode = params.get('poster') === '1';
   const qa = isQA();
-  const reduced = prefersReducedMotion();
-  const fine = typeof matchMedia === 'function' && matchMedia('(pointer: fine)').matches;
+  const reduced = prefersReducedMotion() || qa;
+  root.classList.add('is-video');
+  const scrollMode = !reduced && getComputedStyle(root).getPropertyValue('--hx-scroll').trim() === '1';
+  root.classList.toggle('is-scroll', scrollMode);
 
-  let engine = null;
-  let ready = false;
-  let revealPending = false;
-  let hotspots = [];
-  const pins = new Map();
-  let openId = null;
-  let engaged = false;
-  let autoAllowed = false;
-  let autoOn = false;
-  let zoomed = false;
-  let hintTimer = 0;
-  let lastFrame = [];
-  let homeDist = 1;
-  let layoutKind = '';
-  let box = { w: 0, h: 0, top: 0, bottom: 0, cw: 0, ch: 0, ui: [] };
+  const O = { name: 'orbit', n: man.orbit.count, loop: true, dir: man.orbit.dir || 'orbit/' };
+  const D = { name: 'dive', n: man.dive.count, loop: false, dir: man.dive.dir || 'dive/' };
+  const SEQ = [O, D];
+  const degPer = 360 / O.n;
+  const TURN = man.orbit.turn === -1 ? -1 : 1;
+  const chapters = (man.dive.chapters || []).slice().sort((a, b) => a.at - b.at);
 
-  const mobile = () => box.w < 768;
-  const kind = () => (mobile() ? 'mob' : 'desk');
+  let W = 1, H = 1, setKey = '', set = null;
+  let canvas = null, ctx = null, cw = 1, ch = 1;
+  let visible = true, raf = 0, last = 0, drawn = false;
+  // orbit (frames, looping), dive (frames)
+  const orb = { pos: 0, vel: 0, idle: !reduced, tween: null };
+  let dCur = 0, dVel = 0, dF = 0, dT = 0;
+  let shownChapter = -1;
+
   const announce = (msg) => { if (live) { live.textContent = ''; requestAnimationFrame(() => { live.textContent = msg; }); } };
 
-  if (posterMode) root.classList.add('is-poster');
-
-  /* ------------------------------------------------------------------ layout: insets, poster alignment */
-  function measure() {
-    const s = stage.getBoundingClientRect();
-    const c = copy.getBoundingClientRect();
-    const d = dock.getBoundingClientRect();
-    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 80;
-    box = { ...box, w: s.width, h: s.height };
-    const rel = (r, m) => ({ x0: r.left - s.left - m, x1: r.right - s.left + m, y0: r.top - s.top - m, y1: r.bottom - s.top + m });
-    const uiRects = [...dock.children].filter((el) => !el.hidden).map((el) => el.getBoundingClientRect());
-    if (!zoomed) uiRects.push(c);
-    box.ui = uiRects.filter((r) => r.width).map((r) => rel(r, 14));
-    box.ui.push({ x0: -1e4, x1: 1e4, y0: -1e4, y1: header + 8 });
-    let ins;
-    if (posterMode) ins = { left: 0, right: 0, top: 0, bottom: 0 };
-    else if (mobile()) ins = { left: 0, right: 0, top: Math.max(header, c.bottom - s.top), bottom: Math.max(0, s.bottom - d.top + 8) };
-    else {
-      // the building moves to the free side of the copy (mirrored in Arabic); vertical stays centred
-      const side = Math.round(s.width * 0.3);
-      ins = { left: isRTL() ? 0 : side, right: isRTL() ? side : 0, top: 0, bottom: 0 };
-    }
-    box.top = mobile() ? ins.top : header;
-    box.bottom = Math.max(0, s.bottom - d.top + 8);
-    root.style.setProperty('--hx-dock', `${Math.round(s.bottom - d.top)}px`);
-    return ins;
+  /* ---------------------------------------------------------------- frames: fetch, decode, cache */
+  function resetSeq(q) {
+    q.blob = new Array(q.n).fill(null);
+    q.fetching = new Set();
+    q.bm = new Map();
+    q.decoding = new Set();
   }
-  /** Place the still so its camera centre lands where the live view puts it (the engine shifts the projection by
-      (left minus right) / 2 and (top minus bottom) / 2 pixels). */
-  function alignPoster(ins) {
-    if (!posterImg) return;
-    const k = kind();
-    const P = POSTER[k];
-    const W = box.w, H = box.h;
-    const aspect = W / H;
-    // the engine keeps the vertical field of view on wide screens and the horizontal one below an aspect of 1.25
-    const liveScale = aspect >= 1.25 ? H : W / 1.25;
-    const stillScale = P.w / P.h >= 1.25 ? P.h : P.w / 1.25;
-    const s = liveScale / stillScale;
-    const cx = W / 2 + (ins.left - ins.right) / 2;
-    const cy = H / 2 + (ins.top - ins.bottom) / 2;
-    let w = P.w * s, h = P.h * s;
-    let x = cx - w / 2, y = cy - h / 2;
-    // never leave an edge uncovered: grow (and recentre) when needed
-    if (x > 0 || y > 0 || x + w < W || y + h < H || !(s > 0)) {
-      const sc = Math.max(W / P.w, H / P.h);
-      w = P.w * sc; h = P.h * sc;
-      x = clamp(cx - w / 2, W - w, 0); y = clamp(cy - h / 2, H - h, 0);
+  SEQ.forEach(resetSeq);
+  const url = (q, i) => `${BASE}${q.dir}${set.prefix}${String(i).padStart(3, '0')}.${set.ext || 'webp'}`;
+  let fetchesOn = 0, decodesOn = 0, gen = 0;
+  let focus = O;              // the sequence in use
+  let loadAll = !reduced;     // reduced motion and QA only load key frames
+  let started = false;        // nothing loads before the page itself has
+  const wanted = [];          // key frames asked for in reduced motion
+
+  // slow or data saving connections stop after every 2nd frame (the blend between frames covers the gaps)
+  const conn = navigator.connection;
+  const lean = !!conn && (conn.saveData || /(^|-)2g|3g/.test(conn.effectiveType || ''));
+  function passes(q) {
+    const out = [];
+    const seen = new Set();
+    const steps = man.progressive || [4, 2, 1];
+    for (const step of lean ? steps.filter((x) => x > 1) : steps) {
+      for (let i = 0; i < q.n; i += step) if (!seen.has(i)) { seen.add(i); out.push(i); }
     }
-    posterImg.style.width = `${w.toFixed(1)}px`;
-    posterImg.style.height = `${h.toFixed(1)}px`;
-    posterImg.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    return out;
+  }
+  const plan = { orbit: [], dive: [] };
+  function nextFetch() {
+    const cand = (q, i) => i >= 0 && i < q.n && !q.blob[i] && !q.fetching.has(i);
+    // frames near the view first
+    const near = focus === O ? O : D;
+    const p = near === O ? orb.pos : dCur;
+    const ahead = near === O ? (Math.sign(orb.vel) || 1) : (Math.sign(dT - dCur) || 1);
+    for (let d = 0; d <= 6; d++) {
+      for (const s of [ahead, -ahead]) {
+        let i = Math.round(p) + s * d;
+        if (near.loop) i = mod(i, near.n);
+        if (cand(near, i)) return [near, i];
+      }
+    }
+    if (D.blob[0] === null && cand(D, 0)) return [D, 0];
+    for (const w of wanted) if (cand(w[0], w[1])) return w;
+    if (!loadAll) return null;
+    const first = focus, second = focus === O ? D : O;
+    const pa = plan[first.name], pb = plan[second.name];
+    // the sequence in use: coarse pass, then the other one's coarse pass, then the rest of both
+    const coarse = (q, arr) => arr.slice(0, Math.ceil(q.n / 4));
+    for (const [q, arr] of [[first, coarse(first, pa)], [second, coarse(second, pb)], [first, pa], [second, pb]]) {
+      for (const i of arr) if (cand(q, i)) return [q, i];
+    }
+    return null;
+  }
+  function pumpFetch() {
+    while (started && fetchesOn < FETCHES && set) {
+      const nx = nextFetch();
+      if (!nx) return;
+      const [q, i] = nx;
+      const g = gen;
+      q.fetching.add(i);
+      fetchesOn++;
+      fetch(url(q, i))
+        .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(`${r.status}`))))
+        .then((b) => { if (g === gen) q.blob[i] = b; })
+        .catch((err) => { if (g === gen) console.warn('[hero] frame failed', q.name, i, err.message); })
+        .finally(() => { fetchesOn--; if (g === gen) { q.fetching.delete(i); pumpDecode(); pumpFetch(); } });
+    }
+  }
+  async function decodeBlob(b) {
+    if ('createImageBitmap' in window) return createImageBitmap(b);
+    const img = new Image();
+    const u = URL.createObjectURL(b);
+    img.src = u;
+    try { await img.decode(); } finally { URL.revokeObjectURL(u); }
+    return img;
+  }
+  // frames worth having decoded now: around each sequence's position (the one in use gets the wider window)
+  function decodeWants() {
+    const out = [];
+    const add = (q, center, r, dir) => {
+      for (let d = 0; d <= r; d++) {
+        for (const s of (d ? [dir, -dir] : [1])) {
+          let i = Math.round(center) + s * d;
+          if (q.loop) i = mod(i, q.n);
+          else if (i < 0 || i >= q.n) continue;
+          out.push([q, i]);
+        }
+      }
+    };
+    if (reduced) { for (const w of wanted) out.push(w); add(O, orb.pos, 1, 1); add(D, dCur, 1, 1); return out; }
+    if (focus === O) { add(O, orb.pos, 7, Math.sign(orb.vel) || 1); add(D, 0, HANDOVER + 1, 1); }
+    else { add(D, dCur, 8, Math.sign(dT - dCur) || 1); add(O, 0, 1, 1); }
+    return out;
+  }
+  function pumpDecode() {
+    if (!set) return;
+    for (const [q, i] of decodeWants()) {
+      if (decodesOn >= DECODES) return;
+      if (q.bm.has(i) || q.decoding.has(i) || !q.blob[i]) continue;
+      const g = gen;
+      q.decoding.add(i);
+      decodesOn++;
+      decodeBlob(q.blob[i])
+        .then((bmp) => {
+          if (g !== gen) { bmp.close?.(); return; }
+          q.bm.set(i, bmp);
+          evict();
+          request();
+        })
+        .catch((err) => console.warn('[hero] decode failed', q.name, i, err))
+        .finally(() => { decodesOn--; if (g === gen) q.decoding.delete(i); pumpDecode(); });
+    }
+  }
+  function evict() {
+    let total = O.bm.size + D.bm.size;
+    if (total <= CACHE) return;
+    const dist = (q, i) => {
+      const p = q === O ? orb.pos : dCur;
+      let d = Math.abs(i - p);
+      if (q.loop) d = Math.min(d, q.n - d);
+      if (q !== focus) d += q === O ? (i === 0 ? 0 : 40) : (i <= HANDOVER ? 0 : 40);
+      return i % 4 === 0 ? d / 2 : d;
+    };
+    const all = [];
+    for (const q of SEQ) for (const i of q.bm.keys()) all.push([dist(q, i), q, i]);
+    all.sort((a, b) => b[0] - a[0]);
+    for (const [, q, i] of all) {
+      if (total <= CACHE) break;
+      q.bm.get(i)?.close?.();
+      q.bm.delete(i);
+      total--;
+    }
+  }
+  // the two decoded frames around position p, and the blend between them
+  function pick(q, p) {
+    const n = q.n;
+    const i0 = Math.floor(p), f = p - i0;
+    let lo = null, hi = null, dl = 0, dh = 0;
+    for (let d = 0; d < n; d++) {
+      const j = q.loop ? mod(i0 - d, n) : i0 - d;
+      if (j < 0) break;
+      if (q.bm.has(j)) { lo = j; dl = d; break; }
+    }
+    for (let d = 1; d <= n; d++) {
+      const j = q.loop ? mod(i0 + d, n) : i0 + d;
+      if (j >= n) break;
+      if (q.bm.has(j)) { hi = j; dh = d; break; }
+    }
+    if (lo === null && hi === null) return null;
+    if (lo === null) return { a: hi, b: hi, w: 0 };
+    if (hi === null || hi === lo) return { a: lo, b: lo, w: 0 };
+    const w = (dl + f) / (dl + dh);
+    // neighbours: a short crossfade in the middle of the step; far apart (still loading): a plain blend
+    return { a: lo, b: hi, w: dl + dh === 1 ? ss5((w - 0.08) / 0.84) : w };
+  }
+
+  /* ---------------------------------------------------------------- canvas */
+  function chooseSet() {
+    const key = W < H * 0.95 && man.sets?.mobile ? 'mobile' : 'desktop';
+    if (key === setKey) return;
+    setKey = key;
+    set = { prefix: 'f-', size: [1600, 900], ...(man.sets?.[key] || {}) };
+    gen++;
+    for (const q of SEQ) { for (const b of q.bm.values()) b.close?.(); resetSeq(q); }
+    fetchesOn = 0; decodesOn = 0;
+    plan.orbit = passes(O);
+    plan.dive = passes(D);
+    drawn = false;
+    root.classList.remove('is-live');
+    if (started) pumpFetch();
   }
   function layout() {
-    const ins = measure();
-    alignPoster(ins);
-    if (engine) {
-      engine.setInsets(ins);
-      const k = kind();
-      if (k !== layoutKind) {
-        layoutKind = k;
-        engine.setHomeView(VIEWS[k], { apply: ready && !openId && !zoomed, instant: true });
-        homeDist = dist(VIEWS[k].position, VIEWS[k].target);
+    const r = stage.getBoundingClientRect();
+    W = Math.max(1, r.width);
+    H = Math.max(1, r.height);
+    chooseSet();
+    if (!canvas) return;
+    const [fw, fh] = set.size;
+    const cover = Math.max(W / fw, H / fh);
+    // device pixels, capped at 2 and at the frame's own pixels (more would only upscale)
+    const dpr = clamp(Math.min(window.devicePixelRatio || 1, 2), 0.5, Math.max(0.5, 1 / cover));
+    cw = Math.max(1, Math.round(W * dpr));
+    ch = Math.max(1, Math.round(H * dpr));
+    canvas.width = cw;
+    canvas.height = ch;
+    ctx.imageSmoothingQuality = 'high';
+  }
+  function draw(img, alpha) {
+    if (!img || alpha <= 0.002) return;
+    const fw = img.width, fh = img.height;
+    const s = Math.max(cw / fw, ch / fh);
+    const sw = cw / s, sh = ch / s;
+    ctx.globalAlpha = Math.min(1, alpha);
+    ctx.drawImage(img, (fw - sw) / 2, (fh - sh) / 2, sw, sh, 0, 0, cw, ch);
+  }
+  function drawSeq(q, pk, alpha) {
+    if (!pk) return false;
+    draw(q.bm.get(pk.a), alpha);
+    if (pk.w > 0.002 && pk.b !== pk.a) draw(q.bm.get(pk.b), alpha * pk.w);
+    return true;
+  }
+  function paint() {
+    if (!ctx) return;
+    const h = clamp(dCur / HANDOVER, 0, 1);
+    const po = h < 1 ? pick(O, orb.pos) : null;
+    const pd = h > 0 || !po ? pick(D, Math.max(0, dCur)) : null;
+    if (!po && !pd) return;
+    ctx.globalAlpha = 1;
+    let ok = false;
+    if (po) ok = drawSeq(O, po, 1);
+    if (pd && (h > 0 || !ok)) ok = drawSeq(D, pd, ok ? ss5(h) : 1) || ok;
+    ctx.globalAlpha = 1;
+    if (ok && !drawn) { drawn = true; requestAnimationFrame(() => root.classList.add('is-live')); }
+  }
+
+  /* ---------------------------------------------------------------- scroll and dive */
+  const span = 1 - HOLD[0] - HOLD[1];
+  const easeU = (u) => u - EASE * Math.sin(2 * Math.PI * u) / (2 * Math.PI);
+  function diveOfP(p) {
+    const u = clamp((p - HOLD[0]) / span, 0, 1);
+    return (D.n - 1) * easeU(u);
+  }
+  function pOfDive(f) {
+    const v = clamp(f / (D.n - 1), 0, 1);
+    let lo = 0, hi = 1;
+    for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2; if (easeU(m) < v) lo = m; else hi = m; }
+    return f <= 0 ? 0 : HOLD[0] + span * (lo + hi) / 2;
+  }
+  const runPx = () => Math.max(0, root.offsetHeight - pin.offsetHeight);
+  function scrollP() {
+    const run = runPx();
+    return run > 1 ? clamp(-root.getBoundingClientRect().top / run, 0, 1) : 0;
+  }
+  function scrollToDive(f, immediate = false) {
+    const y = window.scrollY + root.getBoundingClientRect().top + pOfDive(f) * runPx();
+    scrollPage(Math.round(y), { immediate });
+  }
+
+  /* ---------------------------------------------------------------- orbit */
+  const atTop = () => dCur < 0.01 && dT < 0.01;
+  const shortest = (to) => { let d = mod(to - orb.pos, O.n); if (d > O.n / 2) d -= O.n; return d; };
+  function turnTo(to, secs) {
+    const d = shortest(to);
+    orb.vel = 0;
+    if (Math.abs(d) < 1e-3) { orb.tween = null; orb.pos = mod(to, O.n); return; }
+    orb.tween = { from: orb.pos, d, t0: performance.now(), dur: secs ?? clamp(0.45 + Math.abs(d) * degPer / 400, 0.45, 0.9) };
+    request();
+  }
+  function stopIdle() { orb.idle = false; }
+  // a push that coasts about `deg` degrees under the friction
+  function kick(deg) {
+    stopIdle();
+    orb.tween = null;
+    const maxV = TURN_MAX / degPer;
+    orb.vel = clamp(orb.vel + (deg / degPer) * FRICTION, -maxV, maxV);
+    request();
+  }
+  // a drag across this many pixels turns framesPerWidth() frames (phones count as 640 px, so a thumb swipe
+  // does not spin the building)
+  const dragW = () => Math.max(W, 640);
+  const framesPerWidth = () => {
+    const sh = man.orbit.shift > 0 ? 1 / man.orbit.shift : O.n / 4;
+    return clamp(sh, O.n / 8, O.n / 2.6);
+  };
+
+  /* ---------------------------------------------------------------- loop */
+  function tick(now) {
+    raf = 0;
+    const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
+    last = now;
+    let moving = false;
+    // dive target from the scroll; held at the front until the orbit is back there
+    if (scrollMode) dT = diveOfP(scrollP());
+    const wantsDive = dT > 0.01;
+    if (wantsDive) {
+      if (focus !== D) { focus = D; pumpFetch(); }
+      if (!orb.tween && (Math.abs(shortest(0)) > 1e-3 || Math.abs(orb.vel) > 0)) { stopIdle(); turnTo(0); }
+    } else if (dCur < 0.5 && focus !== O) { focus = O; pumpFetch(); }
+    // orbit: tween, momentum or idle
+    if (orb.tween) {
+      const tw = orb.tween;
+      const k = clamp((now - tw.t0) / 1000 / tw.dur, 0, 1);
+      orb.pos = mod(tw.from + tw.d * ss5(k), O.n);
+      if (k >= 1) { orb.tween = null; orb.pos = mod(Math.round(orb.pos * 1e4) / 1e4, O.n); }
+      moving = true;
+    } else if (!drag && Math.abs(orb.vel) > 0.02) {
+      orb.pos = mod(orb.pos + orb.vel * dt, O.n);
+      orb.vel *= Math.exp(-FRICTION * dt);
+      moving = true;
+    } else if (!drag) {
+      orb.vel = 0;
+      if (orb.idle && !reduced && atTop() && visible && drawn) {
+        orb.pos = mod(orb.pos + (IDLE_DEG / degPer) * dt, O.n);
+        moving = true;
       }
-    } else layoutKind = '';
-    measureCard();
-    placeCard();
+    }
+    // dive: follows its target with a critically damped spring; waits at the front while the orbit turns back
+    const gate = orb.tween || Math.abs(shortest(0)) > 1e-3 ? 0 : D.n - 1;
+    const want = Math.min(dT, gate);
+    const vmax = D.n * 0.9;
+    dF += clamp(want - dF, -vmax * dt, vmax * dt);
+    const x = dCur - dF;
+    if (reduced || (dF === want && Math.abs(x) < 1e-3 && Math.abs(dVel) < 1e-2)) {
+      if (dCur !== want) moving = true;
+      dCur = dF = want;
+      dVel = 0;
+    } else {
+      const e = Math.exp(-OMEGA * dt);
+      const j = (dVel + OMEGA * x) * dt;
+      dCur = dF + (x + j) * e;
+      dVel = (dVel - OMEGA * j) * e;
+      moving = true;
+    }
+    paint();
+    syncUI();
+    pumpDecode();
+    if (moving) request(); else last = 0;
   }
-  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  function request() { if (!raf && visible) raf = requestAnimationFrame(tick); }
 
-  /* ------------------------------------------------------------------ pins */
-  function clearPins() { pinsLayer.innerHTML = ''; pins.clear(); }
-  function buildPins() {
-    clearPins();
-    if (posterMode) return;
-    hotspots.forEach((h) => {
-      const el = document.createElement('button');
-      el.type = 'button';
-      el.className = 'hx-pin is-off';
-      el.tabIndex = -1;
-      el.dataset.id = h.id;
-      el.setAttribute('aria-expanded', 'false');
-      el.innerHTML = '<span class="hx-pin__dot" aria-hidden="true"></span>';
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (openId === h.id) closeCard({ back: true }); else openCard(h.id);
-      });
-      el.addEventListener('pointerdown', (e) => e.stopPropagation());
-      pinsLayer.appendChild(el);
-      pins.set(h.id, el);
-    });
-    labelPins();
+  /* ---------------------------------------------------------------- UI state */
+  function chapterAt(f) {
+    const v = f / Math.max(1, D.n - 1);
+    let k = 0;
+    chapters.forEach((c, i) => { if (v >= c.at - 1e-4) k = i; });
+    return k;
   }
-  function labelPins() { hotspots.forEach((h) => pins.get(h.id)?.setAttribute('aria-label', fmt(S.pin, { name: t(h.title) }))); }
-  const underUI = (x, y) => box.ui.some((r) => x > r.x0 && x < r.x1 && y > r.y0 && y < r.y1);
-  function onFrame({ hotspots: list }) {
-    lastFrame = list || [];
-    for (const p of lastFrame) {
-      const el = pins.get(p.id);
-      if (!el) continue;
-      const edge = p.x < 20 || p.y < 20 || p.x > box.w - 20 || p.y > box.h - 20;
-      const show = ready && p.visible && !edge && (p.id === openId || !underUI(p.x, p.y));
-      if (el.__show !== show) {
-        el.__show = show;
-        el.classList.toggle('is-off', !show);
-        el.tabIndex = show ? 0 : -1;
+  function syncUI() {
+    const out = clamp(dCur / Math.max(1, D.n * 0.06), 0, 1);
+    root.style.setProperty('--hx-out', out.toFixed(3));
+    root.style.setProperty('--hx-p', (dCur / Math.max(1, D.n - 1)).toFixed(4));
+    root.classList.toggle('is-zoomed', out > 0.98);
+    const end = scrollMode ? dT : dCur;
+    if (btn.zin) btn.zin.disabled = end >= D.n - 1.5;
+    if (btn.zout) btn.zout.disabled = end <= 0.01;
+    const turning = !atTop() && !reduced;
+    if (btn.left) btn.left.disabled = turning;
+    if (btn.right) btn.right.disabled = turning;
+    if (chapters.length) {
+      const k = chapterAt(dCur);
+      if (k !== shownChapter) { shownChapter = k; if (label) label.textContent = t(chapters[k].label); }
+    }
+  }
+
+  /* ---------------------------------------------------------------- reduced motion: key frames */
+  const keysO = Array.from({ length: 8 }, (_, i) => Math.round(i * O.n / 8) % O.n);
+  const keysD = [...new Set([0, ...chapters.map((c) => Math.round(c.at * (D.n - 1))), D.n - 1])].sort((a, b) => a - b);
+  async function ensureFrame(q, i) {
+    if (!wanted.some((w) => w[0] === q && w[1] === i)) wanted.push([q, i]);
+    pumpFetch();
+    const g = gen;
+    const t0 = performance.now();
+    while (!q.bm.has(i) && g === gen && performance.now() - t0 < 6000) {
+      pumpDecode();
+      await new Promise((r) => setTimeout(r, 40));
+    }
+  }
+  let jumping = false;
+  async function jumpTo(o, d) {
+    if (jumping) return;
+    jumping = true;
+    await Promise.all([o !== null ? ensureFrame(O, o) : null, d !== null ? ensureFrame(D, d) : null]);
+    const apply = () => {
+      if (o !== null) { orb.pos = o; orb.vel = 0; orb.tween = null; }
+      if (d !== null) { dT = dCur = dF = d; dVel = 0; }
+      paint();
+      syncUI();
+    };
+    if (qa || !drawn) apply();
+    else {
+      root.classList.add('is-jump');
+      await new Promise((r) => setTimeout(r, 140));
+      apply();
+      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('is-jump')));
+    }
+    jumping = false;
+  }
+
+  /* ---------------------------------------------------------------- actions */
+  function stepDive(dir) {
+    stopIdle();
+    if (reduced) {
+      const cur = dCur;
+      const to = dir > 0 ? keysD.find((k) => k > cur + 0.5) : [...keysD].reverse().find((k) => k < cur - 0.5);
+      if (to === undefined) return;
+      jumpTo(to > 0 ? 0 : null, to);
+      announce(t(chapters[chapterAt(to)]?.label || S.front));
+      return;
+    }
+    const step = (D.n - 1) / 6;
+    const base = scrollMode ? dT : dCur;
+    const to = clamp(dir > 0 ? Math.floor(base / step + 0.05) * step + step : Math.ceil(base / step - 0.05) * step - step, 0, D.n - 1);
+    if (scrollMode) scrollToDive(to);
+    else { dT = to; request(); }
+    announce(t(chapters[chapterAt(to)]?.label || S.front));
+  }
+  function turn(dir) {
+    if (reduced) {
+      stopIdle();
+      const cur = Math.round(orb.pos / (O.n / 8));
+      const to = keysO[mod(cur + dir * TURN, 8)];
+      jumpTo(to, dCur > 0 ? 0 : null);
+      announce(to === 0 ? t(S.front) : fmt(S.angle, { d: Math.round(to * degPer) }));
+      return;
+    }
+    if (!atTop()) return;
+    // the button names say which way the building moves on screen
+    kick(dir * TURN * KICK_DEG);
+  }
+  function reset() {
+    stopIdle();
+    if (reduced) { jumpTo(0, 0); announce(t(S.front)); return; }
+    if (scrollMode && dT > 0.01) scrollToDive(0);
+    turnTo(0);
+    announce(t(S.front));
+  }
+  btn.zin?.addEventListener('click', () => stepDive(1));
+  btn.zout?.addEventListener('click', () => stepDive(-1));
+  btn.reset?.addEventListener('click', reset);
+  btn.left?.addEventListener('click', () => turn(-1));
+  btn.right?.addEventListener('click', () => turn(1));
+
+  /* ---------------------------------------------------------------- input: drag with momentum */
+  let drag = null;
+  const pts = new Set();
+  view.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    pts.add(e.pointerId);
+    if (pts.size > 1) { drag = null; root.classList.remove('is-dragging'); return; }
+    drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, x: e.clientX, mode: e.pointerType === 'mouse' ? 'turn' : null, hist: [[performance.now(), e.clientX]] };
+    if (drag.mode) start(e);
+  });
+  function start(e) {
+    if (reduced || !atTop()) { drag = null; return; }
+    stopIdle();
+    orb.tween = null;
+    orb.vel = 0;
+    root.classList.add('is-dragging');
+    try { view.setPointerCapture(e.pointerId); } catch { /* ignore */ }
+  }
+  view.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (!drag.mode) {
+      // touch: a mostly sideways move turns; an upward or downward one scrolls the page (touch-action: pan-y)
+      const tx = e.clientX - drag.x0, ty = e.clientY - drag.y0;
+      if (Math.abs(tx) > 8 && Math.abs(tx) > Math.abs(ty) * 1.2) { drag.mode = 'turn'; start(e); if (!drag) return; }
+      else if (Math.abs(ty) > 8) { drag = null; return; }
+      else return;
+    }
+    const dx = e.clientX - drag.x;
+    drag.x = e.clientX;
+    const now = performance.now();
+    drag.hist.push([now, e.clientX]);
+    while (drag.hist.length > 2 && now - drag.hist[0][0] > 90) drag.hist.shift();
+    orb.pos = mod(orb.pos + (dx / dragW()) * framesPerWidth() * TURN, O.n);
+    request();
+  });
+  const endPointer = (e) => {
+    pts.delete(e.pointerId);
+    if (!drag || e.pointerId !== drag.id) return;
+    if (drag.mode === 'turn' && e.type === 'pointerup') {
+      const h = drag.hist;
+      const now = performance.now();
+      const [t0, x0] = h[0];
+      const dtv = (now - t0) / 1000;
+      // momentum from the last ~90 ms of the drag (none if the pointer rested before release)
+      if (dtv > 0.008 && now - h[h.length - 1][0] < 60) {
+        const vpx = (h[h.length - 1][1] - x0) / dtv;
+        const maxV = TURN_MAX / degPer;
+        orb.vel = clamp((vpx / dragW()) * framesPerWidth() * TURN, -maxV, maxV);
       }
-      if (el.__occ !== p.occluded) { el.__occ = p.occluded; el.classList.toggle('is-occluded', !!p.occluded); }
-      if (show) el.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`;
     }
-    placeCard();
-    checkZoom();
-    if (revealPending) {
-      revealPending = false;
-      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('is-live')));
-    }
-  }
-
-  /* ------------------------------------------------------------------ zoom state: fade the copy when close */
-  function checkZoom() {
-    if (!engine) return;
-    const d = engine.camera.position.distanceTo(engine.controls.target);
-    const on = !!openId || d < homeDist * 0.7;
-    if (on === zoomed) return;
-    zoomed = on;
-    root.classList.toggle('is-zoomed', on);
-    measure();
-  }
-
-  /* ------------------------------------------------------------------ card */
-  function measureCard() {
-    if (card.hidden) return;
-    box.cw = card.offsetWidth;
-    box.ch = card.offsetHeight;
-  }
-  function fillCard() {
-    const i = hotspots.findIndex((h) => h.id === openId);
-    if (i < 0) return;
-    const h = hotspots[i];
-    cardEls.count.textContent = `${pad(i + 1)} / ${pad(hotspots.length)}`;
-    cardEls.title.textContent = t(h.title);
-    cardEls.text.textContent = t(h.text);
-    measureCard();
-  }
-  function placeCard() {
-    if (!openId || card.hidden) return;
-    if (mobile()) { card.style.transform = ''; return; }
-    const p = lastFrame.find((x) => x.id === openId);
-    if (!p) return;
-    const gap = 32, m = 20;
-    const { w, cw, ch } = box;
-    let x = p.x > w * 0.56 ? p.x - gap - cw : p.x + gap;
-    if (x + cw > w - m) x = p.x - gap - cw;
-    if (x < m) x = Math.min(p.x + gap, w - m - cw);
-    const y = clamp(p.y - ch / 2, box.top + 8, Math.max(box.top + 8, box.h - box.bottom - ch - 8));
-    card.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
-    card.classList.toggle('is-away', !p.visible);
-  }
-  function openCard(id, { focus = true } = {}) {
-    if (!engine || !hotspots.some((h) => h.id === id)) return;
-    stopAuto();
-    engage(true);
-    const first = !openId;
-    openId = id;
-    pins.forEach((el, k) => {
-      el.setAttribute('aria-expanded', String(k === id));
-      el.classList.toggle('is-active', k === id);
-    });
-    card.hidden = false;
-    fillCard();
-    placeCard();
-    card.classList.remove('is-open');
-    void card.offsetWidth;
-    card.classList.add('is-open');
-    engine.focusHotspot(id, { distance: (PIN_DIST[id] || 36) * (mobile() ? 1.35 : 1), duration: reduced ? 0 : 1400 });
-    checkZoom();
-    if (first && focus) cardEls.close?.focus({ preventScroll: true });
-  }
-  function closeCard({ back = false, focusPin = false } = {}) {
-    if (!openId) return;
-    const id = openId;
-    openId = null;
-    card.hidden = true;
-    card.classList.remove('is-open', 'is-away');
-    pins.forEach((el) => { el.setAttribute('aria-expanded', 'false'); el.classList.remove('is-active'); });
-    if (back) { engine?.setView('aerial'); announce(t(S.home)); }
-    if (focusPin) {
-      const el = pins.get(id);
-      if (el && !el.classList.contains('is-off')) el.focus({ preventScroll: true });
-      else engine?.canvas.focus({ preventScroll: true });
-    }
-    checkZoom();
-  }
-  function stepCard(dir) {
-    if (!openId || !hotspots.length) return;
-    const i = hotspots.findIndex((h) => h.id === openId);
-    openCard(hotspots[(i + dir + hotspots.length) % hotspots.length].id, { focus: false });
-  }
-
-  /* ------------------------------------------------------------------ controls */
-  function stopAuto() {
-    if (!autoOn) return;
-    autoOn = false;
-    engine?.setAutoRotate(false);
-  }
-  function resetAll() {
-    if (!engine) return;
-    closeCard();
-    engine.setView('aerial');
-    autoOn = autoAllowed;
-    engine.setAutoRotate(autoOn);
-    announce(t(S.home));
-  }
-  function zoomBy(f) {
-    if (!engine) return;
-    stopAuto();
-    engine.zoom(f, { duration: reduced ? 0 : 420 });
-  }
-
-  /* ------------------------------------------------------------------ wheel engagement + hint */
-  function engage(on) {
-    if (engaged === on) return;
-    engaged = on;
-    engine?.setWheelZoom(on);
-    // while engaged the wheel belongs to the viewer: keep Lenis from smooth-scrolling the page as well
-    engine?.canvas.toggleAttribute('data-lenis-prevent', on);
-    root.classList.toggle('is-engaged', on);
-    if (on) root.classList.remove('is-hint');
-  }
-  function showHint() {
-    if (!fine || !hint || !ready) return;
-    root.classList.add('is-hint');
-    clearTimeout(hintTimer);
-    hintTimer = setTimeout(() => root.classList.remove('is-hint'), 1800);
-  }
-
-  /* ------------------------------------------------------------------ loading */
-  function fallback() {
-    root.classList.remove('is-loading', 'is-live');
-    root.classList.add('is-static');
-    ready = false;
-    clearPins();
-    closeCard();
-    if (bar) bar.hidden = true;
-    if (fallbackLink) fallbackLink.hidden = false;
-    try { engine?.dispose(); } catch { /* ignore */ }
-    engine = null;
-    layout();
-  }
-  function onLoad({ hotspots: hs }) {
-    hotspots = Array.isArray(hs) ? hs : [];
-    buildPins();
-    ready = true;
-    root.classList.remove('is-loading');
-    revealPending = true;
-    if (autoOn) setTimeout(() => { if (autoOn) engine?.setAutoRotate(true); }, 1500);
-    layout();
-  }
-
-  /** On CPU rasterisers (no GPU) the first frame compiles for seconds and every frame is slow: the still (a render
-      of this same model) stays until the visitor reaches for the hero (pointer over it, a tap or keyboard focus). */
-  function whenWanted() {
-    return new Promise((resolve) => {
-      // a real pointer move over the hero (not the hover update a scroll causes under a resting pointer), a press,
-      // keyboard focus or a wheel turn
-      const evs = ['pointermove', 'pointerdown', 'focusin', 'wheel'];
-      const go = (e) => {
-        if (e.type === 'pointermove' && !(e.movementX || e.movementY)) return;
-        evs.forEach((t) => root.removeEventListener(t, go));
-        resolve();
-      };
-      evs.forEach((t) => root.addEventListener(t, go, { passive: true }));
-    });
-  }
-
-  async function boot() {
-    if (!hasWebGL2()) { fallback(); return; }
-    let mod;
-    try {
-      mod = await import('../studio/engine.js');
-      const lp = params.get('lowpower');
-      const cpu = lp === '1' || (lp !== '0' && mod.gpu().software);
-      if (cpu && !posterMode) await whenWanted();
-      root.classList.add('is-loading');
-      const k = kind();
-      engine = mod.createStudio(view, {
-        model: null,
-        controls: !posterMode,
-        ui: false,
-        hotspots: !posterMode,
-        autoRotate: false,
-        quality: 'auto',
-        touchAction: 'pan-y',
-        wheelZoom: false,
-        clickAction: 'none',
-        hour: HOUR,
-        homeView: VIEWS[k],
-        zoomToCursor: true,
-        minTargetY: 1,
-        bloom: true,
-        maxDpr: 1.5,
-      });
-    } catch (err) {
-      console.warn('[home] 3D viewer unavailable', err);
-      fallback();
-      return;
-    }
-    layoutKind = kind();
-    homeDist = dist(VIEWS[layoutKind].position, VIEWS[layoutKind].target);
-    autoAllowed = !reduced && !engine.lowPower && !qa && !posterMode;
-    autoOn = autoAllowed;
-    const c = engine.controls;
-    c.autoRotateSpeed = 0.35;
-    c.minDistance = 2.5;
-    c.maxDistance = 190;
-    c.maxPolarAngle = Math.PI * 0.5; // down to eye level, never below the target
-    c.zoomSpeed = 1.1;
-    const cv = engine.canvas;
-    cv.setAttribute('aria-label', t(S.canvas));
-    cv.setAttribute('aria-roledescription', t(S.role));
-    cv.setAttribute('aria-describedby', 'hx-help');
-    engine.on('load', onLoad);
-    engine.on('frame', onFrame);
-    engine.on('interact', () => { stopAuto(); if (openId) closeCard(); });
-    engine.on('contextlost', () => { console.warn('[home] WebGL context lost'); fallback(); });
-    layout();
-    try {
-      await engine.load(MODEL, { instantCamera: true });
-    } catch (err) {
-      console.warn('[home] 3D model failed to load', err);
-      fallback();
-      return;
-    }
-    // the engine's own limit is generous for the studio; the hero keeps the camera near the building
-    c.maxDistance = 190;
-  }
-
-  /* ------------------------------------------------------------------ wiring */
-  btn.zin?.addEventListener('click', () => zoomBy(0.72));
-  btn.zout?.addEventListener('click', () => zoomBy(1.38));
-  btn.reset?.addEventListener('click', resetAll);
-  cardEls.close?.addEventListener('click', () => closeCard({ back: true, focusPin: true }));
-  $$('[data-hx-card-step]', card).forEach((b) => b.addEventListener('click', () => stepCard(Number(b.dataset.hxCardStep))));
-  card.addEventListener('pointerdown', (e) => e.stopPropagation());
-
-  // wheel zoom only after a press inside the viewer; before that, a hint and the page scrolls
-  view.addEventListener('wheel', (e) => { if (!engaged && !(e.ctrlKey || e.metaKey)) showHint(); }, { passive: true });
-  root.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('a')) return;
-    if (e.target.closest('.hx__stage, .hx-card, .hx__bar')) { engage(true); stopAuto(); }
-  }, true);
-  root.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') engage(false); });
-
-  // keyboard: arrows orbit, plus / minus zoom, 0 resets, Esc closes the card and gives the wheel back
-  root.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (openId) { e.preventDefault(); closeCard({ back: true, focusPin: true }); }
-      engage(false);
-      return;
-    }
-    if (!engine || e.target !== engine.canvas || e.altKey || e.metaKey || e.ctrlKey) return;
-    const a = 0.16;
-    let handled = true;
-    switch (e.key) {
-      case 'ArrowLeft': engine.rotate(-a, 0); break;
-      case 'ArrowRight': engine.rotate(a, 0); break;
-      case 'ArrowUp': engine.rotate(0, -a * 0.6); break;
-      case 'ArrowDown': engine.rotate(0, a * 0.6); break;
-      case '+': case '=': zoomBy(0.75); break;
-      case '-': case '_': zoomBy(1.33); break;
-      case '0': case 'Home': resetAll(); break;
-      default: handled = false;
-    }
-    if (handled) { e.preventDefault(); e.stopPropagation(); stopAuto(); }
-  }, true);
-
-  if (btn.full && document.fullscreenEnabled && root.requestFullscreen) {
-    btn.full.hidden = false;
-    btn.full.addEventListener('click', () => {
-      if (document.fullscreenElement) document.exitFullscreen?.(); else root.requestFullscreen().catch(() => {});
-    });
-    document.addEventListener('fullscreenchange', () => {
-      const on = document.fullscreenElement === root;
-      btn.full.setAttribute('aria-pressed', String(on));
-      btn.full.setAttribute('aria-label', t(on ? S.fsOut : S.fsIn));
-    });
-  }
-
-  // off-screen: give the wheel back; the engine pauses its own rendering
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) engage(false); }, { threshold: 0 }).observe(root);
-  }
-  if ('ResizeObserver' in window) {
-    const ro = new ResizeObserver(rafThrottle(layout));
-    [stage, copy, dock].forEach((el) => ro.observe(el));
-  } else window.addEventListener('resize', rafThrottle(layout));
-  root.addEventListener('transitionend', (e) => { if (e.target === copy) measure(); });
-
-  onLang(() => {
-    labelPins();
-    engine?.canvas.setAttribute('aria-label', t(S.canvas));
-    engine?.canvas.setAttribute('aria-roledescription', t(S.role));
-    if (btn.full) btn.full.setAttribute('aria-label', t(document.fullscreenElement ? S.fsOut : S.fsIn));
-    if (openId) fillCard();
-    layout();
+    drag = null;
+    root.classList.remove('is-dragging');
+    request();
+  };
+  view.addEventListener('pointerup', endPointer);
+  view.addEventListener('pointercancel', endPointer);
+  view.addEventListener('keydown', (e) => {
+    const k = e.key;
+    let used = true;
+    if (k === 'ArrowLeft') { if (reduced) turn(-1); else if (atTop()) kick(-TURN * KEY_DEG); }
+    else if (k === 'ArrowRight') { if (reduced) turn(1); else if (atTop()) kick(TURN * KEY_DEG); }
+    else if (k === '+' || k === '=') stepDive(1);
+    else if (k === '-' || k === '_') stepDive(-1);
+    else if (k === '0') reset();
+    else used = false;
+    if (used) e.preventDefault();
   });
 
-  /* ------------------------------------------------------------------ boot: still first, engine after first paint */
+  /* ---------------------------------------------------------------- lifecycle */
+  function paintText() {
+    view.setAttribute('aria-label', t(S.view));
+    if (label && chapters.length && shownChapter >= 0) label.textContent = t(chapters[shownChapter].label);
+  }
+  view.tabIndex = 0;
+  view.setAttribute('role', 'application');
+  view.setAttribute('aria-describedby', 'hx-help');
+  view.style.touchAction = 'pan-y';
+  root.hxState = () => ({
+    mode: 'video', reduced, scroll: scrollMode, set: setKey, frames: { orbit: O.n, dive: D.n },
+    orbit: orb.pos, deg: orb.pos * degPer, vel: orb.vel, idle: orb.idle, turning: !!orb.tween,
+    dive: dCur, target: dT, run: runPx(), live: drawn,
+    loaded: { orbit: O.blob.filter(Boolean).length, dive: D.blob.filter(Boolean).length },
+    decoded: { orbit: O.bm.size, dive: D.bm.size },
+    chapter: shownChapter,
+  });
+  root.hxScrollForDive = (f) => pOfDive(f);
+  root.hxSetOrbit = (f) => { stopIdle(); orb.tween = null; orb.vel = 0; orb.pos = mod(f, O.n); request(); };
+
+  if (!reduced || !qa) {
+    try {
+      canvas = document.createElement('canvas');
+      canvas.setAttribute('aria-hidden', 'true');
+      ctx = canvas.getContext('2d', { alpha: false });
+      if (!ctx) throw new Error('no 2d context');
+      view.append(canvas);
+    } catch (err) {
+      console.warn('[hero] canvas unavailable, the photo stays still', err);
+      canvas = null; ctx = null;
+    }
+  }
+  if (qa) {
+    // static poster; the buttons still work (they draw on a canvas made on first use)
+    loadAll = false;
+  }
+  function ensureCanvas() {
+    if (ctx) return;
+    canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    ctx = canvas.getContext('2d', { alpha: false });
+    view.append(canvas);
+    layout();
+  }
+  if (qa) for (const b of [btn.zin, btn.zout, btn.reset, btn.left, btn.right]) b?.addEventListener('pointerdown', ensureCanvas, { once: true });
   layout();
-  if (posterImg && !posterImg.complete) posterImg.addEventListener('load', layout, { once: true });
+  syncUI();
+  paintText();
+
+  if ('ResizeObserver' in window) {
+    let pending = 0;
+    new ResizeObserver(() => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => { layout(); paint(); request(); }); }).observe(stage);
+  } else window.addEventListener('resize', () => { layout(); paint(); request(); });
+  if (scrollMode) window.addEventListener('scroll', request, { passive: true });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) request(); }).observe(root);
+  }
+  onLang(() => { paintText(); const k = shownChapter; shownChapter = -1; if (k >= 0) syncUI(); });
+
   whenLoaded().then(() => {
     root.classList.add('is-ready');
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const go = () => boot().catch((err) => { console.warn('[home] 3D hero failed', err); fallback(); });
-      if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 600 });
-      else setTimeout(go, 60);
-    }));
-  });
-
-  // read-only handle for QA scripts and the still renderer
-  Object.defineProperty(window, 'MOBCO_HERO', {
-    configurable: true,
-    get: () => ({ engine, ready, live: root.classList.contains('is-live'), openId, engaged, autoOn, zoomed }),
+    started = true;
+    if (qa) return;
+    if (reduced) {
+      // only the key frames, after the page is idle
+      const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 600));
+      idle(() => { for (const i of keysO) wanted.push([O, i]); for (const i of keysD) wanted.push([D, i]); pumpFetch(); }, { timeout: 3000 });
+      return;
+    }
+    if (scrollMode) { dT = dCur = dF = diveOfP(scrollP()); if (dT > 0.01) focus = D; }
+    pumpFetch();
+    request();
   });
 }

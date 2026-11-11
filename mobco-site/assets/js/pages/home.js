@@ -1,5 +1,5 @@
 // assets/js/pages/home.js: HOME page, part A behaviours.
-//   initHero()  interactive 3D model of the Eastmain building (home-hero.js)
+//   initHero()  multi-stage zoom into the real Eastmain photo, with depth tilt (home-hero.js)
 //   initSteps()   "We plan. We build. We manage.": the three lines are tabs; the photo crossfades with the step
 // Core modules are singletons initialised by core/main.js (loaded first). Part B lives in home-b.js.
 

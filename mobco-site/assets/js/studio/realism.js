@@ -25,6 +25,7 @@ const RULES = [
   ['paving', /paving|plaza|pave|kerb|curb|coping|forecourt|gravel|sand-deck|lagoon-sand|deck-stone/i],
   ['timber', /timber|deck|wood/i],
   ['masonry', /stone|limestone|precast|render|plaster|concrete|white|shell|plinth|trim|portal|parapet|wall|campus-frame|facade-solid|column/i],
+  ['metal', /metal|alu|steel|mullion|spandrel|louvre|louver|railing|car-paint/i],
 ];
 
 export function isGlassLike(m) {
@@ -40,6 +41,7 @@ export function classify(m) {
   if (isGlassLike(m) && /glass|glazing|balustrade|glaz/i.test(name)) return 'glass';
   if (isGlassLike(m)) return 'plain';
   for (const [cls, re] of RULES) if (re.test(name)) return cls;
+  if ((m.metalness || 0) >= 0.45) return 'metal';
   return 'plain';
 }
 
@@ -50,6 +52,7 @@ uniform mat4 rlAOMatrix;
 uniform vec4 rlAOParams; // x strength, y top-height range (m), z on, w direct-light share
 varying vec3 vRlWorld;
 varying vec3 vRlNormal;
+varying float vRlSeed; // per plant / object random 0..1 (instances: from their position, so a tree keeps its tint)
 float rlHash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float rlHash2(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float rlNoise(vec3 x) {
@@ -77,7 +80,7 @@ float rlAO() {
 }
 `;
 
-const VERT_DECL = 'varying vec3 vRlWorld;\nvarying vec3 vRlNormal;\n';
+const VERT_DECL = 'varying vec3 vRlWorld;\nvarying vec3 vRlNormal;\nvarying float vRlSeed;\n';
 const VERT_BODY = /* glsl */`
   vec4 rlW = vec4(transformed, 1.0);
   vec3 rlN = objectNormal;
@@ -90,6 +93,12 @@ const VERT_BODY = /* glsl */`
   #endif
   vRlWorld = (modelMatrix * rlW).xyz;
   vRlNormal = normalize(mat3(modelMatrix) * rlN);
+  vec3 rlO = modelMatrix[3].xyz;
+  #ifdef USE_INSTANCING
+    rlO = (modelMatrix * vec4(instanceMatrix[3].xyz, 1.0)).xyz;
+  #endif
+  // quantised to 2.5 m so the parts of one plant (crown lobes, leaf cards) share a seed
+  vRlSeed = fract(sin(dot(floor(rlO.xz / 2.5) + 0.5, vec2(12.9898, 78.233))) * 43758.5453);
 `;
 
 // Albedo / roughness detail per family (inserted after map_fragment and roughnessmap_fragment).
@@ -99,7 +108,14 @@ const ALBEDO = {
       float big = rlNoise(vRlWorld * 0.08 + 3.0);
       diffuseColor.rgb *= 0.93 + 0.1 * n + 0.05 * (big - 0.5);
       // faint weathering: a touch darker towards the foot of walls
-      diffuseColor.rgb *= mix(0.94, 1.0, smoothstep(0.0, 1.6, vRlWorld.y)); }`,
+      diffuseColor.rgb *= mix(0.94, 1.0, smoothstep(0.0, 1.6, vRlWorld.y));
+      // soft vertical rain streaks on walls (stretched noise), a little dust on upward faces, a slight warm or
+      // cool cast between large patches (batches of stone and render never match exactly)
+      float side = 1.0 - abs(vRlNormal.y);
+      float streak = rlNoise(vec3(vRlWorld.x * 2.1, vRlWorld.y * 0.11, vRlWorld.z * 2.1) + 1.7);
+      diffuseColor.rgb *= 1.0 - side * 0.05 * smoothstep(0.5, 0.92, streak);
+      diffuseColor.rgb *= mix(1.0, 0.97 + 0.03 * n, smoothstep(0.7, 0.95, vRlNormal.y));
+      diffuseColor.rgb *= vec3(1.0 + 0.012 * (big - 0.5), 1.0, 1.0 - 0.018 * (big - 0.5)); }`,
   brick: /* glsl */`
     { vec3 an = abs(vRlNormal);
       vec2 bp = an.x > an.z ? vec2(vRlWorld.z, vRlWorld.y) : vec2(vRlWorld.x, vRlWorld.y);
@@ -131,7 +147,8 @@ const ALBEDO = {
           float vis = 1.0 - smoothstep(0.08, 0.3, max(fw.x, fw.y));
           float j = 1.0 - smoothstep(0.47 - fw.x, 0.49, max(f.x, f.y));
           diffuseColor.rgb *= mix(1.0, mix(0.86, 1.0, j), vis);
-          diffuseColor.rgb *= 0.97 + 0.06 * rlHash2(floor(q));
+          float slab = rlHash2(floor(q));
+          diffuseColor.rgb *= (0.96 + 0.08 * slab) * vec3(1.0 + 0.015 * (slab - 0.5), 1.0, 1.0 - 0.02 * (slab - 0.5));
         }
       #endif
     }`,
@@ -143,12 +160,18 @@ const ALBEDO = {
     { float big = rlNoise(vRlWorld * 0.09 + 11.0);
       float mid = rlDetail(vRlWorld, 0.7);
       vec3 dry = vec3(1.12, 1.06, 0.82), lush = vec3(0.86, 0.98, 0.84);
-      diffuseColor.rgb *= mix(lush, dry, smoothstep(0.25, 0.85, big)) * (0.9 + 0.2 * mid); }`,
+      diffuseColor.rgb *= mix(lush, dry, smoothstep(0.25, 0.85, big)) * (0.9 + 0.2 * mid);
+      // real turf is less saturated than a flat green and slightly clumpy close up
+      float gl = dot(diffuseColor.rgb, vec3(0.3, 0.59, 0.11));
+      diffuseColor.rgb = mix(vec3(gl), diffuseColor.rgb, 0.86) * (0.96 + 0.08 * rlNoise(vRlWorld * 3.1)); }`,
   foliage: /* glsl */`
     { float big = rlNoise(vRlWorld * 0.11 + 5.0);
       float mid = rlNoise(vRlWorld * 1.3);
       vec3 warm = vec3(1.1, 1.06, 0.84), cool = vec3(0.86, 0.97, 0.92);
-      diffuseColor.rgb *= mix(cool, warm, big) * (0.82 + 0.3 * mid);
+      // each plant drifts between blue-green, fresh and olive and is a little lighter or darker than its neighbours
+      float sd = vRlSeed;
+      vec3 plant = mix(vec3(0.9, 1.0, 0.95), vec3(1.1, 1.06, 0.82), sd) * (0.9 + 0.2 * fract(sd * 7.31));
+      diffuseColor.rgb *= mix(cool, warm, big) * plant * (0.84 + 0.28 * mid);
       // sunlit tops read lighter, undersides darker (cheap canopy self-shading)
       diffuseColor.rgb *= 0.85 + 0.22 * clamp(vRlNormal.y * 0.5 + 0.5, 0.0, 1.0); }`,
   timber: /* glsl */`
@@ -156,11 +179,26 @@ const ALBEDO = {
       float along = an.y > 0.7 ? vRlWorld.x : vRlWorld.y;
       float grain = rlNoise(vec3(along * 0.6, vRlWorld.z * 9.0, vRlWorld.y * 9.0));
       diffuseColor.rgb *= 0.88 + 0.2 * grain; }`,
+  metal: /* glsl */`
+    { diffuseColor.rgb *= 0.97 + 0.06 * rlNoise(vRlWorld * 0.35 + 2.0); }`,
+  // glazing: neighbouring panes are never quite the same tint (float glass batches, coatings, what is behind)
+  glass: /* glsl */`
+    { vec3 an = abs(vRlNormal);
+      float along = an.x > an.z ? vRlWorld.z : vRlWorld.x;
+      float pane = rlHash2(floor(vec2(along / 1.5, vRlWorld.y / 3.4)) + floor(vRlWorld.xz * 0.02));
+      float wide = rlNoise(vRlWorld * 0.05 + 4.0);
+      diffuseColor.rgb *= (0.95 + 0.08 * pane) * vec3(1.0 - 0.02 * wide, 1.0, 1.0 + 0.025 * wide); }`,
   solar: '',
   water: '',
-  glass: '',
   plain: '',
 };
+// Glass: a faint, smooth waviness in the panes (roller wave of tempered glass) so reflections of the sky and
+// neighbours bend a little across a facade instead of mirroring like a perfect plane
+const GLASS_NORMAL = /* glsl */`
+  { vec3 gw = vRlWorld * 0.3;
+    vec2 gt = vec2(rlNoise(gw + 3.3), rlNoise(gw + 9.1)) - 0.5;
+    float gfar = 1.0 - smoothstep(0.08, 0.4, length(fwidth(vRlWorld)));
+    normal = normalize(normal + vec3(gt * 0.06 * gfar, 0.0)); }`;
 const ROUGH = {
   masonry: 'roughnessFactor = clamp(roughnessFactor + (rlNoise(vRlWorld * 1.7) - 0.5) * 0.16, 0.05, 1.0);',
   brick: 'roughnessFactor = clamp(roughnessFactor + (rlNoise(vRlWorld * 3.0) - 0.5) * 0.12, 0.05, 1.0);',
@@ -172,6 +210,7 @@ const ROUGH = {
   water: '',
   glass: 'roughnessFactor = clamp(roughnessFactor + (rlNoise(vRlWorld * 0.05) - 0.5) * 0.04, 0.0, 1.0);',
   solar: 'roughnessFactor = clamp(roughnessFactor + (rlNoise(vRlWorld * 0.4) - 0.5) * 0.06, 0.05, 1.0);',
+  metal: 'roughnessFactor = clamp(roughnessFactor + (rlNoise(vRlWorld * 0.9 + 5.0) - 0.5) * 0.1, 0.03, 1.0);',
   plain: '',
 };
 // Physically shaped glass (opt-in with material.userData.physicalGlass): the tinted body covers what is behind
@@ -198,7 +237,7 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
   const uniforms = {
     rlAOMap: { value: null },
     rlAOMatrix: { value: new THREE.Matrix4() },
-    rlAOParams: { value: new THREE.Vector4(0.55, 40, 0, 0.32) },
+    rlAOParams: { value: new THREE.Vector4(0.6, 40, 0, 0.34) },
   };
   const envTargets = {};      // variant → WebGLRenderTarget (PMREM)
   let envVariant = null;
@@ -251,6 +290,7 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
       fs = GLSL_COMMON + fs;
       if (ALBEDO[cls]) fs = fs.replace('#include <map_fragment>', `#include <map_fragment>\n${ALBEDO[cls]}`);
       if (ROUGH[cls]) fs = fs.replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>\n${ROUGH[cls]}`);
+      if (cls === 'glass') fs = fs.replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>\n${GLASS_NORMAL}`);
       if (cls !== 'glass' && cls !== 'water') fs = fs.replace('#include <aomap_fragment>', `#include <aomap_fragment>\n${AO_APPLY}`);
       if (pg) fs = fs.replace('#include <opaque_fragment>', PHYSICAL_GLASS);
       else if (cls === 'glass') fs = fs.replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${GLASS_ALPHA}`);
@@ -283,8 +323,8 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
 
   /* ---------------------------------------------------------------- outdoor environment (PMREM) */
   const ENV = {
-    day: { top: [0.22, 0.36, 0.62], horizon: [0.92, 0.94, 0.96], ground: [0.33, 0.30, 0.26], city: [0.36, 0.39, 0.43], glow: [1.6, 1.45, 1.2] },
-    golden: { top: [0.16, 0.2, 0.36], horizon: [1.15, 0.72, 0.42], ground: [0.26, 0.2, 0.16], city: [0.2, 0.18, 0.2], glow: [2.6, 1.4, 0.6] },
+    day: { top: [0.22, 0.36, 0.62], horizon: [0.92, 0.94, 0.96], ground: [0.33, 0.30, 0.26], city: [0.36, 0.39, 0.43], glow: [1.6, 1.45, 1.2], cloud: 0.75 },
+    golden: { top: [0.16, 0.2, 0.36], horizon: [1.15, 0.72, 0.42], ground: [0.26, 0.2, 0.16], city: [0.2, 0.18, 0.2], glow: [2.6, 1.4, 0.6], cloud: 0.5 },
     // blue hour: deep blue zenith, a lighter blue band low in the sky, lit windows on the skyline
     dusk: { top: [0.035, 0.075, 0.2], horizon: [0.2, 0.3, 0.52], ground: [0.025, 0.026, 0.032], city: [0.03, 0.032, 0.04], glow: [0.18, 0.2, 0.28], lights: 1 },
     night: { top: [0.008, 0.012, 0.026], horizon: [0.03, 0.04, 0.06], ground: [0.012, 0.012, 0.014], city: [0.02, 0.022, 0.03], glow: [0, 0, 0], lights: 0.6 },
@@ -300,13 +340,27 @@ export function createRealism(THREE, { quality = 'high' } = {}) {
         uHor: { value: new THREE.Vector3(...v.horizon) },
         uGnd: { value: new THREE.Vector3(...v.ground) },
         uGlow: { value: new THREE.Vector3(...v.glow) },
+        uCloud: { value: v.cloud || 0 },
       },
       vertexShader: 'varying vec3 vD; void main(){ vD = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
       fragmentShader: /* glsl */`
-        uniform vec3 uTop; uniform vec3 uHor; uniform vec3 uGnd; uniform vec3 uGlow; varying vec3 vD;
+        uniform vec3 uTop; uniform vec3 uHor; uniform vec3 uGnd; uniform vec3 uGlow; uniform float uCloud; varying vec3 vD;
+        float h3(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+        float n3(vec3 x) {
+          vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);
+          return mix(mix(mix(h3(i), h3(i + vec3(1, 0, 0)), f.x), mix(h3(i + vec3(0, 1, 0)), h3(i + vec3(1, 1, 0)), f.x), f.y),
+                     mix(mix(h3(i + vec3(0, 0, 1)), h3(i + vec3(1, 0, 1)), f.x), mix(h3(i + vec3(0, 1, 1)), h3(i + vec3(1, 1, 1)), f.x), f.y), f.z);
+        }
         void main(){
           vec3 d = normalize(vD);
           vec3 c = mix(uHor, uTop, pow(smoothstep(0.0, 0.75, d.y), 0.6));
+          // soft scattered clouds (reflections only): glazing picks up broken light patches like a real sky
+          if (uCloud > 0.0 && d.y > 0.0) {
+            vec2 cp = d.xz / (d.y + 0.18) * 1.6;
+            float cn = 0.55 * n3(vec3(cp, 1.3)) + 0.3 * n3(vec3(cp * 2.3, 4.1)) + 0.15 * n3(vec3(cp * 5.1, 7.7));
+            float cl = smoothstep(0.5, 0.78, cn) * smoothstep(0.0, 0.12, d.y);
+            c = mix(c, uHor * 1.12 + vec3(0.04), cl * uCloud);
+          }
           c = mix(c, uGnd, smoothstep(0.0, -0.08, d.y));
           // broad bright patch high in the sky (diffuse sun scatter) gives glazing a soft highlight band
           float s = max(dot(d, normalize(vec3(0.45, 0.62, 0.64))), 0.0);

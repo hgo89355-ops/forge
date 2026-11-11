@@ -3,7 +3,7 @@
 //
 //  1. Key figures: STATS counters (site-data) + dot-matrix "three continents" map (world-map data)
 //  2. Vision & mission split panel: image wipe synced to the core tabs component
-//  3. Core values: accessible flip cards (+ pointer tilt on fine pointers)
+//  3. Core values: plain photo cards (no script needed)
 //  4. Vertically integrated model: interactive SVG/HTML diagram (hover/focus/click/keyboard/touch, RTL aware)
 //  5. Journey timeline: chapter chips + current-chapter tracking on top of the core carousel
 // All copy comes from bilingual {en, ar} objects rendered with t(); everything re-renders on 'langchange'.
@@ -81,55 +81,6 @@ function initVisionMission() {
     const forward = isRTL() ? dx > 0 : dx < 0;
     root.__selectTab?.(forward ? 'mission' : 'vision');
   }, { passive: true });
-}
-
-/* ======================================================================
-   3. Core values: flip cards
-   ====================================================================== */
-function initValues() {
-  const cards = $$('.about-value');
-  if (!cards.length) return;
-  const tilt = hasFinePointer() && !prefersReducedMotion();
-  cards.forEach((card) => {
-    const front = $('.about-value__face--front', card);
-    const back = $('.about-value__face--back', card);
-    if (!front || !back) return;
-    const set = (flipped, focus = false) => {
-      card.classList.toggle('is-flipped', flipped);
-      front.inert = flipped;
-      back.inert = !flipped;
-      front.setAttribute('aria-hidden', String(flipped));
-      back.setAttribute('aria-hidden', String(!flipped));
-      if (focus) $(flipped ? '[data-flip="close"]' : '[data-flip="open"]', card)?.focus({ preventScroll: true });
-    };
-    set(false);
-    card.__flip = set;
-    card.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-flip]');
-      if (!btn) return;
-      set(btn.getAttribute('data-flip') === 'open', true);
-    });
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && card.classList.contains('is-flipped')) { e.preventDefault(); set(false, true); }
-    });
-    if (tilt) {
-      const move = rafThrottle((x, y) => {
-        card.style.setProperty('--rx', `${(-(y - 0.5) * 7).toFixed(2)}deg`);
-        card.style.setProperty('--ry', `${((x - 0.5) * 9).toFixed(2)}deg`);
-      });
-      card.addEventListener('pointermove', (e) => {
-        if (e.pointerType !== 'mouse') return;
-        const r = card.getBoundingClientRect();
-        card.classList.add('is-tilting');
-        move(clamp((e.clientX - r.left) / r.width, 0, 1), clamp((e.clientY - r.top) / r.height, 0, 1));
-      });
-      card.addEventListener('pointerleave', () => {
-        card.classList.remove('is-tilting');
-        card.style.setProperty('--rx', '0deg');
-        card.style.setProperty('--ry', '0deg');
-      });
-    }
-  });
 }
 
 /* ======================================================================
@@ -395,7 +346,7 @@ function initAnchors() {
 safe('stats', initStats);
 safe('map', initMap);
 safe('vision-mission', initVisionMission);
-safe('values', initValues);
+
 safe('model', initModel);
 safe('journey', initJourney);
 safe('anchors', initAnchors);

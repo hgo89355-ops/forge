@@ -29,8 +29,8 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="preload" href="assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/img/hero/eastmain-3d-wide.webp" as="image" type="image/webp" media="(min-width: 768px)" fetchpriority="high">
-  <link rel="preload" href="assets/img/hero/eastmain-3d-mobile.webp" as="image" type="image/webp" media="(max-width: 767.98px)" fetchpriority="high">
+  <link rel="preload" href="assets/img/hero/zoom/stage-0.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="assets/img/hero/video.json" as="fetch" type="application/json" crossorigin="anonymous">
   <link rel="stylesheet" href="assets/vendor/lenis/lenis.css">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/pages/home.css">
@@ -97,8 +97,6 @@
     ]
   }
   </script>
-  <!-- three.js import map (same as studio.html): the 3D hero lazy-imports the studio engine. Must precede every module script. -->
-  <script type="importmap">{"imports":{"three":"./assets/vendor/three/three.module.js","three/addons/":"./assets/vendor/three/addons/"}}</script>
   <script src="assets/vendor/gsap/gsap.min.js" defer></script>
   <script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
   <script src="assets/vendor/gsap/SplitText.min.js" defer></script>
@@ -171,61 +169,53 @@
 
   <main id="main" tabindex="-1">
     <!-- =====================================================================
-         01 · HERO: Eastmain as a detailed 3D building you can spin and zoom (assets/js/pages/home-hero.js).
-         A still rendered from the same viewer paints first; the live view crossfades in once the model is ready.
+         01 · HERO: Eastmain as one continuous camera (assets/js/pages/home-hero.js).
+         At the top, dragging turns the building through a 360 degree orbit; scrolling (the picture is pinned)
+         dives through one continuous push-in to a desk inside; the page then continues. Frames and manifest:
+         assets/img/hero/video.json, built by tools/hero_video.py. Without it, the still stages run instead
+         (home-hero-stills.js, assets/img/hero/zoom/stages.json, tools/hero_zoom.py).
          ===================================================================== -->
     <section class="hx theme-dark" id="ha-hero" aria-labelledby="hx-title" data-hx>
-      <div class="hx__stage" data-hx-stage>
-        <picture class="hx__poster" data-hx-poster>
-          <source media="(max-width: 767.98px)" type="image/webp" srcset="assets/img/hero/eastmain-3d-mobile.webp">
-          <source media="(max-width: 767.98px)" srcset="assets/img/hero/eastmain-3d-mobile.jpg">
-          <source type="image/webp" srcset="assets/img/hero/eastmain-3d-wide.webp">
-          <img src="assets/img/hero/eastmain-3d-wide.jpg" alt="Eastmain at dusk: a glass office building over lit shops and a plaza with a pool, New Cairo" data-ar-alt="إيست مين عند الغسق: مبنى مكاتب زجاجي فوق محلات مضاءة وساحة ببركة ماء، القاهرة الجديدة" width="2800" height="1080" fetchpriority="high" decoding="async">
-        </picture>
-        <div class="hx__view" data-hx-view></div>
-        <div class="hx__shade" aria-hidden="true"></div>
-        <div class="hx__pins" data-hx-pins></div>
-        <p class="hx__hint" data-hx-hint aria-hidden="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#mouse"></use></svg><span data-ar="انقر للتكبير بعجلة الفأرة">Click to zoom with the scroll wheel</span></p>
-      </div>
+      <div class="hx__pin" data-hx-pin>
+        <div class="hx__stage" data-hx-stage>
+          <div class="hx__layers" data-hx-layers>
+            <img class="hx__poster" data-hx-poster src="assets/img/hero/zoom/stage-0.webp" alt="Eastmain at dusk: a glass office building over lit shops and a plaza with a pool, New Cairo" data-ar-alt="إيست مين عند الغسق: مبنى مكاتب زجاجي فوق محلات مضاءة وساحة ببركة ماء، القاهرة الجديدة" width="2000" height="1125" fetchpriority="high" decoding="async">
+          </div>
+          <div class="hx__view" data-hx-view></div>
+          <div class="hx__shade" aria-hidden="true"></div>
+        </div>
 
-      <div class="container hx__inner">
-        <div class="hx__copy" data-hx-copy>
-          <h1 class="hx__title" id="hx-title" data-ar="إرثٌ من الثقة">A legacy of trust</h1>
-          <p class="hx__lead" data-ar="نبني في ثلاث قارات منذ عام 2001.">Building across three continents since 2001.</p>
-          <div class="hx__actions">
-            <a class="btn btn--primary" href="projects.html"><span data-ar="استكشف المشاريع">Explore projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
+        <div class="container hx__inner">
+          <div class="hx__copy" data-hx-copy>
+            <h1 class="hx__title" id="hx-title" data-ar="إرثٌ من الثقة">A legacy of trust</h1>
+            <p class="hx__lead" data-ar="نبني في ثلاث قارات منذ عام 2001.">Building across three continents since 2001.</p>
+            <div class="hx__actions">
+              <a class="btn btn--primary" href="projects.html"><span data-ar="استكشف المشاريع">Explore projects</span><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></a>
+            </div>
+          </div>
+
+          <div class="hx__dock" data-hx-dock>
+            <p class="hx__caption"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-hx-label>Eastmain, New Cairo</span></p>
+            <div class="hx__bar" role="group" aria-label="Photo controls" data-ar-aria-label="أدوات الصورة" data-hx-bar>
+              <span class="hx__turns" dir="ltr" data-hx-turns hidden>
+                <button class="hx-tool" type="button" data-hx-turn="left" aria-label="Turn left" data-ar-aria-label="تدوير لليسار" data-tooltip="Turn left" data-ar-tooltip="تدوير لليسار"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-left"></use></svg></button>
+                <button class="hx-tool" type="button" data-hx-turn="right" aria-label="Turn right" data-ar-aria-label="تدوير لليمين" data-tooltip="Turn right" data-ar-tooltip="تدوير لليمين"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#chevron-right"></use></svg></button>
+                <span class="hx__sep" aria-hidden="true"></span>
+              </span>
+              <button class="hx-tool" type="button" data-hx-zoom="in" aria-label="Zoom in" data-ar-aria-label="تكبير" data-tooltip="Zoom in" data-ar-tooltip="تكبير"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
+              <button class="hx-tool" type="button" data-hx-zoom="out" aria-label="Zoom out" data-ar-aria-label="تصغير" data-tooltip="Zoom out" data-ar-tooltip="تصغير"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#minus"></use></svg></button>
+              <button class="hx-tool" type="button" data-hx-reset aria-label="Back to the whole building" data-ar-aria-label="العودة إلى المبنى كاملًا" data-tooltip="Back to the whole building" data-ar-tooltip="العودة إلى المبنى كاملًا"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
+              <button class="hx-tool" type="button" data-hx-above hidden aria-pressed="false" aria-label="View from above" data-ar-aria-label="منظر من الأعلى" data-tooltip="View from above" data-ar-tooltip="منظر من الأعلى"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plane"></use></svg></button>
+              <span class="hx__sep" aria-hidden="true"></span>
+              <a class="hx-tool" href="studio.html?model=mixed-use" aria-label="Explore in 3D" data-ar-aria-label="استكشف بتقنية ثلاثية الأبعاد" data-tooltip="Explore in 3D" data-ar-tooltip="استكشف بتقنية ثلاثية الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></a>
+            </div>
           </div>
         </div>
 
-        <div class="hx__dock" data-hx-dock>
-          <p class="hx__caption"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#map-pin"></use></svg><span data-ar="إيست مين، القاهرة الجديدة">Eastmain, New Cairo</span></p>
-          <div class="hx__bar" role="group" aria-label="3D view controls" data-ar-aria-label="أدوات العرض ثلاثي الأبعاد" data-hx-bar>
-            <button class="hx-tool" type="button" data-hx-zoom="in" aria-label="Zoom in" data-ar-aria-label="تكبير" data-tooltip="Zoom in" data-ar-tooltip="تكبير"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
-            <button class="hx-tool" type="button" data-hx-zoom="out" aria-label="Zoom out" data-ar-aria-label="تصغير" data-tooltip="Zoom out" data-ar-tooltip="تصغير"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#minus"></use></svg></button>
-            <button class="hx-tool" type="button" data-hx-reset aria-label="Reset view" data-ar-aria-label="إعادة ضبط العرض" data-tooltip="Reset view" data-ar-tooltip="إعادة ضبط العرض"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-            <button class="hx-tool" type="button" data-hx-full hidden aria-pressed="false" aria-label="Full screen" data-ar-aria-label="ملء الشاشة" data-tooltip="Full screen" data-ar-tooltip="ملء الشاشة"><svg class="icon hx-tool__max" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#maximize"></use></svg><svg class="icon hx-tool__min" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#minimize"></use></svg></button>
-            <span class="hx__sep" aria-hidden="true"></span>
-            <a class="hx-tool" href="studio.html?model=mixed-use" aria-label="Explore in 3D" data-ar-aria-label="استكشف بتقنية ثلاثية الأبعاد" data-tooltip="Explore in 3D" data-ar-tooltip="استكشف بتقنية ثلاثية الأبعاد"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg></a>
-          </div>
-          <a class="btn btn--light btn--sm hx__fallback" href="studio.html?model=mixed-use" data-hx-fallback hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-3d"></use></svg><span data-ar="استكشف بتقنية ثلاثية الأبعاد">Explore in 3D</span></a>
-        </div>
+        <ol class="hx__depth" data-hx-depth aria-label="Zoom levels" data-ar-aria-label="مستويات التكبير" hidden></ol>
+        <div class="hx__progress" data-hx-progress hidden aria-hidden="true"><span></span></div>
       </div>
-
-      <div class="hx-card" id="hx-card" data-hx-card hidden>
-        <div class="hx-card__head">
-          <p class="hx-card__count" data-hx-card-count></p>
-          <button class="hx-card__close" type="button" data-hx-card-close aria-label="Back to full view" data-ar-aria-label="العودة إلى العرض الكامل"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#x"></use></svg></button>
-        </div>
-        <div class="hx-card__body" aria-live="polite">
-          <p class="hx-card__title" data-hx-card-title></p>
-          <p class="hx-card__text" data-hx-card-text></p>
-        </div>
-        <div class="hx-card__nav">
-          <button class="hx-card__step" type="button" data-hx-card-step="-1" aria-label="Previous point" data-ar-aria-label="النقطة السابقة"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-left"></use></svg></button>
-          <button class="hx-card__step" type="button" data-hx-card-step="1" aria-label="Next point" data-ar-aria-label="النقطة التالية"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-right"></use></svg></button>
-        </div>
-      </div>
-      <p class="visually-hidden" id="hx-help" data-ar="اسحب للتدوير. مفاتيح الأسهم للتدوير، و + و - للتكبير والتصغير، و 0 لإعادة الضبط.">Drag to rotate. Arrow keys rotate. Plus and minus zoom. 0 resets.</p>
+      <p class="visually-hidden" id="hx-help" data-ar="اسحب جانبيًا أو استخدم الأسهم للدوران حول المبنى، ومرّر الصفحة للدخول إليه. + و - للتقدم أو الرجوع، و 0 للعودة إلى المنظر الأمامي.">Drag sideways, or use the arrow keys, to turn round the building. Scroll to go inside. Plus and minus step in or out, 0 goes back to the front.</p>
       <p class="visually-hidden" aria-live="polite" data-hx-live></p>
     </section>
 
@@ -453,7 +443,7 @@
           <li class="ag-panel" data-sector="education">
             <a class="ag-panel__link" href="projects.html?category=education">
               <span class="ag-panel__frame">
-                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp 480w, assets/img/campus.webp 1499w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/campus.jpg" srcset="assets/img/thumbs/campus.jpg 480w, assets/img/campus.jpg 1499w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="1499" height="1295" loading="lazy" decoding="async" draggable="false" style="--pos:50% 45%"></picture></span>
+                <span class="ag-panel__media"><picture><source type="image/webp" srcset="assets/img/thumbs/tbc-schools-group-12.webp 480w, assets/img/tbc-schools-group-12.webp 1022w" sizes="(max-width: 640px) 100vw, 860px"><img src="assets/img/tbc-schools-group-12.jpg" srcset="assets/img/thumbs/tbc-schools-group-12.jpg 480w, assets/img/tbc-schools-group-12.jpg 1022w" sizes="(max-width: 640px) 100vw, 860px" alt="" width="1022" height="640" loading="lazy" decoding="async" draggable="false" style="--pos:50% 50%"></picture></span>
                 <span class="ag-panel__overlay" aria-hidden="true"></span>
               </span>
               <span class="ag-panel__tag" aria-hidden="true" data-ar="التعليم">Education</span>
@@ -651,13 +641,13 @@
             </div>
 
             <div class="carousel__slide hb-slide" role="group" aria-roledescription="slide" aria-label="4 of 14" data-ar-aria-label="4 من 14">
-              <!-- PROJECTS: innovation-campus (featured) · descriptive name. TODO(content): Project name is descriptive; client to supply real name, location, use and status (sign in render reads “SIC”). -->
-              <a class="project-card hb-card" href="projects.html#innovation-campus">
-                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp 480w, assets/img/campus.webp 1499w" sizes="(min-width: 1800px) calc(30vw * 1.45), (min-width: 1024px) calc(37vw * 1.45), (min-width: 640px) calc(54vw * 1.45), calc(84vw * 1.45)"><img src="assets/img/thumbs/campus.jpg" srcset="assets/img/thumbs/campus.jpg 480w, assets/img/campus.jpg 1499w" sizes="(min-width: 1800px) calc(30vw * 1.45), (min-width: 1024px) calc(37vw * 1.45), (min-width: 640px) calc(54vw * 1.45), calc(84vw * 1.45)" alt="Innovation Campus. Ring buildings, a central tower and connecting bridges." data-ar-alt="حرم الابتكار. مبانٍ حلقية وبرج مركزي وجسور رابطة." width="1499" height="1295" loading="lazy" decoding="async" draggable="false" style="--pos:50% 45%"></picture></div>
+              <!-- PROJECTS: stc-headquarters (featured) -->
+              <a class="project-card hb-card" href="projects.html#stc-headquarters">
+                <div class="project-card__media"><picture><source type="image/webp" srcset="assets/img/thumbs/campus.webp 480w, assets/img/campus.webp 1499w" sizes="(min-width: 1800px) calc(30vw * 1.45), (min-width: 1024px) calc(37vw * 1.45), (min-width: 640px) calc(54vw * 1.45), calc(84vw * 1.45)"><img src="assets/img/thumbs/campus.jpg" srcset="assets/img/thumbs/campus.jpg 480w, assets/img/campus.jpg 1499w" sizes="(min-width: 1800px) calc(30vw * 1.45), (min-width: 1024px) calc(37vw * 1.45), (min-width: 640px) calc(54vw * 1.45), calc(84vw * 1.45)" alt="STC Headquarters. Horseshoe building, sail tower and a sky bridge between two pavilions." data-ar-alt="المقر الرئيسي لشركة stc. مبنى على شكل حدوة وبرج بشراع وجسر معلّق بين جناحين." width="1499" height="1295" loading="lazy" decoding="async" draggable="false" style="--pos:50% 45%"></picture></div>
                 <span class="project-card__arrow" aria-hidden="true"><svg class="icon icon--dir" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow-up-right"></use></svg></span>
                 <div class="project-card__body">
-                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="حرم تعليمي">Campus</span></div>
-                  <h3 class="project-card__title" data-ar="حرم الابتكار">Innovation Campus</h3>
+                  <div class="project-card__meta"><span class="badge badge--glass" data-ar="مقر رئيسي لشركة">Corporate headquarters</span></div>
+                  <h3 class="project-card__title" data-ar="المقر الرئيسي لشركة stc">STC Headquarters</h3>
                 </div>
               </a>
             </div>

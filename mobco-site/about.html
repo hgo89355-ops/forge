@@ -286,117 +286,75 @@
         <!-- Values: static for SEO / no-JS; about.js adds the flip. Each card shows a portfolio photo. -->
         <ul class="about-values__grid" role="list" data-about-values data-reveal-stagger="90">
           <li class="about-value about-value--core" data-value="safety">
-            <div class="about-value__inner">
-              <div class="about-value__face about-value__face--front">
-                <span class="about-value__photo" aria-hidden="true">
+            <span class="about-value__photo" aria-hidden="true">
                   <picture>
                     <source type="image/webp" srcset="assets/img/thumbs/park-inn-olaya-hotel.webp 480w, assets/img/park-inn-olaya-hotel.webp 1022w" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw">
                     <img src="assets/img/park-inn-olaya-hotel.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos:50% 45%">
                   </picture>
                 </span>
-                <h3 class="about-value__title" id="val-safety" data-ar="السلامة">Safety</h3>
-                <button class="about-value__toggle" type="button" data-flip="open" aria-label="More about Safety" data-ar-aria-label="المزيد عن السلامة"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
-              </div>
-              <div class="about-value__face about-value__face--back">
-                <p class="about-value__back-title" data-ar="السلامة">Safety</p>
-                <p class="about-value__text" data-ar="نحمي فرقنا وشركاءنا والمجتمع في كل موقع نعمل فيه.">We protect our people, our partners and the public on every site.</p>
-                <button class="about-value__toggle" type="button" data-flip="close" aria-label="Back to Safety" data-ar-aria-label="العودة إلى السلامة"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-              </div>
+            <div class="about-value__body">
+              <h3 class="about-value__title" id="val-safety" data-ar="السلامة">Safety</h3>
+              <p class="about-value__text" data-ar="نحمي فرقنا وشركاءنا والمجتمع في كل موقع نعمل فيه.">We protect our people, our partners and the public on every site.</p>
             </div>
           </li>
           <li class="about-value about-value--core" data-value="integrity">
-            <div class="about-value__inner">
-              <div class="about-value__face about-value__face--front">
-                <span class="about-value__photo" aria-hidden="true">
+            <span class="about-value__photo" aria-hidden="true">
                   <picture>
                     <source type="image/webp" srcset="assets/img/thumbs/bank-albilad-head-office.webp 480w, assets/img/bank-albilad-head-office.webp 1022w" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw">
                     <img src="assets/img/bank-albilad-head-office.jpg" alt="" width="1022" height="688" loading="lazy" decoding="async" style="--pos:45% 40%">
                   </picture>
                 </span>
-                <h3 class="about-value__title" id="val-integrity" data-ar="النزاهة">Integrity</h3>
-                <button class="about-value__toggle" type="button" data-flip="open" aria-label="More about Integrity" data-ar-aria-label="المزيد عن النزاهة"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
-              </div>
-              <div class="about-value__face about-value__face--back">
-                <p class="about-value__back-title" data-ar="النزاهة">Integrity</p>
-                <p class="about-value__text" data-ar="النزاهة والاتساق هما بصمة خدماتنا. نفي بما نلتزم به.">Integrity and consistency are the signatures of our service. We deliver what we commit to.</p>
-                <button class="about-value__toggle" type="button" data-flip="close" aria-label="Back to Integrity" data-ar-aria-label="العودة إلى النزاهة"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-              </div>
+            <div class="about-value__body">
+              <h3 class="about-value__title" id="val-integrity" data-ar="النزاهة">Integrity</h3>
+              <p class="about-value__text" data-ar="النزاهة والاتساق هما بصمة خدماتنا. نفي بما نلتزم به.">Integrity and consistency are the signatures of our service. We deliver what we commit to.</p>
             </div>
           </li>
           <li class="about-value about-value--core" data-value="excellence">
-            <div class="about-value__inner">
-              <div class="about-value__face about-value__face--front">
-                <span class="about-value__photo" aria-hidden="true">
+            <span class="about-value__photo" aria-hidden="true">
                   <picture>
                     <source type="image/webp" srcset="assets/img/thumbs/raffles-hotel-residence.webp 480w, assets/img/raffles-hotel-residence.webp 1022w" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw">
                     <img src="assets/img/raffles-hotel-residence.jpg" alt="" width="1022" height="665" loading="lazy" decoding="async" style="--pos:50% 40%">
                   </picture>
                 </span>
-                <h3 class="about-value__title" id="val-excellence" data-ar="التميّز">Excellence</h3>
-                <button class="about-value__toggle" type="button" data-flip="open" aria-label="More about Excellence" data-ar-aria-label="المزيد عن التميّز"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
-              </div>
-              <div class="about-value__face about-value__face--back">
-                <p class="about-value__back-title" data-ar="التميّز">Excellence</p>
-                <p class="about-value__text" data-ar="نسلّم مشاريعنا في مواعيدها وضمن ميزانياتها وبأعلى معايير الجودة.">Projects delivered on time, within budget and to the highest quality standards.</p>
-                <button class="about-value__toggle" type="button" data-flip="close" aria-label="Back to Excellence" data-ar-aria-label="العودة إلى التميّز"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-              </div>
+            <div class="about-value__body">
+              <h3 class="about-value__title" id="val-excellence" data-ar="التميّز">Excellence</h3>
+              <p class="about-value__text" data-ar="نسلّم مشاريعنا في مواعيدها وضمن ميزانياتها وبأعلى معايير الجودة.">Projects delivered on time, within budget and to the highest quality standards.</p>
             </div>
           </li>
           <li class="about-value" data-value="creative">
-            <div class="about-value__inner">
-              <div class="about-value__face about-value__face--front">
-                <span class="about-value__photo" aria-hidden="true">
+            <span class="about-value__photo" aria-hidden="true">
                   <picture>
                     <source type="image/webp" srcset="assets/img/thumbs/as-safiyyah-museum-park.webp 480w, assets/img/as-safiyyah-museum-park.webp 1022w" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw">
                     <img src="assets/img/as-safiyyah-museum-park.jpg" alt="" width="1022" height="689" loading="lazy" decoding="async" style="--pos:55% 50%">
                   </picture>
                 </span>
-                <h3 class="about-value__title" id="val-creative" data-ar="الإبداع">Creativity</h3>
-                <button class="about-value__toggle" type="button" data-flip="open" aria-label="More about Creativity" data-ar-aria-label="المزيد عن الإبداع"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
-              </div>
-              <div class="about-value__face about-value__face--back">
-                <p class="about-value__back-title" data-ar="الإبداع">Creativity</p>
-                <p class="about-value__text" data-ar="نتعامل مع كل مشروع بتفكيرٍ متجدّد منذ مرحلة التخطيط.">We bring fresh thinking to every project, starting at the planning stage.</p>
-                <button class="about-value__toggle" type="button" data-flip="close" aria-label="Back to Creativity" data-ar-aria-label="العودة إلى الإبداع"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-              </div>
+            <div class="about-value__body">
+              <h3 class="about-value__title" id="val-creative" data-ar="الإبداع">Creativity</h3>
+              <p class="about-value__text" data-ar="نتعامل مع كل مشروع بتفكيرٍ متجدّد منذ مرحلة التخطيط.">We bring fresh thinking to every project, starting at the planning stage.</p>
             </div>
           </li>
           <li class="about-value" data-value="innovative">
-            <div class="about-value__inner">
-              <div class="about-value__face about-value__face--front">
-                <span class="about-value__photo" aria-hidden="true">
+            <span class="about-value__photo" aria-hidden="true">
                   <picture>
                     <source type="image/webp" srcset="assets/img/thumbs/taif-municipality-building.webp 480w, assets/img/taif-municipality-building.webp 1022w" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw">
                     <img src="assets/img/taif-municipality-building.jpg" alt="" width="1022" height="689" loading="lazy" decoding="async" style="--pos:50% 45%">
                   </picture>
                 </span>
-                <h3 class="about-value__title" id="val-innovative" data-ar="الابتكار">Innovation</h3>
-                <button class="about-value__toggle" type="button" data-flip="open" aria-label="More about Innovation" data-ar-aria-label="المزيد عن الابتكار"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
-              </div>
-              <div class="about-value__face about-value__face--back">
-                <p class="about-value__back-title" data-ar="الابتكار">Innovation</p>
-                <p class="about-value__text" data-ar="نعتمد أحدث الأساليب المُجرَّبة ونتبنّى الأفكار المبتكرة لنتجاوز ما حققناه.">Proven, state-of-the-art techniques and new ideas help us surpass our current achievements.</p>
-                <button class="about-value__toggle" type="button" data-flip="close" aria-label="Back to Innovation" data-ar-aria-label="العودة إلى الابتكار"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-              </div>
+            <div class="about-value__body">
+              <h3 class="about-value__title" id="val-innovative" data-ar="الابتكار">Innovation</h3>
+              <p class="about-value__text" data-ar="نعتمد أحدث الأساليب المُجرَّبة ونتبنّى الأفكار المبتكرة لنتجاوز ما حققناه.">Proven, state-of-the-art techniques and new ideas help us surpass our current achievements.</p>
             </div>
           </li>
           <li class="about-value" data-value="people">
-            <div class="about-value__inner">
-              <div class="about-value__face about-value__face--front">
-                <span class="about-value__photo" aria-hidden="true">
+            <span class="about-value__photo" aria-hidden="true">
                   <picture>
                     <source type="image/webp" srcset="assets/img/thumbs/sub-real-estate-office.webp 480w, assets/img/sub-real-estate-office.webp 1248w" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw">
                     <img src="assets/img/sub-real-estate-office.jpg" alt="" width="1248" height="964" loading="lazy" decoding="async" style="--pos:50% 50%">
                   </picture>
                 </span>
-                <h3 class="about-value__title" id="val-people" data-ar="فريقنا">Our people</h3>
-                <button class="about-value__toggle" type="button" data-flip="open" aria-label="More about our people" data-ar-aria-label="المزيد عن فريقنا"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#plus"></use></svg></button>
-              </div>
-              <div class="about-value__face about-value__face--back">
-                <p class="about-value__back-title" data-ar="فريقنا">Our people</p>
-                <p class="about-value__text" data-ar="فرصٌ فردية ورضًا شخصي وتحدياتٌ مُجزية لجميع أعضاء المجموعة.">Individual opportunity, personal satisfaction and rewarding challenges for all members of the firm.</p>
-                <button class="about-value__toggle" type="button" data-flip="close" aria-label="Back to our people" data-ar-aria-label="العودة إلى فريقنا"><svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#rotate-ccw"></use></svg></button>
-              </div>
+            <div class="about-value__body">
+              <h3 class="about-value__title" id="val-people" data-ar="فريقنا">Our people</h3>
+              <p class="about-value__text" data-ar="فرصٌ فردية ورضًا شخصي وتحدياتٌ مُجزية لجميع أعضاء المجموعة.">Individual opportunity, personal satisfaction and rewarding challenges for all members of the firm.</p>
             </div>
           </li>
         </ul>

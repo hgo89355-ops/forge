@@ -63,7 +63,7 @@ const SCENES = [
   { project: 'victoria-101', base: 'victoria-101', pos: '50% 46%',
     words: { en: ['Three', '*continents'], ar: ['ثلاث', '*قارات'] },
     kb: ['scale(1.06) translate3d(-1%,1%,0)', 'scale(1.2) translate3d(1.5%,-1%,0)'] },
-  { project: 'innovation-campus', base: 'campus', pos: '50% 38%',
+  { project: 'stc-headquarters', base: 'campus', pos: '50% 38%',
     words: { en: ['Since', '*2001'], ar: ['منذ', '*2001'] },
     kb: ['scale(1.2) translate3d(0,2%,0)', 'scale(1.05) translate3d(0,-1%,0)'] },
   { project: 'lagoon-villa-community', base: 'aerial-panorama', pos: '50% 50%', gallery: 3, pano: true,
@@ -352,7 +352,7 @@ const CROP_AR = {
   'eastmain:1': 0.8, 'eastmain:2': 1,
   'victoria-101:1': 0.78, 'victoria-101:2': 1.6,
   'lagoon-villa-community:2': 1,
-  'innovation-campus:1': 0.8, 'innovation-campus:2': 1.6,
+  'stc-headquarters:1': 0.8, 'stc-headquarters:2': 1.6,
   'classical-landmark:1': 1.4, 'classical-landmark:2': 0.8,
 };
 const natAR = (base) => (IMAGES[base] ? IMAGES[base].w / IMAGES[base].h : 1.4);

@@ -486,8 +486,10 @@ export function createKit(THREE, ctx = {}) {
   function trees(parent, spots, { seed = 5, palette = [0x5f7d43, 0x6d8a4a, 0x4f6f3e, 0x7a9152, 0x587a48], name = 'trees' } = {}) {
     const T = treeParts();
     const rnd = makeRng(seed);
+    const jit = makeRng(seed + 977); // separate stream: the authored variety (crown shape, colour) is unchanged
     const trunkM = [], crownM = [[], [], []], crownC = [[], [], []];
-    for (const [x, z, h = 8, spread = 1] of spots) {
+    for (const [x, z, h0 = 8, spread = 1] of spots) {
+      const h = h0 * (0.9 + jit() * 0.2); // no two trees quite the same height
       const ry = rnd() * 6.28;
       const th = h * 0.42;
       trunkM.push(mat4(x, 0, z, ry, h * 0.09, th, h * 0.09));
@@ -496,6 +498,7 @@ export function createKit(THREE, ctx = {}) {
       crownM[v].push(mat4(x, th * 0.7, z, ry, w, h * 0.66, w));
       const c = new THREE.Color(palette[Math.floor(rnd() * palette.length)]);
       c.offsetHSL((rnd() - 0.5) * 0.03, (rnd() - 0.5) * 0.08, (rnd() - 0.5) * 0.06);
+      c.offsetHSL((jit() - 0.5) * 0.02, 0, (jit() - 0.45) * 0.05);
       crownC[v].push(c);
     }
     const out = [inst(`${name}-trunks`, T.trunk, T.trunkMat, trunkM)];
@@ -555,15 +558,23 @@ export function createKit(THREE, ctx = {}) {
   function palms(parent, spots, { seed = 9, name = 'palms', y = 0 } = {}) {
     const T = palmParts();
     const rnd = makeRng(seed);
-    const tm = [], cm = [];
-    for (const [x, z, h = 7] of spots) {
+    const jit = makeRng(seed + 977);
+    const tm = [], cm = [], fc = [], tc = [];
+    for (const [x, z, h0 = 7] of spots) {
+      const h = h0 * (0.93 + jit() * 0.14);
+      const girth = 0.92 + jit() * 0.16;
       const ry = rnd() * 6.28;
-      tm.push(mat4(x, y, z, ry, 1, h, 1));
-      // trunk top after the lean (x offset 0.18 * h^2 in unit space -> 0.18 * 1 at the top, scaled by 1)
-      const off = 0.18;
-      cm.push(mat4(x + Math.cos(ry) * off, y + h, z - Math.sin(ry) * off, ry + rnd(), 1 + h * 0.03));
+      tm.push(mat4(x, y, z, ry, girth, h, girth));
+      // trunk top after the lean (x offset 0.18 * h^2 in unit space -> 0.18 * 1 at the top, scaled by girth)
+      const off = 0.18 * girth;
+      cm.push(mat4(x + Math.cos(ry) * off, y + h, z - Math.sin(ry) * off, ry + rnd(), (1 + h * 0.03) * (0.92 + jit() * 0.16)));
+      // fronds: from fresh green to sun-bleached olive; trunks a little lighter or greyer
+      const k = 0.9 + jit() * 0.2, dry = jit();
+      fc.push(new THREE.Color(k * (1 + 0.1 * dry), k * (1 + 0.02 * dry), k * (1 - 0.12 * dry)));
+      const tk = 0.92 + jit() * 0.16;
+      tc.push(new THREE.Color(tk, tk * 0.99, tk * 0.97));
     }
-    const out = [inst(`${name}-trunks`, T.trunk, T.trunkMat, tm), inst(`${name}-crowns`, T.crown, T.frondMat, cm)];
+    const out = [inst(`${name}-trunks`, T.trunk, T.trunkMat, tm, { colors: tc }), inst(`${name}-crowns`, T.crown, T.frondMat, cm, { colors: fc })];
     out.forEach((o) => parent.add(o));
     return out;
   }
