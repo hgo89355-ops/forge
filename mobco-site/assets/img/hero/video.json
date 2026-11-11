@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "generated": "2026-11-11T21:40:26",
+  "note": "written by tools/hero_video.py; dive.chapters may be edited by hand (kept), the rest is rewritten",
+  "placeholder": {
+    "orbit": false,
+    "dive": false
+  },
+  "sets": {
+    "desktop": {
+      "prefix": "f-",
+      "ext": "avif",
+      "size": [
+        1920,
+        1080
+      ],
+      "quality": 55
+    },
+    "mobile": {
+      "prefix": "m-",
+      "ext": "avif",
+      "size": [
+        720,
+        960
+      ],
+      "quality": 55,
+      "use": "portrait viewports",
+      "crop": {
+        "x": 0.2891,
+        "y": 0,
+        "w": 0.4219,
+        "h": 1
+      }
+    }
+  },
+  "poster": {
+    "desktop": "orbit/f-000.avif",
+    "mobile": "orbit/m-000.avif"
+  },
+  "progressive": [
+    8,
+    4,
+    2,
+    1
+  ],
+  "orbit": {
+    "dir": "orbit/",
+    "count": 360,
+    "loop": true,
+    "fps": 14.281,
+    "degPerFrame": 1.0,
+    "turn": -1,
+    "shift": 0.00238,
+    "junctions": [
+      {
+        "between": "orbit-5.mp4 > orbit-1.mp4",
+        "jumpBefore": 4.68,
+        "inliers": 2436,
+        "aligned": true,
+        "scale": 0.9998,
+        "shiftPx": [
+          0.4,
+          0.4
+        ],
+        "jumpAfter": 4.2
+      },
+      {
+        "between": "orbit-1.mp4 > orbit-2.mp4",
+        "jumpBefore": 10.93,
+        "inliers": 1859,
+        "aligned": true,
+        "scale": 0.9979,
+        "shiftPx": [
+          -1.0,
+          2.4
+        ],
+        "jumpAfter": 7.12
+      },
+      {
+        "between": "orbit-2.mp4 > orbit-3.mp4",
+        "jumpBefore": 3.97,
+        "inliers": 2499,
+        "aligned": true,
+        "scale": 1.0003,
+        "shiftPx": [
+          -0.4,
+          -0.1
+        ],
+        "jumpAfter": 3.71
+      },
+      {
+        "between": "orbit-3.mp4 > orbit-4.mp4",
+        "jumpBefore": 5.31,
+        "inliers": 2186,
+        "aligned": true,
+        "scale": 1.0002,
+        "shiftPx": [
+          -0.0,
+          1.0
+        ],
+        "jumpAfter": 4.33
+      },
+      {
+        "between": "orbit-4.mp4 > orbit-5.mp4",
+        "jumpBefore": 11.27,
+        "inliers": 1790,
+        "aligned": true,
+        "scale": 1.0009,
+        "shiftPx": [
+          0.9,
+          -0.5
+        ],
+        "jumpAfter": 8.06
+      }
+    ],
+    "cuts": [],
+    "bytes": {
+      "desktop": 45997894,
+      "mobile": 16072719
+    }
+  },
+  "dive": {
+    "dir": "dive/",
+    "count": 180,
+    "loop": false,
+    "fps": 11.967,
+    "chapters": [
+      {
+        "at": 0,
+        "label": {
+          "en": "Eastmain, New Cairo",
+          "ar": "إيست مين، القاهرة الجديدة"
+        }
+      },
+      {
+        "at": 0.3,
+        "label": {
+          "en": "Glass corner and shops",
+          "ar": "الركن الزجاجي والمحلات"
+        }
+      },
+      {
+        "at": 0.55,
+        "label": {
+          "en": "Through the glass",
+          "ar": "عبر الزجاج"
+        }
+      },
+      {
+        "at": 0.75,
+        "label": {
+          "en": "A desk by the window",
+          "ar": "مكتب بجوار النافذة"
+        }
+      }
+    ],
+    "handover": 0.8140000104904175,
+    "cuts": [],
+    "bytes": {
+      "desktop": 17226981,
+      "mobile": 6579463
+    }
+  },
+  "bytes": {
+    "desktop": 63224875,
+    "mobile": 22652182
+  },
+  "source": {
+    "orbit": [
+      "orbit-1.mp4",
+      "orbit-2.mp4",
+      "orbit-3.mp4",
+      "orbit-4.mp4",
+      "orbit-5.mp4"
+    ],
+    "dive": "dive.mp4"
+  }
+}
