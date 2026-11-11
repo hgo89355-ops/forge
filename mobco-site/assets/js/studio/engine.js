@@ -113,6 +113,11 @@ export function createStudio(container, options = {}) {
   const dprCap = Math.min(lowPower ? 1 : mobile ? 1.5 : 2, Number.isFinite(opts.maxDpr) ? opts.maxDpr : 2);
   const hq = new URLSearchParams(location.search).get('hq') === '1'; // QA: full-resolution stills even on a CPU rasteriser
   let dprScale = lowPower && !hq ? 0.6 : 1; // adaptive (lowered when frames are slow)
+  // while the camera moves the scene renders at a lighter resolution (never under 1 device pixel per CSS pixel),
+  // then once more at full sharpness when it stops: turning stays fluid on laptops with retina screens
+  const MOTION_SCALE = 0.65;
+  let motionScale = 1, moveUntil = 0, userMoving = false;
+  let ambientAcc = 0;          // ambient model animation (water, lights) renders at 30 fps when nothing else moves
 
   /* -------------------------------------------------------------- events */
   const listeners = new Map();
@@ -293,8 +298,11 @@ export function createStudio(container, options = {}) {
   });
   controls.addEventListener('start', () => {
     if (tween && !tween.locked) tween = null;
+    userMoving = true;
     emit('interact', {});
   });
+  // the camera keeps easing (damping) for a moment after the visitor lets go
+  controls.addEventListener('end', () => { userMoving = false; moveUntil = now() + 450; });
 
   function clampTarget() {
     if (!model) return;
@@ -347,7 +355,8 @@ export function createStudio(container, options = {}) {
     const rect = container.getBoundingClientRect();
     width = Math.max(1, Math.round(rect.width));
     height = Math.max(1, Math.round(rect.height));
-    const dpr = Math.min(window.devicePixelRatio || 1, dprCap) * dprScale;
+    const full = Math.min(window.devicePixelRatio || 1, dprCap) * dprScale;
+    const dpr = motionScale < 1 ? Math.max(Math.min(1, full), full * motionScale) : full;
     renderer.setPixelRatio(Math.max(0.5, dpr));
     renderer.setSize(width, height, false);
     bloom?.setSize(width * renderer.getPixelRatio(), height * renderer.getPixelRatio());
@@ -434,7 +443,15 @@ export function createStudio(container, options = {}) {
     if (tween) { stepTween(t); dirty = true; }
     if (revealTween) { stepReveal(t); dirty = true; }
     if (controls.enableDamping) controls.dampingFactor = 1 - Math.pow(1 - DAMP_60, Math.max(0.25, dt * 60));
-    if (controls.update(dt)) dirty = true;
+    const camMoved = controls.update(dt);
+    if (camMoved) dirty = true;
+    if (tween) moveUntil = t + 160;
+    if (!lowPower && !hq) {
+      // only the visitor's own turning, zooming and the view tweens count: the slow auto-rotate keeps full sharpness
+      const want = userMoving || t < moveUntil ? MOTION_SCALE : 1;
+      // (dropping only helps above about 1 device pixel per CSS pixel; going back to full always applies)
+      if (want !== motionScale && (want === 1 || Math.min(window.devicePixelRatio || 1, dprCap) * dprScale > 1.15)) { motionScale = want; resize(); dirty = true; }
+    }
     if (keepOut()) dirty = true;
 
     // explode easing
@@ -454,9 +471,13 @@ export function createStudio(container, options = {}) {
       dirty = true;
     }
     if (model?.update && (!lowPower || dirty)) {
-      // a model's update() may return true when something that casts a shadow moved (refreshes the shadow map)
-      try { if (model.update(dt, elapsed) === true) shadowsChanged(); } catch (e) { console.warn('[studio] model update failed', e); model.update = null; }
-      dirty = true;
+      ambientAcc += dt;
+      if (dirty || ambientAcc >= 1 / 30) {
+        // a model's update() may return true when something that casts a shadow moved (refreshes the shadow map)
+        try { if (model.update(ambientAcc, elapsed) === true) shadowsChanged(); } catch (e) { console.warn('[studio] model update failed', e); model.update = null; }
+        ambientAcc = 0;
+        dirty = true;
+      }
     }
     if (!dirty) return;
     needsRender = false;
@@ -1296,6 +1317,7 @@ export function createStudio(container, options = {}) {
       id: state.id, mode: state.mode, explode: state.explodeTarget, section: state.section, hour: state.hour,
       autoRotate: state.autoRotate, hotspots: state.hotspots, selected: state.selected, view: state.view,
       loading: state.loading, floors: model ? model.floors.length : 0,
+      render: { motionScale, dprScale, pixelRatio: renderer.getPixelRatio() },
     };
   }
   function setAutoRotate(on) {

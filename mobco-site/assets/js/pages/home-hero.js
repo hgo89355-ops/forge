@@ -29,7 +29,7 @@ import { whenLoaded } from '../core/preloader.js';
 import { scrollTo as scrollPage } from '../core/motion.js';
 
 const BASE = 'assets/img/hero/';
-const OMEGA = 8.5;            // dive spring (per second, critically damped)
+const OMEGA = 12;             // dive spring (per second, critically damped): follows the scroll closely
 const HOLD = [0.012, 0.06];   // share of the scroll held at the top (orbit) and after the last dive frame
 const EASE = 0.4;             // the dive eases in and out over the scroll (0: linear)
 const IDLE_DEG = 1;           // idle turn, degrees per second
@@ -41,6 +41,8 @@ const HANDOVER = 3;           // dive frames over which the orbit's front frame 
 // decoded frames kept (both sequences); fewer on touch devices, which crop the 16:9 frames and have less memory
 const CACHE_PX = 56 * 1280 * 720; // decoded pixels kept (both sequences): 56 frames at 1280 x 720, fewer when larger
 const FETCHES = 6, DECODES = 4;
+const BG_FETCHES = 2;         // frames far from the view load two at a time, and pause while the visitor scrolls or drags
+const BG_DELAY = 1200;        // ms after the page has loaded before those background frames start
 
 const S = {
   view: { en: 'Eastmain, New Cairo. Drag sideways to turn round the building, scroll to go inside.', ar: 'إيست مين، القاهرة الجديدة. اسحب جانبيًا للدوران حول المبنى، ومرّر الصفحة للدخول إليه.' },
@@ -133,6 +135,11 @@ function setupVideo(root, man) {
   let focus = O;              // the sequence in use
   let loadAll = !reduced;     // reduced motion and QA only load key frames
   let started = false;        // nothing loads before the page itself has
+  let bgAt = Infinity;        // background loading starts at this time (performance.now())
+  let interactAt = -1e9;      // last scroll, wheel, drag or key in the hero
+  let bgTimer = 0;
+  const busy = () => performance.now() < Math.max(bgAt, interactAt + 700);
+  const touch = () => { interactAt = performance.now(); };
   const wanted = [];          // key frames asked for in reduced motion
 
   // slow or data saving connections stop after every 2nd frame (the blend between frames covers the gaps)
@@ -166,10 +173,13 @@ function setupVideo(root, man) {
     if (!loadAll) return null;
     const first = focus, second = focus === O ? D : O;
     const pa = plan[first.name], pb = plan[second.name];
-    // the sequence in use: coarse pass, then the other one's coarse pass, then the rest of both
+    // the sequence in use: its first coarse pass straight away; the other's coarse pass and every finer pass of both
+    // load in the background (a third value of true)
+    const firstPass = (q, arr) => arr.slice(0, Math.ceil(q.n / (man.progressive?.[0] || 4)));
+    for (const i of firstPass(first, pa)) if (cand(first, i)) return [first, i, false];
     const coarse = (q, arr) => arr.slice(0, Math.ceil(q.n / 4));
-    for (const [q, arr] of [[first, coarse(first, pa)], [second, coarse(second, pb)], [first, pa], [second, pb]]) {
-      for (const i of arr) if (cand(q, i)) return [q, i];
+    for (const [q, arr] of [[second, coarse(second, pb)], [first, pa], [second, pb]]) {
+      for (const i of arr) if (cand(q, i)) return [q, i, true];
     }
     return null;
   }
@@ -177,7 +187,12 @@ function setupVideo(root, man) {
     while (started && fetchesOn < FETCHES && set) {
       const nx = nextFetch();
       if (!nx) return;
-      const [q, i] = nx;
+      const [q, i, bg] = nx;
+      if (bg && (fetchesOn >= BG_FETCHES || busy())) {
+        // try again once the visitor has paused
+        if (!bgTimer) bgTimer = setTimeout(() => { bgTimer = 0; pumpFetch(); }, Math.max(150, Math.max(bgAt, interactAt + 700) - performance.now() + 20));
+        return;
+      }
       const g = gen;
       q.fetching.add(i);
       fetchesOn++;
@@ -356,7 +371,8 @@ function setupVideo(root, man) {
     for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2; if (easeU(m) < v) lo = m; else hi = m; }
     return f <= 0 ? 0 : HOLD[0] + span * (lo + hi) / 2;
   }
-  const runPx = () => Math.max(0, root.offsetHeight - pin.offsetHeight);
+  let runCache = -1;           // reset on resize; reading layout every frame forces style work
+  const runPx = () => (runCache >= 0 ? runCache : (runCache = Math.max(0, root.offsetHeight - pin.offsetHeight)));
   function scrollP() {
     const run = runPx();
     return run > 1 ? clamp(-root.getBoundingClientRect().top / run, 0, 1) : 0;
@@ -404,7 +420,8 @@ function setupVideo(root, man) {
     const wantsDive = dT > 0.01;
     if (wantsDive) {
       if (focus !== D) { focus = D; pumpFetch(); }
-      if (!orb.tween && (Math.abs(shortest(0)) > 1e-3 || Math.abs(orb.vel) > 0)) { stopIdle(); turnTo(0); }
+      // a quick swing back to the front so the dive starts promptly
+      if (!orb.tween && (Math.abs(shortest(0)) > 1e-3 || Math.abs(orb.vel) > 0)) { stopIdle(); turnTo(0, clamp(0.25 + Math.abs(shortest(0)) * degPer / 700, 0.25, 0.5)); }
     } else if (dCur < 0.5 && focus !== O) { focus = O; pumpFetch(); }
     // orbit: tween, momentum or idle
     if (orb.tween) {
@@ -427,7 +444,7 @@ function setupVideo(root, man) {
     // dive: follows its target with a critically damped spring; waits at the front while the orbit turns back
     const gate = orb.tween || Math.abs(shortest(0)) > 1e-3 ? 0 : D.n - 1;
     const want = Math.min(dT, gate);
-    const vmax = D.n * 0.9;
+    const vmax = D.n * 1.6;
     dF += clamp(want - dF, -vmax * dt, vmax * dt);
     const x = dCur - dF;
     if (reduced || (dF === want && Math.abs(x) < 1e-3 && Math.abs(dVel) < 1e-2)) {
@@ -679,9 +696,14 @@ function setupVideo(root, man) {
 
   if ('ResizeObserver' in window) {
     let pending = 0;
-    new ResizeObserver(() => { cancelAnimationFrame(pending); pending = requestAnimationFrame(() => { layout(); paint(); request(); }); }).observe(stage);
-  } else window.addEventListener('resize', () => { layout(); paint(); request(); });
-  if (scrollMode) window.addEventListener('scroll', request, { passive: true });
+    new ResizeObserver(() => { runCache = -1; cancelAnimationFrame(pending); pending = requestAnimationFrame(() => { layout(); paint(); request(); }); }).observe(stage);
+  } else window.addEventListener('resize', () => { runCache = -1; layout(); paint(); request(); });
+  window.addEventListener('resize', () => { runCache = -1; }, { passive: true });
+  if (scrollMode) window.addEventListener('scroll', () => { touch(); request(); }, { passive: true });
+  window.addEventListener('wheel', touch, { passive: true });
+  view.addEventListener('pointerdown', touch, { passive: true });
+  view.addEventListener('pointermove', () => { if (drag) touch(); }, { passive: true });
+  view.addEventListener('keydown', touch, { passive: true });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) request(); }).observe(root);
   }
@@ -690,6 +712,7 @@ function setupVideo(root, man) {
   whenLoaded().then(() => {
     root.classList.add('is-ready');
     started = true;
+    bgAt = performance.now() + BG_DELAY;
     if (qa) return;
     if (reduced) {
       // only the key frames, after the page is idle
