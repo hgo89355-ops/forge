@@ -1,1 +1,1 @@
-Prospects on 2026-11-10: 3 new across 3 markets; 45 being followed; 101 finished.
+Prospects on 2026-11-11: 13 new across 13 markets; 54 being followed; 105 finished.

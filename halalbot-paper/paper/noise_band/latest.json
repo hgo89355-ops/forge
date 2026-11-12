@@ -1,8 +1,18 @@
 {
- "account": 9952.47,
- "pnl": -47.53,
- "trades": 7,
+ "account": 9929.98,
+ "pnl": -70.02,
+ "trades": 8,
  "wins": 2,
- "last_day": "2026-11-10",
- "today": []
+ "last_day": "2026-11-11",
+ "today": [
+  {
+   "date": "2026-11-11",
+   "bought": "12:00",
+   "buy_price": 693.51,
+   "sold": "15:00",
+   "sell_price": 692.02,
+   "ret_pct": -0.226,
+   "why": "fell below band/VWAP"
+  }
+ ]
 }
