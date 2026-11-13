@@ -1,28 +1,36 @@
 {
- "run_time_utc": "2026-11-12 00:54",
+ "run_time_utc": "2026-11-13 00:44",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-11-11",
- "last_crypto_candle": "2026-11-11",
+ "last_stock_candle": "2026-11-12",
+ "last_crypto_candle": "2026-11-12",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 10057.16,
-   "total_profit": 57.16,
-   "total_return_pct": 0.57,
-   "last_day": "2026-11-11",
-   "last_day_pnl": 55.05,
-   "main_bucket": 6929.06,
+   "account_value": 10023.75,
+   "total_profit": 23.75,
+   "total_return_pct": 0.24,
+   "last_day": "2026-11-12",
+   "last_day_pnl": -33.41,
+   "main_bucket": 6895.65,
    "high_reward_bucket": 3128.11,
    "worst_drop_pct": -3.18,
-   "open_trades": 14,
+   "open_trades": 13,
    "orders_next_open": [
     {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "ADI",
-     "strategy": "Pullback in trend",
-     "quantity": 0.134446,
-     "stop_loss": 390.1456,
-     "take_profit": 598.4238
+     "status": "SELL AT NEXT OPEN",
+     "symbol": "BMY",
+     "strategy": "Triple MA",
+     "quantity": 11.299727,
+     "stop_loss": "",
+     "take_profit": ""
+    },
+    {
+     "status": "SELL AT NEXT OPEN",
+     "symbol": "ABT",
+     "strategy": "Triple MA",
+     "quantity": 6.727519,
+     "stop_loss": "",
+     "take_profit": ""
     }
    ],
    "closed_trades_total": 10,
@@ -31,13 +39,13 @@
    "left_on_table_total": 488.45,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-11",
+    "date": "2026-11-12",
     "bought": [
      {
-      "symbol": "UNH",
+      "symbol": "ADI",
       "strategy": "Pullback in trend",
-      "price": 404.7944,
-      "value_usd": 34.42
+      "price": 404.8945,
+      "value_usd": 55.65
      }
     ],
     "sold": [],
@@ -47,23 +55,23 @@
    }
   },
   "setup5": {
-   "account_value": 10005.61,
-   "total_profit": 5.61,
-   "total_return_pct": 0.06,
-   "last_day": "2026-11-11",
-   "last_day_pnl": 61.07,
-   "main_bucket": 6904.23,
+   "account_value": 10013.64,
+   "total_profit": 13.64,
+   "total_return_pct": 0.14,
+   "last_day": "2026-11-12",
+   "last_day_pnl": 8.04,
+   "main_bucket": 6912.27,
    "high_reward_bucket": 3101.38,
    "worst_drop_pct": -4.29,
-   "open_trades": 14,
+   "open_trades": 15,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "AAPL",
-     "strategy": "52-week high",
-     "quantity": 0.162008,
-     "stop_loss": 346.975,
-     "take_profit": 442.1796
+     "symbol": "ABT",
+     "strategy": "Breakout-retest",
+     "quantity": 0.074849,
+     "stop_loss": 104.2498,
+     "take_profit": 137.252
     }
    ],
    "closed_trades_total": 16,
@@ -72,8 +80,15 @@
    "left_on_table_total": 734.89,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-11",
-    "bought": [],
+    "date": "2026-11-12",
+    "bought": [
+     {
+      "symbol": "AAPL",
+      "strategy": "52-week high",
+      "price": 358.0677,
+      "value_usd": 57.16
+     }
+    ],
     "sold": [],
     "profit_from_winners": 0,
     "loss_from_losers": 0,
@@ -82,35 +97,24 @@
   }
  },
  "data_ok": true,
- "expected_stock_candle": "2026-11-11",
+ "expected_stock_candle": "2026-11-12",
  "records": {
-  "date": "2026-11-11",
+  "date": "2026-11-12",
   "markets_recorded": 350,
-  "signals_today": 46,
-  "bot_signals": 37,
-  "shadow_signals": 9,
+  "signals_today": 35,
+  "bot_signals": 21,
+  "shadow_signals": 14,
   "alerts": [
-   "Volume spike: xyz:NVDA traded 7.5x its usual volume (-5.7%)",
-   "Volume spike: para:TTWO traded 7.2x its usual volume (+3.2%)",
-   "Volume spike: GRAM traded 4.7x its usual volume (+2.9%)",
-   "Volume spike: INIT traded 4.5x its usual volume (-33.7%)",
-   "Volume spike: io:GPRO traded 4.4x its usual volume (-9.3%)",
-   "Signal skipped: EOG (Pullback in trend); its outcome will be tracked",
-   "Signal skipped: EOG (PB rest); its outcome will be tracked",
-   "Signal skipped: EFA (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: TSLA (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: V (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: ADI (PB tech); its outcome will be tracked",
-   "Signal skipped: AAPL (Turtle breakout); its outcome will be tracked",
-   "Signal skipped: AAPL (TU rest); its outcome will be tracked",
-   "Signal skipped: JPM (Triple MA); its outcome will be tracked",
-   "Signal skipped: PEP (Triple MA); its outcome will be tracked",
-   "Signal skipped: TXN (Triple MA); its outcome will be tracked",
-   "Signal skipped: SNPS (Triple MA); its outcome will be tracked",
-   "Signal skipped: CDNS (Triple MA); its outcome will be tracked",
-   "Signal skipped: IWM (Triple MA); its outcome will be tracked",
-   "Signal skipped: XLB (Triple MA); its outcome will be tracked",
-   "Signal skipped: EFA (Triple MA); its outcome will be tracked"
+   "Unusual move: para:10Y +5.3% (5.5x its normal daily move)",
+   "Volume spike: xyz:TWST traded 23.0x its usual volume (-7.6%)",
+   "Volume spike: xyz:NVDA traded 12.8x its usual volume (+4.8%)",
+   "Volume spike: para:STX traded 6.8x its usual volume (+2.2%)",
+   "Volume spike: xyz:NBIS traded 5.6x its usual volume (-12.7%)",
+   "Volume spike: xyz:EUR traded 5.1x its usual volume (-0.4%)",
+   "Volume spike: xyz:CVX traded 4.8x its usual volume (+1.6%)",
+   "Volume spike: xyz:AMD traded 4.2x its usual volume (+1.5%)",
+   "Signal skipped: TSLA (Triple MA); its outcome will be tracked",
+   "Signal skipped: GM (Breakout-retest); its outcome will be tracked"
   ]
  }
 }
