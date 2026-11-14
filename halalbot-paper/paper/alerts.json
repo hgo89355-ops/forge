@@ -1,19 +1,19 @@
 {
- "date": "2026-11-12",
+ "date": "2026-11-13",
  "markets_recorded": 350,
- "signals_today": 35,
- "bot_signals": 21,
+ "signals_today": 32,
+ "bot_signals": 18,
  "shadow_signals": 14,
  "alerts": [
-  "Unusual move: para:10Y +5.3% (5.5x its normal daily move)",
-  "Volume spike: xyz:TWST traded 23.0x its usual volume (-7.6%)",
-  "Volume spike: xyz:NVDA traded 12.8x its usual volume (+4.8%)",
-  "Volume spike: para:STX traded 6.8x its usual volume (+2.2%)",
-  "Volume spike: xyz:NBIS traded 5.6x its usual volume (-12.7%)",
-  "Volume spike: xyz:EUR traded 5.1x its usual volume (-0.4%)",
-  "Volume spike: xyz:CVX traded 4.8x its usual volume (+1.6%)",
-  "Volume spike: xyz:AMD traded 4.2x its usual volume (+1.5%)",
-  "Signal skipped: TSLA (Triple MA); its outcome will be tracked",
-  "Signal skipped: GM (Breakout-retest); its outcome will be tracked"
+  "Volume spike: xyz:OURA traded 14.0x its usual volume (-0.3%)",
+  "Volume spike: IMX traded 11.2x its usual volume (-7.4%)",
+  "Volume spike: BERA traded 6.7x its usual volume (+13.8%)",
+  "Volume spike: xyz:BIRD traded 4.6x its usual volume (+19.7%)",
+  "Volume spike: para:COHR traded 4.0x its usual volume (-9.5%)",
+  "Signal skipped: SLB (Breakout-retest); its outcome will be tracked",
+  "Signal skipped: XLB (Breakout-retest); its outcome will be tracked",
+  "Signal skipped: CVX (PB rest); its outcome will be tracked",
+  "Signal skipped: WMT (Triple MA); its outcome will be tracked",
+  "Signal skipped: XLU (Triple MA); its outcome will be tracked"
  ]
 }
