@@ -1,15 +1,15 @@
 {
- "run_time_utc": "2026-11-15 00:43",
+ "run_time_utc": "2026-11-16 00:43",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-11-13",
- "last_crypto_candle": "2026-11-14",
+ "last_crypto_candle": "2026-11-15",
  "markets_missing": [],
  "setups": {
   "main": {
    "account_value": 10051.57,
    "total_profit": 51.57,
    "total_return_pct": 0.52,
-   "last_day": "2026-11-14",
+   "last_day": "2026-11-15",
    "last_day_pnl": 0.0,
    "main_bucket": 6923.46,
    "high_reward_bucket": 3128.11,
@@ -39,7 +39,7 @@
    "left_on_table_total": 569.81,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-14",
+    "date": "2026-11-15",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -48,117 +48,74 @@
    }
   },
   "setup5": {
-   "account_value": 9997.77,
-   "total_profit": -2.23,
-   "total_return_pct": -0.02,
-   "last_day": "2026-11-14",
-   "last_day_pnl": -39.82,
-   "main_bucket": 6896.39,
+   "account_value": 10021.0,
+   "total_profit": 21.0,
+   "total_return_pct": 0.21,
+   "last_day": "2026-11-15",
+   "last_day_pnl": 23.23,
+   "main_bucket": 6919.62,
    "high_reward_bucket": 3101.38,
    "worst_drop_pct": -4.29,
-   "open_trades": 15,
+   "open_trades": 17,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "ETH-USD",
-     "strategy": "X Stochastic reversal",
-     "quantity": 0.211845,
-     "stop_loss": 1607.8822,
-     "take_profit": ""
-    },
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "SOL-USD",
-     "strategy": "X Stochastic reversal",
-     "quantity": 4.070313,
-     "stop_loss": 63.0235,
-     "take_profit": ""
+     "symbol": "SLB",
+     "strategy": "Breakout-retest",
+     "quantity": 0.449148,
+     "stop_loss": 50.0651,
+     "take_profit": 67.7188
     }
    ],
    "closed_trades_total": 19,
    "wins": 2,
-   "closed_last_day": [
-    {
-     "symbol": "BTC-USD",
-     "engine": "X Stochastic reversal",
-     "reason": "stop",
-     "pnl_usd": -35.57
-    },
-    {
-     "symbol": "BNB-USD",
-     "engine": "X Stochastic reversal",
-     "reason": "stop",
-     "pnl_usd": -4.24
-    }
-   ],
+   "closed_last_day": [],
    "left_on_table_total": 805.27,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-14",
+    "date": "2026-11-15",
     "bought": [
      {
-      "symbol": "BTC-USD",
+      "symbol": "ETH-USD",
       "strategy": "X Stochastic reversal",
-      "price": null,
-      "value_usd": null
+      "price": 1770.652,
+      "value_usd": 388.62
      },
      {
-      "symbol": "BNB-USD",
+      "symbol": "SOL-USD",
       "strategy": "X Stochastic reversal",
-      "price": null,
-      "value_usd": null
+      "price": 70.3414,
+      "value_usd": 296.0
      }
     ],
-    "sold": [
-     {
-      "symbol": "BTC-USD",
-      "strategy": "X Stochastic reversal",
-      "reason": "stop",
-      "pnl_usd": -35.57,
-      "left_on_table_usd": 39.55
-     },
-     {
-      "symbol": "BNB-USD",
-      "strategy": "X Stochastic reversal",
-      "reason": "stop",
-      "pnl_usd": -4.24,
-      "left_on_table_usd": 5.71
-     }
-    ],
+    "sold": [],
     "profit_from_winners": 0,
-    "loss_from_losers": -39.81,
-    "left_on_table": 45.26
+    "loss_from_losers": 0,
+    "left_on_table": 0
    }
   }
  },
  "data_ok": true,
  "expected_stock_candle": "2026-11-13",
  "records": {
-  "date": "2026-11-14",
+  "date": "2026-11-15",
   "markets_recorded": 350,
-  "signals_today": 29,
-  "bot_signals": 19,
-  "shadow_signals": 10,
+  "signals_today": 19,
+  "bot_signals": 16,
+  "shadow_signals": 3,
   "alerts": [
-   "Unusual move: ASTER -22.5% (9.2x its normal daily move)",
-   "Unusual move: xyz:STRC -1.9% (4.3x its normal daily move)",
-   "Unusual move: para:TOTAL2 -7.1% (4.3x its normal daily move)",
-   "Unusual move: mkts:BVIV +13.6% (4.2x its normal daily move)",
-   "Volume spike: BERA traded 13.5x its usual volume (-18.0%)",
-   "Volume spike: CFX traded 10.3x its usual volume (-16.6%)",
-   "Volume spike: ASTER traded 9.6x its usual volume (-22.5%)",
-   "Volume spike: IMX traded 6.7x its usual volume (-9.5%)",
-   "Volume spike: LINEA traded 6.0x its usual volume (-11.6%)",
-   "Volume spike: SOPH traded 5.8x its usual volume (+21.0%)",
-   "Volume spike: xyz:STRC traded 4.9x its usual volume (-1.9%)",
-   "Volume spike: MNT traded 4.8x its usual volume (-8.3%)",
-   "Volume spike: ACE traded 4.4x its usual volume (-12.6%)",
-   "Volume spike: IOTA traded 4.4x its usual volume (-11.3%)",
-   "Signal skipped: SLB (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: XLB (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: CVX (PB rest); its outcome will be tracked",
+   "Unusual move: para:DRV +26.7% (4.7x its normal daily move)",
+   "Unusual move: SOPH -45.8% (4.0x its normal daily move)",
+   "Volume spike: ASTER traded 21.1x its usual volume (+3.4%)",
+   "Volume spike: para:OTHERS traded 7.6x its usual volume (+1.1%)",
+   "Volume spike: para:LRCX traded 4.9x its usual volume (+4.1%)",
+   "Volume spike: SOPH traded 4.5x its usual volume (-45.8%)",
+   "Volume spike: para:TOTAL2 traded 4.3x its usual volume (+4.2%)",
+   "Volume spike: RESOLV traded 4.2x its usual volume (+3.7%)",
    "Signal skipped: WMT (Triple MA); its outcome will be tracked",
-   "Signal skipped: XLU (Triple MA); its outcome will be tracked"
+   "Signal skipped: XLU (Triple MA); its outcome will be tracked",
+   "Signal skipped: XLB (Breakout-retest); its outcome will be tracked",
+   "Signal skipped: CVX (PB rest); its outcome will be tracked"
   ]
  }
 }

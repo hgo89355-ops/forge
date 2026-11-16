@@ -130,15 +130,15 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-05,SOL-USD,Inside-day breakout,96.11,3.5312,finished,5,-1.461,stop,False
 2026-11-05,COST,Strong on a red day,1065.59,20.0674,open,6,2.934,open,True
 2026-11-05,liquid:INJ,Strong on a red day,8.1463,0.6279,finished,6,-1.026,stop,False
-2026-11-05,liquid:MERL,Strong on a red day,0.0304,0.0027,open,9,0.383,open,False
-2026-11-06,ES=F,Drop bounce in uptrend,7404.0,130.9643,open,5,1.506,open,True
+2026-11-05,liquid:MERL,Strong on a red day,0.0304,0.0027,open,10,0.203,open,False
+2026-11-06,ES=F,Drop bounce in uptrend,7404.0,130.9643,open,6,1.626,open,True
 2026-11-06,SPY,Drop bounce in uptrend,735.29,11.115,open,5,0.984,open,True
 2026-11-07,liquid:MET,Big jump on volume,0.3279,0.0246,finished,1,-1.027,stop,False
 2026-11-07,liquid:MET,Inside-day breakout,0.3279,0.0246,finished,1,-1.027,stop,False
 2026-11-08,liquid:RSR,Inside-day breakout,0.0017,0.0001,finished,4,-1.022,stop,False
 2026-11-09,liquid:INIT,Big jump on volume,0.1843,0.039,finished,2,-1.009,stop,False
 2026-11-09,liquid:RSR,Big jump on volume,0.0017,0.0002,finished,2,-1.022,stop,False
-2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,5,2.236,open,False
+2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,6,1.459,open,False
 2026-11-09,EEM,Inside-day breakout,61.03,1.3996,open,4,0.099,open,True
 2026-11-09,META,Inside-day breakout,641.37,24.7357,open,4,0.098,open,True
 2026-11-09,SNPS,Inside-day breakout,466.97,20.2361,open,4,-0.321,open,True
@@ -149,12 +149,12 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-11,ADI,Inside-day breakout,409.08,21.1964,open,2,-0.363,open,True
 2026-11-11,CSCO,Inside-day breakout,100.76,3.9436,finished,2,-1.051,stop,True
 2026-11-11,EEM,Inside-day breakout,62.04,1.4136,open,2,0.176,open,True
-2026-11-11,ES=F,Inside-day breakout,7606.5,142.0,open,2,-0.338,open,True
+2026-11-11,ES=F,Inside-day breakout,7606.5,142.0,open,3,-0.229,open,True
 2026-11-11,MS,Inside-day breakout,190.61,5.8902,open,2,0.08,open,False
-2026-11-11,NQ=F,Inside-day breakout,28199.5,882.0,open,2,-0.361,open,True
+2026-11-11,NQ=F,Inside-day breakout,28199.5,882.0,open,3,-0.227,open,True
 2026-11-11,QCOM,Inside-day breakout,176.57,9.9429,open,2,-0.301,open,True
 2026-11-11,QQQ,Inside-day breakout,690.38,17.6936,open,2,-0.101,open,True
 2026-11-11,SPY,Inside-day breakout,759.81,12.1543,open,2,-0.092,open,True
 2026-11-11,XLK,Inside-day breakout,174.36,5.8564,open,2,0.015,open,True
 2026-11-11,liquid:FET,Inside-day breakout,0.1487,0.0116,finished,3,-1.026,stop,False
-2026-11-11,liquid:xyz_XYZ100,Inside-day breakout,28090.0,763.5714,open,3,-0.781,open,False
+2026-11-11,liquid:xyz_XYZ100,Inside-day breakout,28090.0,763.5714,open,4,0.006,open,False
