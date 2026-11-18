@@ -1,0 +1,109 @@
+
+◆  Rendering lock-short → /home/user/forge/videos/lock-short/renders/lock-short-v5-draft.mp4
+   30fps · looks (CRF 16) · 4 workers
+   GPU: browser GPU (auto-detect)
+
+
+  Lint: 0 error(s), 1 warning(s) — run `hyperframes lint` for full output.
+  Continuing render despite lint issues. Use --strict to block errors.
+
+Checking browser...
+Browser: env
+[INFO] [Render] Pipeline started {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","platform":"linux","arch":"x64","nodeVersion":"v22.23.5","fps":{"num":30,"den":1},"format":"mp4","quality":"standard","browserGpuMode":"auto","forceScreenshot":false,"protocolTimeout":300000,"browserTimeout":120000,"pageNavigationTimeout":60000,"playerReadyTimeout":45000}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"pipeline","status":"checkpoint","elapsedMs":4,"message":"started","format":"mp4","quality":"standard","browserGpuMode":"auto","forceScreenshot":false,"protocolTimeoutMs":300000,"pageNavigationTimeoutMs":60000,"playerReadyTimeoutMs":45000,"requestedWorkers":4}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"compile","status":"start","elapsedMs":6,"needsAlpha":false}
+  █░░░░░░░░░░░░░░░░░░░░░░░░  5%  Compiling composition
+@hf-progress {"code":"compile","pct":5}
+[WARN] [compile] Audio "vo" (assets/audio/voice_v5_placeholder.wav) is 24.21s but its data-duration is 24.37s, so the slot is shortened to the media length. Set data-duration to ~24.21s, trim data-media-start, or use a longer/looping source if that isn't intended. {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f"}
+[INFO] [Compiler] Fetched 11 font face(s) for "Inter" from Google Fonts (cached to /root/.cache/hyperframes/fonts/inter)
+[INFO] [Compiler] Injected deterministic @font-face rules for 1 requested font families
+[INFO] Compiled composition metadata {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","entryFile":"index.html","staticDuration":24.366666666666667,"width":1080,"height":1920,"videoCount":0,"audioCount":2,"renderModeHints":{"recommendScreenshot":false,"reasons":[]}}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"compile","status":"end","elapsedMs":468,"durationMs":462,"needsAlpha":false}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"compile","status":"checkpoint","elapsedMs":469,"message":"composition metadata resolved","width":1080,"height":1920,"videoCount":0,"audioCount":2,"imageCount":0,"deviceScaleFactor":1,"forceScreenshot":false,"compositionHash":"b1dda20d9cc90acd"}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"browser_probe","status":"start","elapsedMs":469,"forceScreenshot":false,"stagePhase":"calibrating"}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"browser_probe","status":"end","elapsedMs":610,"durationMs":141,"forceScreenshot":false,"stagePhase":"calibrating"}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"browser_probe","status":"checkpoint","elapsedMs":611,"message":"duration resolved","durationSeconds":24.366666666666667,"totalFrames":731,"compositionHash":"b1dda20d9cc90acd","beginFrameStalled":false}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"video_extract","status":"start","elapsedMs":612,"videoCount":0}
+  ██░░░░░░░░░░░░░░░░░░░░░░░  10%  Extracting video frames
+@hf-progress {"code":"extract_video","pct":10}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"video_extract","status":"end","elapsedMs":613,"durationMs":1,"videoCount":0}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"video_extract","status":"checkpoint","elapsedMs":616,"message":"frames resolved","videoCount":0,"extractedVideoCount":0,"totalFramesExtracted":0,"maxFramesPerVideo":0,"avgFramesPerExtractedVideo":null,"vfrPreflightCount":null,"vfrPreflightMs":null,"cacheHits":null,"cacheMisses":null,"transientRetries":null,"minVideoFrameCoverageRatio":null,"authoredTimedClipCount":38}
+[INFO] [Render] No HDR sources detected, rendering SDR {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f"}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"hdr_detection","status":"checkpoint","elapsedMs":616,"message":"resolved","requestedHdrMode":"auto","effectiveHdr":"sdr","nativeHdrVideoCount":0,"nativeHdrImageCount":0}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"audio_process","status":"start","elapsedMs":617,"audioCount":2}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"file_server","status":"start","elapsedMs":619,"reused":false}
+  █████░░░░░░░░░░░░░░░░░░░░  20%  Processing audio tracks
+@hf-progress {"code":"process_audio","pct":20}
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Starting frame capture
+@hf-progress {"code":"start_browsers","pct":25}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"file_server","status":"end","elapsedMs":625,"durationMs":6}
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Checking browser GPU
+@hf-progress {"code":"start_browsers","pct":25}
+[hyperframes] browserGpuMode probe → software (WebGL unavailable)
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Starting frame capture
+@hf-progress {"code":"start_browsers","pct":25}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"capture_calibration","status":"checkpoint","elapsedMs":1169,"message":"skipped","requestedWorkers":4,"totalFrames":731,"htmlInCanvasDetected":false,"lowMemoryMode":false,"deInversionEligible":false,"deParallelRouterEligible":false}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"worker_resolution","status":"checkpoint","elapsedMs":1171,"message":"resolved","workerCount":4}
+[INFO] [Render] Parallel beginframe capture will stream to the encoder (interleaved, 4 workers) instead of the disk path. Set HF_CAPTURE_PARALLEL_STREAM=false to disable. {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f"}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"worker_resolution","status":"checkpoint","elapsedMs":1172,"message":"parallel beginframe capture routed to streaming"}
+[INFO] streaming-encode gate {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","enabled":true,"reason":"parallel_forced","configFlag":true,"durationCapEnabled":false,"outputFormat":"mp4","workerCount":4,"durationSeconds":24.366666666666667,"maxDurationSeconds":240}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"capture_strategy","status":"checkpoint","elapsedMs":1173,"message":"resolved","workerCount":4,"forceScreenshot":false,"captureBeyondViewport":null,"useStreamingEncode":true,"useLayeredComposite":false,"usePageSideCompositing":false,"hasHdrContent":false,"hasShaderTransitions":false,"isPngSequence":false}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"capture_streaming","status":"start","elapsedMs":1174,"stagePhase":"capturing","workerCount":4,"forceScreenshot":false,"totalFrames":731,"framesCompleted":0,"captureMode":"beginframe","captureOperation":"beginFrame"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":0,"phase":"browser_launch","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":1,"phase":"browser_launch","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":2,"phase":"browser_launch","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":3,"phase":"browser_launch","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Starting browsers (0/4 ready)
+@hf-progress {"code":"start_browsers","done":0,"total":4,"pct":25}
+[BrowserManager] HeadlessExperimental.beginFrame probe failed after 398ms: Protocol error (HeadlessExperimental.enable): 'HeadlessExperimental.enable' wasn't found; falling back to screenshot mode.
+[BrowserManager] HeadlessExperimental.beginFrame probe failed after 505ms: Protocol error (HeadlessExperimental.enable): 'HeadlessExperimental.enable' wasn't found; falling back to screenshot mode.
+[BrowserManager] HeadlessExperimental.beginFrame probe failed after 323ms: Protocol error (HeadlessExperimental.enable): 'HeadlessExperimental.enable' wasn't found; falling back to screenshot mode.
+[BrowserManager] HeadlessExperimental.beginFrame probe failed after 432ms: Protocol error (HeadlessExperimental.enable): 'HeadlessExperimental.enable' wasn't found; falling back to screenshot mode.
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":1,"phase":"browser_probe","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":1,"phase":"session_init","browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[Browser:WARN] Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":2,"phase":"browser_probe","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":2,"phase":"session_init","browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":3,"phase":"browser_probe","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":3,"phase":"session_init","browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":0,"phase":"browser_probe","browserExecutable":"/usr/bin/google-chrome","browserVersion":"unknown","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":0,"phase":"session_init","browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":"unknown","gpuBackend":"unknown"}
+[Browser:WARN] Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation
+[Browser:WARN] Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation
+[Browser:WARN] Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation
+[Browser:WARN] [.WebGL-0x323c0019ae00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[non-blocking] Failed to load resource: the server responded with a status of 404 (Not Found)
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":3,"phase":"frame_capture","frameIndex":3,"browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":false,"gpuBackend":"unknown"}
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Starting browsers (1/4 ready)
+@hf-progress {"code":"start_browsers","done":1,"total":4,"pct":25}
+[Browser:WARN] [.WebGL-0x6cc00185200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[Browser:WARN] [.WebGL-0x1a240019e600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[non-blocking] Failed to load resource: the server responded with a status of 404 (Not Found)
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":0,"phase":"frame_capture","frameIndex":0,"browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":false,"gpuBackend":"unknown"}
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Starting browsers (2/4 ready)
+@hf-progress {"code":"start_browsers","done":2,"total":4,"pct":25}
+[non-blocking] Failed to load resource: the server responded with a status of 404 (Not Found)
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":1,"phase":"frame_capture","frameIndex":1,"browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":false,"gpuBackend":"unknown"}
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Streaming frame 1/731 (4 workers)
+@hf-progress {"code":"capture","done":1,"total":731,"pct":25}
+[Browser:WARN] [.WebGL-0x3484001d2800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[non-blocking] Failed to load resource: the server responded with a status of 404 (Not Found)
+[INFO] [audio] phases {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","prepare":223,"groups":0,"mix":131,"master":0,"encode":1545,"guard":13435}
+[INFO] [Render:trace] {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","phase":"audio_process","status":"end","elapsedMs":15953,"durationMs":15336,"audioCount":2}
+[INFO] [Render] Parallel capture worker phase {"renderJobId":"95fa0e36-5029-413b-87f8-348bcac7708f","workerId":2,"phase":"frame_capture","frameIndex":2,"browserExecutable":"/usr/bin/google-chrome","browserVersion":"Chrome/153.0.8010.12","canvasDrawElement":false,"gpuBackend":"unknown"}
+[Browser:WARN] [.WebGL-0x1a240019e600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Streaming frame 2/731 (4 workers)
+@hf-progress {"code":"capture","done":2,"total":731,"pct":25}
+[Browser:WARN] [.WebGL-0x323c0019ae00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[Browser:WARN] [.WebGL-0x6cc00185200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[Browser:WARN] [.WebGL-0x3484001d2800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Streaming frame 3/731 (4 workers)
+@hf-progress {"code":"capture","done":3,"total":731,"pct":25}
+[Browser:WARN] [.WebGL-0x1a240019e600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+  ██████░░░░░░░░░░░░░░░░░░░  25%  Streaming frame 6/731 (4 workers)
+@hf-progress {"code":"capture","done":6,"total":731,"pct":25}
+[Browser:WARN] [.WebGL-0x6cc00185200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[Browser:WARN] [.WebGL-0x323c0019ae00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[Browser:WARN] [.WebGL-0x3484001d2800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+  ██████░░░░░░░░░░░░░░░░░░░  26%  Streaming frame 7/731 (4 workers)
+@hf-progress {"code":"capture","done":7,"total":731,"pct":26}

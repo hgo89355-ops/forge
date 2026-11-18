@@ -25,3 +25,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   push/pull actions, off-camera in close-ups. Pick wide-shot camera distance so machine + guide fit above captions.
 - Frame Critic: 3 rounds took the film from mostly 5–7 to mostly 8; the weakest scenes were the ones built
   last (key grid, ancient lock) — schedule extra time for scenes that leave the main machine.
+- v5 pacing: anchor every shot to a spoken word (sequential word search) so a new voice re-times the film
+  automatically; the pacing checker (lib/critic/pacing_check.py) fails v4 on length, 11 long silences and a dead end.
+- ElevenLabs can be down (timeouts / HTTP 500). Never retry a generation after a timeout — it may still charge;
+  retry the free usage call first to see if the service is back.

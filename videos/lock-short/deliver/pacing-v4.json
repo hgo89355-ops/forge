@@ -1,0 +1,66 @@
+{
+ "duration_s": 39.0,
+ "cuts": 13,
+ "cuts_per_10s": 3.3,
+ "total_silence_s": 5.79,
+ "silences_over_0.3s": [
+  [
+   2.0,
+   2.59
+  ],
+  [
+   7.12,
+   7.59
+  ],
+  [
+   11.06,
+   11.68
+  ],
+  [
+   13.46,
+   13.77
+  ],
+  [
+   18.61,
+   19.04
+  ],
+  [
+   19.86,
+   20.53
+  ],
+  [
+   23.68,
+   24.26
+  ],
+  [
+   28.89,
+   29.45
+  ],
+  [
+   31.72,
+   32.03
+  ],
+  [
+   34.55,
+   35.1
+  ],
+  [
+   36.62,
+   37.32
+  ]
+ ],
+ "dead_windows_1.5s": [
+  [
+   36.0,
+   38.8
+  ]
+ ],
+ "motion_in_first_second": true,
+ "static_end_s": 0.0,
+ "fails": [
+  "longer than 35 s (39.0 s)",
+  "11 silence(s) over 0.3 s",
+  "1 stretch(es) of 1.5 s+ with no visual change"
+ ],
+ "pass": false
+}

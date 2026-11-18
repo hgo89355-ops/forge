@@ -1,0 +1,17 @@
+<!doctype html><html><head><style>html,body{margin:0;background:radial-gradient(120% 80% at 50% 40%,#F1F3F5 0%,#DDE1E6 70%,#CFD4DA 100%)}</style></head><body>
+<canvas id="c"></canvas>
+<script src="../assets/vendor/three-0.158.min.js"></script><script src="../../../lib/components/escalator3d.js"></script>
+<script>
+const [w,h,t,cx,cy,cz,d,az,el]=location.hash.slice(1).split(',').map(Number);
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true,alpha:true}); r.setSize(w,h); r.toneMapping=THREE.ACESFilmicToneMapping; r.outputColorSpace=THREE.SRGBColorSpace; r.shadowMap.enabled=true;
+const s=new THREE.Scene(); const env=new THREE.Scene(); env.add(new THREE.Mesh(new THREE.BoxGeometry(100,100,100),new THREE.MeshBasicMaterial({color:0x9aa1aa,side:THREE.BackSide})));
+const lt=new THREE.Mesh(new THREE.PlaneGeometry(60,30),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide})); lt.position.set(-30,40,20); lt.lookAt(0,0,0); env.add(lt);
+s.environment=new THREE.PMREMGenerator(r).fromScene(env,0.02).texture;
+s.add(new THREE.HemisphereLight(0xffffff,0x8a9099,0.6)); const k=new THREE.DirectionalLight(0xffffff,2.2); k.position.set(-300,700,600); k.castShadow=true; k.shadow.mapSize.set(2048,2048); Object.assign(k.shadow.camera,{left:-700,right:700,top:700,bottom:-700,near:10,far:3000}); s.add(k);
+const f=new THREE.DirectionalLight(0xffffff,0.7); f.position.set(500,200,400); s.add(f);
+const g=new THREE.Mesh(new THREE.PlaneGeometry(8000,8000),new THREE.ShadowMaterial({opacity:0.15})); g.rotation.x=-Math.PI/2; g.position.y=-140; g.receiveShadow=true; s.add(g);
+const esc=Escalator3D.build(THREE,s,{rise:300,angle:30}); esc.update(t,{speed:50});
+const cam=new THREE.PerspectiveCamera(30,w/h,1,10000); const a=az*Math.PI/180,e=el*Math.PI/180;
+cam.position.set(cx+d*Math.sin(a)*Math.cos(e),cy+d*Math.sin(e),cz+d*Math.cos(a)*Math.cos(e)); cam.lookAt(cx,cy,cz);
+r.render(s,cam); window.__done=true;
+</script></body></html>
