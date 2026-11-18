@@ -1,53 +1,59 @@
 setup,strategy,market,status,entry_date,entry_price,stop,target,exit_date,exit_reason,pnl_usd,R,won,left_on_table_usd
-Main setup,52-week high,PG,buy at next open,2026-11-17,173.19,169.75,205.71,,,0.0,,,
-Main setup,52-week high,COST,open,2026-11-16,1111.57,1090.84,1306.62,,,1.35,,,
-Main setup,Pullback in trend,CVX,open,2026-11-16,220.25,215.01,270.2,,,-9.7,,,
+Main setup,Breakout-retest,LIN,buy at next open,2026-11-18,515.63,506.1,605.24,,,0.0,,,
+Main setup,Dip after bull flag,HD,buy at next open,2026-11-18,339.35,330.09,428.2,,,0.0,,,
+Main setup,52-week high,PG,open,2026-11-17,171.51,168.07,204.03,,,0.11,,,
+Main setup,52-week high,COST,open,2026-11-16,1112.29,1091.56,1307.34,,,-1.38,,,
+Main setup,Pullback in trend,CVX,open,2026-11-16,220.25,215.01,270.2,,,-12.85,,,
 Main setup,Pullback in trend,ADI,closed,2026-11-12,,,,2026-11-16,stop,-2.68,-1.02,no,4.33
-Main setup,Pullback in trend,UNH,open,2026-11-11,404.79,392.73,520.95,,,0.62,,,
+Main setup,Pullback in trend,UNH,closed,2026-11-11,,,,2026-11-17,stop,-1.06,-1.03,no,2.18
 Main setup,Pullback in trend,SNPS,closed,2026-11-10,,,,2026-11-16,stop,-4.47,-1.02,no,6.42
-Main setup,Breakout-retest,JNJ,open,2026-11-09,278.28,270.59,352.14,,,10.34,,,
-Main setup,Triple MA,AAPL,open,2026-11-09,345.08,318.45,,,,15.03,,,
-Main setup,Triple MA,GE,open,2026-11-09,332.26,299.21,,,,-11.11,,,
+Main setup,Breakout-retest,JNJ,open,2026-11-09,278.28,270.59,352.14,,,1.02,,,
+Main setup,Triple MA,AAPL,open,2026-11-09,345.08,318.45,,,,13.33,,,
+Main setup,Triple MA,GE,sell at next open,2026-11-09,,,,,,,,,
 Main setup,52-week high,BLK,closed,2026-11-05,,,,2026-11-05,stop,-1.79,-1.04,no,4.05
-Main setup,Dip after bull flag,EOG,open,2026-11-05,148.46,144.01,191.31,,,33.09,,,
-Main setup,Triple MA,BRK-B,open,2026-11-04,566.87,544.42,,,,31.75,,,
-Main setup,Triple MA,DE,sell at next open,2026-11-04,,,,,,,,,
-Main setup,Bull flag,UPS,open,2026-11-03,109.5,107.05,132.8,,,13.46,,,
-Main setup,Momentum 12-1,TXN,open,2026-11-02,304.4,265.36,,,,-18.28,,,
-Main setup,Momentum 12-1,MRK,open,2026-11-02,148.97,130.41,,,,-5.38,,,
+Main setup,Dip after bull flag,EOG,open,2026-11-05,148.46,144.01,191.31,,,30.44,,,
+Main setup,Triple MA,BRK-B,open,2026-11-04,566.87,544.42,,,,24.31,,,
+Main setup,Triple MA,DE,closed,2026-11-04,,,,2026-11-17,signal,-1.38,-0.42,no,2.9
+Main setup,Bull flag,UPS,open,2026-11-03,107.9,105.49,130.87,,,14.17,,,
+Main setup,Momentum 12-1,TXN,open,2026-11-02,304.4,265.36,,,,-15.32,,,
+Main setup,Momentum 12-1,MRK,open,2026-11-02,148.97,130.41,,,,-6.68,,,
 Main setup,Bull flag,IBM,closed,2026-10-30,,,,2026-11-03,stop_gap,-2.33,-1.22,no,2.48
 Main setup,Turtle breakout,TXN,closed,2026-10-28,,,,2026-10-30,stop,-3.02,-1.03,no,3.15
 Main setup,Breakout-retest,SNPS,closed,2026-10-27,,,,2026-11-05,stop,-29.46,-1.02,no,77.14
 Main setup,Pullback in trend,QCOM,closed,2026-10-27,,,,2026-10-30,stop,-26.98,-1.03,no,79.5
-Main setup,Triple MA,XLRE,sell at next open,2026-10-27,,,,,,,,,
 Main setup,Triple MA,BMY,closed,2026-10-27,,,,2026-11-13,signal,13.84,0.23,yes,23.84
 Main setup,Triple MA,ABT,closed,2026-10-27,,,,2026-11-13,signal,34.82,0.6,yes,57.52
+Main setup,Triple MA,XLRE,closed,2026-10-27,,,,2026-11-17,signal,22.23,0.74,yes,28.48
 Main setup,Turtle breakout,TSLA,closed,2026-10-27,,,,2026-11-04,stop_gap,-32.6,-1.35,no,50.5
 Main setup,Breakout-retest,ADI,closed,2026-10-26,,,,2026-11-05,stop,-24.06,-1.03,no,127.03
 Main setup,Bull flag,EOG,closed,2026-10-26,,,,2026-11-02,stop,-18.35,-1.04,no,34.04
 Main setup,Bull flag,COP,closed,2026-10-26,,,,2026-11-03,stop_gap,-20.06,-1.16,no,45.46
 Main setup,Triple MA,SLB,closed,2026-10-26,,,,2026-11-05,signal,1.1,0.02,yes,65.1
-Setup 5,52-week high,PG,buy at next open,2026-11-17,173.19,169.75,205.71,,,0.0,,,
-Setup 5,X Stochastic reversal,ETH-USD,open,2026-11-15,1770.65,1607.91,,,,0.15,,,
-Setup 5,X Stochastic reversal,BTC-USD,closed,2026-11-14,,,,2026-11-14,stop,-0.33,-1.03,no,0.37
-Setup 5,Breakout-retest,EFA,closed,2026-11-12,,,,2026-11-16,stop,-0.51,-1.07,no,0.61
-Setup 5,Triple MA,AMZN,open,2026-11-11,273.79,245.12,,,,-26.66,,,
-Setup 5,PB tech,TXN,open,2026-11-10,289.19,276.17,416.18,,,0.45,,,
-Setup 5,PB tech,SNPS,closed,2026-11-10,,,,2026-11-16,stop,-29.12,-1.02,no,41.86
-Setup 5,Breakout-retest,JNJ,open,2026-11-09,278.28,270.59,352.14,,,10.18,,,
-Setup 5,Triple MA,AAPL,open,2026-11-09,345.08,318.45,,,,14.79,,,
-Setup 5,Triple MA,GE,open,2026-11-09,332.26,299.21,,,,-14.13,,,
-Setup 5,X Hammer tech,ADBE,closed,2026-11-09,,,,2026-11-09,stop,-0.9,-1.31,no,2.75
-Setup 5,X Stochastic reversal,XRP-USD,closed,2026-11-07,,,,2026-11-09,stop,-33.97,-1.02,no,30.63
-Setup 5,X Stochastic reversal,SOL-USD,closed,2026-11-07,,,,2026-11-10,stop,-34.01,-1.02,no,36.79
-Setup 5,Dip after bull flag,EOG,open,2026-11-05,148.46,144.01,191.31,,,3.87,,,
-Setup 5,Triple MA,BRK-B,open,2026-11-04,566.87,544.42,,,,31.48,,,
-Setup 5,Triple MA,DE,sell at next open,2026-11-04,,,,,,,,,
-Setup 5,Bull flag,UPS,open,2026-11-03,109.5,107.05,132.8,,,11.71,,,
-Setup 5,Breakout-retest,BMY,open,2026-11-02,62.51,60.73,79.69,,,4.67,,,
-Setup 5,Breakout-retest,COST,open,2026-11-02,1016.89,999.42,1180.4,,,15.91,,,
-Setup 5,Momentum 12-1,MRK,open,2026-11-02,148.97,130.41,,,,-17.0,,,
-Setup 5,X Stochastic reversal,SOL-USD,closed,2026-11-01,,,,2026-11-05,stop,-35.76,-1.02,no,48.42
+Setup 5,Breakout-retest,LIN,buy at next open,2026-11-18,515.63,506.1,605.24,,,0.0,,,
+Setup 5,Dip after bull flag,HD,buy at next open,2026-11-18,339.35,330.09,428.2,,,0.0,,,
+Setup 5,52-week high,PG,open,2026-11-17,171.51,168.07,204.03,,,0.01,,,
+Setup 5,Breakout-retest,SLB,closed,2026-11-16,,,,2026-11-17,stop,-0.78,-1.03,no,1.03
+Setup 5,X Stochastic reversal,ETH-USD,open,2026-11-15,1770.65,1607.91,,,,11.37,,,
+Setup 5,X Stochastic reversal,SOL-USD,open,2026-11-15,70.34,63.03,,,,19.61,,,
+Setup 5,X Stochastic reversal,BTC-USD,closed,2026-11-14,,,,2026-11-14,stop,-35.57,-1.03,no,39.56
+Setup 5,X Stochastic reversal,BNB-USD,closed,2026-11-14,,,,2026-11-14,stop,-4.24,-1.02,no,5.71
+Setup 5,Breakout-retest,ABT,closed,2026-11-13,,,,2026-11-17,stop,-0.24,-1.03,no,0.42
+Setup 5,52-week high,AAPL,open,2026-11-12,358.17,349.16,444.3,,,-1.01,,,
+Setup 5,52-week high,JNJ,open,2026-11-10,282.28,274.65,355.51,,,-8.69,,,
+Setup 5,PB tech,SNPS,closed,2026-11-10,,,,2026-11-16,stop,-2.96,-1.02,no,4.26
+Setup 5,Breakout-retest,XOM,open,2026-11-06,163.38,158.4,211.44,,,15.86,,,
+Setup 5,Triple MA,EFA,closed,2026-11-06,,,,2026-11-09,signal,15.64,0.6,yes,1.74
+Setup 5,X MA cross 20/60,NKE,open,2026-11-06,38.31,34.63,,,,-22.64,,,
+Setup 5,X MA cross 20/60,TLT,closed,2026-11-06,,,,2026-11-13,stop_gap,-22.67,-1.13,no,25.12
+Setup 5,X Stochastic reversal,AMD,open,2026-11-06,444.87,391.69,,,,37.27,,,
+Setup 5,Dip after bull flag,EOG,open,2026-11-05,148.46,144.01,191.31,,,3.63,,,
+Setup 5,Triple MA,BRK-B,open,2026-11-04,566.87,544.42,,,,24.16,,,
+Setup 5,Triple MA,DE,closed,2026-11-04,,,,2026-11-17,signal,-3.06,-0.42,no,6.42
+Setup 5,Bull flag,UPS,open,2026-11-03,107.9,105.49,130.87,,,13.21,,,
+Setup 5,Breakout-retest,COST,open,2026-11-02,1016.89,999.42,1180.4,,,64.15,,,
+Setup 5,Breakout-retest,MSFT,closed,2026-11-02,,,,2026-11-02,stop,-0.31,-1.04,no,0.54
+Setup 5,Breakout-retest,BMY,closed,2026-11-02,,,,2026-11-17,stop,-20.7,-1.03,no,46.92
+Setup 5,Momentum 12-1,MRK,open,2026-11-02,148.97,130.41,,,,-21.12,,,
 Setup 5,Bull flag,IBM,closed,2026-10-30,,,,2026-11-03,stop_gap,-3.27,-1.22,no,3.48
 Setup 5,Breakout-retest,DIA,closed,2026-10-29,,,,2026-10-30,stop,-0.86,-1.1,no,0.91
 Setup 5,Breakout-retest,CRM,closed,2026-10-28,,,,2026-10-29,stop,-3.91,-1.03,no,5.93
@@ -59,7 +65,7 @@ Setup 5,Triple MA,SLB,closed,2026-10-26,,,,2026-11-05,signal,1.1,0.02,yes,65.35
 Setup 5,X Engulfing tech,TXN,closed,2026-10-26,,,,2026-11-05,stop,-9.84,-0.32,no,93.62
 Setup 5,X Hammer tech,NVDA,closed,2026-10-26,,,,2026-10-30,stop_gap,-14.87,-1.46,no,49.65
 Setup 5,X Hammer tech,AVGO,closed,2026-10-26,,,,2026-10-30,stop,-10.52,-1.07,no,55.9
-Setup 5,X MA cross 20/60,XLP,open,2026-10-26,88.17,84.25,,,,34.68,,,
+Setup 5,X MA cross 20/60,XLP,open,2026-10-26,88.17,84.25,,,,25.76,,,
 Setup 5,X Stochastic reversal,CSCO,closed,2026-10-26,,,,2026-10-30,stop,-28.94,-1.02,no,52.2
 Setup 5,X Stochastic reversal,ORCL,closed,2026-10-26,,,,2026-11-05,stop,-34.91,-1.01,no,115.29
 Setup 5,X Stochastic reversal,AMAT,closed,2026-10-26,,,,2026-11-05,stop_gap,-22.23,-1.11,no,71.41

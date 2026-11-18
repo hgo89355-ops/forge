@@ -1,23 +1,19 @@
 {
- "date": "2026-11-16",
- "markets_recorded": 349,
- "signals_today": 16,
- "bot_signals": 12,
- "shadow_signals": 4,
+ "date": "2026-11-17",
+ "markets_recorded": 351,
+ "signals_today": 17,
+ "bot_signals": 15,
+ "shadow_signals": 2,
  "alerts": [
-  "Unusual move: para:TTWO -7.4% (4.1x its normal daily move)",
-  "Volume spike: para:TER traded 9.3x its usual volume (-6.6%)",
-  "Volume spike: para:TTWO traded 9.1x its usual volume (-7.4%)",
-  "Volume spike: xyz:USAR traded 6.2x its usual volume (-11.0%)",
-  "Volume spike: para:GLW traded 5.8x its usual volume (-6.7%)",
-  "Volume spike: SKR traded 5.7x its usual volume (+5.3%)",
-  "Volume spike: xyz:ZM traded 4.9x its usual volume (-3.4%)",
-  "Volume spike: LIT traded 4.6x its usual volume (+4.7%)",
-  "Volume spike: xyz:SHAZ traded 4.4x its usual volume (-13.6%)",
-  "Signal skipped: PEP (TU rest); its outcome will be tracked",
-  "Signal skipped: BMY (Triple MA); its outcome will be tracked",
-  "Signal skipped: AMZN (Breakout-retest); its outcome will be tracked",
-  "Signal skipped: BLK (Breakout-retest); its outcome will be tracked",
-  "Signal skipped: PEP (Turtle breakout); its outcome will be tracked"
+  "Unusual move: STABLE -15.1% (4.4x its normal daily move)",
+  "Volume spike: xyz:CVX traded 12.3x its usual volume (-0.2%)",
+  "Volume spike: xyz:COST traded 8.8x its usual volume (-0.8%)",
+  "Volume spike: io:NVDA traded 5.5x its usual volume (+3.3%)",
+  "Volume spike: xyz:BABA traded 4.0x its usual volume (-3.4%)",
+  "Signal skipped: MDT (Triple MA); its outcome will be tracked",
+  "Signal skipped: XLF (Breakout-retest); its outcome will be tracked",
+  "Signal skipped: XLRE (Breakout-retest); its outcome will be tracked",
+  "Signal skipped: XLY (Breakout-retest); its outcome will be tracked",
+  "Signal skipped: HD (Dip after bull flag, quick exit); its outcome will be tracked"
  ]
 }
