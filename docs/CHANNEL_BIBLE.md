@@ -58,3 +58,10 @@ Open this when making or reviewing any video. Owner-supplied references: the gui
   emergency stop) → recap.
 - Reusable cutaways: build each machine as a component that works in 9:16 and 16:9, so Shorts and the
   long video share it.
+
+## 7. Shorts pacing (from v5, automatic Frame Critic fails)
+Run `python3 lib/critic/pacing_check.py <video.mp4> --voice <voice.wav>` on every Short. Automatic FAIL if:
+longer than 35 s · any silence over 0.3 s · any 1.5 s with no visual change · no motion in the first second ·
+end card longer than 0.5 s. Targets: 26–32 s, 75–85 words, speech from frame 1, pauses < 0.25 s, a cut on every
+sentence, camera always moving, subject ≥ 60% of the frame, no "follow" line — end on a line that loops to the
+first. Put the timing chart (duration, cuts per 10 s, total silence) on the approval card next to the last version.
