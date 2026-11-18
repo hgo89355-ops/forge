@@ -1,0 +1,60 @@
+# Channel bible (style v4)
+
+Open this when making or reviewing any video. Owner-supplied references: the guide character sheet
+(curious / oops / shocked / confident) and the escalator frame "The Two Hidden Tracks".
+
+## 1. The look
+- **Ground:** light cool grey studio (about #D8DCE0 → #E9ECEF), soft floor shadow under the machine.
+- **The machine (hero, ≥ 50% of the frame):** stylized-realistic 3D cutaway made in Three.js:
+  brushed steel and aluminium, glass shells cut away, rounded bevels, soft studio light (key upper-left,
+  fill, rim), contact shadows. Cut faces are clean and readable.
+- **Colour-coding of key parts** (one strong colour per part family, consistent across a video):
+  moving parts that matter = saturated blue (#1F4FE0 / light #4FA3E8), drive parts = red (#D7262B),
+  motors = orange (#F08A24), edges/trim = yellow (#F2C230). Everything else stays neutral metal.
+- **Labels:** white rounded boxes (radius ~10 px), dark bold text (Inter 800), thin dark leader line
+  ending in a white dot with a dark ring on the part. Labels appear when the voice names the part.
+- **Title tag:** top-left, white box with a 12 px blue accent bar on its left; bold dark text.
+- **Precision:** proportions, part counts and motion follow the real machine. A beautiful wrong diagram
+  is worse than none.
+
+## 2. The guide character (code rig in lib/character/)
+- Young guy, messy swept black hair, white face/skin with black outlines, simple eyes and eyebrows,
+  open expressive mouth.
+- Blue short-sleeve tee (#1F4FE0) with a small white gear logo on the chest; dark navy slim jeans
+  (#2A3347); white sneakers with grey laces.
+- Flat 2D, bold even black outline, minimal shading (one soft shadow tone at most). Never 3D.
+- Moods: **curious** (hand on chin), **oops** (hand behind head, sheepish grin), **shocked** (hands up,
+  open mouth, motion lines), **confident** (hands on hips, grin). Plus action poses: point, push, pull,
+  struggle, jump, wave.
+- Size: small next to the machine (he stands on it, peeks in, points). He is the sidekick, the machine
+  is the star. 1–3 jokes per video (tries the wrong thing, gets surprised, gets bonked).
+- Acting: mood changes go through anticipation → pose → settle; offset body parts; feet touch surfaces.
+
+## 3. Motion
+- Spring physics for arrivals (damping 0.55–0.8); camera moves ease in-out; no linear moves except
+  rotation of machine parts that really rotate at constant speed.
+- Something new every 2–3 s (part moves, label lands, camera moves, character acts).
+- Transitions have a cause on screen (whip, zoom through a part, object becomes the world).
+
+## 4. Words, captions, voice
+- Script ≈ 2.2–2.7 spoken words per second; each claim checked (SOURCES.md per video).
+- Captions: big word-timed groups of 2–4 words, Inter 900, inside the safe area
+  (Shorts: text between y 168 and 1330 px of 1920; not under the right-hand action rail).
+- Voice: AI voice, labelled "AI voice" in the description. Default local Kokoro `am_fenrir` @ 1.0
+  (free, commercial OK). ElevenLabs "Liam" works on the free tier but the free tier has no commercial
+  licence and needs attribution — check before monetising.
+
+## 5. Sound
+- Sound effects made in code, only on visible actions (parts moving, clicks, whooshes on cuts, a
+  "wrong" buzz). Peaks land one frame after the picture. Mix ≈ −14 LUFS, true peak ≤ −1 dBTP.
+- Music: none yet (no free licensed source set up) — see OWNER_TODO.md.
+
+## 6. Long videos and chapters
+- 8–10 minutes, never longer. Built one chapter per day, assembled on Sunday.
+- Description timestamps: first chapter at 0:00, at least 3 chapters, each ≥ 10 s, clear searchable
+  chapter titles.
+- Escalator draft chapters: hook (stuck on an escalator) → the two hidden tracks → why every step
+  stays flat → chain + motor → handrail → the upside-down trip back → safety (comb plates, brakes,
+  emergency stop) → recap.
+- Reusable cutaways: build each machine as a component that works in 9:16 and 16:9, so Shorts and the
+  long video share it.

@@ -1,0 +1,13 @@
+# Owner to-do (only you can do these)
+
+- [ ] **Voice download:** to use the ElevenLabs "Liam" voice, allow the download (add a permission rule, or say
+      "download the ElevenLabs file"). Until then videos use the free local Kokoro voice `am_fenrir`.
+- [ ] **ElevenLabs licence:** the free tier has no commercial licence and needs attribution. Decide before
+      monetising: stay on Kokoro (free, commercial OK) or upgrade (costs money — your call).
+- [ ] **Music:** no free licensed music source is set up. Options: a free library you trust (e.g. YouTube Audio
+      Library, downloaded by you into the repo), or no music.
+- [ ] **YouTube posting:** no YouTube upload connection exists in the build environment yet. Posting needs a
+      connected account or you uploading the files.
+- [ ] **~/automaton:** that folder is on your own computer. To keep a copy of CLAUDE.md there, connect your
+      computer (Remote Control) or copy the file yourself.
+- [ ] **Channel name / handle:** tell me so the brain file and descriptions use it.
