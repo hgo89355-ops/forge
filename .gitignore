@@ -1,0 +1,5 @@
+# render scratch output
+*.log
+videos/*/renders/work-*/
+videos/*/snap*/
+videos/*/.hyperframes/
