@@ -1,5 +1,9 @@
 # Owner to-do (only you can do these)
 
+- [ ] **Approve or give notes on the lock Short** (videos/lock-short/renders/lock-short-v4.mp4). There is no
+      "Approvals" queue, "Motion Studio" or "Company Brain" tool connected here, so approvals happen in chat
+      and the style lives in this repo (CLAUDE.md + docs/CHANNEL_BIBLE.md).
+
 - [ ] **Voice download:** to use the ElevenLabs "Liam" voice, allow the download (add a permission rule, or say
       "download the ElevenLabs file"). Until then videos use the free local Kokoro voice `am_fenrir`.
 - [ ] **ElevenLabs licence:** the free tier has no commercial licence and needs attribution. Decide before

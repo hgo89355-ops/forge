@@ -19,3 +19,9 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   Mark snippet-only sources in SOURCES.md.
 - Draft review lesson: the first layout made the machine and the sidekick too small — hero ≥ 50% of the
   frame, character ≈ 15–20% of the frame height.
+- v4 build: offline CSG (three-bvh-csg in node) → JSON geometry loaded by a plain <script>; Three.js r158 UMD
+  vendored locally. HyperFrames render of 39 s 9:16 3D at 30 fps: 15m44s on 4 CPU workers (software GL).
+- Character rule that fixed most critic notes: guide on top of the machine in wide shots, on the floor for
+  push/pull actions, off-camera in close-ups. Pick wide-shot camera distance so machine + guide fit above captions.
+- Frame Critic: 3 rounds took the film from mostly 5–7 to mostly 8; the weakest scenes were the ones built
+  last (key grid, ancient lock) — schedule extra time for scenes that leave the main machine.

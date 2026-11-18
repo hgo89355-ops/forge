@@ -1,0 +1,6 @@
+<!doctype html><html><head><style>html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(120% 80% at 50% 40%,#F1F3F5 0%,#DDE1E6 70%,#CFD4DA 100%)}canvas,svg{position:absolute;left:0;top:0}</style></head><body>
+<canvas id="c" width="1920" height="1080"></canvas><svg id="s" width="1920" height="1080"></svg>
+<script src="../assets/components/lock-cutaway.js"></script><script src="../assets/components/guide.js"></script>
+<script src="../assets/vendor/three-0.158.min.js"></script><script src="../assets/lock-geo.js"></script>
+<script src="../assets/film-script.js"></script><script src="../assets/film3d.js"></script>
+<script>const f=Film3D.mount(document.getElementById('c'),document.getElementById('s'),{w:1920,h:1080}); f.renderAt(+location.hash.slice(1)||19.9);</script></body></html>

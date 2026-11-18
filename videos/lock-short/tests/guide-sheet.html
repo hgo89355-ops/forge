@@ -1,0 +1,10 @@
+<!doctype html><html><body style="margin:0;background:#F7F5EF">
+<svg id="s" width="1800" height="760" xmlns="http://www.w3.org/2000/svg"></svg>
+<script src="../assets/components/guide.js"></script>
+<script>
+const names=['curious','oops','shocked','confident','point','push','struggle','cheer','wave'];
+let h='';
+names.forEach((n,i)=>{ const st=Object.assign({x:110+i*195,y:700,h:600,face:1},Guide.POSES[n]);
+ h+=Guide.draw(st)+`<text x="${110+i*195}" y="745" font-family="sans-serif" font-size="26" text-anchor="middle">${n}</text>`;});
+document.getElementById('s').innerHTML=h;
+</script></body></html>
