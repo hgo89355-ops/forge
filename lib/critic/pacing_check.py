@@ -39,7 +39,7 @@ def main():
     total_sil = round(sum(e - s for s, e in sil), 2)
     d, fps = frame_diffs(path)
     MOVE = 0.35      # mean abs grey-level change per 0.1 s that counts as "something changed"
-    CUT = 18.0       # a jump this big between two samples is a cut
+    CUT = 30.0       # a jump this big between two samples is a cut (captions/labels stay below this)
     moving = d > MOVE
     win = int(1.5 * fps)
     dead = []
@@ -58,7 +58,11 @@ def main():
         if v: break
         tail += 1
     end_card = round(tail / fps, 2)
-    cuts = int((d > CUT).sum())
+    big = [i for i, v in enumerate(d) if v > CUT]
+    cut_times = []
+    for i in big:
+        if not cut_times or i / fps - cut_times[-1] > 0.3: cut_times.append(i / fps)
+    cuts = len(cut_times)
     res = {
         'duration_s': round(dur, 2), 'cuts': cuts, 'cuts_per_10s': round(cuts / dur * 10, 1),
         'total_silence_s': total_sil, 'silences_over_0.3s': long_sil, 'dead_windows_1.5s': dead,

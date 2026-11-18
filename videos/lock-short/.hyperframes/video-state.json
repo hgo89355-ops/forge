@@ -970,5 +970,16 @@
         "attribution": "inputs-changed"
       }
     ]
-  }
+  },
+  "renders": {
+    "latest": {
+      "id": "ef34371f-038f-4814-a997-a4e5cb8c2a16",
+      "completedAt": 1795017519458,
+      "output": "/home/user/forge/videos/lock-short/renders/lock-short-v5-draft.mp4",
+      "status": "completed",
+      "revision": null
+    },
+    "retainedRevisions": []
+  },
+  "pendingArtifactCleanup": []
 }

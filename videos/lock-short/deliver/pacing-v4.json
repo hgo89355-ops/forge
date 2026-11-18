@@ -1,7 +1,7 @@
 {
  "duration_s": 39.0,
- "cuts": 13,
- "cuts_per_10s": 3.3,
+ "cuts": 4,
+ "cuts_per_10s": 1.0,
  "total_silence_s": 5.79,
  "silences_over_0.3s": [
   [
