@@ -1,44 +1,44 @@
 date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-10-22,BMY,Inside-day breakout,63.0,2.0514,finished,4,-1.114,stop,False
-2026-10-22,DE,Inside-day breakout,643.62,18.9821,open,19,0.09,open,False
-2026-10-22,FDX,Inside-day breakout,303.92,5.6021,open,19,2.963,open,False
+2026-10-22,DE,Inside-day breakout,643.62,18.9821,finished,20,-1.068,stop,False
+2026-10-22,FDX,Inside-day breakout,303.92,5.6021,open,20,2.308,open,False
 2026-10-22,PFE,Inside-day breakout,30.42,0.5821,finished,3,-1.375,stop,False
 2026-10-22,UNH,Inside-day breakout,424.98,13.2414,finished,2,-1.064,stop,False
 2026-10-22,XLV,Inside-day breakout,181.3,3.1157,finished,4,-1.116,stop,False
 2026-10-22,AAPL,Strong on a red day,348.22,6.0836,finished,2,-1.115,stop,False
 2026-10-22,ADBE,Strong on a red day,270.55,8.6714,finished,2,-1.062,stop,False
 2026-10-22,BMY,Strong on a red day,63.0,2.0514,finished,4,-1.114,stop,False
-2026-10-22,BRK-B,Strong on a red day,546.97,6.3586,open,19,4.429,open,False
+2026-10-22,BRK-B,Strong on a red day,546.97,6.3586,open,20,4.023,open,False
 2026-10-22,COST,Strong on a red day,1018.21,15.8186,finished,2,-1.128,stop,False
 2026-10-22,CRM,Strong on a red day,250.29,8.6843,finished,4,-1.332,stop,False
 2026-10-22,DIS,Strong on a red day,113.13,2.0321,finished,2,-1.11,stop,False
 2026-10-22,HD,Strong on a red day,327.73,7.1493,finished,1,-1.091,stop,False
-2026-10-22,HON,Strong on a red day,218.31,4.905,open,19,1.447,open,False
+2026-10-22,HON,Strong on a red day,218.31,4.905,open,20,0.453,open,False
 2026-10-22,IEF,Strong on a red day,91.2,0.5121,finished,15,-1.356,stop,False
 2026-10-22,INTU,Strong on a red day,354.9,12.3964,finished,2,-1.057,stop,False
 2026-10-22,ISRG,Strong on a red day,443.85,13.1479,finished,18,-1.067,stop,False
-2026-10-22,JNJ,Strong on a red day,267.61,6.9221,open,19,0.917,open,False
+2026-10-22,JNJ,Strong on a red day,267.61,6.9221,open,20,0.114,open,False
 2026-10-22,KO,Strong on a red day,95.34,1.5921,finished,1,-1.119,stop,False
 2026-10-22,LIN,Strong on a red day,510.36,7.7386,finished,5,-1.132,stop,False
 2026-10-22,LLY,Strong on a red day,1306.6899,39.6179,finished,1,-1.066,stop,False
 2026-10-22,LOW,Strong on a red day,204.37,4.9063,finished,2,-1.082,stop,False
 2026-10-22,MA,Strong on a red day,633.21,10.4526,finished,2,-1.12,stop,False
-2026-10-22,MCD,Strong on a red day,252.63,4.3507,open,19,5.286,open,False
+2026-10-22,MCD,Strong on a red day,252.63,4.3507,open,20,4.9,open,False
 2026-10-22,MDT,Strong on a red day,96.59,2.6829,finished,4,-1.205,stop,False
 2026-10-22,NKE,Strong on a red day,38.32,1.0671,finished,18,-1.071,stop,False
 2026-10-22,NOW,Strong on a red day,157.0,6.0636,finished,4,-1.052,stop,False
 2026-10-22,PEP,Strong on a red day,138.83,3.0657,finished,1,-1.09,stop,False
 2026-10-22,PFE,Strong on a red day,30.42,0.5821,finished,3,-1.375,stop,False
 2026-10-22,PG,Strong on a red day,164.501,3.1321,finished,1,-1.105,stop,False
-2026-10-22,SBUX,Strong on a red day,101.91,2.6721,open,19,3.058,open,False
+2026-10-22,SBUX,Strong on a red day,101.91,2.6721,open,20,1.311,open,False
 2026-10-22,TLT,Strong on a red day,81.74,0.8471,finished,4,-1.193,stop,False
 2026-10-22,UNH,Strong on a red day,424.98,13.2414,finished,2,-1.064,stop,False
-2026-10-22,UPS,Strong on a red day,101.52,1.9436,open,19,5.954,open,False
+2026-10-22,UPS,Strong on a red day,101.52,1.9436,open,20,4.952,open,False
 2026-10-22,V,Strong on a red day,414.34,7.4364,finished,2,-1.11,stop,False
 2026-10-22,WMT,Strong on a red day,121.12,2.5229,finished,3,-1.096,stop,False
-2026-10-22,XLF,Strong on a red day,56.65,0.7021,open,19,0.168,open,False
+2026-10-22,XLF,Strong on a red day,56.65,0.7021,finished,20,-1.16,stop,False
 2026-10-22,XLP,Strong on a red day,89.99,1.3014,finished,1,-1.138,stop,False
-2026-10-22,XLU,Strong on a red day,42.87,0.6986,open,19,1.051,open,False
+2026-10-22,XLU,Strong on a red day,42.87,0.6986,open,20,0.278,open,False
 2026-10-22,XLV,Strong on a red day,181.3,3.1157,finished,4,-1.116,stop,False
 2026-10-24,liquid:ANIME,Big jump on volume,0.0035,0.0004,finished,1,-1.019,stop,False
 2026-10-24,liquid:INIT,Big jump on volume,0.1591,0.015,finished,2,-1.021,stop,False
@@ -71,22 +71,22 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-10-30,ABT,Strong on a red day,106.2,3.0192,finished,13,-1.127,stop,True
 2026-10-30,BMY,Strong on a red day,62.48,1.8879,finished,13,-1.066,stop,True
 2026-10-30,COP,Strong on a red day,154.03,3.555,finished,1,-1.085,stop,False
-2026-10-30,COST,Strong on a red day,1012.28,17.5797,open,13,4.478,open,True
+2026-10-30,COST,Strong on a red day,1012.28,17.5797,open,14,4.319,open,True
 2026-10-30,CVX,Strong on a red day,235.52,4.735,finished,1,-1.098,stop,False
 2026-10-30,DE,Strong on a red day,675.48,17.4479,finished,12,-1.077,stop,True
 2026-10-30,EOG,Strong on a red day,165.54,3.8338,finished,1,-1.085,stop,False
 2026-10-30,FDX,Strong on a red day,313.28,7.6643,finished,5,-1.082,stop,True
 2026-10-30,GM,Strong on a red day,87.4,2.9521,finished,11,-1.06,stop,True
 2026-10-30,INTU,Strong on a red day,341.09,13.6293,finished,12,-1.05,stop,True
-2026-10-30,KO,Strong on a red day,94.08,1.7586,open,13,2.059,open,True
+2026-10-30,KO,Strong on a red day,94.08,1.7586,open,14,0.922,open,True
 2026-10-30,LIN,Strong on a red day,514.24,7.97,finished,2,-1.13,stop,False
 2026-10-30,LLY,Strong on a red day,1417.54,48.2415,finished,5,-1.058,stop,True
 2026-10-30,MRK,Strong on a red day,149.52,5.2093,finished,2,-1.057,stop,True
-2026-10-30,PEP,Strong on a red day,137.34,3.1336,open,13,1.057,open,False
+2026-10-30,PEP,Strong on a red day,137.34,3.1336,open,14,0.142,open,False
 2026-10-30,PFE,Strong on a red day,30.52,0.6036,finished,5,-2.387,stop,True
-2026-10-30,WMT,Strong on a red day,123.51,2.6443,open,13,1.139,open,False
+2026-10-30,WMT,Strong on a red day,123.51,2.6443,open,14,0.64,open,False
 2026-10-30,XLE,Strong on a red day,70.02,1.4257,finished,1,-1.097,stop,False
-2026-10-30,XLP,Strong on a red day,89.42,1.4707,open,13,0.789,open,True
+2026-10-30,XLP,Strong on a red day,89.42,1.4707,open,14,-0.109,open,True
 2026-10-30,XOM,Strong on a red day,187.25,4.1364,finished,1,-1.089,stop,True
 2026-10-30,liquid:BCH,Strong on a red day,294.0,15.9721,finished,3,-1.037,stop,False
 2026-10-30,liquid:GRASS,Strong on a red day,0.5916,0.0765,finished,6,-1.015,stop,False
@@ -128,22 +128,22 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-05,ETH-USD,Inside-day breakout,2427.21,79.2597,finished,3,-1.249,stop,True
 2026-11-05,LINK-USD,Inside-day breakout,11.456,0.5989,finished,7,-1.032,stop,False
 2026-11-05,SOL-USD,Inside-day breakout,96.11,3.5312,finished,5,-1.461,stop,False
-2026-11-05,COST,Strong on a red day,1065.59,20.0674,open,9,2.456,open,True
+2026-11-05,COST,Strong on a red day,1065.59,20.0674,open,10,2.317,open,True
 2026-11-05,liquid:INJ,Strong on a red day,8.1463,0.6279,finished,6,-1.026,stop,False
 2026-11-05,liquid:MERL,Strong on a red day,0.0304,0.0027,finished,11,-1.022,stop,False
-2026-11-06,ES=F,Drop bounce in uptrend,7404.0,130.9643,open,8,0.023,open,True
+2026-11-06,ES=F,Drop bounce in uptrend,7404.0,130.9643,finished,9,-1.473,stop,True
 2026-11-06,SPY,Drop bounce in uptrend,735.29,11.115,finished,7,-1.134,stop,True
 2026-11-07,liquid:MET,Big jump on volume,0.3279,0.0246,finished,1,-1.027,stop,False
 2026-11-07,liquid:MET,Inside-day breakout,0.3279,0.0246,finished,1,-1.027,stop,False
 2026-11-08,liquid:RSR,Inside-day breakout,0.0017,0.0001,finished,4,-1.022,stop,False
 2026-11-09,liquid:INIT,Big jump on volume,0.1843,0.039,finished,2,-1.009,stop,False
 2026-11-09,liquid:RSR,Big jump on volume,0.0017,0.0002,finished,2,-1.022,stop,False
-2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,9,3.538,open,False
+2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,10,2.486,open,False
 2026-11-09,EEM,Inside-day breakout,61.03,1.3996,finished,5,-1.087,stop,True
 2026-11-09,META,Inside-day breakout,641.37,24.7357,finished,7,-1.052,stop,True
 2026-11-09,SNPS,Inside-day breakout,466.97,20.2361,finished,5,-1.046,stop,True
 2026-11-10,liquid:INIT,Big jump on volume,0.2001,0.0444,finished,1,-1.009,stop,False
-2026-11-10,KO,Inside-day breakout,96.91,1.9771,open,6,0.833,open,True
+2026-11-10,KO,Inside-day breakout,96.91,1.9771,open,7,-0.178,open,True
 2026-11-10,liquid:LIT,Inside-day breakout,3.4721,0.3714,finished,2,-1.019,stop,False
 2026-11-11,ABBV,Inside-day breakout,294.98,7.3418,finished,4,-1.144,stop,False
 2026-11-11,ADI,Inside-day breakout,409.08,21.1964,finished,3,-1.038,stop,True
@@ -160,25 +160,26 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-11,liquid:xyz_XYZ100,Inside-day breakout,28090.0,763.5714,finished,5,-1.074,stop,False
 2026-11-16,ADBE,Strong on a red day,246.0,7.6693,finished,1,-1.063,stop,True
 2026-11-16,FDX,Strong on a red day,327.65,8.8535,finished,1,-1.074,stop,False
-2026-11-16,INTU,Strong on a red day,345.56,12.6729,finished,1,-1.054,stop,False
-2026-11-16,PG,Strong on a red day,173.02,3.4471,open,2,-0.404,open,True
-2026-11-16,SBUX,Strong on a red day,108.72,3.2323,open,2,0.394,open,True
+2026-11-16,INTU,Strong on a red day,345.56,12.6729,finished,1,-1.054,stop,True
+2026-11-16,PG,Strong on a red day,173.02,3.4471,finished,3,-1.099,stop,True
+2026-11-16,SBUX,Strong on a red day,108.72,3.2323,finished,3,-1.067,stop,True
 2026-11-16,UNH,Strong on a red day,412.02,10.9807,finished,1,-1.073,stop,True
-2026-11-17,SOL-USD,Inside-day breakout,75.1052,4.6984,open,1,-0.044,open,True
-2026-11-17,XRP-USD,Inside-day breakout,0.9829,0.0605,open,1,-0.057,open,True
-2026-11-17,liquid:BCH,Inside-day breakout,212.3,15.3264,open,1,-0.277,open,False
+2026-11-17,SOL-USD,Inside-day breakout,75.1052,4.6984,open,2,-0.52,open,True
+2026-11-17,XRP-USD,Inside-day breakout,0.9829,0.0605,open,2,-0.4,open,True
+2026-11-17,liquid:BCH,Inside-day breakout,212.3,15.3264,open,2,-0.419,open,False
 2026-11-17,liquid:CAKE,Inside-day breakout,1.6533,0.1013,finished,1,-1.033,stop,False
-2026-11-17,liquid:DASH,Inside-day breakout,38.67,4.0161,open,1,-0.316,open,False
-2026-11-17,liquid:GAS,Inside-day breakout,0.9792,0.0608,open,1,-0.34,open,False
-2026-11-17,liquid:GRASS,Inside-day breakout,0.4174,0.0478,open,1,-0.254,open,False
-2026-11-17,liquid:INJ,Inside-day breakout,7.4142,0.75,open,1,-0.588,open,False
-2026-11-17,liquid:POL,Inside-day breakout,0.083,0.0053,open,1,-0.264,open,False
-2026-11-17,liquid:RENDER,Inside-day breakout,1.4828,0.1229,open,1,-0.775,open,False
-2026-11-17,liquid:STX,Inside-day breakout,0.2802,0.0268,open,1,-0.336,open,False
-2026-11-17,liquid:TAO,Inside-day breakout,197.67,16.5686,open,1,-0.335,open,False
-2026-11-17,liquid:ZEC,Inside-day breakout,968.89,119.44,open,1,-0.478,open,False
-2026-11-17,liquid:ZETA,Inside-day breakout,0.0293,0.0025,open,1,0.098,open,False
-2026-11-17,liquid:MEGA,Strong on a red day,0.0518,0.0044,open,1,0.954,open,False
-2026-11-17,liquid:xyz_NATGAS,Strong on a red day,3.5824,0.1312,open,1,1.474,open,False
-2026-11-18,SOL-USD,Inside-day breakout,75.08,4.6587,open,0,,waiting for entry,True
-2026-11-18,XRP-USD,Inside-day breakout,0.9789,0.0596,open,0,,waiting for entry,True
+2026-11-17,liquid:DASH,Inside-day breakout,38.67,4.0161,open,2,-0.545,open,False
+2026-11-17,liquid:GAS,Inside-day breakout,0.9792,0.0608,open,2,-0.39,open,False
+2026-11-17,liquid:GRASS,Inside-day breakout,0.4174,0.0478,open,2,0.014,open,False
+2026-11-17,liquid:INJ,Inside-day breakout,7.4142,0.75,open,2,-0.458,open,False
+2026-11-17,liquid:POL,Inside-day breakout,0.083,0.0053,open,2,-0.627,open,False
+2026-11-17,liquid:RENDER,Inside-day breakout,1.4828,0.1229,finished,2,-1.024,stop,False
+2026-11-17,liquid:STX,Inside-day breakout,0.2802,0.0268,open,2,-0.648,open,False
+2026-11-17,liquid:TAO,Inside-day breakout,197.67,16.5686,open,2,-0.352,open,False
+2026-11-17,liquid:ZEC,Inside-day breakout,968.89,119.44,open,2,-0.64,open,False
+2026-11-17,liquid:ZETA,Inside-day breakout,0.0293,0.0025,open,2,-0.21,open,False
+2026-11-17,liquid:MEGA,Strong on a red day,0.0518,0.0044,open,2,1.416,open,False
+2026-11-17,liquid:xyz_NATGAS,Strong on a red day,3.5824,0.1312,open,2,0.591,open,False
+2026-11-18,SOL-USD,Inside-day breakout,75.08,4.6587,open,1,-0.092,open,True
+2026-11-18,XRP-USD,Inside-day breakout,0.9789,0.0596,open,1,-0.018,open,True
+2026-11-19,liquid:MEGA,Strong on a red day,0.0581,0.0045,open,0,,waiting for entry,False

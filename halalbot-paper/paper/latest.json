@@ -1,180 +1,226 @@
 {
- "run_time_utc": "2026-11-19 00:43",
+ "run_time_utc": "2026-11-20 00:42",
  "paper_start": "2026-10-26",
- "last_stock_candle": "2026-11-18",
- "last_crypto_candle": "2026-11-18",
+ "last_stock_candle": "2026-11-19",
+ "last_crypto_candle": "2026-11-19",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 9875.15,
-   "total_profit": -124.85,
-   "total_return_pct": -1.25,
-   "last_day": "2026-11-18",
-   "last_day_pnl": -68.71,
-   "main_bucket": 6747.04,
+   "account_value": 9806.09,
+   "total_profit": -193.91,
+   "total_return_pct": -1.94,
+   "last_day": "2026-11-19",
+   "last_day_pnl": -74.59,
+   "main_bucket": 6677.99,
    "high_reward_bucket": 3128.11,
-   "worst_drop_pct": -3.18,
-   "open_trades": 11,
+   "worst_drop_pct": -3.75,
+   "open_trades": 8,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
-     "symbol": "LLY",
-     "strategy": "Dip after bull flag",
-     "quantity": 0.487456,
-     "stop_loss": 1339.2717,
-     "take_profit": 1817.5327
+     "symbol": "DIS",
+     "strategy": "Triple MA",
+     "quantity": 5.547872,
+     "stop_loss": 111.593,
+     "take_profit": ""
     },
     {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "MA",
-     "strategy": "Pullback in trend",
-     "quantity": 0.721552,
-     "stop_loss": 629.5138,
-     "take_profit": 781.9316
+     "status": "SELL AT NEXT OPEN",
+     "symbol": "BRK-B",
+     "strategy": "Triple MA",
+     "quantity": 1.222008,
+     "stop_loss": "",
+     "take_profit": ""
+    },
+    {
+     "status": "SELL AT NEXT OPEN",
+     "symbol": "AAPL",
+     "strategy": "Triple MA",
+     "quantity": 1.952251,
+     "stop_loss": "",
+     "take_profit": ""
     }
    ],
-   "closed_trades_total": 19,
+   "closed_trades_total": 22,
    "wins": 4,
    "closed_last_day": [
     {
-     "symbol": "GE",
-     "engine": "Triple MA",
-     "reason": "signal",
-     "pnl_usd": -8.05
+     "symbol": "JNJ",
+     "engine": "Breakout-retest",
+     "reason": "stop_gap",
+     "pnl_usd": -21.66
     },
     {
-     "symbol": "CVX",
-     "engine": "Pullback in trend",
-     "reason": "stop_gap",
-     "pnl_usd": -24.53
-    }
-   ],
-   "left_on_table_total": 682.55,
-   "learn_from_mistakes": [],
-   "day": {
-    "date": "2026-11-18",
-    "bought": [
-     {
-      "symbol": "HD",
-      "strategy": "Dip after bull flag",
-      "price": 331.5762,
-      "value_usd": 694.04
-     },
-     {
-      "symbol": "LIN",
-      "strategy": "Breakout-retest",
-      "price": 512.2718,
-      "value_usd": 46.44
-     }
-    ],
-    "sold": [
-     {
-      "symbol": "GE",
-      "strategy": "Triple MA",
-      "reason": "signal",
-      "pnl_usd": -8.05,
-      "left_on_table_usd": 24.31
-     },
-     {
-      "symbol": "CVX",
-      "strategy": "Pullback in trend",
-      "reason": "stop_gap",
-      "pnl_usd": -24.53,
-      "left_on_table_usd": 44.12
-     }
-    ],
-    "profit_from_winners": 0,
-    "loss_from_losers": -32.58,
-    "left_on_table": 68.43
-   }
-  },
-  "setup5": {
-   "account_value": 9825.38,
-   "total_profit": -174.62,
-   "total_return_pct": -1.75,
-   "last_day": "2026-11-18",
-   "last_day_pnl": -67.09,
-   "main_bucket": 6724.0,
-   "high_reward_bucket": 3101.38,
-   "worst_drop_pct": -4.47,
-   "open_trades": 15,
-   "orders_next_open": [
-    {
-     "status": "BUY AT NEXT OPEN",
-     "symbol": "LLY",
-     "strategy": "Dip after bull flag",
-     "quantity": 0.446178,
-     "stop_loss": 1339.2717,
-     "take_profit": 1817.5327
-    }
-   ],
-   "closed_trades_total": 25,
-   "wins": 2,
-   "closed_last_day": [
-    {
-     "symbol": "JNJ",
+     "symbol": "COST",
      "engine": "52-week high",
-     "reason": "stop",
-     "pnl_usd": -19.2
+     "reason": "stop_gap",
+     "pnl_usd": -15.19
+    },
+    {
+     "symbol": "PG",
+     "engine": "52-week high",
+     "reason": "stop_gap",
+     "pnl_usd": -1.94
     }
    ],
-   "left_on_table_total": 906.89,
+   "left_on_table_total": 754.69,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-18",
+    "date": "2026-11-19",
     "bought": [
      {
-      "symbol": "HD",
+      "symbol": "LLY",
       "strategy": "Dip after bull flag",
-      "price": 331.5762,
-      "value_usd": 691.53
+      "price": 1370.7494,
+      "value_usd": 665.59
      },
      {
-      "symbol": "LIN",
-      "strategy": "Breakout-retest",
-      "price": 512.2718,
-      "value_usd": 66.58
+      "symbol": "MA",
+      "strategy": "Pullback in trend",
+      "price": 637.687,
+      "value_usd": 461.43
      }
     ],
     "sold": [
      {
       "symbol": "JNJ",
+      "strategy": "Breakout-retest",
+      "reason": "stop_gap",
+      "pnl_usd": -21.66,
+      "left_on_table_usd": 55.95
+     },
+     {
+      "symbol": "COST",
       "strategy": "52-week high",
-      "reason": "stop",
-      "pnl_usd": -19.2,
-      "left_on_table_usd": 42.57
+      "reason": "stop_gap",
+      "pnl_usd": -15.19,
+      "left_on_table_usd": 18.57
+     },
+     {
+      "symbol": "PG",
+      "strategy": "52-week high",
+      "reason": "stop_gap",
+      "pnl_usd": -1.94,
+      "left_on_table_usd": 2.95
      }
     ],
     "profit_from_winners": 0,
-    "loss_from_losers": -19.2,
-    "left_on_table": 42.57
+    "loss_from_losers": -38.79,
+    "left_on_table": 77.47
+   }
+  },
+  "setup5": {
+   "account_value": 9713.91,
+   "total_profit": -286.09,
+   "total_return_pct": -2.86,
+   "last_day": "2026-11-19",
+   "last_day_pnl": -111.53,
+   "main_bucket": 6612.53,
+   "high_reward_bucket": 3101.38,
+   "worst_drop_pct": -5.56,
+   "open_trades": 12,
+   "orders_next_open": [
+    {
+     "status": "BUY AT NEXT OPEN",
+     "symbol": "DIS",
+     "strategy": "Triple MA",
+     "quantity": 2.585582,
+     "stop_loss": 111.593,
+     "take_profit": ""
+    },
+    {
+     "status": "SELL AT NEXT OPEN",
+     "symbol": "BRK-B",
+     "strategy": "Triple MA",
+     "quantity": 1.214312,
+     "stop_loss": "",
+     "take_profit": ""
+    }
+   ],
+   "closed_trades_total": 28,
+   "wins": 2,
+   "closed_last_day": [
+    {
+     "symbol": "NKE",
+     "engine": "X MA cross 20/60",
+     "reason": "stop",
+     "pnl_usd": -34.19
+    },
+    {
+     "symbol": "AAPL",
+     "engine": "52-week high",
+     "reason": "stop",
+     "pnl_usd": -1.51
+    },
+    {
+     "symbol": "PG",
+     "engine": "52-week high",
+     "reason": "stop_gap",
+     "pnl_usd": -0.27
+    }
+   ],
+   "left_on_table_total": 967.65,
+   "learn_from_mistakes": [],
+   "day": {
+    "date": "2026-11-19",
+    "bought": [
+     {
+      "symbol": "LLY",
+      "strategy": "Dip after bull flag",
+      "price": 1370.7494,
+      "value_usd": 608.78
+     }
+    ],
+    "sold": [
+     {
+      "symbol": "NKE",
+      "strategy": "X MA cross 20/60",
+      "reason": "stop",
+      "pnl_usd": -34.19,
+      "left_on_table_usd": 58.48
+     },
+     {
+      "symbol": "AAPL",
+      "strategy": "52-week high",
+      "reason": "stop",
+      "pnl_usd": -1.51,
+      "left_on_table_usd": 1.87
+     },
+     {
+      "symbol": "PG",
+      "strategy": "52-week high",
+      "reason": "stop_gap",
+      "pnl_usd": -0.27,
+      "left_on_table_usd": 0.41
+     }
+    ],
+    "profit_from_winners": 0,
+    "loss_from_losers": -35.97,
+    "left_on_table": 60.76
    }
   }
  },
  "data_ok": true,
- "expected_stock_candle": "2026-11-18",
+ "expected_stock_candle": "2026-11-19",
  "records": {
-  "date": "2026-11-18",
+  "date": "2026-11-19",
   "markets_recorded": 352,
-  "signals_today": 30,
-  "bot_signals": 24,
-  "shadow_signals": 6,
+  "signals_today": 11,
+  "bot_signals": 11,
+  "shadow_signals": 0,
   "alerts": [
-   "Unusual move: xyz:STRC -2.6% (5.2x its normal daily move)",
-   "Unusual move: xyz:COPPER -5.4% (5.0x its normal daily move)",
-   "Volume spike: xyz:CVX traded 8.7x its usual volume (-4.6%)",
-   "Volume spike: para:IGV traded 6.8x its usual volume (+0.6%)",
-   "Volume spike: io:PRL traded 5.4x its usual volume (+27.4%)",
-   "Volume spike: xyz:BB traded 4.8x its usual volume (+2.5%)",
-   "Volume spike: xyz:COPPER traded 4.7x its usual volume (-5.4%)",
-   "Signal skipped: LLY (Dip after bull flag, quick exit); its outcome will be tracked",
-   "Signal skipped: COP (Dip after bull flag, quick exit); its outcome will be tracked",
-   "Signal skipped: EOG (Dip after bull flag, quick exit); its outcome will be tracked",
-   "Signal skipped: MA (PB rest); its outcome will be tracked",
-   "Signal skipped: SBUX (Triple MA); its outcome will be tracked",
-   "Signal skipped: HD (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: MA (Breakout-retest); its outcome will be tracked",
-   "Signal skipped: VZ (Breakout-retest); its outcome will be tracked"
+   "Unusual move: io:SNDK -88.0% (17.0x its normal daily move)",
+   "Unusual move: xyz:ZM -10.8% (5.1x its normal daily move)",
+   "Volume spike: xyz:ANT traded 50.9x its usual volume (-4.4%)",
+   "Volume spike: para:ANTH traded 34.5x its usual volume (-3.9%)",
+   "Volume spike: SKY traded 33.5x its usual volume (-7.1%)",
+   "Volume spike: xyz:ZM traded 6.5x its usual volume (-10.8%)",
+   "Volume spike: xyz:COST traded 6.5x its usual volume (-0.6%)",
+   "Volume spike: para:IGV traded 6.2x its usual volume (-3.0%)",
+   "Volume spike: ETC traded 5.8x its usual volume (-1.9%)",
+   "Volume spike: xyz:GME traded 5.7x its usual volume (+2.5%)",
+   "Volume spike: xyz:UMC traded 5.1x its usual volume (-4.8%)",
+   "Volume spike: xyz:IREN traded 4.8x its usual volume (-8.0%)"
   ]
  }
 }
