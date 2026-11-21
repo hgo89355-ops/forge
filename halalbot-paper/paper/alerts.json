@@ -1,21 +1,22 @@
 {
- "date": "2026-11-19",
- "markets_recorded": 352,
- "signals_today": 11,
- "bot_signals": 11,
+ "date": "2026-11-20",
+ "markets_recorded": 354,
+ "signals_today": 21,
+ "bot_signals": 21,
  "shadow_signals": 0,
  "alerts": [
-  "Unusual move: io:SNDK -88.0% (17.0x its normal daily move)",
-  "Unusual move: xyz:ZM -10.8% (5.1x its normal daily move)",
-  "Volume spike: xyz:ANT traded 50.9x its usual volume (-4.4%)",
-  "Volume spike: para:ANTH traded 34.5x its usual volume (-3.9%)",
-  "Volume spike: SKY traded 33.5x its usual volume (-7.1%)",
-  "Volume spike: xyz:ZM traded 6.5x its usual volume (-10.8%)",
-  "Volume spike: xyz:COST traded 6.5x its usual volume (-0.6%)",
-  "Volume spike: para:IGV traded 6.2x its usual volume (-3.0%)",
-  "Volume spike: ETC traded 5.8x its usual volume (-1.9%)",
-  "Volume spike: xyz:GME traded 5.7x its usual volume (+2.5%)",
-  "Volume spike: xyz:UMC traded 5.1x its usual volume (-4.8%)",
-  "Volume spike: xyz:IREN traded 4.8x its usual volume (-8.0%)"
+  "Unusual move: xyz:SNDK -89.3% (17.1x its normal daily move)",
+  "Unusual move: STBL -19.1% (4.4x its normal daily move)",
+  "Unusual move: xyz:NVDA -11.3% (4.1x its normal daily move)",
+  "Volume spike: xyz:COST traded 25.5x its usual volume (+0.6%)",
+  "Volume spike: para:ANTH traded 17.1x its usual volume (-5.7%)",
+  "Volume spike: io:SNDK traded 12.2x its usual volume (-13.8%)",
+  "Volume spike: para:GLW traded 11.5x its usual volume (-7.1%)",
+  "Volume spike: xyz:ANT traded 10.3x its usual volume (-5.5%)",
+  "Volume spike: xyz:SNDK traded 7.0x its usual volume (-89.3%)",
+  "Volume spike: para:AVGO traded 6.5x its usual volume (-11.1%)",
+  "Volume spike: xyz:IREN traded 6.3x its usual volume (-14.3%)",
+  "Volume spike: xyz:EWT traded 5.5x its usual volume (-8.1%)",
+  "Volume spike: xyz:BMNR traded 5.2x its usual volume (-10.9%)"
  ]
 }

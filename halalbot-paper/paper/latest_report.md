@@ -1,40 +1,40 @@
-# Paper trading report — 2026-11-20 00:42 UTC
+# Paper trading report — 2026-11-21 00:43 UTC
 
-Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-11-19, last crypto candle: 2026-11-19.
+Paper start: 2026-10-26 with $10,000 per setup. Last stock candle: 2026-11-20, last crypto candle: 2026-11-20.
 
 ## Alerts
 
-- Unusual move: io:SNDK -88.0% (17.0x its normal daily move)
-- Unusual move: xyz:ZM -10.8% (5.1x its normal daily move)
-- Volume spike: xyz:ANT traded 50.9x its usual volume (-4.4%)
-- Volume spike: para:ANTH traded 34.5x its usual volume (-3.9%)
-- Volume spike: SKY traded 33.5x its usual volume (-7.1%)
-- Volume spike: xyz:ZM traded 6.5x its usual volume (-10.8%)
-- Volume spike: xyz:COST traded 6.5x its usual volume (-0.6%)
-- Volume spike: para:IGV traded 6.2x its usual volume (-3.0%)
-- Volume spike: ETC traded 5.8x its usual volume (-1.9%)
-- Volume spike: xyz:GME traded 5.7x its usual volume (+2.5%)
-- Volume spike: xyz:UMC traded 5.1x its usual volume (-4.8%)
-- Volume spike: xyz:IREN traded 4.8x its usual volume (-8.0%)
+- Unusual move: xyz:SNDK -89.3% (17.1x its normal daily move)
+- Unusual move: STBL -19.1% (4.4x its normal daily move)
+- Unusual move: xyz:NVDA -11.3% (4.1x its normal daily move)
+- Volume spike: xyz:COST traded 25.5x its usual volume (+0.6%)
+- Volume spike: para:ANTH traded 17.1x its usual volume (-5.7%)
+- Volume spike: io:SNDK traded 12.2x its usual volume (-13.8%)
+- Volume spike: para:GLW traded 11.5x its usual volume (-7.1%)
+- Volume spike: xyz:ANT traded 10.3x its usual volume (-5.5%)
+- Volume spike: xyz:SNDK traded 7.0x its usual volume (-89.3%)
+- Volume spike: para:AVGO traded 6.5x its usual volume (-11.1%)
+- Volume spike: xyz:IREN traded 6.3x its usual volume (-14.3%)
+- Volume spike: xyz:EWT traded 5.5x its usual volume (-8.1%)
+- Volume spike: xyz:BMNR traded 5.2x its usual volume (-10.9%)
 
-Recorded 352 Liquid markets; 11 signals logged today (11 from the bot, 0 shadow signals on other markets).
+Recorded 354 Liquid markets; 21 signals logged today (21 from the bot, 0 shadow signals on other markets).
 
 ## Main setup
 
-- Account: $9,806.09 (-1.94% since start)
-- Last day (2026-11-19): -74.59 USD
-- Main bucket $6,677.99, high-reward bucket $3,128.11
-- Open trades: 8; closed so far: 22 (4 wins)
-- Worst drop so far: -3.75%; left on the table (closed trades): $754.69
-- Closed last day: JNJ (Breakout-retest, stop_gap) -21.66; COST (52-week high, stop_gap) -15.19; PG (52-week high, stop_gap) -1.94
-- Orders for the next open: BUY DIS (Triple MA), stop 111.593; SELL BRK-B (Triple MA); SELL AAPL (Triple MA)
+- Account: $9,739.93 (-2.60% since start)
+- Last day (2026-11-20): -66.47 USD
+- Main bucket $6,611.83, high-reward bucket $3,128.11
+- Open trades: 7; closed so far: 26 (6 wins)
+- Worst drop so far: -4.4%; left on the table (closed trades): $920.33
+- Closed last day: TXN (Momentum 12-1, stop) -70.49; BRK-B (Triple MA, signal) +7.09; AAPL (Triple MA, signal) +14.03; LIN (Breakout-retest, stop) -0.91
 
 ## Setup 5 (comparison)
 
-- Account: $9,713.91 (-2.86% since start)
-- Last day (2026-11-19): -111.53 USD
-- Main bucket $6,612.53, high-reward bucket $3,101.38
-- Open trades: 12; closed so far: 28 (2 wins)
-- Worst drop so far: -5.56%; left on the table (closed trades): $967.65
-- Closed last day: NKE (X MA cross 20/60, stop) -34.19; AAPL (52-week high, stop) -1.51; PG (52-week high, stop_gap) -0.27
-- Orders for the next open: BUY DIS (Triple MA), stop 111.593; SELL BRK-B (Triple MA)
+- Account: $9,619.66 (-3.80% since start)
+- Last day (2026-11-20): -94.25 USD
+- Main bucket $6,518.29, high-reward bucket $3,101.38
+- Open trades: 11; closed so far: 31 (3 wins)
+- Worst drop so far: -6.47%; left on the table (closed trades): $1,053.88
+- Closed last day: BRK-B (Triple MA, signal) +7.04; ETH-USD (X Stochastic reversal, stop) -34.99; LIN (Breakout-retest, stop) -1.31
+- Orders for the next open: BUY XRP-USD (X Stochastic reversal), stop 0.8204; BUY IBM (X Hammer tech), stop 223.39; BUY MSFT (X Stochastic reversal), stop 459.9471
