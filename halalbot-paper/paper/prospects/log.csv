@@ -138,7 +138,7 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-08,liquid:RSR,Inside-day breakout,0.0017,0.0001,finished,4,-1.022,stop,False
 2026-11-09,liquid:INIT,Big jump on volume,0.1843,0.039,finished,2,-1.009,stop,False
 2026-11-09,liquid:RSR,Big jump on volume,0.0017,0.0002,finished,2,-1.022,stop,False
-2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,11,3.498,open,False
+2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,12,3.534,open,False
 2026-11-09,EEM,Inside-day breakout,61.03,1.3996,finished,5,-1.087,stop,True
 2026-11-09,META,Inside-day breakout,641.37,24.7357,finished,7,-1.052,stop,True
 2026-11-09,SNPS,Inside-day breakout,466.97,20.2361,finished,5,-1.046,stop,True
@@ -178,8 +178,8 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-17,liquid:TAO,Inside-day breakout,197.67,16.5686,finished,3,-1.024,stop,False
 2026-11-17,liquid:ZEC,Inside-day breakout,968.89,119.44,finished,3,-1.016,stop,False
 2026-11-17,liquid:ZETA,Inside-day breakout,0.0293,0.0025,finished,3,-1.024,stop,False
-2026-11-17,liquid:MEGA,Strong on a red day,0.0518,0.0044,open,3,-0.898,open,False
-2026-11-17,liquid:xyz_NATGAS,Strong on a red day,3.5824,0.1312,open,3,1.44,open,False
+2026-11-17,liquid:MEGA,Strong on a red day,0.0518,0.0044,finished,4,-1.023,stop,False
+2026-11-17,liquid:xyz_NATGAS,Strong on a red day,3.5824,0.1312,open,4,1.471,open,False
 2026-11-18,SOL-USD,Inside-day breakout,75.08,4.6587,finished,2,-1.145,stop,True
 2026-11-18,XRP-USD,Inside-day breakout,0.9789,0.0596,finished,2,-1.062,stop,True
 2026-11-19,liquid:MEGA,Strong on a red day,0.0581,0.0045,finished,1,-1.026,stop,False
@@ -188,6 +188,6 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-20,TLT,Strong on a red day,81.45,0.7836,open,0,,waiting for entry,True
 2026-11-20,VZ,Strong on a red day,46.48,0.9779,open,0,,waiting for entry,True
 2026-11-20,WMT,Strong on a red day,127.95,3.1471,open,0,,waiting for entry,False
-2026-11-20,liquid:HMSTR,Strong on a red day,0.0001,0.0,open,0,,waiting for entry,False
-2026-11-20,liquid:USUAL,Strong on a red day,0.0111,0.001,open,0,,waiting for entry,False
-2026-11-20,liquid:xyz_NATGAS,Strong on a red day,3.7784,0.1491,open,0,,waiting for entry,False
+2026-11-20,liquid:HMSTR,Strong on a red day,0.0001,0.0,open,1,-0.02,open,False
+2026-11-20,liquid:USUAL,Strong on a red day,0.0111,0.001,open,1,0.099,open,False
+2026-11-20,liquid:xyz_NATGAS,Strong on a red day,3.7784,0.1491,open,1,-0.02,open,False

@@ -15,7 +15,7 @@
 | Main setup | Pullback in trend | SNPS | closed | 2026-11-10 | – | – | – | 2026-11-16 | stop | -4.47 | -1.02 | no | 6.42 |
 | Main setup | Breakout-retest | JNJ | closed | 2026-11-09 | – | – | – | 2026-11-19 | stop_gap | -21.66 | -1.16 | no | 55.95 |
 | Main setup | Triple MA | GE | closed | 2026-11-09 | – | – | – | 2026-11-18 | signal | -8.05 | -0.16 | no | 24.31 |
-| Main setup | Triple MA | AAPL | closed | 2026-11-09 | – | – | – | 2026-11-20 | signal | 14.03 | 0.27 | yes | 35.67 |
+| Main setup | Triple MA | AAPL | closed | 2026-11-09 | – | – | – | 2026-11-20 | signal | 14.49 | 0.28 | yes | 35.67 |
 | Main setup | 52-week high | BLK | closed | 2026-11-05 | – | – | – | 2026-11-05 | stop | -1.79 | -1.04 | no | 4.05 |
 | Main setup | Dip after bull flag | EOG | open | 2026-11-05 | 148.46 | 144.01 | 191.31 | – | – | 0.67 | – | – | – |
 | Main setup | Triple MA | DE | closed | 2026-11-04 | – | – | – | 2026-11-17 | signal | -1.38 | -0.42 | no | 2.9 |
@@ -37,17 +37,17 @@
 | Main setup | Triple MA | SLB | closed | 2026-10-26 | – | – | – | 2026-11-05 | signal | 1.1 | 0.02 | yes | 65.1 |
 | Setup 5 | X Hammer tech | IBM | buy at next open | 2026-11-23 | 224.66 | 223.39 | – | – | – | 0.0 | – | – | – |
 | Setup 5 | X Stochastic reversal | MSFT | buy at next open | 2026-11-23 | 485.0 | 459.95 | – | – | – | 0.0 | – | – | – |
-| Setup 5 | X Stochastic reversal | XRP-USD | buy at next open | 2026-11-21 | 0.91 | 0.82 | – | – | – | 0.0 | – | – | – |
+| Setup 5 | X Stochastic reversal | XRP-USD | open | 2026-11-21 | 0.91 | 0.82 | – | – | – | 7.19 | – | – | – |
 | Setup 5 | Triple MA | DIS | open | 2026-11-20 | 121.15 | 112.37 | – | – | – | -8.15 | – | – | – |
 | Setup 5 | Dip after bull flag | LLY | open | 2026-11-19 | 1370.75 | 1325.9 | 1804.16 | – | – | -10.65 | – | – | – |
 | Setup 5 | Breakout-retest | LIN | closed | 2026-11-18 | – | – | – | 2026-11-20 | stop | -1.31 | -1.05 | no | 1.77 |
 | Setup 5 | Dip after bull flag | HD | open | 2026-11-18 | 331.58 | 322.33 | 420.44 | – | – | 15.28 | – | – | – |
 | Setup 5 | 52-week high | PG | closed | 2026-11-17 | – | – | – | 2026-11-19 | stop_gap | -0.27 | -1.1 | no | 0.41 |
 | Setup 5 | Breakout-retest | SLB | closed | 2026-11-16 | – | – | – | 2026-11-17 | stop | -0.78 | -1.03 | no | 1.03 |
-| Setup 5 | X Stochastic reversal | SOL-USD | open | 2026-11-15 | 70.34 | 63.04 | – | – | – | -6.14 | – | – | – |
+| Setup 5 | X Stochastic reversal | SOL-USD | open | 2026-11-15 | 70.34 | 63.04 | – | – | – | -0.28 | – | – | – |
 | Setup 5 | X Stochastic reversal | ETH-USD | closed | 2026-11-15 | – | – | – | 2026-11-20 | stop | -34.99 | -1.01 | no | 51.78 |
 | Setup 5 | X Stochastic reversal | BTC-USD | closed | 2026-11-14 | – | – | – | 2026-11-14 | stop | -35.57 | -1.03 | no | 39.57 |
-| Setup 5 | X Stochastic reversal | BNB-USD | closed | 2026-11-14 | – | – | – | 2026-11-14 | stop | -4.22 | -1.02 | no | 5.68 |
+| Setup 5 | X Stochastic reversal | BNB-USD | closed | 2026-11-14 | – | – | – | 2026-11-14 | stop | -4.21 | -1.02 | no | 5.68 |
 | Setup 5 | Breakout-retest | ABT | closed | 2026-11-13 | – | – | – | 2026-11-17 | stop | -0.24 | -1.03 | no | 0.42 |
 | Setup 5 | 52-week high | AAPL | closed | 2026-11-12 | – | – | – | 2026-11-19 | stop | -1.51 | -1.04 | no | 1.87 |
 | Setup 5 | 52-week high | JNJ | closed | 2026-11-10 | – | – | – | 2026-11-18 | stop | -19.2 | -1.04 | no | 42.57 |
@@ -59,7 +59,7 @@
 | Setup 5 | X Stochastic reversal | AMD | open | 2026-11-06 | 444.87 | 391.69 | – | – | – | -13.04 | – | – | – |
 | Setup 5 | Dip after bull flag | EOG | open | 2026-11-05 | 148.46 | 144.01 | 191.31 | – | – | 0.08 | – | – | – |
 | Setup 5 | Triple MA | DE | closed | 2026-11-04 | – | – | – | 2026-11-17 | signal | -3.06 | -0.42 | no | 6.42 |
-| Setup 5 | Triple MA | BRK-B | closed | 2026-11-04 | – | – | – | 2026-11-20 | signal | 7.04 | 0.26 | yes | 32.69 |
+| Setup 5 | Triple MA | BRK-B | closed | 2026-11-04 | – | – | – | 2026-11-20 | signal | 7.05 | 0.26 | yes | 32.69 |
 | Setup 5 | Bull flag | UPS | open | 2026-11-03 | 107.9 | 105.49 | 130.87 | – | – | -9.23 | – | – | – |
 | Setup 5 | Breakout-retest | COST | open | 2026-11-02 | 1016.89 | 999.42 | 1180.4 | – | – | 58.69 | – | – | – |
 | Setup 5 | Breakout-retest | MSFT | closed | 2026-11-02 | – | – | – | 2026-11-02 | stop | -0.31 | -1.04 | no | 0.54 |
@@ -103,27 +103,29 @@
 | X IBS on index futures | 0 | 0 | 0 | – | 380 | 68.4 | 68.4 | – | 0.05 |
 | X MA cross 20/60 | 1 | 2 | 0 | 0.0 | 1726 | 38.1 | 38.1 | -1.07 | 0.42 |
 | X RSI2 momentum | 0 | 0 | 0 | – | 7969 | 40.1 | 40.1 | – | 0.11 |
-| X Stochastic reversal | 2 | 6 | 0 | 0.0 | 4386 | 40.1 | 40.1 | -1.03 | 0.13 |
+| X Stochastic reversal | 3 | 6 | 0 | 0.0 | 4386 | 40.1 | 40.1 | -1.03 | 0.13 |
 | X Swing contraction | 0 | 0 | 0 | – | 3709 | 37.5 | 37.5 | – | 0.17 |
 
 ### Days
 
 | date | setup | account | day_pnl | winning_day |
 | --- | --- | --- | --- | --- |
-| 2026-11-20 | Main setup | 9739.93 | -66.47 | no |
-| 2026-11-20 | Setup 5 | 9619.66 | -94.25 | no |
+| 2026-11-21 | Main setup | 9740.41 | 0.0 | no |
+| 2026-11-21 | Setup 5 | 9632.72 | 13.05 | yes |
+| 2026-11-20 | Main setup | 9740.41 | -65.99 | no |
+| 2026-11-20 | Setup 5 | 9619.67 | -94.24 | no |
 | 2026-11-19 | Main setup | 9806.4 | -74.28 | no |
 | 2026-11-19 | Setup 5 | 9713.91 | -111.53 | no |
 | 2026-11-18 | Main setup | 9880.68 | -63.18 | no |
 | 2026-11-18 | Setup 5 | 9825.44 | -67.04 | no |
 | 2026-11-17 | Main setup | 9943.86 | -38.34 | no |
-| 2026-11-17 | Setup 5 | 9892.48 | -72.82 | no |
+| 2026-11-17 | Setup 5 | 9892.48 | -72.83 | no |
 | 2026-11-16 | Main setup | 9982.2 | -69.37 | no |
-| 2026-11-16 | Setup 5 | 9965.3 | -55.73 | no |
+| 2026-11-16 | Setup 5 | 9965.31 | -55.72 | no |
 | 2026-11-15 | Main setup | 10051.57 | 0.0 | no |
-| 2026-11-15 | Setup 5 | 10021.03 | 23.24 | yes |
+| 2026-11-15 | Setup 5 | 10021.03 | 23.23 | yes |
 | 2026-11-14 | Main setup | 10051.57 | 0.0 | no |
-| 2026-11-14 | Setup 5 | 9997.79 | -39.79 | no |
+| 2026-11-14 | Setup 5 | 9997.8 | -39.78 | no |
 | 2026-11-13 | Main setup | 10051.57 | 27.34 | yes |
 | 2026-11-13 | Setup 5 | 10037.58 | 23.95 | yes |
 | 2026-11-12 | Main setup | 10024.23 | -32.93 | no |
