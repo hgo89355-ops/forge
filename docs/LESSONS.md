@@ -29,3 +29,12 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   automatically; the pacing checker (lib/critic/pacing_check.py) fails v4 on length, 11 long silences and a dead end.
 - ElevenLabs can be down (timeouts / HTTP 500). Never retry a generation after a timeout — it may still charge;
   retry the free usage call first to see if the service is back.
+
+## 2026-11-23
+- ElevenLabs Liam (eleven_v4) full Short read = 422 credits for 395 characters (≈ 1.07 credits/char), 29.2 s raw.
+  lib/audio/trim_pauses.py cut 11 pauses to 0.18 s → 26.8 s with no silence > 0.2 s. Download from
+  elevenlabsusercontent.com worked this time with plain curl.
+- Character v2: draw limbs as tapered filled outlines (outline pass, then fill pass) and outline shirt + sleeves
+  together so they read as one garment; round end caps must be built as explicit points (SVG arcs flipped the wrong way).
+- Door shots: a 168 cm guide next to a lock at ~95 cm can't share a 9:16 frame with lower-third captions. Use an
+  extreme close-up (hand + key + lock only) for the hook, and wide shots (≥ 380 cm away) with IK hand-on-key for the story.

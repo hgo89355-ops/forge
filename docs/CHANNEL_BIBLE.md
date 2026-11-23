@@ -17,12 +17,14 @@ Open this when making or reviewing any video. Owner-supplied references: the gui
 - **Precision:** proportions, part counts and motion follow the real machine. A beautiful wrong diagram
   is worse than none.
 
-## 2. The guide character (code rig in lib/character/)
+## 2. The guide character (code rig v2: lib/components/guide.js, pose sheet videos/lock-short/tests/guide-sheet.html)
 - Young guy, messy swept black hair, white face/skin with black outlines, simple eyes and eyebrows,
   open expressive mouth.
 - Blue short-sleeve tee (#1F4FE0) with a small white gear logo on the chest; dark navy slim jeans
   (#2A3347); white sneakers with grey laces.
 - Flat 2D, bold even black outline, minimal shading (one soft shadow tone at most). Never 3D.
+- Human build (v2, 2026-11-23): shaped head with jaw + ear, tapered arms/legs, hands with a thumb, shirt and sleeves
+  outlined as one piece. Never boxy. In door/close-up shots his hand is placed on the object with two-bone IK.
 - Moods: **curious** (hand on chin), **oops** (hand behind head, sheepish grin), **shocked** (hands up,
   open mouth, motion lines), **confident** (hands on hips, grin). Plus action poses: point, push, pull,
   struggle, jump, wave.
@@ -38,7 +40,8 @@ Open this when making or reviewing any video. Owner-supplied references: the gui
 
 ## 4. Words, captions, voice
 - Script ≈ 2.2–2.7 spoken words per second; each claim checked (SOURCES.md per video).
-- Captions: big word-timed groups of 2–4 words, Inter 900, inside the safe area
+- Captions (v6, competitor standard): white Inter 900 with a thick black outline, keywords in yellow (#FFD21F),
+  1–3 words at a time, lower third (top ≈ 1150 px). Big word-timed groups, inside the safe area
   (Shorts: text between y 168 and 1330 px of 1920; not under the right-hand action rail).
 - Voice: AI voice, labelled "AI voice" in the description. Default local Kokoro `am_fenrir` @ 1.0
   (free, commercial OK). ElevenLabs "Liam" works on the free tier but the free tier has no commercial

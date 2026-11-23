@@ -1,0 +1,506 @@
+[
+ {
+  "id": "w0",
+  "text": "If",
+  "start": 0.0,
+  "end": 0.16
+ },
+ {
+  "id": "w1",
+  "text": "you",
+  "start": 0.16,
+  "end": 0.28
+ },
+ {
+  "id": "w2",
+  "text": "put",
+  "start": 0.28,
+  "end": 0.44
+ },
+ {
+  "id": "w3",
+  "text": "the",
+  "start": 0.44,
+  "end": 0.64
+ },
+ {
+  "id": "w4",
+  "text": "wrong",
+  "start": 0.64,
+  "end": 0.88
+ },
+ {
+  "id": "w5",
+  "text": "key",
+  "start": 0.88,
+  "end": 1.2
+ },
+ {
+  "id": "w6",
+  "text": "in",
+  "start": 1.2,
+  "end": 1.34
+ },
+ {
+  "id": "w7",
+  "text": "a",
+  "start": 1.34,
+  "end": 1.48
+ },
+ {
+  "id": "w8",
+  "text": "lock,",
+  "start": 1.48,
+  "end": 1.74
+ },
+ {
+  "id": "w9",
+  "text": "it",
+  "start": 1.96,
+  "end": 2.16
+ },
+ {
+  "id": "w10",
+  "text": "won't",
+  "start": 2.16,
+  "end": 2.44
+ },
+ {
+  "id": "w11",
+  "text": "turn.",
+  "start": 2.44,
+  "end": 2.72
+ },
+ {
+  "id": "w12",
+  "text": "And",
+  "start": 3.06,
+  "end": 3.12
+ },
+ {
+  "id": "w13",
+  "text": "the",
+  "start": 3.12,
+  "end": 3.26
+ },
+ {
+  "id": "w14",
+  "text": "reason",
+  "start": 3.26,
+  "end": 3.52
+ },
+ {
+  "id": "w15",
+  "text": "is",
+  "start": 3.52,
+  "end": 3.94
+ },
+ {
+  "id": "w16",
+  "text": "hiding",
+  "start": 3.94,
+  "end": 4.26
+ },
+ {
+  "id": "w17",
+  "text": "inside.",
+  "start": 4.26,
+  "end": 4.8
+ },
+ {
+  "id": "w18",
+  "text": "Every",
+  "start": 5.14,
+  "end": 5.38
+ },
+ {
+  "id": "w19",
+  "text": "lock",
+  "start": 5.38,
+  "end": 5.68
+ },
+ {
+  "id": "w20",
+  "text": "hides",
+  "start": 5.68,
+  "end": 6.08
+ },
+ {
+  "id": "w21",
+  "text": "tiny",
+  "start": 6.08,
+  "end": 6.52
+ },
+ {
+  "id": "w22",
+  "text": "pins,",
+  "start": 6.52,
+  "end": 7.04
+ },
+ {
+  "id": "w23",
+  "text": "stacked",
+  "start": 7.22,
+  "end": 7.54
+ },
+ {
+  "id": "w24",
+  "text": "in",
+  "start": 7.54,
+  "end": 7.74
+ },
+ {
+  "id": "w25",
+  "text": "pairs,",
+  "start": 7.74,
+  "end": 8.08
+ },
+ {
+  "id": "w26",
+  "text": "pushed",
+  "start": 8.32,
+  "end": 8.56
+ },
+ {
+  "id": "w27",
+  "text": "down",
+  "start": 8.56,
+  "end": 8.86
+ },
+ {
+  "id": "w28",
+  "text": "by",
+  "start": 8.86,
+  "end": 9.08
+ },
+ {
+  "id": "w29",
+  "text": "springs.",
+  "start": 9.08,
+  "end": 9.44
+ },
+ {
+  "id": "w30",
+  "text": "The",
+  "start": 9.86,
+  "end": 9.98
+ },
+ {
+  "id": "w31",
+  "text": "top",
+  "start": 9.98,
+  "end": 10.24
+ },
+ {
+  "id": "w32",
+  "text": "pins",
+  "start": 10.24,
+  "end": 10.62
+ },
+ {
+  "id": "w33",
+  "text": "block",
+  "start": 10.62,
+  "end": 10.92
+ },
+ {
+  "id": "w34",
+  "text": "the",
+  "start": 10.92,
+  "end": 11.14
+ },
+ {
+  "id": "w35",
+  "text": "cylinder",
+  "start": 11.14,
+  "end": 11.54
+ },
+ {
+  "id": "w36",
+  "text": "until",
+  "start": 11.54,
+  "end": 12.0
+ },
+ {
+  "id": "w37",
+  "text": "the",
+  "start": 12.0,
+  "end": 12.2
+ },
+ {
+  "id": "w38",
+  "text": "right",
+  "start": 12.2,
+  "end": 12.46
+ },
+ {
+  "id": "w39",
+  "text": "key",
+  "start": 12.46,
+  "end": 12.78
+ },
+ {
+  "id": "w40",
+  "text": "lifts",
+  "start": 12.78,
+  "end": 13.12
+ },
+ {
+  "id": "w41",
+  "text": "every",
+  "start": 13.12,
+  "end": 13.66
+ },
+ {
+  "id": "w42",
+  "text": "pair",
+  "start": 13.66,
+  "end": 13.98
+ },
+ {
+  "id": "w43",
+  "text": "to",
+  "start": 13.98,
+  "end": 14.2
+ },
+ {
+  "id": "w44",
+  "text": "exactly",
+  "start": 14.2,
+  "end": 14.68
+ },
+ {
+  "id": "w45",
+  "text": "the",
+  "start": 14.68,
+  "end": 14.98
+ },
+ {
+  "id": "w46",
+  "text": "right",
+  "start": 14.98,
+  "end": 15.16
+ },
+ {
+  "id": "w47",
+  "text": "height.",
+  "start": 15.16,
+  "end": 15.46
+ },
+ {
+  "id": "w48",
+  "text": "Then",
+  "start": 15.78,
+  "end": 15.96
+ },
+ {
+  "id": "w49",
+  "text": "every",
+  "start": 15.96,
+  "end": 16.48
+ },
+ {
+  "id": "w50",
+  "text": "gap",
+  "start": 16.48,
+  "end": 16.76
+ },
+ {
+  "id": "w51",
+  "text": "lines",
+  "start": 16.76,
+  "end": 17.06
+ },
+ {
+  "id": "w52",
+  "text": "up",
+  "start": 17.06,
+  "end": 17.28
+ },
+ {
+  "id": "w53",
+  "text": "on",
+  "start": 17.28,
+  "end": 17.46
+ },
+ {
+  "id": "w54",
+  "text": "one",
+  "start": 17.46,
+  "end": 17.76
+ },
+ {
+  "id": "w55",
+  "text": "line",
+  "start": 17.76,
+  "end": 18.08
+ },
+ {
+  "id": "w56",
+  "text": "and",
+  "start": 18.08,
+  "end": 18.5
+ },
+ {
+  "id": "w57",
+  "text": "click,",
+  "start": 18.5,
+  "end": 18.88
+ },
+ {
+  "id": "w58",
+  "text": "it",
+  "start": 19.14,
+  "end": 19.28
+ },
+ {
+  "id": "w59",
+  "text": "turns.",
+  "start": 19.28,
+  "end": 19.56
+ },
+ {
+  "id": "w60",
+  "text": "The",
+  "start": 19.92,
+  "end": 20.06
+ },
+ {
+  "id": "w61",
+  "text": "wrong",
+  "start": 20.06,
+  "end": 20.36
+ },
+ {
+  "id": "w62",
+  "text": "key",
+  "start": 20.36,
+  "end": 20.66
+ },
+ {
+  "id": "w63",
+  "text": "misses",
+  "start": 20.66,
+  "end": 20.94
+ },
+ {
+  "id": "w64",
+  "text": "by",
+  "start": 20.94,
+  "end": 21.24
+ },
+ {
+  "id": "w65",
+  "text": "less",
+  "start": 21.24,
+  "end": 21.52
+ },
+ {
+  "id": "w66",
+  "text": "than",
+  "start": 21.52,
+  "end": 21.76
+ },
+ {
+  "id": "w67",
+  "text": "a",
+  "start": 21.76,
+  "end": 21.88
+ },
+ {
+  "id": "w68",
+  "text": "millimeter.",
+  "start": 21.88,
+  "end": 22.42
+ },
+ {
+  "id": "w69",
+  "text": "So",
+  "start": 22.64,
+  "end": 22.82
+ },
+ {
+  "id": "w70",
+  "text": "one",
+  "start": 22.82,
+  "end": 23.18
+ },
+ {
+  "id": "w71",
+  "text": "tiny",
+  "start": 23.18,
+  "end": 23.5
+ },
+ {
+  "id": "w72",
+  "text": "pin",
+  "start": 23.5,
+  "end": 23.86
+ },
+ {
+  "id": "w73",
+  "text": "is",
+  "start": 23.86,
+  "end": 24.1
+ },
+ {
+  "id": "w74",
+  "text": "all",
+  "start": 24.1,
+  "end": 24.4
+ },
+ {
+  "id": "w75",
+  "text": "it",
+  "start": 24.4,
+  "end": 24.56
+ },
+ {
+  "id": "w76",
+  "text": "takes",
+  "start": 24.56,
+  "end": 24.8
+ },
+ {
+  "id": "w77",
+  "text": "to",
+  "start": 24.8,
+  "end": 25.04
+ },
+ {
+  "id": "w78",
+  "text": "lock",
+  "start": 25.04,
+  "end": 25.24
+ },
+ {
+  "id": "w79",
+  "text": "you",
+  "start": 25.24,
+  "end": 25.42
+ },
+ {
+  "id": "w80",
+  "text": "out.",
+  "start": 25.42,
+  "end": 25.7
+ },
+ {
+  "id": "w81",
+  "text": "And",
+  "start": 25.9,
+  "end": 26.0
+ },
+ {
+  "id": "w82",
+  "text": "that's",
+  "start": 26.0,
+  "end": 26.32
+ },
+ {
+  "id": "w83",
+  "text": "why.",
+  "start": 26.32,
+  "end": 26.56
+ }
+]
