@@ -236,7 +236,7 @@ const Film6 = (function () {
           break;
         }
         case 'pinsA':
-          camLerp(u, [13.6, 8.5, 0, 104, 38, 13], [13.6, 8.2, 0, 90, 24, 10]);
+          camLerp(u, [13.6, 7.0, 0, 74, 34, 11], [13.6, 7.2, 0, 64, 22, 9]);
           L('KEY PINS', [5.84, 1.5, 1.45], 70, 1080, ramp(t, A.pins.start - 0.05, A.pins.start + 0.2), { color: BLUE });
           break;
         case 'pinsB':
@@ -257,7 +257,7 @@ const Film6 = (function () {
           const s = K(t, [[A.right.start - 0.12, 20], [A.right.start + 0.85, 0, 'o3']]);
           keySt = { s, bitting: RIGHT };
           const tx = Math.min(tipX(s) - 4, 13.6);
-          setCam(lerp(tx, 13.6, ramp(t, A.right.start + 0.85, t1)), lerp(4.5, 5.8, mix(u)), 0, lerp(72, 58, mix(u)), lerp(30, 14, mix(u)), lerp(9, 7, mix(u)));
+          setCam(lerp(tx, 13.6, ramp(t, A.right.start + 0.85, t1)), lerp(2.0, 4.0, mix(u)), 0, lerp(70, 60, mix(u)), lerp(30, 14, mix(u)), lerp(6, 5, mix(u)));
           break;
         }
         case 'height':
