@@ -65,3 +65,9 @@ longer than 35 s · any silence over 0.3 s · any 1.5 s with no visual change ·
 end card longer than 0.5 s. Targets: 26–32 s, 75–85 words, speech from frame 1, pauses < 0.25 s, a cut on every
 sentence, camera always moving, subject ≥ 60% of the frame, no "follow" line — end on a line that loops to the
 first. Put the timing chart (duration, cuts per 10 s, total silence) on the approval card next to the last version.
+
+## 8. Proven Short framework (from the 2026-11-23 research, videos/lock-short/RESEARCH.md)
+0.0 s action + bold "If you…" line · problem shown before the explanation · "the reason is hiding inside" →
+colour-coded cutaway · one shot per beat, camera always moving, 2–4-word captions · payoff + character win ·
+tiny-difference twist · end on "and that's why…" back on frame 1 (loop) · quiet music bed + crisp mechanical
+SFX. Also cut a 6–10 s silent "X vs Y" mechanism loop from every Short (the biggest lock videos are silent loops).
