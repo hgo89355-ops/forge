@@ -1,16 +1,14 @@
 {
- "date": "2026-11-21",
+ "date": "2026-11-22",
  "markets_recorded": 354,
- "signals_today": 20,
- "bot_signals": 20,
+ "signals_today": 19,
+ "bot_signals": 19,
  "shadow_signals": 0,
  "alerts": [
-  "Unusual move: para:DRV +37.7% (5.1x its normal daily move)",
-  "Volume spike: para:2Y traded 15.4x its usual volume (+2.8%)",
-  "Volume spike: para:DRV traded 9.7x its usual volume (+37.7%)",
-  "Volume spike: para:TOTAL2 traded 7.1x its usual volume (+1.1%)",
-  "Volume spike: para:30Y traded 5.9x its usual volume (+1.5%)",
-  "Volume spike: para:OTHERS traded 4.7x its usual volume (+0.2%)",
-  "Volume spike: para:LRCX traded 4.2x its usual volume (-0.0%)"
+  "Volume spike: ACE traded 92.7x its usual volume (-11.7%)",
+  "Volume spike: para:DRV traded 20.5x its usual volume (+10.1%)",
+  "Volume spike: para:30Y traded 9.3x its usual volume (-1.2%)",
+  "Volume spike: para:2Y traded 6.9x its usual volume (-1.9%)",
+  "Volume spike: STBL traded 4.1x its usual volume (+6.8%)"
  ]
 }

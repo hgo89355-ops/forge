@@ -1,15 +1,15 @@
 {
- "run_time_utc": "2026-11-22 00:42",
+ "run_time_utc": "2026-11-23 00:42",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-11-20",
- "last_crypto_candle": "2026-11-21",
+ "last_crypto_candle": "2026-11-22",
  "markets_missing": [],
  "setups": {
   "main": {
    "account_value": 9740.41,
    "total_profit": -259.59,
    "total_return_pct": -2.6,
-   "last_day": "2026-11-21",
+   "last_day": "2026-11-22",
    "last_day_pnl": 0.0,
    "main_bucket": 6612.3,
    "high_reward_bucket": 3128.11,
@@ -22,7 +22,7 @@
    "left_on_table_total": 920.33,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-21",
+    "date": "2026-11-22",
     "bought": [],
     "sold": [],
     "profit_from_winners": 0,
@@ -31,12 +31,12 @@
    }
   },
   "setup5": {
-   "account_value": 9632.72,
-   "total_profit": -367.28,
+   "account_value": 9633.26,
+   "total_profit": -366.74,
    "total_return_pct": -3.67,
-   "last_day": "2026-11-21",
-   "last_day_pnl": 13.05,
-   "main_bucket": 6531.34,
+   "last_day": "2026-11-22",
+   "last_day_pnl": 0.53,
+   "main_bucket": 6531.88,
    "high_reward_bucket": 3101.38,
    "worst_drop_pct": -6.47,
    "open_trades": 12,
@@ -45,7 +45,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "IBM",
      "strategy": "X Hammer tech",
-     "quantity": 2.907155,
+     "quantity": 2.907395,
      "stop_loss": 223.39,
      "take_profit": ""
     },
@@ -53,7 +53,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "MSFT",
      "strategy": "X Stochastic reversal",
-     "quantity": 0.1442,
+     "quantity": 0.144966,
      "stop_loss": 459.9471,
      "take_profit": ""
     }
@@ -61,18 +61,11 @@
    "closed_trades_total": 31,
    "wins": 3,
    "closed_last_day": [],
-   "left_on_table_total": 1053.88,
+   "left_on_table_total": 1053.9,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-21",
-    "bought": [
-     {
-      "symbol": "XRP-USD",
-      "strategy": "X Stochastic reversal",
-      "price": 0.9116,
-      "value_usd": 333.19
-     }
-    ],
+    "date": "2026-11-22",
+    "bought": [],
     "sold": [],
     "profit_from_winners": 0,
     "loss_from_losers": 0,
@@ -83,19 +76,17 @@
  "data_ok": true,
  "expected_stock_candle": "2026-11-20",
  "records": {
-  "date": "2026-11-21",
+  "date": "2026-11-22",
   "markets_recorded": 354,
-  "signals_today": 20,
-  "bot_signals": 20,
+  "signals_today": 19,
+  "bot_signals": 19,
   "shadow_signals": 0,
   "alerts": [
-   "Unusual move: para:DRV +37.7% (5.1x its normal daily move)",
-   "Volume spike: para:2Y traded 15.4x its usual volume (+2.8%)",
-   "Volume spike: para:DRV traded 9.7x its usual volume (+37.7%)",
-   "Volume spike: para:TOTAL2 traded 7.1x its usual volume (+1.1%)",
-   "Volume spike: para:30Y traded 5.9x its usual volume (+1.5%)",
-   "Volume spike: para:OTHERS traded 4.7x its usual volume (+0.2%)",
-   "Volume spike: para:LRCX traded 4.2x its usual volume (-0.0%)"
+   "Volume spike: ACE traded 92.7x its usual volume (-11.7%)",
+   "Volume spike: para:DRV traded 20.5x its usual volume (+10.1%)",
+   "Volume spike: para:30Y traded 9.3x its usual volume (-1.2%)",
+   "Volume spike: para:2Y traded 6.9x its usual volume (-1.9%)",
+   "Volume spike: STBL traded 4.1x its usual volume (+6.8%)"
   ]
  }
 }

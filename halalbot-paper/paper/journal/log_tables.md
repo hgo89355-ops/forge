@@ -37,16 +37,16 @@
 | Main setup | Triple MA | SLB | closed | 2026-10-26 | – | – | – | 2026-11-05 | signal | 1.1 | 0.02 | yes | 65.1 |
 | Setup 5 | X Hammer tech | IBM | buy at next open | 2026-11-23 | 224.66 | 223.39 | – | – | – | 0.0 | – | – | – |
 | Setup 5 | X Stochastic reversal | MSFT | buy at next open | 2026-11-23 | 485.0 | 459.95 | – | – | – | 0.0 | – | – | – |
-| Setup 5 | X Stochastic reversal | XRP-USD | open | 2026-11-21 | 0.91 | 0.82 | – | – | – | 7.19 | – | – | – |
+| Setup 5 | X Stochastic reversal | XRP-USD | open | 2026-11-21 | 0.91 | 0.82 | – | – | – | 6.0 | – | – | – |
 | Setup 5 | Triple MA | DIS | open | 2026-11-20 | 121.15 | 112.37 | – | – | – | -8.15 | – | – | – |
 | Setup 5 | Dip after bull flag | LLY | open | 2026-11-19 | 1370.75 | 1325.9 | 1804.16 | – | – | -10.65 | – | – | – |
 | Setup 5 | Breakout-retest | LIN | closed | 2026-11-18 | – | – | – | 2026-11-20 | stop | -1.31 | -1.05 | no | 1.77 |
 | Setup 5 | Dip after bull flag | HD | open | 2026-11-18 | 331.58 | 322.33 | 420.44 | – | – | 15.28 | – | – | – |
 | Setup 5 | 52-week high | PG | closed | 2026-11-17 | – | – | – | 2026-11-19 | stop_gap | -0.27 | -1.1 | no | 0.41 |
 | Setup 5 | Breakout-retest | SLB | closed | 2026-11-16 | – | – | – | 2026-11-17 | stop | -0.78 | -1.03 | no | 1.03 |
-| Setup 5 | X Stochastic reversal | SOL-USD | open | 2026-11-15 | 70.34 | 63.04 | – | – | – | -0.28 | – | – | – |
-| Setup 5 | X Stochastic reversal | ETH-USD | closed | 2026-11-15 | – | – | – | 2026-11-20 | stop | -34.99 | -1.01 | no | 51.78 |
-| Setup 5 | X Stochastic reversal | BTC-USD | closed | 2026-11-14 | – | – | – | 2026-11-14 | stop | -35.57 | -1.03 | no | 39.57 |
+| Setup 5 | X Stochastic reversal | SOL-USD | open | 2026-11-15 | 70.34 | 63.05 | – | – | – | 1.45 | – | – | – |
+| Setup 5 | X Stochastic reversal | ETH-USD | closed | 2026-11-15 | – | – | – | 2026-11-20 | stop | -34.99 | -1.01 | no | 51.79 |
+| Setup 5 | X Stochastic reversal | BTC-USD | closed | 2026-11-14 | – | – | – | 2026-11-14 | stop | -35.57 | -1.03 | no | 39.58 |
 | Setup 5 | X Stochastic reversal | BNB-USD | closed | 2026-11-14 | – | – | – | 2026-11-14 | stop | -4.21 | -1.02 | no | 5.68 |
 | Setup 5 | Breakout-retest | ABT | closed | 2026-11-13 | – | – | – | 2026-11-17 | stop | -0.24 | -1.03 | no | 0.42 |
 | Setup 5 | 52-week high | AAPL | closed | 2026-11-12 | – | – | – | 2026-11-19 | stop | -1.51 | -1.04 | no | 1.87 |
@@ -110,20 +110,22 @@
 
 | date | setup | account | day_pnl | winning_day |
 | --- | --- | --- | --- | --- |
+| 2026-11-22 | Main setup | 9740.41 | 0.0 | no |
+| 2026-11-22 | Setup 5 | 9633.26 | 0.53 | yes |
 | 2026-11-21 | Main setup | 9740.41 | 0.0 | no |
-| 2026-11-21 | Setup 5 | 9632.72 | 13.05 | yes |
+| 2026-11-21 | Setup 5 | 9632.73 | 13.05 | yes |
 | 2026-11-20 | Main setup | 9740.41 | -65.99 | no |
-| 2026-11-20 | Setup 5 | 9619.67 | -94.24 | no |
+| 2026-11-20 | Setup 5 | 9619.68 | -94.24 | no |
 | 2026-11-19 | Main setup | 9806.4 | -74.28 | no |
-| 2026-11-19 | Setup 5 | 9713.91 | -111.53 | no |
+| 2026-11-19 | Setup 5 | 9713.92 | -111.53 | no |
 | 2026-11-18 | Main setup | 9880.68 | -63.18 | no |
-| 2026-11-18 | Setup 5 | 9825.44 | -67.04 | no |
+| 2026-11-18 | Setup 5 | 9825.45 | -67.04 | no |
 | 2026-11-17 | Main setup | 9943.86 | -38.34 | no |
-| 2026-11-17 | Setup 5 | 9892.48 | -72.83 | no |
+| 2026-11-17 | Setup 5 | 9892.49 | -72.82 | no |
 | 2026-11-16 | Main setup | 9982.2 | -69.37 | no |
-| 2026-11-16 | Setup 5 | 9965.31 | -55.72 | no |
+| 2026-11-16 | Setup 5 | 9965.31 | -55.73 | no |
 | 2026-11-15 | Main setup | 10051.57 | 0.0 | no |
-| 2026-11-15 | Setup 5 | 10021.03 | 23.23 | yes |
+| 2026-11-15 | Setup 5 | 10021.04 | 23.24 | yes |
 | 2026-11-14 | Main setup | 10051.57 | 0.0 | no |
 | 2026-11-14 | Setup 5 | 9997.8 | -39.78 | no |
 | 2026-11-13 | Main setup | 10051.57 | 27.34 | yes |
