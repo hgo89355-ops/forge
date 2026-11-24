@@ -10,14 +10,13 @@ Part C (the month-1 plan) lives in docs/CALENDAR.md and is kept updated there.
 - **Niche:** "The hidden engineering of everyday things": how machines, vehicles and systems people see every day
   actually work, plus famous giant machines and physics phenomena.
 - **Audience:** curious teens and adults, English, worldwide. Not "made for kids".
-- **Character:** the locked model sheet (white cartoon skin, messy black hair, blue t-shirt with gear, dark jeans,
-  white sneakers). Never redesign without the owner's ✓. Smooth curved limbs, never boxy.
-- **Look:** machines in the clean 3D style of the v5 lock; the character stays 2D with matching light + a soft
-  shadow; the camera TRAVELS between scenes (push into the machine, pull back out), *[message cut off here]*
-
-> **Open question for the owner:** Part A says the character is the 2D model sheet and "stays 2D". The latest
-> build (2026-11-24) uses the 3D stickman with a cap (lib/components/stick3d.js) that the owner asked for earlier the
-> same day. Which one is locked? Until answered, nothing is published either way.
+- **Character (LOCKED, owner ✓ 2026-11-24): the 3D stickman with the cap** — lib/components/stick3d.js.
+  Round glossy white head with an ink face (many expressions + blinks), messy black hair tufts, blue six-panel
+  baseball cap with a small gear logo and yellow brim, blue t-shirt with the white gear logo and yellow trim, loose
+  navy pants, white sneakers, black stick arms with ball hands, ink outlines. Never redesign without the owner's ✓.
+  Smooth curved shapes, never boxy. (Replaces the 2D model sheet named in the original handoff text.)
+- **Look:** machines in the clean 3D style of the v5 lock; the character is 3D in the same scene, same light, real
+  soft shadows; the camera TRAVELS between scenes (push into the machine, pull back out), *[message cut off here]*
 
 ## Part B — *(not received yet)*
 ## Part D — *(not received yet)*
