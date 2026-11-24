@@ -50,3 +50,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   Euler order 'ZXY' on the shoulder (twist, then forward, then out) makes poses easy to reason about.
 - Hand on an object: two-bone IK onto the key bow; in an extreme close-up scale the key up (0.22) and pull the camera
   back (~70 cm) so the real-size hand doesn't hide the key.
+- Owner rejected the realistic 3D guide ("awful") and chose a 3D stickman in the signature look (cap + tee). Show
+  a pose sheet + face close-up before building scenes around a new character — it took ~20 min to make, vs ~40 min a render.
+- 3D ink outlines: inverted hull (BackSide material, vertices pushed along normals in onBeforeCompile) gives the
+  2D brand's black line on a 3D figure for free.

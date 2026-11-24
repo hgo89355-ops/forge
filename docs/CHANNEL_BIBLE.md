@@ -18,10 +18,17 @@ Open this when making or reviewing any video. Owner-supplied references: the gui
   is worse than none.
 
 ## 2. The guide character
-**Current (2026-11-24, owner decision): 3D guide** — lib/components/guide3d.js, test sheet
-videos/lock-short/tests/guide3d-sheet.html. Built in Three.js from code (no outside models), ~178 cm, adult
-proportions, stylised-realistic skin/hair/clothes, two-bone IK for hands, poses in Guide3D.POSES. Shoot him from
-his front side (camera az ≈ 30–55° when he faces a door on screen-right). The flat 2D notes below are the retired v2 rig.
+**Current (2026-11-24, owner decision): 3D stickman, signature look** — lib/components/stick3d.js, test sheet
+videos/lock-short/tests/guide3d-sheet.html?rig=stick. Built in Three.js from code. ~165 cm.
+- Head: big glossy white sphere with an ink outline; face = black oval eyes with a glint, ink brows, ink mouth
+  (open mouths show a dark-red inside, teeth, tongue). Black messy hair tufts peek out under the cap.
+- Signature cap: blue crown, white gear logo on the front, yellow brim and top button.
+- Signature tee: blue (#1F4FE0), white gear logo on the left chest, yellow hem and sleeve trim.
+- Black stick limbs (r ≈ 2 cm) with ink outlines, ball hands (a finger appears for "point"), white sneakers.
+- Same API as the old rig: pose(), reach() (two-bone IK), POSES (idle, curious, oops, shocked, confident, point,
+  wave, cheer, push, struggle). Shoot him from his front side; in close-ups grip the END of what he holds so the
+  ball hand doesn't cover the subject.
+- Retired: the realistic 3D guide (lib/components/guide3d.js) — owner rejected the look.
 
 ### Retired 2D rig (lib/components/guide.js)
 - Young guy, messy swept black hair, white face/skin with black outlines, simple eyes and eyebrows,

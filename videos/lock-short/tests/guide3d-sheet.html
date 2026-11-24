@@ -1,9 +1,9 @@
 <!doctype html><html><body style="margin:0;background:#DDE1E6">
 <canvas id="c" width="1800" height="1000"></canvas>
 <script src="../assets/vendor/three-0.158.min.js"></script>
-<script src="../assets/components/guide3d.js"></script><script>window.TEST=JSON.parse(decodeURIComponent((location.search.match(/t=([^&]*)/)||[,"%5B%5D"])[1]));</script>
+<script src="../assets/components/guide3d.js"></script><script src="../assets/components/stick3d.js"></script><script>window.TEST=JSON.parse(decodeURIComponent((location.search.match(/t=([^&]*)/)||[,"%5B%5D"])[1]));</script>
 <script>
-const W=1800,H=1000, mode=(location.hash||'#sheet').slice(1);
+const W=1800,H=1000, mode=(location.hash||'#sheet').slice(1); const RIG=/rig=stick/.test(location.search)?Stick3D:Guide3D; const CAP=(location.search.match(/cap=(\w+)/)||[])[1];
 const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true,preserveDrawingBuffer:true});
 r.setSize(W,H,false); r.toneMapping=THREE.ACESFilmicToneMapping; r.outputColorSpace=THREE.SRGBColorSpace; r.shadowMap.enabled=true; r.shadowMap.type=THREE.PCFSoftShadowMap;
 const sc=new THREE.Scene(); sc.background=new THREE.Color('#DDE1E6');
@@ -20,11 +20,11 @@ const ground=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.ShadowM
 const names=(new URLSearchParams(location.search).get('n')||'idle,confident,curious,oops,shocked,point,wave,cheer,struggle').split(',');
 let cam;
 if(mode==='face'){
-  const g=Guide3D.create(THREE); sc.add(g.root); g.pose(Object.assign({face:0.35},Guide3D.POSES.confident));
-  cam=new THREE.PerspectiveCamera(30,W/H,1,5000); cam.position.set(40,172,85); cam.lookAt(0,163,0);
+  const g=RIG.create(THREE,{cap:CAP}); sc.add(g.root); g.pose(Object.assign({face:0.35},RIG.POSES.confident));
+  cam=new THREE.PerspectiveCamera(30,W/H,1,5000); cam.position.set(40,150,110); cam.lookAt(0,140,0);
 } else {
-  names.forEach((n,i)=>{ const g=Guide3D.create(THREE); sc.add(g.root);
-    const extra=window.TEST&&window.TEST[i]||{}; g.pose(Object.assign({x:(i-(names.length-1)/2)*95,face:0.25},Guide3D.POSES[n]||{},extra));
+  names.forEach((n,i)=>{ const g=RIG.create(THREE,{cap:CAP}); sc.add(g.root);
+    const extra=window.TEST&&window.TEST[i]||{}; g.pose(Object.assign({x:(i-(names.length-1)/2)*95,face:0.25},RIG.POSES[n]||{},extra));
     if(n==='struggle'){ const t=new THREE.Vector3((i-(names.length-1)/2)*95+45,105,30); g.reach('R',t); }
   });
   cam=new THREE.PerspectiveCamera(30,W/H,1,5000); cam.position.set(0,110,950); cam.lookAt(0,95,0);

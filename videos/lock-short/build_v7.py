@@ -63,7 +63,7 @@ film = film.replace('data-duration="39"', f'data-duration="{DUR}"').replace('Fil
 film = film.replace('window.__filmSeek', 'window.__film7Seek')
 open('compositions/film7.html', 'w').write(film)
 idx = open('versions/index-v4.html.txt').read()
-idx = idx.replace('<script src="assets/film3d.js"></script>', f'<script src="assets/components/guide3d.js"></script>\n    <script src="assets/words-{TAG}.js"></script>\n    <script src="assets/film7.js"></script>')
+idx = idx.replace('<script src="assets/film3d.js"></script>', f'<script src="assets/components/stick3d.js"></script>\n    <script src="assets/words-{TAG}.js"></script>\n    <script src="assets/film7.js"></script>')
 idx = idx.replace('data-duration="39"', f'data-duration="{DUR}"')
 idx = idx.replace('id="film" data-composition-id="film" data-composition-src="compositions/film.html"', 'id="film7" data-composition-id="film7" data-composition-src="compositions/film7.html"')
 idx = idx.replace('id="captions" data-composition-id="captions" data-composition-src="compositions/captions.html"', 'id="captions7" data-composition-id="captions7" data-composition-src="compositions/captions7.html"')

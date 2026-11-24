@@ -31,13 +31,14 @@ Open the detail files below **only when the task needs them**.
   background, soft shadows.
 - White rounded label boxes with a thin line to a dot on the part. Title tag top-left: white box with a
   blue accent bar ("The Two Hidden Tracks").
-- The guide (owner decision 2026-11-24): a **3D guy with realistic proportions, built in code**
-  (lib/components/guide3d.js): messy swept black hair, blue tee with a white gear logo, dark jeans, white sneakers.
-  Lives in the 3D scene, casts shadows, hands placed by IK; points, reacts, 1–3 jokes per video.
-  Moods: curious · oops · shocked · confident. (Old flat 2D rig lib/components/guide.js is retired.)
+- The guide (owner decision 2026-11-24): a **3D stickman in the signature look**, built in code
+  (lib/components/stick3d.js): round glossy white head with a simple ink face, black stick limbs with ink outlines,
+  signature blue tee (white gear logo, yellow sleeve trim), signature cap (blue crown, gear logo, yellow brim),
+  white sneakers. Lives in the 3D scene, casts shadows, hands placed by IK; 1–3 jokes per video.
+  Moods: curious · oops · shocked · confident. (Retired: 2D rig guide.js, realistic 3D guide3d.js.)
 - Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,
-  yellow keywords) in the lower third. Sound effects made in code. Voice: the owner's own recording when available
-  (videos/<slug>/RECORD_YOUR_VOICE.md), else AI voice labelled as AI voice.
+  yellow keywords) in the lower third. Sound effects made in code. Voice: ElevenLabs "Liam" (owner OK'd, 2026-11-24),
+  labelled as AI voice; the owner may record his own (videos/<slug>/RECORD_YOUR_VOICE.md).
 
 ## Where things are (open only when needed)
 | File | What's in it |

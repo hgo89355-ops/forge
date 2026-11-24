@@ -16,6 +16,6 @@
       computer (Remote Control) or copy the file yourself.
 - [ ] **Channel name / handle:** tell me so the brain file and descriptions use it.
 
-- **Record your voice for the lock Short** (2026-11-24): script + tips in videos/lock-short/RECORD_YOUR_VOICE.md.
+- (Optional — Liam is OK'd) **Record your voice for the lock Short** (2026-11-24): script + tips in videos/lock-short/RECORD_YOUR_VOICE.md.
   Put the file in Google Drive and tell me its name (Vocaroo links can't be opened from the build machine).
 - Voice cloning (optional, costs money): ElevenLabs Starter (~$6/month) would let me clone your voice once. Not done — rule: spend no money.

@@ -152,7 +152,7 @@ const Film7 = (function () {
     const doorKey = new THREE.Mesh(keyGeometry(RIGHT), M.key); doorKey.scale.setScalar(0.22); doorKey.rotation.y = Math.PI / 2; hinge.add(doorKey);
     const doorTag = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.4, 2.4), M.tag); doorTag.position.set(-11.6, -5.2, 0); doorKey.add(doorTag);
     const LOCKFACE = [X0 - 46 + 80, FL + 106, 3.8];
-    const guide = Guide3D.create(THREE); scene.add(guide.root); guide.root.visible = false;
+    const guide = (window.Stick3D || window.Guide3D).create(THREE); scene.add(guide.root); guide.root.visible = false;
     guide.root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
     // ---------- overlay helpers
     const vtmp = new THREE.Vector3();
@@ -215,13 +215,13 @@ const Film7 = (function () {
       const L = (text, mm, bx, by, a, opt) => labels.push([text, mm, bx, by, a, opt || {}]);
       const pulse = (a, d = 0.5) => (t >= a && t < a + d ? Math.sin(((t - a) / d) * Math.PI) : 0);
       let openAmt = 0, keyJiggle = 0;
-      const HK = [LOCKFACE[0] + 2, LOCKFACE[1] - 3, 9, 74, 40, 10], HK1 = [LOCKFACE[0] + 1.5, LOCKFACE[1] - 2.5, 8, 62, 30, 8];
+      const HK = [LOCKFACE[0] + 1, LOCKFACE[1] - 3, 9, 84, 58, 10], HK1 = [LOCKFACE[0] + 1, LOCKFACE[1] - 2.5, 8, 72, 48, 8];
       const WIDE0 = [X0 + 12, 100, 12, 440, 54, 4], WIDE1 = [X0 + 12, 100, 12, 385, 44, 4];
       switch (name) {
         case 'hookIn': case 'loop': case 'hookJam': case 'dive': case 'doorOpen': case 'lockedOut': {
           door = 1; doorKeyBit = WRONG; doorKeyTag = true; doorKeyZ = 4;
           if (name === 'hookIn') { doorKeyZ = K(t, [[0, 11], [t1 - 0.12, 4, 'o3']]); camLerp(u, HK, HK1); }
-          if (name === 'loop') { doorKeyZ = lerp(17, 11, u); camLerp(u, [LOCKFACE[0] + 3, LOCKFACE[1] - 3.5, 10, 88, 50, 12], HK); }
+          if (name === 'loop') { doorKeyZ = lerp(17, 11, u); camLerp(u, [LOCKFACE[0] + 2, LOCKFACE[1] - 3.5, 10, 98, 66, 12], HK); }
           if (name === 'hookJam') { doorShake = 1; keyJiggle = 1; camLerp(u, WIDE0, WIDE1); }
           if (name === 'dive') {
             const e = E.i3(u);
@@ -374,12 +374,12 @@ const Film7 = (function () {
     }
 
     function poseGuide(name, t, t0, t1, u) {
-      const P = Guide3D.POSES;
+      const P = (window.Stick3D || window.Guide3D).POSES;
       const at = { x: X0 - 4, y: FL, z: 22 };
       const faceTo = (px, pz, g) => Math.atan2(px - g.x, pz - g.z);
       const faceLock = faceTo(LOCKFACE[0], LOCKFACE[2], at), faceCam = faceTo(camera.position.x, camera.position.z, at);
       doorSet.updateMatrixWorld(true);
-      const bow = doorKey.localToWorld(new THREE.Vector3(-13, -0.5, 0));
+      const bow = doorKey.localToWorld(new THREE.Vector3(-25, -0.5, 0));
       const R = (base, extra) => { guide.pose(Object.assign({}, base, at, { face: faceLock }, extra)); guide.reach('R', bow); };
       if (name === 'hookIn' || name === 'loop') return R(P.confident, { lean: 0.1, handR: 'grip', gaze: [0.2, -0.2] });
       if (name === 'hookJam') {
