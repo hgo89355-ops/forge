@@ -52,6 +52,10 @@ Open the detail files below **only when the task needs them**.
 | videos/<slug>/ | One folder per video: project, SCRIPT, SOURCES.md, REVIEW.md, renders |
 | lib/ | Reusable components (character rig, machine cutaways, captions, SFX) |
 
+## Creative engine (owner handoff 2026-11-24)
+- Claude owns creative planning. How to think: docs/CREATIVE_ENGINE.md (read before planning or scripting).
+- Month plan and posting log: docs/CALENDAR.md (Part C) — keep it updated every run.
+
 ## Every run
 1. Read this file. Open PROGRESS.md. Open other files only if the task needs them.
 2. Do the task. Keep outputs in videos/<slug>/ or lib/.

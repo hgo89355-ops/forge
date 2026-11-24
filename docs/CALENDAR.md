@@ -4,6 +4,9 @@
 _Nothing posted yet._ Lock Short v7 (3D stickman) is waiting for the owner's ✓ — not scheduled. Prediction: 2K–10K views
 in 30 days most likely (videos/lock-short/deliver/VIEW_PREDICTION.md). Needs a new title (copycat already uses ours).
 
+## Month 1 plan (Part C of the creative engine)
+_Not received yet: the owner's handoff message was cut off. Paste Part C here when it arrives._
+
 ## Week 1 plan (approved by owner; one swap after the topic check, see below)
 | Day | Format | Title | Notes |
 |---|---|---|---|
