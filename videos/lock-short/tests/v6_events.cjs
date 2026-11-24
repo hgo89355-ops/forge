@@ -2,7 +2,7 @@
 global.window = {}; global.document = {};
 require('../assets/components/lock-cutaway.js'); require('../assets/film-script.js');
 const L = window.LockCutaway, FS = window.FilmScript;
-const words = require('../assets/v6-words.json');
+const words = require(process.env.WORDS ? require('path').resolve(process.env.WORDS) : '../assets/v6-words.json');
 const ORDER = ['wrong','lock','wont','and','inside','every','pins','stacked','pairs','springs','top','block','cylinder','until','right','lifts','exactly','height','then','gap','line','click','turns','the','wrong','less','so','tiny','pin','all','out','and','why'];
 const norm = (s) => s.toLowerCase().replace(/[^a-z]/g, '');
 const A = {}, seen = {}; let i = 0, last = { start: 0, end: 0.3 };

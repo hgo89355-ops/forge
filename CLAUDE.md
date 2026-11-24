@@ -34,8 +34,9 @@ Open the detail files below **only when the task needs them**.
 - The guide: one cartoon guy (messy black hair, blue tee with a white gear logo, dark jeans, white
   sneakers), flat 2D with black outlines, small next to the machine; points, reacts, 1–3 jokes per video.
   Moods: curious · oops · shocked · confident. Built as a code rig so he is identical in every video.
-- Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions in the
-  safe area. Sound effects made in code. AI voice, labelled as AI voice.
+- Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,
+  yellow keywords) in the lower third. Sound effects made in code. Voice: the owner's own recording when available
+  (videos/<slug>/RECORD_YOUR_VOICE.md), else AI voice labelled as AI voice.
 
 ## Where things are (open only when needed)
 | File | What's in it |

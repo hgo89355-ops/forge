@@ -41,3 +41,12 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Background renders stop at the 30-minute default limit (v6 died at 93%). Start renders with a 90-minute limit.
 - Topic research: search the exact topic sorted by view count with duration=short as well as outliers — the first pass
   missed Zack D. Films' 16.5M "How A Keys Unlocks" Short. Also check for copycats from the last 60 days.
+
+## 2026-11-24
+- ElevenLabs voice cloning needs a paid plan (free plan: 0 cloning; Starter ≈ $6/mo) — owner chose to record his own
+  voice instead. Vocaroo is blocked by this machine's network; take recordings through Google Drive.
+- 3D guide in Three.js: lathe limbs + deformed-sphere head + one sculpted hair shell (hairline mask, swept quiff,
+  strand ridges) look far more real than cone spikes. Eyes must sit proud of the head surface or they vanish.
+  Euler order 'ZXY' on the shoulder (twist, then forward, then out) makes poses easy to reason about.
+- Hand on an object: two-bone IK onto the key bow; in an extreme close-up scale the key up (0.22) and pull the camera
+  back (~70 cm) so the real-size hand doesn't hide the key.

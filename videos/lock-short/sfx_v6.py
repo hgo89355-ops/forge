@@ -1,7 +1,8 @@
 """v6 sound effects, all synthesized in code, anchored to words + lock physics (assets/audio/v6_events.json)."""
-import numpy as np, soundfile as sf, json
+import numpy as np, soundfile as sf, json, sys
+EV = sys.argv[1] if len(sys.argv) > 1 else 'assets/audio/v6_events.json'; OUT = sys.argv[2] if len(sys.argv) > 2 else 'assets/audio/sfx_v6.wav'
 exec(open('sfx.py').read().split("# key slides")[0].replace("DUR = 39.0", "DUR = 40.0"))
-E = json.load(open('assets/audio/v6_events.json')); A = {k: v[0] for k, v in E['A'].items()}; S = E['shots']; DUR = E['DUR']
+E = json.load(open(EV)); A = {k: v[0] for k, v in E['A'].items()}; S = E['shots']; DUR = E['DUR']
 out = np.zeros(int(SR * (DUR + 0.5)))
 def add(sig, at, g=1.0):
     i = int(at * SR); j = min(len(out), i + len(sig))
@@ -38,4 +39,4 @@ add(thud(120, 0.25, 0.8), A['out'], 0.5)
 add(scrape(DUR - S['loop'], 1.1), S['loop'], 0.8)   # loops into the hook's key slide
 out = out[:int(SR * DUR)]
 out = out / np.abs(out).max() * 0.5
-sf.write('assets/audio/sfx_v6.wav', np.stack([out, out], 1), SR); print('sfx ok', round(len(out) / SR, 2))
+sf.write(OUT, np.stack([out, out], 1), SR); print('sfx ok', round(len(out) / SR, 2))

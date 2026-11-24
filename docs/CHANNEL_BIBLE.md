@@ -17,7 +17,13 @@ Open this when making or reviewing any video. Owner-supplied references: the gui
 - **Precision:** proportions, part counts and motion follow the real machine. A beautiful wrong diagram
   is worse than none.
 
-## 2. The guide character (code rig v2: lib/components/guide.js, pose sheet videos/lock-short/tests/guide-sheet.html)
+## 2. The guide character
+**Current (2026-11-24, owner decision): 3D guide** — lib/components/guide3d.js, test sheet
+videos/lock-short/tests/guide3d-sheet.html. Built in Three.js from code (no outside models), ~178 cm, adult
+proportions, stylised-realistic skin/hair/clothes, two-bone IK for hands, poses in Guide3D.POSES. Shoot him from
+his front side (camera az ≈ 30–55° when he faces a door on screen-right). The flat 2D notes below are the retired v2 rig.
+
+### Retired 2D rig (lib/components/guide.js)
 - Young guy, messy swept black hair, white face/skin with black outlines, simple eyes and eyebrows,
   open expressive mouth.
 - Blue short-sleeve tee (#1F4FE0) with a small white gear logo on the chest; dark navy slim jeans
@@ -43,7 +49,8 @@ Open this when making or reviewing any video. Owner-supplied references: the gui
 - Captions (v6, competitor standard): white Inter 900 with a thick black outline, keywords in yellow (#FFD21F),
   1–3 words at a time, lower third (top ≈ 1150 px). Big word-timed groups, inside the safe area
   (Shorts: text between y 168 and 1330 px of 1920; not under the right-hand action rail).
-- Voice: AI voice, labelled "AI voice" in the description. Default local Kokoro `am_fenrir` @ 1.0
+- Voice: the owner's own recording is preferred (cut pauses with lib/audio/trim_pauses.py, re-time with the word anchors).
+  Otherwise AI voice, labelled "AI voice" in the description. Default local Kokoro `am_fenrir` @ 1.0
   (free, commercial OK). ElevenLabs "Liam" works on the free tier but the free tier has no commercial
   licence and needs attribution — check before monetising.
 
