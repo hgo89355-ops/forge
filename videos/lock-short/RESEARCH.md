@@ -57,3 +57,7 @@
 - Missed in the first pass: Zack D. Films already has a 16.5M Short on this exact topic — it should be studied before publishing.
 - Crowded: at least 12 near-identical pin-tumbler Shorts were posted 2026-10-06 → 11-22 by small channels (most under
   5K views), one already titled "How a Lock Knows Your Key" (Slow Pencil, 4.2K). Our hook/story must stand apart and the title should change.
+
+## 5. Niche ceiling check (2026-11-24, vidIQ outliers, 5 credits)
+Top 40 breakout 3D "how it works" Shorts from channels under 5K subs, last 3 months: 11K → 3.4M views (middle ≈ 115K).
+Full table and the view prediction: deliver/VIEW_PREDICTION.md.

@@ -19,7 +19,12 @@ const fill=new THREE.DirectionalLight(0xffffff,0.5); fill.position.set(400,100,3
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.ShadowMaterial({opacity:0.18})); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; sc.add(ground);
 const names=(new URLSearchParams(location.search).get('n')||'idle,confident,curious,oops,shocked,point,wave,cheer,struggle').split(',');
 let cam;
-if(mode==='face'){
+if(mode==='faces'){
+  const F=[['smile','open','neutral',{}],['smirk','smug',['confident','raised'],{}],['bigGrin','happy','raised',{blush:0.8}],['scream','panic','surprised',{sweat:1}],
+           ['teeth','angry','angry',{sweat:1}],['wavy','open','worried',{sweat:1}],['sad','sad','sad',{}],['grin','happy','worried',{blush:1,sweat:1}],['o','open','raised',{}],['shocked','wide','surprised',{}]];
+  F.forEach(([m,e,b,x],i)=>{ const g=RIG.create(THREE,{}); sc.add(g.root); g.pose(Object.assign({x:(i-4.5)*40,mouth:m,eyes:e,brows:b},x)); });
+  cam=new THREE.PerspectiveCamera(30,W/H,1,5000); cam.position.set(0,145,420); cam.lookAt(0,140,0);
+} else if(mode==='face'){
   const g=RIG.create(THREE,{cap:CAP}); sc.add(g.root); g.pose(Object.assign({face:0.35},RIG.POSES.confident));
   cam=new THREE.PerspectiveCamera(30,W/H,1,5000); cam.position.set(40,150,110); cam.lookAt(0,140,0);
 } else {

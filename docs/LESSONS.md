@@ -54,3 +54,8 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   a pose sheet + face close-up before building scenes around a new character — it took ~20 min to make, vs ~40 min a render.
 - 3D ink outlines: inverted hull (BackSide material, vertices pushed along normals in onBeforeCompile) gives the
   2D brand's black line on a 3D figure for free.
+- Owner feedback on the stickman: loose pants (not stick legs), many facial expressions, and a cap that doesn't read as a
+  police cap (no band, no badge-sized logo, six panels + curved brim). Faces: swap whole parts (white eyes + pupils for
+  panic, arcs for joy, gritted-teeth bar, wavy mouth, blush) and add blinks every ~2.3 s.
+- View prediction method: compare (A) every same-topic Short from small channels in the last ~2 months (the realistic
+  median) with (B) top breakout Shorts in the niche (the ceiling). Lock topic median ≈ 2.4K views; 1 in 14 broke out.

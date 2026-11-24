@@ -381,19 +381,30 @@ const Film7 = (function () {
       doorSet.updateMatrixWorld(true);
       const bow = doorKey.localToWorld(new THREE.Vector3(-25, -0.5, 0));
       const R = (base, extra) => { guide.pose(Object.assign({}, base, at, { face: faceLock }, extra)); guide.reach('R', bow); };
-      if (name === 'hookIn' || name === 'loop') return R(P.confident, { lean: 0.1, handR: 'grip', gaze: [0.2, -0.2] });
+      const blink = (x) => (((t + 0.37) % 2.3) < 0.1 ? Object.assign({}, x, { eyes: 'closed' }) : x);   // natural blinks
+      const F = { // expression presets
+        smug: { mouth: 'smirk', eyes: 'smug', brows: ['confident', 'raised'] },
+        determined: { mouth: 'teeth', eyes: 'angry', brows: 'determined', sweat: 0 },
+        worried: { mouth: 'wavy', eyes: 'open', brows: 'worried', sweat: 1 },
+        panic: { mouth: 'scream', eyes: 'panic', brows: 'surprised', sweat: 1 },
+        joy: { mouth: 'bigGrin', eyes: 'happy', brows: 'raised', blush: 0.8 },
+        sheepish: { mouth: 'grin', eyes: 'happy', brows: 'worried', blush: 1, sweat: 1 },
+      };
+      if (name === 'hookIn' || name === 'loop') return R(P.confident, Object.assign({ lean: 0.1, handR: 'grip', gaze: [0.2, -0.2] }, blink(F.smug)));
       if (name === 'hookJam') {
-        const wob = Math.sin(t * 31), stuck = t > A.wont.start;
-        return R(P.struggle, Object.assign({ handR: 'grip', lean: -0.1 + 0.05 * wob, twist: 0.12 * wob, gaze: [0, -0.2] },
-          stuck ? { mouth: 'shocked', eyes: 'wide', brows: 'worried', face: lerp(faceLock, faceCam, 0.35) } : {}));
+        const wob = Math.sin(t * 31), k = t - t0;
+        const face = t > A.wont.start ? F.panic : k < 0.35 ? F.determined : blink(F.worried);
+        return R(P.struggle, Object.assign({ handR: 'grip', lean: -0.1 + 0.05 * wob, twist: 0.12 * wob, gaze: [0, -0.2] }, face,
+          t > A.wont.start ? { face: lerp(faceLock, faceCam, 0.4), head: [-0.15, 0.2, 0.1] } : {}));
       }
-      if (name === 'dive') return guide.pose(Object.assign({}, P.shocked, at, { x: at.x - 6, face: lerp(faceLock, faceCam, 0.6) }));
+      if (name === 'dive') return guide.pose(Object.assign({}, P.panic, at, F.panic, { x: at.x - 6, face: lerp(faceLock, faceCam, 0.6) }));
       if (name === 'doorOpen') {
         const g = { x: X0 - 26, y: FL, z: 46 };
-        return guide.pose(Object.assign({}, P.cheer, g, { face: faceTo(camera.position.x, camera.position.z, g), bob: Math.max(0, Math.sin(((t - t0) / 0.32) * Math.PI)) * 12 }));
+        return guide.pose(Object.assign({}, P.cheer, g, F.joy, { face: faceTo(camera.position.x, camera.position.z, g), bob: Math.max(0, Math.sin(((t - t0) / 0.32) * Math.PI)) * 12 }));
       }
-      if (t > A.out.start - 0.1) return guide.pose(Object.assign({}, P.oops, at, { face: lerp(faceLock, faceCam, 0.7) }));
-      return R(P.struggle, { handR: 'grip', mouth: 'frown', brows: 'worried', eyes: 'open', lean: -0.06 + 0.04 * Math.sin(t * 31), sweat: 0 });
+      if (t > A.out.start - 0.1) return guide.pose(Object.assign({}, P.oops, at, F.sheepish, { face: lerp(faceLock, faceCam, 0.7) }));
+      const k = t - t0;
+      return R(P.struggle, Object.assign({ handR: 'grip', lean: -0.06 + 0.04 * Math.sin(t * 31) }, k < 0.5 ? F.determined : blink(F.worried)));
     }
     return { renderAt, project, camera, DUR, SHOTS };
   }

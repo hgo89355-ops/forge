@@ -1,7 +1,8 @@
 # Calendar
 
 ## Posted
-_Nothing posted yet._ Lock Short v6 (style test) is ready and waiting for the owner's ✓ — not scheduled.
+_Nothing posted yet._ Lock Short v7 (3D stickman) is waiting for the owner's ✓ — not scheduled. Prediction: 2K–10K views
+in 30 days most likely (videos/lock-short/deliver/VIEW_PREDICTION.md). Needs a new title (copycat already uses ours).
 
 ## Week 1 plan (approved by owner; one swap after the topic check, see below)
 | Day | Format | Title | Notes |
