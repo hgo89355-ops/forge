@@ -44,3 +44,16 @@
 6. Twist/consequence line about the tiny difference (less than a millimetre).
 7. End on "and that's why…" with the camera back on frame 1 → seamless loop.
 8. Bonus every time: a 6–10 s silent "Right key vs Wrong key" cutaway loop (no voice, mechanical sounds only).
+
+## 4. Follow-up search (2026-11-24, vidIQ, 5 credits): Shorts on the exact topic only
+| Short | Channel (subs) | Views | Length | Link |
+|---|---|---|---|---|
+| How A Keys Unlocks 🔑 | Zack D. Films (29.8M) | 16.5M | 31 s | https://www.youtube.com/watch?v=5aTVou7esaw |
+| How Lock Works 3D Animation | A.k invention (3.9K) | 4.7M | 6 s | https://www.youtube.com/watch?v=_g5a1xYmyRY |
+| Padlock working Process | Scienceverse (284K) | 1.4M | 38 s | https://www.youtube.com/watch?v=o-5FegqH-Y0 |
+| How a Key Actually Opens a Lock 🔑 | Why Unboxed 3D (741) | 248K | 16 s | https://www.youtube.com/watch?v=-C8KEuZapvs |
+| How does lock work (3d animation) | Dynamic Yog (161K) | 160K | 56 s | https://www.youtube.com/watch?v=Sjl8PLkwHGQ |
+| How Key Lock Works | Howz (123K) | 70K | 29 s | https://www.youtube.com/watch?v=AotUblWc0U8 |
+- Missed in the first pass: Zack D. Films already has a 16.5M Short on this exact topic — it should be studied before publishing.
+- Crowded: at least 12 near-identical pin-tumbler Shorts were posted 2026-10-06 → 11-22 by small channels (most under
+  5K views), one already titled "How a Lock Knows Your Key" (Slow Pencil, 4.2K). Our hook/story must stand apart and the title should change.

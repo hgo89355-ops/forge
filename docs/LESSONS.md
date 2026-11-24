@@ -39,3 +39,5 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Door shots: a 168 cm guide next to a lock at ~95 cm can't share a 9:16 frame with lower-third captions. Use an
   extreme close-up (hand + key + lock only) for the hook, and wide shots (≥ 380 cm away) with IK hand-on-key for the story.
 - Background renders stop at the 30-minute default limit (v6 died at 93%). Start renders with a 90-minute limit.
+- Topic research: search the exact topic sorted by view count with duration=short as well as outliers — the first pass
+  missed Zack D. Films' 16.5M "How A Keys Unlocks" Short. Also check for copycats from the last 60 days.
