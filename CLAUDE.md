@@ -31,9 +31,10 @@ Open the detail files below **only when the task needs them**.
   background, soft shadows.
 - White rounded label boxes with a thin line to a dot on the part. Title tag top-left: white box with a
   blue accent bar ("The Two Hidden Tracks").
-- The guide: one cartoon guy (messy black hair, blue tee with a white gear logo, dark jeans, white
-  sneakers), flat 2D with black outlines, small next to the machine; points, reacts, 1–3 jokes per video.
-  Moods: curious · oops · shocked · confident. Built as a code rig so he is identical in every video.
+- The guide (owner decision 2026-11-24): a **3D guy with realistic proportions, built in code**
+  (lib/components/guide3d.js): messy swept black hair, blue tee with a white gear logo, dark jeans, white sneakers.
+  Lives in the 3D scene, casts shadows, hands placed by IK; points, reacts, 1–3 jokes per video.
+  Moods: curious · oops · shocked · confident. (Old flat 2D rig lib/components/guide.js is retired.)
 - Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,
   yellow keywords) in the lower third. Sound effects made in code. Voice: the owner's own recording when available
   (videos/<slug>/RECORD_YOUR_VOICE.md), else AI voice labelled as AI voice.
