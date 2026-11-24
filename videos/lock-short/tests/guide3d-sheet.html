@@ -1,0 +1,33 @@
+<!doctype html><html><body style="margin:0;background:#DDE1E6">
+<canvas id="c" width="1800" height="1000"></canvas>
+<script src="../assets/vendor/three-0.158.min.js"></script>
+<script src="../assets/components/guide3d.js"></script><script>window.TEST=JSON.parse(decodeURIComponent((location.search.match(/t=([^&]*)/)||[,"%5B%5D"])[1]));</script>
+<script>
+const W=1800,H=1000, mode=(location.hash||'#sheet').slice(1);
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true,preserveDrawingBuffer:true});
+r.setSize(W,H,false); r.toneMapping=THREE.ACESFilmicToneMapping; r.outputColorSpace=THREE.SRGBColorSpace; r.shadowMap.enabled=true; r.shadowMap.type=THREE.PCFSoftShadowMap;
+const sc=new THREE.Scene(); sc.background=new THREE.Color('#DDE1E6');
+{ const env=new THREE.Scene(); env.add(new THREE.Mesh(new THREE.BoxGeometry(100,100,100),new THREE.MeshBasicMaterial({color:0x9aa1aa,side:THREE.BackSide})));
+  const soft=(w,h,x,y,z,c)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:c,side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);env.add(m);};
+  soft(60,30,-30,40,20,0xffffff);soft(40,40,45,10,30,0xe9eef5);soft(80,10,0,-45,0,0x5a6068);
+  sc.environment=new THREE.PMREMGenerator(r).fromScene(env,0.02).texture; }
+sc.add(new THREE.HemisphereLight(0xffffff,0x8a9099,0.6));
+const key=new THREE.DirectionalLight(0xffffff,2.2); key.position.set(-300,500,600); key.castShadow=true; key.shadow.mapSize.set(2048,2048);
+Object.assign(key.shadow.camera,{left:-900,right:900,top:300,bottom:-50,near:10,far:2000}); key.shadow.bias=-0.0005; sc.add(key);
+const rim=new THREE.DirectionalLight(0xdfe8ff,0.9); rim.position.set(300,300,-400); sc.add(rim);
+const fill=new THREE.DirectionalLight(0xffffff,0.5); fill.position.set(400,100,300); sc.add(fill);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.ShadowMaterial({opacity:0.18})); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; sc.add(ground);
+const names=(new URLSearchParams(location.search).get('n')||'idle,confident,curious,oops,shocked,point,wave,cheer,struggle').split(',');
+let cam;
+if(mode==='face'){
+  const g=Guide3D.create(THREE); sc.add(g.root); g.pose(Object.assign({face:0.35},Guide3D.POSES.confident));
+  cam=new THREE.PerspectiveCamera(30,W/H,1,5000); cam.position.set(40,172,85); cam.lookAt(0,163,0);
+} else {
+  names.forEach((n,i)=>{ const g=Guide3D.create(THREE); sc.add(g.root);
+    const extra=window.TEST&&window.TEST[i]||{}; g.pose(Object.assign({x:(i-(names.length-1)/2)*95,face:0.25},Guide3D.POSES[n]||{},extra));
+    if(n==='struggle'){ const t=new THREE.Vector3((i-(names.length-1)/2)*95+45,105,30); g.reach('R',t); }
+  });
+  cam=new THREE.PerspectiveCamera(30,W/H,1,5000); cam.position.set(0,110,950); cam.lookAt(0,95,0);
+}
+r.render(sc,cam);
+</script></body></html>
