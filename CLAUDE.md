@@ -48,6 +48,7 @@ Open the detail files below **only when the task needs them**.
 | docs/LESSONS.md | What worked / what failed (tools, renders, network, timings) |
 | PROGRESS.md | What's in progress right now and the next step |
 | OWNER_TODO.md | Things only the owner can do (accounts, approvals, money decisions) |
+| docs/GROWTH_PLAN.md | Goal (millions of views per video) and the plan to get there |
 | videos/<slug>/ | One folder per video: project, SCRIPT, SOURCES.md, REVIEW.md, renders |
 | lib/ | Reusable components (character rig, machine cutaways, captions, SFX) |
 
