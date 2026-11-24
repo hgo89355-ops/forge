@@ -1,14 +1,27 @@
 {
- "date": "2026-11-22",
+ "date": "2026-11-23",
  "markets_recorded": 354,
- "signals_today": 19,
- "bot_signals": 19,
+ "signals_today": 26,
+ "bot_signals": 26,
  "shadow_signals": 0,
  "alerts": [
-  "Volume spike: ACE traded 92.7x its usual volume (-11.7%)",
-  "Volume spike: para:DRV traded 20.5x its usual volume (+10.1%)",
-  "Volume spike: para:30Y traded 9.3x its usual volume (-1.2%)",
-  "Volume spike: para:2Y traded 6.9x its usual volume (-1.9%)",
-  "Volume spike: STBL traded 4.1x its usual volume (+6.8%)"
+  "Unusual move: xyz:NVDA +22.0% (7.1x its normal daily move)",
+  "Unusual move: io:NVDA +22.3% (5.3x its normal daily move)",
+  "Unusual move: xyz:EWT +14.1% (4.8x its normal daily move)",
+  "Unusual move: para:UNITREE +20.8% (4.4x its normal daily move)",
+  "Unusual move: xyz:UMC +16.5% (4.3x its normal daily move)",
+  "Unusual move: xyz:UNITREE +20.8% (4.3x its normal daily move)",
+  "Unusual move: xyz:STRC +2.8% (4.1x its normal daily move)",
+  "Volume spike: para:BTCD traded 41.0x its usual volume (+0.2%)",
+  "Volume spike: xyz:COST traded 20.1x its usual volume (-1.2%)",
+  "Volume spike: xyz:SNDK traded 11.1x its usual volume (+4.7%)",
+  "Volume spike: para:CRWD traded 7.3x its usual volume (-4.4%)",
+  "Volume spike: para:30Y traded 7.2x its usual volume (-0.7%)",
+  "Volume spike: SKY traded 7.0x its usual volume (-3.0%)",
+  "Volume spike: io:SNDK traded 7.0x its usual volume (+4.7%)",
+  "Volume spike: para:2Y traded 6.8x its usual volume (+0.3%)",
+  "Volume spike: xyz:ZM traded 5.8x its usual volume (+3.4%)",
+  "Volume spike: xyz:TWST traded 5.8x its usual volume (+6.0%)",
+  "Signal skipped: XLP (PB rest); its outcome will be tracked"
  ]
 }
