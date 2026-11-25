@@ -1,0 +1,24 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(120% 80% at 50% 40%, #F1F3F5 0%, #DDE1E6 70%, #CFD4DA 100%); }
+    #mt10-canvas { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="motion10" data-width="1080" data-height="1920" data-start="0" data-duration="10">
+    <canvas id="mt10-canvas" class="clip" data-start="0" data-duration="10" width="1080" height="1920"></canvas>
+  </div>
+  <script>
+    (function () {
+      const DUR = 10;
+      const m = MotionTest10.mount(document.getElementById('mt10-canvas'));
+      const tl = gsap.timeline({ paused: true });
+      const proxy = { t: 0 };
+      tl.to(proxy, { t: DUR, duration: DUR, ease: 'none' }, 0);
+      tl.eventCallback('onUpdate', function () { m.renderAt(tl.time()); });
+      function onSeek(e) { const d = e && e.detail; if (d && typeof d.time === 'number') tl.totalTime(Math.min(d.time, tl.totalDuration()), true); m.renderAt(tl.time()); }
+      if (window.__mt10Seek) window.removeEventListener('hf-seek', window.__mt10Seek);
+      window.__mt10Seek = onSeek; window.addEventListener('hf-seek', onSeek);
+      m.renderAt(0);
+      window.__timelines['motion10'] = tl;
+    })();
+  </script>
+</template>
