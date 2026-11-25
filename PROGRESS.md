@@ -1,6 +1,9 @@
 # Progress
 
 ## Now
+- **Lock Short v11** (final look: flat-toon stickman, white arms, thick black legs, curly top, headphones, bigger
+  eyes) → videos/lock-short/renders/lock-short-v11.mp4. Waiting for owner ✓ + new title. Movement test:
+  videos/character-test/renders/character-motion-10s.mp4 (waiting for owner feedback on motion).
 - **Lock Short v11** (final look: full stickman 'rick', thicker legs, slimmer body) — door scenes re-rendered and spliced
   into v9 → renders/lock-short-v11.mp4. Then owner ✓ + new title → post.
 - **Lock Short v9 (personality pass)** rendering: sneaks up suspiciously, strains, plants a foot and yanks the stuck key,
