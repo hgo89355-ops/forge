@@ -119,7 +119,7 @@ const Hero3D = (function () {
     };
     const INK = 0x14151a;
     const outline = (w) => { const m = new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide }); m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normal * ${w.toFixed(2)};`); }; return m; };
-    const OL = { s: outline(0.26), m: outline(0.4) };
+    const OL = { s: outline(opts.build === 'stick' ? 0.36 : 0.26), m: outline(opts.build === 'stick' ? 0.6 : 0.4) };
     const mesh = (g, m, parent, p, r, ol = 'm') => {
       const o = new THREE.Mesh(g, m); o.castShadow = true; o.receiveShadow = true;
       if (p) o.position.copy(p); if (r) o.rotation.set(r[0], r[1], r[2]);
@@ -141,12 +141,12 @@ const Hero3D = (function () {
     // build: 'hero' (default, ~18-year-old proportions) or 'stick' (stickman: big round head, simple body, even, normal-thickness limbs)
     const STICK = opts.build === 'stick';
     const B = STICK
-      ? { H: 72, TH: 29, SH: 28, UA: 21, FA: 19, faceS: 1.62, faceY: 18.0, ts: [0.88, 0.74, 0.9], ua: [3.5, 3.4], fa: [3.4, 3.3], el: 3.45, th: [5.0, 4.9], sh: [4.9, 4.8], kn: 5.0, mitt: [2.8, 3.4, 3.2], mittY: -3.4, hipX: 5.4 }
-      : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4 };
+      ? { H: 74, TH: 30, SH: 29, UA: 22, FA: 20, faceS: 1.72, faceY: 16.6, ts: [0.7, 0.72, 0.78], ua: [2.9, 2.9], fa: [2.9, 2.9], el: 2.9, th: [3.6, 3.6], sh: [3.6, 3.6], kn: 3.6, mitt: [3.1, 3.1, 3.1], mittY: -2.6, hipX: 4.0, sl: 0.66, shoeS: 0.82 }
+      : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4, sl: 1, shoeS: 1 };
     const H = B.H, TS = B.ts;
     const hips = group(root, V(0, H, 0));
     // jeans: seat / hips
-    mesh(scaled(new THREE.SphereGeometry(1, 28, 18), 11.8, 7.0, 7.4), M.jeans, hips, V(0, -6.2, -0.4), null, null);
+    mesh(scaled(new THREE.SphereGeometry(1, 28, 18), 11.8 * TS[0], 7.0, 7.4 * TS[2]), M.jeans, hips, V(0, -6.2, -0.4), null, null);
     const spine = group(hips), chest = group(spine);
     // t-shirt torso (rounded), hem, collar, gear emblem
     { const prof = [[13.6, -8], [13.4, -4], [12.6, 6], [13.0, 16], [14.4, 26], [15.0, 33], [14.4, 39], [12.0, 43], [8.0, 45.4], [5.2, 46.1], [4.6, 46.2]];
@@ -164,7 +164,7 @@ const Hero3D = (function () {
     }
     // neck + head
     const neck = group(chest, V(0, 45 * TS[1], -0.3));
-    mesh(limb(3.6, 4.0, 7), M.skin, neck, V(0, 6.5, 0), null, 's');
+    if (STICK) mesh(limb(2.6, 2.6, 4), M.skin, neck, V(0, 4.5, 0), null, 's'); else mesh(limb(3.6, 4.0, 7), M.skin, neck, V(0, 6.5, 0), null, 's');
     const head = group(neck, V(0, 4.6, 0.4));
     const face = group(head, V(0, B.faceY, 0.6)); face.scale.setScalar(B.faceS);
     const R = 10.6;
@@ -172,10 +172,10 @@ const Hero3D = (function () {
       const pos = g.attributes.position, v = new THREE.Vector3();
       for (let i = 0; i < pos.count; i++) {
         v.fromBufferAttribute(pos, i); const k = rr / R; let x = v.x / k, y = v.y / k, z = v.z / k;
-        const t = Math.max(0, Math.min(1, (-y - 1.0) / 8.5));
+        const t = STICK ? 0 : Math.max(0, Math.min(1, (-y - 1.0) / 8.5));
         x *= 1 - 0.2 * t * t; if (z > 0) z = z * (1 - 0.12 * t) + 0.7 * t * t * (z / R);
         y -= 0.9 * t * t;                                    // slightly longer jaw
-        pos.setXYZ(i, x * 0.97 * k, y * 1.08 * k, z * 0.97 * k);
+        pos.setXYZ(i, x * (STICK ? 1 : 0.97) * k, y * (STICK ? 1.02 : 1.08) * k, z * (STICK ? 0.98 : 0.97) * k);
       }
       g.computeVertexNormals(); return g;
     };
@@ -197,7 +197,7 @@ const Hero3D = (function () {
       drawFace(faceCanvas.getContext('2d'), ex, blink); faceTex.needsUpdate = true;
     };
     // ears (small, white)
-    for (const s of [-1, 1]) mesh(scaled(new THREE.SphereGeometry(1.5, 24, 16), 0.5, 1.0, 0.75), M.skin, face, V(s * 9.35, -0.6, -0.6), [0, s * 0.3, 0], 's');
+    if (!STICK) for (const s of [-1, 1]) mesh(scaled(new THREE.SphereGeometry(1.5, 24, 16), 0.5, 1.0, 0.75), M.skin, face, V(s * 9.35, -0.6, -0.6), [0, s * 0.3, 0], 's');
     // hair: cap shell + chunky stylised clumps swept up and to one side (messy)
     { const hair = group(face);
       const g = new THREE.SphereGeometry(R, 72, 48, 0, Math.PI * 2, 0, Math.PI * 0.62), pos = g.attributes.position, n = new THREE.Vector3();
@@ -227,10 +227,10 @@ const Hero3D = (function () {
     const arms = {};
     for (const [side, s] of [['L', 1], ['R', -1]]) {
       const sh = group(chest, V(s * 15.2 * TS[0], 40.5 * TS[1], -0.4));
-      mesh(scaled(new THREE.SphereGeometry(5.6, 40, 28), 1, 0.95, 0.92), M.tee, sh, V(-s * 0.8, 0.6, 0));                  // shoulder
-      const sl = mesh(limb(5.7, 5.2, 9.5), M.tee, sh, V(0, 0.8, 0));                                                          // sleeve
-      const slHem = new THREE.TorusGeometry(5.25, 0.45, 8, 28); slHem.rotateX(Math.PI / 2);
-      mesh(slHem, M.teeDark, sh, V(0, -9.2, 0), null, null);
+      mesh(scaled(new THREE.SphereGeometry(5.6 * B.sl, 40, 28), 1, 0.95, 0.92), M.tee, sh, V(-s * 0.8 * B.sl, 0.6, 0));                  // shoulder
+      const sl = mesh(limb(5.7 * B.sl, 5.2 * B.sl, 9.5 * (STICK ? 0.8 : 1)), M.tee, sh, V(0, 0.8, 0));                                                          // sleeve
+      const slHem = new THREE.TorusGeometry(5.25 * B.sl, 0.45, 8, 28); slHem.rotateX(Math.PI / 2);
+      mesh(slHem, M.teeDark, sh, V(0, STICK ? -7.4 : -9.2, 0), null, null);
       mesh(limb(B.ua[0], B.ua[1], UA - 1.5), M.skin, sh, V(0, -1.5, 0));
       const el = group(sh, V(0, -UA, 0));
       mesh(new THREE.SphereGeometry(B.el, 32, 20), M.skin, el, null, null, null);
@@ -252,10 +252,10 @@ const Hero3D = (function () {
       const kn = group(hp, V(0, -TH, 0));
       mesh(new THREE.SphereGeometry(B.kn, 32, 20), M.jeans, kn, null, null, null);
       mesh(limb(B.sh[0], B.sh[1], SH - 2.5), M.jeans, kn);
-      const cuff = new THREE.TorusGeometry(4.9, 0.6, 8, 24); cuff.rotateX(Math.PI / 2);
+      const cuff = new THREE.TorusGeometry(STICK ? 3.7 : 4.9, 0.6, 8, 24); cuff.rotateX(Math.PI / 2);
       mesh(cuff, M.jeansDark, kn, V(0, -SH + 3.0, 0), null, null);
       const an = group(kn, V(0, -SH, 0));
-      const foot = group(an);
+      const foot = group(an); foot.scale.setScalar(B.shoeS);
       const sp = new THREE.Shape();
       sp.moveTo(-6.4, 0); sp.lineTo(17.5, 0); sp.quadraticCurveTo(21.6, 0.2, 21.4, 3.6); sp.quadraticCurveTo(20.6, 6.6, 15.5, 7.4);
       sp.quadraticCurveTo(9, 8.6, 5.5, 10.2); sp.quadraticCurveTo(2.2, 11.6, -3.5, 11.2); sp.quadraticCurveTo(-7.2, 10.6, -7.3, 6.4); sp.lineTo(-7.3, 2.2); sp.quadraticCurveTo(-7.2, 0, -6.4, 0);
@@ -276,6 +276,7 @@ const Hero3D = (function () {
     let state = Object.assign({}, D);
     function handShape(A, kind) {
       A.index.visible = kind === 'point';
+      if (STICK) { A.mitt.scale.set(1, 1, 1); A.thumb.visible = false; A.index.rotation.set(0.25, 0, 0); return; }
       if (kind === 'open') { A.mitt.scale.set(1, 1.1, 1.08); A.thumb.rotation.set(1.05, 0, -A.s * 0.25); }
       else if (kind === 'point') { A.mitt.scale.set(1.1, 0.72, 1.0); A.thumb.rotation.set(0.6, 0, A.s * 0.35); A.index.rotation.set(0.25, 0, 0); }
       else if (kind === 'hold') { A.mitt.scale.set(1.15, 0.78, 1.02); A.thumb.rotation.set(0.25, 0, A.s * 0.5); }

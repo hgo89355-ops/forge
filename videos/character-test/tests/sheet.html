@@ -30,7 +30,7 @@ if(mode==='turn'){
   cam.position.set(10,95,640); cam.lookAt(10,85,0);
 } else if(mode.startsWith('face-')){
   const e=mode.slice(5); const h=mk(); sc.add(h.root); h.pose({face:0.18,expr:e,head:[0,0,0]});
-  cam=new THREE.PerspectiveCamera(30,W/H,1,6000); if(BUILD==='stick'){cam.position.set(18,132,125); cam.lookAt(0,125,0);} else {cam.position.set(14,166,92); cam.lookAt(0,160,0);}
+  cam=new THREE.PerspectiveCamera(30,W/H,1,6000); if(BUILD==='stick'){cam.position.set(18,128,160); cam.lookAt(0,121,0);} else {cam.position.set(14,166,92); cam.lookAt(0,160,0);}
 } else if(mode==='poses'){
   const A=Hero3D.ANIM, P=[['idle',A.idle(0.5)],['walk',A.walk(0.15)],['point',A.point(1)],['reach',A.reach(1)],['jump back',A.jumpBack(0.42)],['celebrate',A.celebrate(0.12)],['think',A.think(0.4)]];
   P.forEach(([n,st],i)=>{const h=mk(); sc.add(h.root); const s=Object.assign({},st); s.x=(i-3)*100+(s.x||0); s.face=0.35; h.pose(s); lab(n.toUpperCase(),(i+0.5)*W/7,H-70);});
