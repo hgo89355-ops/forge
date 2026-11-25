@@ -79,3 +79,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Re-render only what changed: `hyperframes render --start/--end` for the changed shots, then
   `python3 lib/render/splice.py base.mp4 out.mp4 FRAME:seg.mp4 …` (frame-exact, keeps base audio). Door-scene-only
   re-render of the lock Short ≈ 12 min instead of ≈ 40. Pick cut frames inside shot boundaries (30 fps).
+- three.js gotcha: materials that differ only in onBeforeCompile share one cached shader program — set
+  `customProgramCacheKey` or every outline gets the first one's thickness. (Our outlines were silently thin until fixed.)
+- Owner's target style = flat 2D-looking toon (Rick's-Clips-like): 2-step ramp + 50% emissive for flat colour, thick
+  outline (1.45 cm body), bold straight eyebrows, black stick limbs; customised with our hair, headphones and tee.

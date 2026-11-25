@@ -25,7 +25,7 @@ const Hero3D = (function () {
   // ---------- face textures (drawn in code; swapped per expression) ----------
   // canvas spans the front of the head: 150° wide × 110° tall; drawn in "cm" around the head centre.
   const FACE = { W: 1024, H: 512, sx: 44.3, sy: 22.5 };
-  function drawFace(ctx, ex, blink) {
+  function drawFace(ctx, ex, blink, bold) {
     const { W, H, sx, sy } = FACE;
     ctx.clearRect(0, 0, W, H);
     const G = 1.5; ctx.save(); ctx.setTransform(sx * G, 0, 0, sy * G, W / 2, H / 2);
@@ -38,7 +38,7 @@ const Hero3D = (function () {
       ctx.fillStyle = INK; ctx.strokeStyle = INK;
       if (e === 'open' || e === 'wide' || e === 'small') {
         const k = e === 'wide' ? 1.3 : e === 'small' ? 0.75 : 1;
-        ctx.beginPath(); ctx.ellipse(cx, cy, 0.55 * k * P.eyeS, 0.95 * k * P.eyeS, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx, cy, (bold ? 0.62 : 0.55) * k * P.eyeS, (bold ? 0.82 : 0.95) * k * P.eyeS, 0, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(cx + 0.18 * k, cy - 0.38 * k, 0.17 * k, 0.24 * k, 0, 0, Math.PI * 2); ctx.fill();
       } else if (e === 'happy') {
         ctx.lineWidth = 0.32; ctx.beginPath(); ctx.moveTo(cx - 0.75, cy + 0.25); ctx.quadraticCurveTo(cx, cy - 0.85, cx + 0.75, cy + 0.25); ctx.stroke();
@@ -50,19 +50,19 @@ const Hero3D = (function () {
       }
     }
     // brows: [lift (cm), angle (rad, + = inner end up)]
-    ctx.strokeStyle = INK; ctx.lineWidth = 0.4;
+    ctx.strokeStyle = INK; ctx.lineWidth = bold ? 0.95 : 0.4;
     for (const s of [-1, 1]) {
       const [lift, ang] = s < 0 ? P.browR : P.browL;   // character's right brow is on screen-left
-      const cx = s * 2.3, cy = -2.35 - lift * 0.8, L = 1.0;
+      const cx = s * 2.3, cy = -2.35 - lift * 0.8, L = bold ? 1.25 : 1.0;
       const ca = Math.cos(ang), sa = Math.sin(ang);
       // inner end (toward the nose) is at -s
       const ix = cx - s * L * ca, iy = cy - L * sa, ox = cx + s * L * ca, oy = cy + L * sa;
-      ctx.beginPath(); ctx.moveTo(ix, iy); ctx.quadraticCurveTo(cx, cy - 0.35, ox, oy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ix, iy); if (bold) ctx.lineTo(ox, oy - 0.08); else ctx.quadraticCurveTo(cx, cy - 0.35, ox, oy); ctx.stroke();
     }
     // mouth (centre at 0, +3.9 cm)
     const my = 2.9;
     ctx.translate(0, my); ctx.scale(1.3, 1.3); ctx.translate(0, -my);
-    ctx.lineWidth = 0.3; ctx.strokeStyle = INK;
+    ctx.lineWidth = bold ? 0.4 : 0.3; ctx.strokeStyle = INK;
     const openMouth = (w, h, teeth, tongue, shape) => {
       ctx.beginPath();
       if (shape === 'D') { ctx.moveTo(-w, my - h * 0.35); ctx.quadraticCurveTo(0, my - h * 0.55, w, my - h * 0.35); ctx.quadraticCurveTo(w * 0.85, my + h, 0, my + h); ctx.quadraticCurveTo(-w * 0.85, my + h, -w, my - h * 0.35); }
@@ -113,16 +113,18 @@ const Hero3D = (function () {
   function create(THREE, opts = {}) {
     const V = (x, y, z) => new THREE.Vector3(x, y, z);
     // 3-tone ramp for cel shading
-    const ramp = new THREE.DataTexture(new Uint8Array([120, 120, 120, 255, 200, 200, 200, 255, 255, 255, 255, 255]), 3, 1, THREE.RGBAFormat);
+    const FLAT = opts.build === 'rick';
+    const ramp = FLAT ? new THREE.DataTexture(new Uint8Array([212, 212, 212, 255, 255, 255, 255, 255]), 2, 1, THREE.RGBAFormat)
+                      : new THREE.DataTexture(new Uint8Array([120, 120, 120, 255, 200, 200, 200, 255, 255, 255, 255, 255]), 3, 1, THREE.RGBAFormat);
     ramp.minFilter = ramp.magFilter = THREE.NearestFilter; ramp.generateMipmaps = false; ramp.needsUpdate = true;
-    const toon = (c) => new THREE.MeshToonMaterial({ color: c, gradientMap: ramp });
+    const toon = (c) => new THREE.MeshToonMaterial({ color: c, gradientMap: ramp, emissive: FLAT ? new THREE.Color(c).multiplyScalar(0.5) : 0x000000 });
     const M = {
       skin: toon('#FFFFFF'), tee: toon('#1E5BFF'), teeDark: toon('#1746D0'), jeans: toon('#25304A'), jeansDark: toon('#1C2538'),
       hair: toon(opts.build === 'stick' || opts.build === 'rick' ? '#33363F' : '#17181C'), shoe: toon('#FFFFFF'), phone: toon('#23262E'), cup: toon('#1E5BFF'), yellow: toon('#F2C230'), sole: toon('#C9CED6'), lace: toon('#A4ACB8'), white: toon('#FFFFFF'),
     };
     const INK = 0x14151a;
-    const outline = (w) => { const m = new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide }); m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normal * ${w.toFixed(2)};`); }; return m; };
-    const OL = { s: outline(opts.build === 'stick' || opts.build === 'rick' ? 0.36 : 0.26), m: outline(opts.build === 'stick' || opts.build === 'rick' ? 0.6 : 0.4) };
+    const outline = (w) => { const m = new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide }); m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normal * ${w.toFixed(2)};`); }; m.customProgramCacheKey = () => 'hero-outline-' + w.toFixed(2); return m; };
+    const OL = { s: outline(FLAT ? 0.7 : opts.build === 'stick' ? 0.36 : 0.26), m: outline(FLAT ? 1.45 : opts.build === 'stick' ? 0.6 : 0.4) };
     const mesh = (g, m, parent, p, r, ol = 'm') => {
       const o = new THREE.Mesh(g, m); o.castShadow = true; o.receiveShadow = true;
       if (p) o.position.copy(p); if (r) o.rotation.set(r[0], r[1], r[2]);
@@ -147,7 +149,7 @@ const Hero3D = (function () {
     const B = STICK
       ? { H: 86, TH: 36, SH: 35, UA: 25, FA: 23, faceS: 1.5, faceY: 14.8, ts: [0.7, 0.72, 0.78], ua: [3.4, 3.3], fa: [3.3, 3.2], el: 3.35, th: [4.4, 4.3], sh: [4.3, 4.2], kn: 4.35, mitt: [3.3, 3.3, 3.3], mittY: -2.7, hipX: 4.9, sl: 0.76, shoeS: 0.82 }
       : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4, sl: 1, shoeS: 1 };
-    if (RICK) Object.assign(B, { ua: [1.2, 1.15], fa: [1.15, 1.1], el: 1.2, th: [2.3, 2.15], sh: [2.15, 2.0], kn: 2.25, mitt: [2.1, 2.1, 2.1], mittY: -1.7, hipX: 4.6, shoeS: 0.7 });
+    if (RICK) Object.assign(B, { ua: [1.2, 1.15], fa: [1.15, 1.1], el: 1.2, th: [3.3, 3.15], sh: [3.15, 3.0], kn: 3.25, mitt: [2.1, 2.1, 2.1], mittY: -1.7, hipX: 4.6, shoeS: 0.7 });
     const H = B.H, TS = B.ts;
     const hips = group(root, V(0, H, 0));
     // jeans: seat / hips
@@ -207,7 +209,7 @@ const Hero3D = (function () {
       const k = expr + (blink ? ':b' : '') + ':' + (look ? look.map((v) => v.toFixed(2)).join(',') : '');
       if (k === faceKey) return; faceKey = k;
       const ex = Object.assign({}, EX[expr] || EX.neutral); if (look && (look[0] || look[1])) ex.look = look;
-      drawFace(faceCanvas.getContext('2d'), ex, blink); faceTex.needsUpdate = true;
+      drawFace(faceCanvas.getContext('2d'), ex, blink, FLAT); faceTex.needsUpdate = true;
     };
     // ears (small, white)
     if (!STICK) for (const s of [-1, 1]) mesh(scaled(new THREE.SphereGeometry(1.5, 24, 16), 0.5, 1.0, 0.75), M.skin, face, V(s * 9.35, -0.6, -0.6), [0, s * 0.3, 0], 's');
@@ -217,7 +219,7 @@ const Hero3D = (function () {
       const sm = (e0, e1, x) => { const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
       for (let i = 0; i < pos.count; i++) {
         n.fromBufferAttribute(pos, i).normalize();
-        const hy = n.z > 0 ? 0.36 + 0.12 * n.z : 0.05 + 0.35 * n.z;               // hairline
+        const hy = n.z > 0 ? (RICK ? 0.44 : 0.36) + 0.12 * n.z : 0.05 + 0.35 * n.z;               // hairline
         const m = sm(hy - 0.03, hy + 0.07, n.y);
         const top = sm(0.35, 0.8, n.y);                                           // short sides, volume on top
         const fwd = Math.max(0, n.z) * sm(0.45, 0.8, n.y);                         // pushed forward at the front
@@ -233,7 +235,7 @@ const Hero3D = (function () {
       for (let i = 0; i < N; i++) {
         const y = 1 - (i / (N - 1)) * 0.75, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = i * ga;
         const d = V(Math.cos(th) * rr, y, Math.sin(th) * rr);
-        if (d.y < (d.z > 0 ? 0.42 : 0.3)) continue;
+        if (d.y < (d.z > 0 ? (RICK ? 0.52 : 0.42) : 0.3)) continue;
         const top = Math.max(0, Math.min(1, (d.y - 0.35) / 0.45)), fwd = Math.max(0, d.z) * top;
         const rad = R * (0.98 + 0.2 * top + 0.12 * fwd);
         const c = mesh(RG[i % RG.length], M.hair, hair, V(d.x * rad, d.y * rad * 1.02 + 0.4, d.z * rad * 0.98 + fwd * 2.2), null, 's');
@@ -245,7 +247,7 @@ const Hero3D = (function () {
       }
       // fringe: ringlets falling over the forehead
       for (const [x, y, z, rz, k] of [[-5.6, 7.4, 9.6, 0.35, 0], [-2.6, 7.9, 10.4, 0.15, 1], [0.4, 8.1, 10.6, -0.05, 3], [3.3, 7.8, 10.3, -0.2, 1], [6.0, 7.1, 9.4, -0.4, 2], [-1.2, 8.8, 10.2, 0.05, 2], [1.9, 8.9, 10.1, -0.1, 0]]) {
-        const c = mesh(RG[k], M.hair, hair, V(x, y, z), [0.25, rnd() * 3, rz], 's'); c.scale.setScalar(1.05 + rnd() * 0.3);
+        const c = mesh(RG[k], M.hair, hair, V(x, y + (RICK ? 1.8 : 0), z - (RICK ? 0.6 : 0)), [0.25, rnd() * 3, rz], 's'); c.scale.setScalar((RICK ? 0.85 : 1.05) + rnd() * 0.3);
       }
       // headphones (signature): band over the hair, blue cups with a yellow ring
       const band = new THREE.TorusGeometry(R * 1.13, 0.95, 12, 64, Math.PI);
