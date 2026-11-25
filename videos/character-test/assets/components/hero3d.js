@@ -14,7 +14,7 @@
  *          expr: neutral|curious|oops|shocked|confident|amazed|scared|proud|confused, blink: 0|1, gaze:[x,y] }
  */
 const Hero3D = (function () {
-  const EXPRS = ['neutral', 'curious', 'oops', 'shocked', 'confident', 'amazed', 'scared', 'proud', 'confused', 'determined', 'worried', 'panic', 'joy'];
+  const EXPRS = ['neutral', 'curious', 'oops', 'shocked', 'confident', 'amazed', 'scared', 'proud', 'confused', 'determined', 'worried', 'panic', 'joy', 'suspicious', 'deadpan', 'annoyed'];
   const D = {
     x: 0, y: 0, z: 0, face: 0, lean: 0, side: 0, twist: 0, crouch: 0, bob: 0, breathe: 0, head: [0, 0, 0],
     armL: { fwd: 0, out: 0.1, twist: 0, bend: 0.18, wrist: 0 }, armR: { fwd: 0, out: 0.1, twist: 0, bend: 0.18, wrist: 0 },
@@ -105,6 +105,9 @@ const Hero3D = (function () {
     worried: { eyes: 'open', browL: [0.55, 0.5], browR: [0.55, 0.5], mouth: 'wavy' },
     panic: { eyes: 'wide', eyeS: 1.1, browL: [1.0, 0.45], browR: [1.0, 0.45], mouth: 'scream' },
     joy: { eyes: 'happy', browL: [0.6, 0.15], browR: [0.6, 0.15], mouth: 'bigGrin' },
+    suspicious: { eyes: 'half', browL: [0.45, -0.1], browR: [-0.15, -0.35], mouth: 'flat', look: [0.8, 0] },
+    deadpan: { eyes: 'half', browL: [0, 0], browR: [0, 0], mouth: 'flat' },
+    annoyed: { eyes: 'half', browL: [-0.2, -0.45], browR: [-0.2, -0.45], mouth: 'frown' },
   };
 
   function create(THREE, opts = {}) {
@@ -115,11 +118,11 @@ const Hero3D = (function () {
     const toon = (c) => new THREE.MeshToonMaterial({ color: c, gradientMap: ramp });
     const M = {
       skin: toon('#FFFFFF'), tee: toon('#1E5BFF'), teeDark: toon('#1746D0'), jeans: toon('#25304A'), jeansDark: toon('#1C2538'),
-      hair: toon(opts.build === 'stick' ? '#33363F' : '#17181C'), shoe: toon('#FFFFFF'), phone: toon('#23262E'), cup: toon('#1E5BFF'), yellow: toon('#F2C230'), sole: toon('#C9CED6'), lace: toon('#A4ACB8'), white: toon('#FFFFFF'),
+      hair: toon(opts.build === 'stick' || opts.build === 'rick' ? '#33363F' : '#17181C'), shoe: toon('#FFFFFF'), phone: toon('#23262E'), cup: toon('#1E5BFF'), yellow: toon('#F2C230'), sole: toon('#C9CED6'), lace: toon('#A4ACB8'), white: toon('#FFFFFF'),
     };
     const INK = 0x14151a;
     const outline = (w) => { const m = new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide }); m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normal * ${w.toFixed(2)};`); }; return m; };
-    const OL = { s: outline(opts.build === 'stick' ? 0.36 : 0.26), m: outline(opts.build === 'stick' ? 0.6 : 0.4) };
+    const OL = { s: outline(opts.build === 'stick' || opts.build === 'rick' ? 0.36 : 0.26), m: outline(opts.build === 'stick' || opts.build === 'rick' ? 0.6 : 0.4) };
     const mesh = (g, m, parent, p, r, ol = 'm') => {
       const o = new THREE.Mesh(g, m); o.castShadow = true; o.receiveShadow = true;
       if (p) o.position.copy(p); if (r) o.rotation.set(r[0], r[1], r[2]);
@@ -139,14 +142,16 @@ const Hero3D = (function () {
 
     const root = new THREE.Group(); root.name = 'hero3d';
     // build: 'hero' (default, ~18-year-old proportions) or 'stick' (stickman: big round head, simple body, even, normal-thickness limbs)
-    const STICK = opts.build === 'stick';
+    const RICK = opts.build === 'rick', STICK = opts.build === 'stick' || RICK;
+    const INKM = toon('#15171C'), LIMB = RICK ? INKM : M.skin, LEG = RICK ? INKM : M.jeans;
     const B = STICK
       ? { H: 86, TH: 36, SH: 35, UA: 25, FA: 23, faceS: 1.5, faceY: 14.8, ts: [0.7, 0.72, 0.78], ua: [3.4, 3.3], fa: [3.3, 3.2], el: 3.35, th: [4.4, 4.3], sh: [4.3, 4.2], kn: 4.35, mitt: [3.3, 3.3, 3.3], mittY: -2.7, hipX: 4.9, sl: 0.76, shoeS: 0.82 }
       : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4, sl: 1, shoeS: 1 };
+    if (RICK) Object.assign(B, { ua: [1.2, 1.15], fa: [1.15, 1.1], el: 1.2, th: [1.35, 1.3], sh: [1.3, 1.25], kn: 1.35, mitt: [2.1, 2.1, 2.1], mittY: -1.7, hipX: 4.6, shoeS: 0.7 });
     const H = B.H, TS = B.ts;
     const hips = group(root, V(0, H, 0));
     // jeans: seat / hips
-    mesh(scaled(new THREE.SphereGeometry(1, 28, 18), 11.8 * TS[0], 7.0, 7.4 * TS[2]), M.jeans, hips, V(0, -6.2, -0.4), null, null);
+    if (!RICK) mesh(scaled(new THREE.SphereGeometry(1, 28, 18), 11.8 * TS[0], 7.0, 7.4 * TS[2]), M.jeans, hips, V(0, -6.2, -0.4), null, null);
     const spine = group(hips), chest = group(spine);
     // t-shirt torso (rounded), hem, collar, gear emblem
     { if (STICK) {   // egg/bean body wearing the tee (stickman look)
@@ -172,7 +177,7 @@ const Hero3D = (function () {
     }
     // neck + head
     const neck = group(chest, V(0, 45 * TS[1], -0.3));
-    if (STICK) mesh(limb(2.6, 2.6, 4), M.skin, neck, V(0, 4.5, 0), null, 's'); else mesh(limb(3.6, 4.0, 7), M.skin, neck, V(0, 6.5, 0), null, 's');
+    if (STICK) mesh(limb(RICK ? 1.4 : 2.6, RICK ? 1.4 : 2.6, 4), LIMB, neck, V(0, 4.5, 0), null, 's'); else mesh(limb(3.6, 4.0, 7), M.skin, neck, V(0, 6.5, 0), null, 's');
     const head = group(neck, V(0, 4.6, 0.4));
     const face = group(head, V(0, B.faceY, 0.6)); face.scale.setScalar(B.faceS);
     const R = 10.6;
@@ -288,16 +293,16 @@ const Hero3D = (function () {
       const sl = mesh(limb(5.7 * B.sl, 5.2 * B.sl, 9.5 * (STICK ? 0.8 : 1)), M.tee, sh, V(0, 0.8, 0));                                                          // sleeve
       const slHem = new THREE.TorusGeometry(5.25 * B.sl, 0.45, 8, 28); slHem.rotateX(Math.PI / 2);
       mesh(slHem, M.teeDark, sh, V(0, STICK ? -7.4 : -9.2, 0), null, null);
-      mesh(limb(B.ua[0], B.ua[1], UA - 1.5), M.skin, sh, V(0, -1.5, 0));
+      mesh(limb(B.ua[0], B.ua[1], UA - 1.5), LIMB, sh, V(0, -1.5, 0));
       const el = group(sh, V(0, -UA, 0));
-      mesh(new THREE.SphereGeometry(B.el, 32, 20), M.skin, el, null, null, null);
-      mesh(limb(B.fa[0], B.fa[1], FA), M.skin, el);
+      mesh(new THREE.SphereGeometry(B.el, 32, 20), LIMB, el, null, null, null);
+      mesh(limb(B.fa[0], B.fa[1], FA), LIMB, el);
       const wr = group(el, V(0, -FA, 0));
       const hand = group(wr);
       // mitt: palm block + thumb + optional index finger
-      const mitt = mesh(scaled(new THREE.SphereGeometry(1, 40, 28), B.mitt[0], B.mitt[1], B.mitt[2]), M.skin, hand, V(0, B.mittY, 0.2), null, 's');
-      const thumb = group(hand, V(-s * 0.6, -2.2, 2.9)); mesh(limb(1.25, 1.05, 3.0, 12), M.skin, thumb, null, null, 's');
-      const index = group(hand, V(0, -7.0, 1.6)); mesh(limb(1.05, 0.95, 4.2, 12), M.skin, index, null, null, 's');
+      const mitt = mesh(scaled(new THREE.SphereGeometry(1, 40, 28), B.mitt[0], B.mitt[1], B.mitt[2]), LIMB, hand, V(0, B.mittY, 0.2), null, 's');
+      const thumb = group(hand, V(-s * 0.6, -2.2, 2.9)); mesh(limb(1.25, 1.05, 3.0, 12), LIMB, thumb, null, null, 's');
+      const index = group(hand, RICK ? V(0, -2.8, 0.8) : V(0, -7.0, 1.6)); mesh(RICK ? limb(0.6, 0.55, 2.6, 10) : limb(1.05, 0.95, 4.2, 12), LIMB, index, null, null, 's');
       arms[side] = { s, sh, el, wr, hand, mitt, thumb, index };
     }
     // legs (navy jeans, tapered) + rounded white sneakers
@@ -305,12 +310,12 @@ const Hero3D = (function () {
     const legs = {};
     for (const [side, s] of [['L', 1], ['R', -1]]) {
       const hp = group(hips, V(s * B.hipX, -8, 0));
-      mesh(limb(B.th[0], B.th[1], TH), M.jeans, hp);
+      mesh(limb(B.th[0], B.th[1], TH), LEG, hp);
       const kn = group(hp, V(0, -TH, 0));
-      mesh(new THREE.SphereGeometry(B.kn, 32, 20), M.jeans, kn, null, null, null);
-      mesh(limb(B.sh[0], B.sh[1], SH - 2.5), M.jeans, kn);
+      mesh(new THREE.SphereGeometry(B.kn, 32, 20), LEG, kn, null, null, null);
+      mesh(limb(B.sh[0], B.sh[1], SH - 2.5), LEG, kn);
       const cuff = new THREE.TorusGeometry(STICK ? 4.5 : 4.9, 0.6, 8, 24); cuff.rotateX(Math.PI / 2);
-      mesh(cuff, M.jeansDark, kn, V(0, -SH + 3.0, 0), null, null);
+      if (!RICK) mesh(cuff, M.jeansDark, kn, V(0, -SH + 3.0, 0), null, null);
       const an = group(kn, V(0, -SH, 0));
       const foot = group(an); foot.scale.setScalar(B.shoeS);
       const sp = new THREE.Shape();
@@ -443,6 +448,28 @@ const Hero3D = (function () {
       const ph = (t % 0.6) / 0.6, air = Math.max(0, Math.sin(Math.PI * Math.min(1, ph * 1.4)));
       return { bob: 14 * air, crouch: 0.18 * Math.max(0, Math.sin(Math.PI * (ph * 1.4 - 1))), armL: { fwd: 0.2, out: 2.6 + 0.2 * air, bend: 0.3 }, armR: { fwd: 0.2, out: 2.6 + 0.2 * air, bend: 0.3 },
         handL: 'fist', handR: 'fist', expr: 'proud', head: [-0.15, 0, 0.08 * Math.sin(t * 9)] };
+    },
+    sneak(t, f = 1.25) {   // crouched tiptoe, head snaps left/right with holds, eyes lead
+      const p = Math.sin(t * Math.PI * f * 2), q = Math.cos(t * Math.PI * f * 2);
+      const look = Math.tanh(3 * Math.sin(t * 2.4)), lookE = Math.tanh(3 * Math.sin(t * 2.4 + 0.35));
+      return { crouch: 0.22, lean: 0.2, bob: Math.abs(q) * 1.6, twist: 0.06 * p,
+        legL: { fwd: 0.45 * p + 0.05, bend: Math.max(0, p) * 1.0 + 0.25 }, legR: { fwd: -0.45 * p + 0.05, bend: Math.max(0, -p) * 1.0 + 0.25 },
+        armL: { fwd: 0.55, out: 0.3, twist: -0.4, bend: 1.7 }, armR: { fwd: 0.75, out: 0.15, bend: 1.25 }, handL: 'open', handR: 'hold',
+        head: [0.05, 0.5 * look, 0.04 * look], gaze: [0.9 * lookE, 0], expr: 'suspicious' };
+    },
+    tug(t, f = 1.6) {      // foot on the machine, both hands yanking, leaning way back
+      const e = 0.5 + 0.5 * Math.sin(t * Math.PI * f * 2 - 1.2), k = e * e * (3 - 2 * e);
+      return { lean: -0.28 - 0.14 * k, crouch: 0.12 + 0.05 * k, twist: -0.08 * k, legL: { fwd: 1.25, out: 0.05, bend: 0.75 - 0.2 * k }, legR: { fwd: -0.25, bend: 0.3 },
+        handL: 'hold', handR: 'hold', expr: 'determined', head: [-0.1 - 0.06 * k, 0, 0] };
+    },
+    sit(u) {               // pratfall: lands on his backside, legs out, hands behind
+      const d = ease.backOut(clamp01(u), 1.2);
+      return { bob: -76 * Math.min(1, d), lean: -0.18 * d, legL: { fwd: 1.45 * d, out: 0.18, bend: 0.15 }, legR: { fwd: 1.4 * d, out: 0.14, bend: 0.2 },
+        armL: { fwd: -0.55 * d, out: 0.4, bend: 0.2 }, armR: { fwd: -0.55 * d, out: 0.4, bend: 0.2 }, handL: 'open', handR: 'open' };
+    },
+    adjustPhones(u) {      // smug: taps a headphone cup
+      const k = Math.sin(Math.PI * clamp01(u));
+      return { armR: { fwd: 0.35 * k, out: 1.5 * k + 0.1, twist: 1.3 * k, bend: 2.2 * k }, handR: 'open', head: [0, 0.1 * k, -0.1 * k], expr: 'confident', gaze: [0.6, 0] };
     },
     think(t) { const s = Math.sin(t * 2.2); return { armR: { fwd: 0.55, out: 0.15, twist: -0.95, bend: 2.3 }, handR: 'fist', armL: { fwd: 0.3, out: 0.05, twist: -0.9, bend: 1.5 }, head: [-0.1, 0.12 * s, 0.14], expr: 'curious', gaze: [0.4 * s, 0.6], blink: blinkAt(t, 1.3) }; },
   };

@@ -158,7 +158,7 @@ const Film7 = (function () {
       if (name === 'loop') { const t0 = SHOTS.find((sh) => sh[0] === 'loop')[1]; return GUIDE_AT.x - 80 + 18 * w(t, t0, DUR); }
       return GUIDE_AT.x - 62 + 62 * io(w(t, 0, 0.98));
     };
-    const RIG = window.Hero3D || window.Stick3D; const guide = RIG.create(THREE, { build: 'stick' }); scene.add(guide.root); guide.root.visible = false;
+    const RIG = window.Hero3D || window.Stick3D; const guide = RIG.create(THREE, { build: window.GUIDE_BUILD || 'stick' }); scene.add(guide.root); guide.root.visible = false;
     guide.root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
     // ---------- overlay helpers
     const vtmp = new THREE.Vector3();
