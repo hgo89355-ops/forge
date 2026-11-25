@@ -83,3 +83,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   `customProgramCacheKey` or every outline gets the first one's thickness. (Our outlines were silently thin until fixed.)
 - Owner's target style = flat 2D-looking toon (Rick's-Clips-like): 2-step ramp + 50% emissive for flat colour, thick
   outline (1.45 cm body), bold straight eyebrows, black stick limbs; customised with our hair, headphones and tee.
+- Never put the character in a void: every story shot needs a place (house front with siding, porch, lawn, bushes,
+  window, lamp, sky). Give him something to hide behind or lean on — it creates action and depth for free.
+- "Walks like a box" fix: step–pause rhythm with eased steps, knee lift only on the stepping leg, hips side-sway,
+  shoulders counter-twist, body rises on each step; keep the root moving with the steps so feet don't slide.

@@ -1,6 +1,9 @@
 # Progress
 
 ## Now
+- **Lock Short v12**: real place (house front, porch, bush, window, lamp, sky); he hides behind a bush, peeks, tiptoes
+  out with a proper step rhythm; cheer beside the open door; falls toward camera. Door scenes spliced into v9 →
+  renders/lock-short-v12.mp4. Owner's last message was cut off ("So then just maybe make…").
 - **Lock Short v11** (final look: flat-toon stickman, white arms, thick black legs, curly top, headphones, bigger
   eyes) → videos/lock-short/renders/lock-short-v11.mp4. Waiting for owner ✓ + new title. Movement test:
   videos/character-test/renders/character-motion-10s.mp4 (waiting for owner feedback on motion).

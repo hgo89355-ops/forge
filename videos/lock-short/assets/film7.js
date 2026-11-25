@@ -138,10 +138,40 @@ const Film7 = (function () {
     const mbox = (w, h, d, x, y, z, m, parent) => { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); b.position.set(x, y, z); b.receiveShadow = true; (parent || doorSet).add(b); return b; };
     const wallM = std(0xe9e4da, 0.0, 0.9), trimM = std(0xf7f5f0, 0.0, 0.6), doorM = std(0x2f5d4e, 0.1, 0.55), panelM = std(0x2a5345, 0.1, 0.6);
     const inside = new THREE.MeshBasicMaterial({ color: 0xffd9a0 });
-    mbox(150, 260, 8, X0 - 121, FL + 130, -4, wallM); mbox(150, 260, 8, X0 + 121, FL + 130, -4, wallM); mbox(92, 54, 8, X0, FL + 233, -4, wallM);
+    // siding texture (drawn in code)
+    const sidingTex = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 256; const g = c.getContext('2d');
+      g.fillStyle = '#d9cbb4'; g.fillRect(0, 0, 256, 256);
+      for (let i = 0; i < 8; i++) { const y = i * 32; const gr = g.createLinearGradient(0, y, 0, y + 32); gr.addColorStop(0, '#e6d9c3'); gr.addColorStop(0.85, '#d6c7ae'); gr.addColorStop(1, '#a89a83'); g.fillStyle = gr; g.fillRect(0, y, 256, 32); }
+      const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 6); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+    const plankTex = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 256; const g = c.getContext('2d');
+      for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? '#9c6b43' : '#a7744a'; g.fillRect(0, i * 32, 256, 32); g.fillStyle = '#6e4a2e'; g.fillRect(0, i * 32 + 30, 256, 2); }
+      const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(5, 3); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+    const sidingM = new THREE.MeshStandardMaterial({ map: sidingTex, roughness: 0.85 }), deckM = new THREE.MeshStandardMaterial({ map: plankTex, roughness: 0.8 });
+    mbox(420, 330, 8, X0 - 261, FL + 165, -4, sidingM); mbox(420, 330, 8, X0 + 261, FL + 165, -4, sidingM); mbox(102, 116, 8, X0, FL + 272, -4, sidingM);
+    // porch deck, step, lawn, path
+    const deck = mbox(560, 4, 150, X0, FL - 2, 75, deckM); deck.receiveShadow = true;
+    mbox(560, 4, 30, X0, FL - 20, 165, deckM); mbox(560, 18, 4, X0, FL - 11, 150, std(0x7a5236, 0, 0.8));
+    const lawnM = std(0x6fa04a, 0, 0.95);
+    const lawn = new THREE.Mesh(new THREE.PlaneGeometry(4000, 3000), lawnM); lawn.rotation.x = -Math.PI / 2; lawn.position.set(X0, FL - 22, 1600); lawn.receiveShadow = true; doorSet.add(lawn);
+    mbox(90, 2, 600, X0 + 4, FL - 21, 480, std(0xb9b2a6, 0, 0.9));
+    // bushes (clusters of leafy balls) — the big one by the door is his hiding spot
+    const leafA = std(0x3f7d3a, 0, 0.9), leafB = std(0x4f9445, 0, 0.9);
+    const bush = (x, z, w, h, seed) => { let k = seed; const r = () => { k = (k * 16807) % 2147483647; return (k - 1) / 2147483646; };
+      for (let i = 0; i < 16; i++) { const a = r() * Math.PI * 2, rr = r() * w * 0.35, sz = w * (0.28 + r() * 0.2);
+        const m = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 14), i % 2 ? leafA : leafB); m.scale.set(sz, sz * (0.85 + r() * 0.3), sz);
+        m.position.set(x + Math.cos(a) * rr, FL + h * (0.3 + 0.55 * r()), z + Math.sin(a) * rr * 0.7); m.castShadow = m.receiveShadow = true; doorSet.add(m); } };
+    bush(X0 - 72, 60, 92, 118, 7); bush(X0 + 120, 22, 70, 70, 11); bush(X0 - 190, 20, 80, 80, 3); bush(X0 + 230, 26, 80, 85, 5);
+    // window with warm light + frame, wall lamp
+    mbox(110, 130, 2, X0 + 150, FL + 150, -0.5, new THREE.MeshBasicMaterial({ color: 0xffdca8 }));
+    for (const [w, h, x, y] of [[120, 8, X0 + 150, FL + 219], [120, 8, X0 + 150, FL + 81], [8, 140, X0 + 90, FL + 150], [8, 140, X0 + 210, FL + 150], [4, 130, X0 + 150, FL + 150], [110, 4, X0 + 150, FL + 150]]) mbox(w, h, 6, x, y, 1, trimM);
+    mbox(124, 8, 22, X0 + 150, FL + 78, 8, trimM);
+    mbox(10, 22, 10, X0 - 66, FL + 186, 4, std(0x2a2d33, 0.6, 0.4)); mbox(8, 14, 8, X0 - 66, FL + 184, 7, new THREE.MeshBasicMaterial({ color: 0xffe3a6 }));
+    // far hedge + fence line so the background is a place, not a void
+    for (let i = -6; i <= 6; i++) bush(X0 + i * 140, 900, 160, 130, 20 + i);
+    const SKY = new THREE.Color(0x9cc6ea);
     mbox(6, 212, 10, X0 - 49, FL + 106, -3, trimM); mbox(6, 212, 10, X0 + 49, FL + 106, -3, trimM); mbox(104, 6, 10, X0, FL + 209, -3, trimM);
     mbox(92, 206, 2, X0, FL + 103, -40, inside); // warm room light seen through the opening
-    mbox(70, 1, 36, X0 + 4, FL + 0.5, 26, std(0x4a4a4a, 0, 0.95)); // doormat
+    mbox(70, 1.2, 36, X0 + 4, FL + 0.6, 26, std(0x4a3a2a, 0, 0.95)); // doormat
     const hinge = new THREE.Group(); hinge.position.set(X0 - 46, FL, 0); doorSet.add(hinge);
     mbox(92, 204, 4.5, 46, 102, 0, doorM, hinge);
     for (const [px, py, ph] of [[24, 150, 70], [68, 150, 70], [24, 52, 70], [68, 52, 70]]) mbox(32, ph, 1.2, px, py, 2.6, panelM, hinge);
@@ -153,10 +183,10 @@ const Film7 = (function () {
     const doorTag = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.4, 2.4), M.tag); doorTag.position.set(-11.6, -5.2, 0); doorKey.add(doorTag);
     const LOCKFACE = [X0 - 46 + 80, FL + 106, 3.8];
     const GUIDE_AT = { x: X0 - 4, z: 22 };
-    const GUIDE_X = (name, t) => {   // sneak path: loop (−80 → −62) flows into hookIn (−62 → 0)
+    const GUIDE_X = (name, t) => {   // loop: crouched behind the bush (−84 → −80); hookIn: rises, sneaks to the door (−80 → 0)
       const io = (u) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2), w = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)));
-      if (name === 'loop') { const t0 = SHOTS.find((sh) => sh[0] === 'loop')[1]; return GUIDE_AT.x - 80 + 18 * w(t, t0, DUR); }
-      return GUIDE_AT.x - 62 + 62 * io(w(t, 0, 0.98));
+      if (name === 'loop') { const t0 = SHOTS.find((sh) => sh[0] === 'loop')[1]; return GUIDE_AT.x - 84 + 4 * w(t, t0, DUR); }
+      return GUIDE_AT.x - 80 + 80 * io(w(t, 0.22, 1.0));
     };
     const RIG = window.Hero3D || window.Stick3D; const guide = RIG.create(THREE, { build: window.GUIDE_BUILD || 'rick' }); scene.add(guide.root); guide.root.visible = false;
     guide.root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
@@ -229,14 +259,14 @@ const Film7 = (function () {
           if (name === 'hookIn' || name === 'loop') {   // medium shot that follows his sneak to the door
             const gx = GUIDE_X(name, t);
             doorKeyZ = name === 'hookIn' ? K(t, [[0.95, 12], [1.38, 4, 'o3']]) : 12;
-            setCam(lerp(gx, LOCKFACE[0], 0.42), FL + 96, 14, 345, 44, 5);
+            setCam(lerp(gx, LOCKFACE[0], 0.42) + 10, FL + 104, 20, 440, 40, 7);
           }
           if (name === 'hookJam') { doorShake = t > A.wont.start + 0.42 ? 1 : 0; keyJiggle = doorShake; camLerp(u, [X0 + 12, 100, 12, 360, 46, 4], [X0 + 12, 100, 12, 320, 40, 4]); }
           if (name === 'dive') {
             const e = E.i3(u);
             setCam(lerp(X0 + 12, LOCKFACE[0], e), lerp(100, LOCKFACE[1] - 2, e), lerp(12, LOCKFACE[2], e), lerp(320, 16, e), lerp(40, 12, e), lerp(4, 0, e));
           }
-          if (name === 'doorOpen') { doorKeyBit = RIGHT; doorKeyTag = false; openAmt = K(t, [[t0, 0], [t0 + 0.55, 1, 'sp8']]); camLerp(u, [X0 - 4, 96, 20, 430, 30, 4], [X0 - 6, 98, 20, 390, 20, 4]); }
+          if (name === 'doorOpen') { doorKeyBit = RIGHT; doorKeyTag = false; openAmt = K(t, [[t0, 0], [t0 + 0.55, 1, 'sp8']]); camLerp(u, [X0 + 30, 96, 30, 440, 24, 4], [X0 + 30, 98, 30, 400, 16, 4]); }
           if (name === 'lockedOut') { doorShake = t < A.out.start - 0.1 ? 1 : 0; keyJiggle = doorShake; doorKeyZ = t < A.out.start - 0.1 ? 4 : null; camLerp(u, [X0 + 8, 100, 14, 380, 42, 4], [X0 - 2, 70, 24, 300, 36, 6]); }
           break;
         }
@@ -345,7 +375,7 @@ const Film7 = (function () {
         doorKey.visible = doorKeyZ !== null;
         if (doorKey.visible) { doorKey.geometry = keyGeometry(doorKeyBit); doorKey.position.set(80, 106, doorKeyZ); doorTag.visible = doorKeyTag; doorKey.rotation.z = keyJiggle ? Math.sin(t * 40) * 0.06 : 0; }
       }
-      guide.root.visible = !!door;
+      guide.root.visible = !!door; scene.background = door ? SKY : null;
       if (door) {
         key.position.set(X0 - 140, FL + 320, 260); key.target.position.set(X0 + 10, FL + 80, 0);
         Object.assign(key.shadow.camera, { left: -220, right: 220, top: 220, bottom: -220, near: 10, far: 900 });
@@ -395,9 +425,15 @@ const Film7 = (function () {
         const blink = ((tt + 0.37) % 2.9) < 0.1 ? 1 : 0;
         const at2 = (x) => ({ x: x === undefined ? at.x : x, y: FL, z: at.z });
         if (name === 'hookIn' || name === 'loop') {
-          const gx = GUIDE_X(name, tt), g = at2(gx);
-          const sn = Object.assign(A.sneak(tt), g, { face: faceTo(LOCKFACE[0], LOCKFACE[2], g) - 0.25, blink });
-          if (name === 'hookIn' && tt > 0.95) return mix(sn, Object.assign({}, A.sneak(0.95), g, { face: faceLock, crouch: 0.12, lean: 0.12, expr: 'confident', gaze: [0.2, -0.2] }), E.io(win(tt, 0.95, 1.25)));
+          const gx = GUIDE_X(name, tt), g = at2(gx), fLock = faceTo(LOCKFACE[0], LOCKFACE[2], g);
+          // hiding pose: crouched low behind the bush, peeking out sideways
+          const peek = (k) => Object.assign({}, g, { face: fLock - 0.5, crouch: 0.85, lean: 0.25, side: -0.12 * k, head: [0.05, 0.35 * k, -0.18 * k],
+            armL: { fwd: 0.9, out: 0.3, twist: -0.5, bend: 1.9 }, armR: { fwd: 0.85, out: 0.25, bend: 1.7 }, handL: 'open', handR: 'hold',
+            legL: { fwd: 0.3, bend: 0.2 }, legR: { fwd: -0.1, bend: 0.2 }, expr: 'suspicious', gaze: [0.9 * k, 0], blink });
+          if (name === 'loop') { const t0 = SHOTS.find((sh) => sh[0] === 'loop')[1]; return peek(E.spring(win(tt, t0 + 0.2, t0 + 0.7), 10, 6)); }
+          const sn = Object.assign(A.sneak(Math.max(0, tt - 0.18)), g, { face: fLock - 0.2, blink });
+          if (tt < 0.32) return mix(peek(1), sn, E.io(win(tt, 0.0, 0.32)));            // pops out from behind the bush
+          if (tt > 0.95) return mix(sn, Object.assign({}, A.sneak(0.77), g, { face: faceLock, crouch: 0.12, lean: 0.12, expr: 'confident', gaze: [0.2, -0.2] }), E.io(win(tt, 0.95, 1.25)));
           return sn;
         }
         if (name === 'hookJam') {
@@ -414,13 +450,13 @@ const Film7 = (function () {
         }
         if (name === 'dive') return Object.assign({}, P.confident, at2(at.x - 8), { face: faceLock + (faceCam() - faceLock) * 0.7, expr: 'annoyed', blink });
         if (name === 'doorOpen') {
-          const g = { x: X0 - 26, y: FL, z: 46 }, fc = faceCam(g), k = tt - t0;
+          const g = { x: X0 + 64, y: FL, z: 52 }, fc = faceCam(g), k = tt - t0;
           if (k < 0.16) return Object.assign({}, g, { face: fc, expr: 'amazed', crouch: 0.15 * Math.sin(Math.PI * k / 0.16), armL: { fwd: 0.2, out: 0.4, bend: 0.6 }, armR: { fwd: 0.2, out: 0.4, bend: 0.6 } });
           return Object.assign(A.celebrate(k - 0.16), g, { face: fc, expr: 'proud' });
         }
         // lockedOut: yanks the wrong key again → it pops out → lands on his backside → deadpan stare at camera
         if (tt < popT) return Object.assign(A.tug(tt - t0), at2(at.x - 3), { face: faceLock, blink, expr: tt - t0 < 0.6 ? 'determined' : 'annoyed' });
-        const f = win(tt, popT, popT + 0.38), g = at2(at.x - 3 - 22 * E.out(f));
+        const f = win(tt, popT, popT + 0.38), g = Object.assign(at2(at.x - 3 - 6 * E.out(f)), { z: at.z + 26 * E.out(f) });
         const sit = Object.assign(A.sit(f), g, { face: faceLock + (faceCam(g) - faceLock) * E.io(win(tt, popT + 0.3, popT + 0.55)), expr: tt < popT + 0.32 ? 'shocked' : 'deadpan', blink: 0, gaze: [0, 0.1] });
         return sit;
       };

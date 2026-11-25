@@ -426,7 +426,7 @@ const Hero3D = (function () {
     walk(t, f = 1.7) {   // in place; caller moves x/z by ~ 70 cm × f per second
       const p = Math.sin(t * Math.PI * f * 2), q = Math.cos(t * Math.PI * f * 2);
       const p2 = Math.sin(t * Math.PI * f * 2 - 0.5);   // arms lag the legs slightly
-      return { bob: Math.abs(q) * 2.4 - 1, lean: 0.07 + 0.015 * Math.abs(q), side: 0.035 * p, twist: -0.1 * p,
+      return { bob: Math.abs(q) * 3.2 - 1.4, lean: 0.07 + 0.02 * Math.abs(q), side: 0.05 * p, twist: -0.16 * p,
         legL: { fwd: 0.42 * p, bend: Math.max(0, -p) * 0.8 + 0.1 * Math.abs(q) }, legR: { fwd: -0.42 * p, bend: Math.max(0, p) * 0.8 + 0.1 * Math.abs(q) },
         armL: { fwd: -0.34 * p2, out: 0.12, bend: 0.3 + 0.18 * Math.max(0, -p2) }, armR: { fwd: 0.34 * p2, out: 0.12, bend: 0.3 + 0.18 * Math.max(0, p2) },
         head: [-0.03 * Math.abs(q), 0.05 * p, -0.02 * p], blink: blinkAt(t, 0.7) };
@@ -451,13 +451,19 @@ const Hero3D = (function () {
       return { bob: 14 * air, crouch: 0.18 * Math.max(0, Math.sin(Math.PI * (ph * 1.4 - 1))), armL: { fwd: 0.2, out: 2.6 + 0.2 * air, bend: 0.3 }, armR: { fwd: 0.2, out: 2.6 + 0.2 * air, bend: 0.3 },
         handL: 'fist', handR: 'fist', expr: 'proud', head: [-0.15, 0, 0.08 * Math.sin(t * 9)] };
     },
-    sneak(t, f = 1.25) {   // crouched tiptoe, head snaps left/right with holds, eyes lead
-      const p = Math.sin(t * Math.PI * f * 2), q = Math.cos(t * Math.PI * f * 2);
+    sneak(t, f = 1.5) {    // cartoon tiptoe: step–pause rhythm, high knee lift, hips sway, shoulders counter-twist, paws up
+      const ph = t * f, n = Math.floor(ph), fr = ph - n;
+      const mv = fr < 0.72 ? ease.io(fr / 0.72) : 1;                 // move, then a short hold on every step
+      const e = n + mv;                                               // eased step phase (monotonic, with holds)
+      const lift = fr < 0.72 ? Math.sin(Math.PI * fr / 0.72) : 0;     // the stepping foot rises and lands
+      const sideSgn = n % 2 === 0 ? 1 : -1;                           // which leg is stepping
+      const swing = Math.sin(Math.PI * e - Math.PI / 2);              // −1 → 1 → −1 …
       const look = Math.tanh(3 * Math.sin(t * 2.4)), lookE = Math.tanh(3 * Math.sin(t * 2.4 + 0.35));
-      return { crouch: 0.22, lean: 0.2, bob: Math.abs(q) * 1.6, twist: 0.06 * p,
-        legL: { fwd: 0.45 * p + 0.05, bend: Math.max(0, p) * 1.0 + 0.25 }, legR: { fwd: -0.45 * p + 0.05, bend: Math.max(0, -p) * 1.0 + 0.25 },
-        armL: { fwd: 0.55, out: 0.3, twist: -0.4, bend: 1.7 }, armR: { fwd: 0.75, out: 0.15, bend: 1.25 }, handL: 'open', handR: 'hold',
-        head: [0.05, 0.5 * look, 0.04 * look], gaze: [0.9 * lookE, 0], expr: 'suspicious' };
+      return { crouch: 0.3 - 0.06 * lift, lean: 0.26 + 0.04 * lift, bob: 2.5 * lift, side: 0.07 * sideSgn * lift, twist: -0.16 * swing,
+        legL: { fwd: 0.5 * swing + 0.05, out: 0.04, bend: 0.3 + (sideSgn > 0 ? 1.25 * lift : 0) },
+        legR: { fwd: -0.5 * swing + 0.05, out: 0.04, bend: 0.3 + (sideSgn < 0 ? 1.25 * lift : 0) },
+        armL: { fwd: 0.95 + 0.12 * swing, out: 0.38, twist: -0.55, bend: 1.95 - 0.25 * lift }, armR: { fwd: 0.95 - 0.12 * swing, out: 0.3, twist: -0.3, bend: 1.7 - 0.2 * lift },
+        handL: 'open', handR: 'hold', head: [0.14 - 0.05 * lift, 0.45 * look, 0.05 * look], gaze: [0.9 * lookE, 0], expr: 'suspicious', stepE: e };
     },
     tug(t, f = 1.6) {      // foot on the machine, both hands yanking, leaning way back
       const e = 0.5 + 0.5 * Math.sin(t * Math.PI * f * 2 - 1.2), k = e * e * (3 - 2 * e);
