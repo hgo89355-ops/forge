@@ -215,15 +215,27 @@ const Hero3D = (function () {
         const side = Math.atan2(n.x, n.z);                                         // 0 = front
         const hy = n.z > 0 ? 0.34 + 0.16 * n.z - 0.12 * Math.max(0, n.x) : 0.1 + 0.4 * n.z;   // side part, lower on one side
         const m = sm(hy - 0.03, hy + 0.08, n.y);
-        const quiff = 0.30 * Math.exp(-((n.z - 0.55) ** 2 / 0.09 + (n.y - 0.78) ** 2 / 0.05 + (n.x + 0.12) ** 2 / 0.12));
+        const quiff = 0.12 * Math.exp(-((n.z - 0.45) ** 2 / 0.12 + (n.y - 0.8) ** 2 / 0.08));
         const sweep = 0.05 * Math.sin(side * 6 + n.y * 3) * m;
-        const r = R * (0.9 + m * (0.16 + 0.07 * Math.max(0, n.y) + quiff + sweep));
+        const r = R * (0.9 + m * (0.17 + 0.08 * Math.max(0, n.y) + quiff + sweep * 0.4));
         pos.setXYZ(i, n.x * r, n.y * r * 1.02, n.z * r * 0.98);
       }
       g.computeVertexNormals(); mesh(g, M.hair, hair);
-      const lock = new THREE.LatheGeometry([[0, 0], [1.0, 0.1], [1.0, 0.3], [0.72, 0.58], [0.38, 0.84], [0.1, 0.98], [0, 1]].map(([r, y]) => new THREE.Vector2(r, y)), 24);
-      for (const [x, y, z, rx, rz, w, l] of [[-3.5, 8.6, 6.8, 1.1, 0.55, 3.0, 8.5], [0.5, 9.6, 6.0, 1.0, 0.2, 3.3, 9.5], [4.2, 8.8, 5.6, 0.9, -0.35, 2.8, 8.0], [-7.6, 5.2, 2.2, 0.4, 1.3, 2.4, 6.0], [6.6, 8.2, -2.6, -0.4, -0.7, 2.6, 6.5]]) {
-        const c = mesh(lock, M.hair, hair, V(x, y, z), [rx, 0, rz]); c.scale.set(w, l, w * 0.55);
+      // curls: round blobs spread over the hair + a few spiral curls falling over the forehead
+      const blob = new THREE.SphereGeometry(1, 20, 14);
+      const N = 70, ga = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < N; i++) {
+        const y = 1 - (i / (N - 1)) * 1.3, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = i * ga;
+        const d = V(Math.cos(th) * rr, y, Math.sin(th) * rr);
+        const hy = d.z > 0 ? 0.34 + 0.16 * d.z : 0.1 + 0.4 * d.z;
+        if (d.y < hy + 0.04) continue;
+        const rad = R * (1.03 + 0.08 * Math.max(0, d.y)), sz = 1.9 + 0.9 * ((i * 37) % 7) / 6;
+        const c = mesh(blob, M.hair, hair, V(d.x * rad, d.y * rad * 1.02, d.z * rad * 0.98), null, 's');
+        c.scale.set(sz, sz * 0.9, sz);
+      }
+      const spiral = (turns, r0, len) => { const pts = []; for (let k = 0; k <= 40; k++) { const u = k / 40, a = u * turns * Math.PI * 2; pts.push(V(Math.cos(a) * r0 * (1 - 0.35 * u), -u * len, Math.sin(a) * r0 * (1 - 0.35 * u))); } return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 60, 0.75, 10); };
+      for (const [x, y, z, rz, t, r0, l] of [[-4.2, 9.0, 8.4, 0.25, 1.6, 1.5, 5.0], [-0.6, 10.0, 8.6, -0.05, 1.8, 1.6, 5.6], [3.2, 9.4, 8.2, -0.3, 1.5, 1.4, 4.6], [6.6, 7.6, 6.4, -0.6, 1.3, 1.3, 4.0]]) {
+        mesh(spiral(t, r0, l), M.hair, hair, V(x, y, z), [0.35, 0, rz], 's');
       }
       // headphones (signature): band over the hair, blue cups with a yellow ring
       const band = new THREE.TorusGeometry(R * 1.13, 0.95, 12, 64, Math.PI);
