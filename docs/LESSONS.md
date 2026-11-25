@@ -76,3 +76,6 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Owner feedback: personality beats polish. A character "toy" that only poses reads childish; give him intent and
   comedy beats (sneak, yank, pratfall, deadpan stare to camera) with holds. New moves live in Hero3D.ANIM (sneak, tug,
   sit, adjustPhones) and expressions (suspicious, deadpan, annoyed).
+- Re-render only what changed: `hyperframes render --start/--end` for the changed shots, then
+  `python3 lib/render/splice.py base.mp4 out.mp4 FRAME:seg.mp4 …` (frame-exact, keeps base audio). Door-scene-only
+  re-render of the lock Short ≈ 12 min instead of ≈ 40. Pick cut frames inside shot boundaries (30 fps).
