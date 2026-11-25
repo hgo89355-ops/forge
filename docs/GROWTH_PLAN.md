@@ -23,3 +23,10 @@
 - First 30 Shorts: mostly 1K–20K each; 1–3 videos break 100K.
 - Months 2–4: if the format fits, regular 100K+ videos and the first 1M+.
 - "Millions per video" consistently: usually after 100+ uploads and several months of tuning.
+
+## Remakes (owner idea, 2026-11-25)
+Re-post a topic weeks later as a **remake, not a copy**: change the first 2 seconds (hook), the title and at least one
+big visual element (character action, story twist); keep the original up; wait 4–8 weeks; change one main thing per
+remake so we learn what moved the numbers. Never re-upload near-identical files — YouTube's "reused/repetitious
+content" rules can block monetisation later. Best candidates: videos that did well (proven topic) or had a strong
+"viewed vs swiped" score but weak reach.

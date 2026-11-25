@@ -1,6 +1,9 @@
 # Progress
 
 ## Now
+- **Stickman build demo (awaiting owner ✓):** `Hero3D.create(THREE, { build: 'stick' })` — same design, big round head, simple
+  body, normal-thickness limbs. Demo: videos/character-test/deliver/5-stickman-build-demo.png. If ✓: switch the films to
+  build 'stick' and re-render the lock Short.
 - **Master character = Hero3D (owner ✓ 2026-11-25)**: refined edges, human-like movement layers. Lock Short v8 with him is
   rendering → videos/lock-short/renders/lock-short-v8.mp4 (then owner's ✓ to publish).
 - **Lock Short v7** — 3D stickman guide (lib/components/stick3d.js: normal blue baseball cap with a small gear logo +
