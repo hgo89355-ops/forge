@@ -141,7 +141,7 @@ const Hero3D = (function () {
     // build: 'hero' (default, ~18-year-old proportions) or 'stick' (stickman: big round head, simple body, even, normal-thickness limbs)
     const STICK = opts.build === 'stick';
     const B = STICK
-      ? { H: 86, TH: 36, SH: 35, UA: 25, FA: 23, faceS: 1.5, faceY: 14.8, ts: [0.7, 0.72, 0.78], ua: [2.9, 2.9], fa: [2.9, 2.9], el: 2.9, th: [3.6, 3.6], sh: [3.6, 3.6], kn: 3.6, mitt: [3.1, 3.1, 3.1], mittY: -2.6, hipX: 4.0, sl: 0.66, shoeS: 0.82 }
+      ? { H: 86, TH: 36, SH: 35, UA: 25, FA: 23, faceS: 1.5, faceY: 14.8, ts: [0.7, 0.72, 0.78], ua: [3.4, 3.3], fa: [3.3, 3.2], el: 3.35, th: [4.4, 4.3], sh: [4.3, 4.2], kn: 4.35, mitt: [3.3, 3.3, 3.3], mittY: -2.7, hipX: 4.9, sl: 0.76, shoeS: 0.82 }
       : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4, sl: 1, shoeS: 1 };
     const H = B.H, TS = B.ts;
     const hips = group(root, V(0, H, 0));
@@ -150,10 +150,10 @@ const Hero3D = (function () {
     const spine = group(hips), chest = group(spine);
     // t-shirt torso (rounded), hem, collar, gear emblem
     { if (STICK) {   // egg/bean body wearing the tee (stickman look)
-        const bean = [[0, -9.5], [6.4, -9.3], [9.0, -7.4], [10.0, -3], [10.2, 3], [10.2, 10], [10.0, 17], [9.4, 23], [8.0, 28], [5.6, 31.6], [3.9, 33.0], [3.4, 33.2]];
-        const g = new THREE.LatheGeometry(bean.map(([r, y]) => new THREE.Vector2(r, y)), 72); g.scale(1, 1, 0.82);
+        const bean = [[0, -9.5], [7.0, -9.3], [10.0, -7.4], [11.0, -3], [11.4, 3], [11.9, 10], [12.6, 17], [12.8, 23], [11.6, 28], [8.2, 31.6], [4.6, 33.0], [3.8, 33.2]];
+        const g = new THREE.LatheGeometry(bean.map(([r, y]) => new THREE.Vector2(r, y)), 72); g.scale(1.06, 1, 0.78);
         mesh(g, M.tee, chest);
-        const hem = new THREE.TorusGeometry(9.7, 0.5, 8, 48); hem.rotateX(Math.PI / 2); hem.scale(1, 1, 0.82);
+        const hem = new THREE.TorusGeometry(10.7, 0.5, 8, 48); hem.rotateX(Math.PI / 2); hem.scale(1.06, 1, 0.78);
         mesh(hem, M.teeDark, chest, V(0, -6.6, 0), null, null);
       } else {
         const prof = [[13.6, -8], [13.4, -4], [12.6, 6], [13.0, 16], [14.4, 26], [15.0, 33], [14.4, 39], [12.0, 43], [8.0, 45.4], [5.2, 46.1], [4.6, 46.2]];
@@ -167,7 +167,7 @@ const Hero3D = (function () {
       const gs = new THREE.Shape(), n = 8;
       for (let i = 0; i < n * 4; i++) { const a = (i / (n * 4)) * Math.PI * 2, rr = (i % 4 < 2) ? 2.0 : 1.55; i ? gs.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : gs.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
       const hole = new THREE.Path(); hole.absarc(0, 0, 0.7, 0, Math.PI * 2, true); gs.holes.push(hole);
-      const gear = mesh(new THREE.ExtrudeGeometry(gs, { depth: 0.12, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: '#FFFFFF' }), chest, STICK ? V(4.0, 19, 8.05) : V(5.6 * TS[0], 31 * TS[1], 9.7 * TS[2]), [0, STICK ? 0.42 : 0.33, 0], null);
+      const gear = mesh(new THREE.ExtrudeGeometry(gs, { depth: 0.12, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: '#FFFFFF' }), chest, STICK ? V(4.6, 19, 9.7) : V(5.6 * TS[0], 31 * TS[1], 9.7 * TS[2]), [0, STICK ? 0.42 : 0.33, 0], null);
       gear.castShadow = false;
     }
     // neck + head
@@ -283,7 +283,7 @@ const Hero3D = (function () {
     const UA = B.UA, FA = B.FA;
     const arms = {};
     for (const [side, s] of [['L', 1], ['R', -1]]) {
-      const sh = group(chest, STICK ? V(s * 8.8, 27.5, -0.2) : V(s * 15.2 * TS[0], 40.5 * TS[1], -0.4));
+      const sh = group(chest, STICK ? V(s * 11.6, 26.5, -0.2) : V(s * 15.2 * TS[0], 40.5 * TS[1], -0.4));
       mesh(scaled(new THREE.SphereGeometry(5.6 * B.sl, 40, 28), 1, 0.95, 0.92), M.tee, sh, V(-s * 0.8 * B.sl, 0.6, 0));                  // shoulder
       const sl = mesh(limb(5.7 * B.sl, 5.2 * B.sl, 9.5 * (STICK ? 0.8 : 1)), M.tee, sh, V(0, 0.8, 0));                                                          // sleeve
       const slHem = new THREE.TorusGeometry(5.25 * B.sl, 0.45, 8, 28); slHem.rotateX(Math.PI / 2);
@@ -309,7 +309,7 @@ const Hero3D = (function () {
       const kn = group(hp, V(0, -TH, 0));
       mesh(new THREE.SphereGeometry(B.kn, 32, 20), M.jeans, kn, null, null, null);
       mesh(limb(B.sh[0], B.sh[1], SH - 2.5), M.jeans, kn);
-      const cuff = new THREE.TorusGeometry(STICK ? 3.7 : 4.9, 0.6, 8, 24); cuff.rotateX(Math.PI / 2);
+      const cuff = new THREE.TorusGeometry(STICK ? 4.5 : 4.9, 0.6, 8, 24); cuff.rotateX(Math.PI / 2);
       mesh(cuff, M.jeansDark, kn, V(0, -SH + 3.0, 0), null, null);
       const an = group(kn, V(0, -SH, 0));
       const foot = group(an); foot.scale.setScalar(B.shoeS);
