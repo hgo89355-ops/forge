@@ -141,7 +141,7 @@ const Hero3D = (function () {
     // build: 'hero' (default, ~18-year-old proportions) or 'stick' (stickman: big round head, simple body, even, normal-thickness limbs)
     const STICK = opts.build === 'stick';
     const B = STICK
-      ? { H: 74, TH: 30, SH: 29, UA: 22, FA: 20, faceS: 1.72, faceY: 16.6, ts: [0.7, 0.72, 0.78], ua: [2.9, 2.9], fa: [2.9, 2.9], el: 2.9, th: [3.6, 3.6], sh: [3.6, 3.6], kn: 3.6, mitt: [3.1, 3.1, 3.1], mittY: -2.6, hipX: 4.0, sl: 0.66, shoeS: 0.82 }
+      ? { H: 86, TH: 36, SH: 35, UA: 25, FA: 23, faceS: 1.5, faceY: 14.8, ts: [0.7, 0.72, 0.78], ua: [2.9, 2.9], fa: [2.9, 2.9], el: 2.9, th: [3.6, 3.6], sh: [3.6, 3.6], kn: 3.6, mitt: [3.1, 3.1, 3.1], mittY: -2.6, hipX: 4.0, sl: 0.66, shoeS: 0.82 }
       : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4, sl: 1, shoeS: 1 };
     const H = B.H, TS = B.ts;
     const hips = group(root, V(0, H, 0));
@@ -150,10 +150,10 @@ const Hero3D = (function () {
     const spine = group(hips), chest = group(spine);
     // t-shirt torso (rounded), hem, collar, gear emblem
     { if (STICK) {   // egg/bean body wearing the tee (stickman look)
-        const bean = [[0, -9.5], [7.5, -9.3], [11.0, -7.2], [12.6, -3], [13.0, 3], [12.5, 10], [11.2, 17], [9.6, 23], [7.8, 28], [5.6, 31.6], [3.9, 33.0], [3.4, 33.2]];
+        const bean = [[0, -9.5], [6.4, -9.3], [9.0, -7.4], [10.0, -3], [10.2, 3], [10.2, 10], [10.0, 17], [9.4, 23], [8.0, 28], [5.6, 31.6], [3.9, 33.0], [3.4, 33.2]];
         const g = new THREE.LatheGeometry(bean.map(([r, y]) => new THREE.Vector2(r, y)), 72); g.scale(1, 1, 0.82);
         mesh(g, M.tee, chest);
-        const hem = new THREE.TorusGeometry(11.6, 0.5, 8, 48); hem.rotateX(Math.PI / 2); hem.scale(1, 1, 0.82);
+        const hem = new THREE.TorusGeometry(9.7, 0.5, 8, 48); hem.rotateX(Math.PI / 2); hem.scale(1, 1, 0.82);
         mesh(hem, M.teeDark, chest, V(0, -6.6, 0), null, null);
       } else {
         const prof = [[13.6, -8], [13.4, -4], [12.6, 6], [13.0, 16], [14.4, 26], [15.0, 33], [14.4, 39], [12.0, 43], [8.0, 45.4], [5.2, 46.1], [4.6, 46.2]];
@@ -167,7 +167,7 @@ const Hero3D = (function () {
       const gs = new THREE.Shape(), n = 8;
       for (let i = 0; i < n * 4; i++) { const a = (i / (n * 4)) * Math.PI * 2, rr = (i % 4 < 2) ? 2.0 : 1.55; i ? gs.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : gs.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
       const hole = new THREE.Path(); hole.absarc(0, 0, 0.7, 0, Math.PI * 2, true); gs.holes.push(hole);
-      const gear = mesh(new THREE.ExtrudeGeometry(gs, { depth: 0.12, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: '#FFFFFF' }), chest, STICK ? V(4.4, 19, 9.25) : V(5.6 * TS[0], 31 * TS[1], 9.7 * TS[2]), [0, STICK ? 0.42 : 0.33, 0], null);
+      const gear = mesh(new THREE.ExtrudeGeometry(gs, { depth: 0.12, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: '#FFFFFF' }), chest, STICK ? V(4.0, 19, 8.05) : V(5.6 * TS[0], 31 * TS[1], 9.7 * TS[2]), [0, STICK ? 0.42 : 0.33, 0], null);
       gear.castShadow = false;
     }
     // neck + head
@@ -208,12 +208,12 @@ const Hero3D = (function () {
     if (!STICK) for (const s of [-1, 1]) mesh(scaled(new THREE.SphereGeometry(1.5, 24, 16), 0.5, 1.0, 0.75), M.skin, face, V(s * 9.35, -0.6, -0.6), [0, s * 0.3, 0], 's');
     if (STICK) {   // smooth sculpted hair: one shell with a swept quiff + a few long smooth locks
       const hair = group(face);
-      const g = new THREE.SphereGeometry(R, 96, 64, 0, Math.PI * 2, 0, Math.PI * 0.64), pos = g.attributes.position, n = new THREE.Vector3();
+      const g = new THREE.SphereGeometry(R, 96, 64, 0, Math.PI * 2, 0, Math.PI * 0.8), pos = g.attributes.position, n = new THREE.Vector3();
       const sm = (e0, e1, x) => { const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
       for (let i = 0; i < pos.count; i++) {
         n.fromBufferAttribute(pos, i).normalize();
         const side = Math.atan2(n.x, n.z);                                         // 0 = front
-        const hy = n.z > 0 ? 0.34 + 0.16 * n.z - 0.12 * Math.max(0, n.x) : 0.1 + 0.4 * n.z;   // side part, lower on one side
+        const hy = n.z > 0 ? 0.3 + 0.16 * n.z - 0.12 * Math.max(0, n.x) : -0.05 + 0.45 * n.z;   // reaches lower at the back (longer hair)
         const m = sm(hy - 0.03, hy + 0.08, n.y);
         const quiff = 0.12 * Math.exp(-((n.z - 0.45) ** 2 / 0.12 + (n.y - 0.8) ** 2 / 0.08));
         const sweep = 0.05 * Math.sin(side * 6 + n.y * 3) * m;
@@ -223,19 +223,21 @@ const Hero3D = (function () {
       g.computeVertexNormals(); mesh(g, M.hair, hair);
       // curls: round blobs spread over the hair + a few spiral curls falling over the forehead
       const blob = new THREE.SphereGeometry(1, 20, 14);
-      const N = 70, ga = Math.PI * (3 - Math.sqrt(5));
+      const N = 150, ga = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < N; i++) {
-        const y = 1 - (i / (N - 1)) * 1.3, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = i * ga;
+        const y = 1 - (i / (N - 1)) * 1.75, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = i * ga;
         const d = V(Math.cos(th) * rr, y, Math.sin(th) * rr);
-        const hy = d.z > 0 ? 0.34 + 0.16 * d.z : 0.1 + 0.4 * d.z;
-        if (d.y < hy + 0.04) continue;
-        const rad = R * (1.03 + 0.08 * Math.max(0, d.y)), sz = 1.9 + 0.9 * ((i * 37) % 7) / 6;
+        const hy = d.z > 0 ? 0.3 + 0.16 * d.z : -0.05 + 0.45 * d.z;
+        if (d.y < hy + 0.02) continue;
+        if (d.z > 0.55 && d.y < 0.55) continue;                                     // keep the face clear
+        const rad = R * (1.02 + 0.1 * Math.max(0, d.y)), sz = 1.6 + 0.8 * ((i * 37) % 7) / 6;
         const c = mesh(blob, M.hair, hair, V(d.x * rad, d.y * rad * 1.02, d.z * rad * 0.98), null, 's');
-        c.scale.set(sz, sz * 0.9, sz);
+        c.scale.set(sz, sz * 0.92, sz);
       }
-      const spiral = (turns, r0, len) => { const pts = []; for (let k = 0; k <= 40; k++) { const u = k / 40, a = u * turns * Math.PI * 2; pts.push(V(Math.cos(a) * r0 * (1 - 0.35 * u), -u * len, Math.sin(a) * r0 * (1 - 0.35 * u))); } return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 60, 0.75, 10); };
-      for (const [x, y, z, rz, t, r0, l] of [[-4.2, 9.0, 8.4, 0.25, 1.6, 1.5, 5.0], [-0.6, 10.0, 8.6, -0.05, 1.8, 1.6, 5.6], [3.2, 9.4, 8.2, -0.3, 1.5, 1.4, 4.6], [6.6, 7.6, 6.4, -0.6, 1.3, 1.3, 4.0]]) {
-        mesh(spiral(t, r0, l), M.hair, hair, V(x, y, z), [0.35, 0, rz], 's');
+      const spiral = (turns, r0, len) => { const pts = []; for (let k = 0; k <= 60; k++) { const u = k / 60, a = u * turns * Math.PI * 2; pts.push(V(Math.cos(a) * r0 * (1 - 0.3 * u), -u * len, Math.sin(a) * r0 * (1 - 0.3 * u))); } return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 90, 0.7, 10); };
+      for (const [x, y, z, rz, t, r0, l] of [[-4.4, 9.2, 8.2, 0.25, 2.4, 1.5, 7.0], [-1.0, 10.2, 8.4, -0.05, 2.6, 1.6, 7.6], [2.6, 9.8, 8.2, -0.25, 2.3, 1.5, 6.6], [6.2, 8.2, 6.6, -0.55, 2.0, 1.4, 5.8],
+                                              [-9.6, 3.0, 3.0, 0.15, 2.8, 1.5, 8.5], [9.6, 3.0, 3.0, -0.15, 2.8, 1.5, 8.5], [-8.4, 1.5, -5.0, 0.1, 3.0, 1.6, 9.5], [8.4, 1.5, -5.0, -0.1, 3.0, 1.6, 9.5], [0, 0.5, -10.2, 0, 3.0, 1.7, 9.0]]) {
+        mesh(spiral(t, r0, l), M.hair, hair, V(x, y, z), [0.3, 0, rz], 's');
       }
       // headphones (signature): band over the hair, blue cups with a yellow ring
       const band = new THREE.TorusGeometry(R * 1.13, 0.95, 12, 64, Math.PI);
@@ -278,7 +280,7 @@ const Hero3D = (function () {
     const UA = B.UA, FA = B.FA;
     const arms = {};
     for (const [side, s] of [['L', 1], ['R', -1]]) {
-      const sh = group(chest, STICK ? V(s * 9.0, 27.5, -0.2) : V(s * 15.2 * TS[0], 40.5 * TS[1], -0.4));
+      const sh = group(chest, STICK ? V(s * 8.8, 27.5, -0.2) : V(s * 15.2 * TS[0], 40.5 * TS[1], -0.4));
       mesh(scaled(new THREE.SphereGeometry(5.6 * B.sl, 40, 28), 1, 0.95, 0.92), M.tee, sh, V(-s * 0.8 * B.sl, 0.6, 0));                  // shoulder
       const sl = mesh(limb(5.7 * B.sl, 5.2 * B.sl, 9.5 * (STICK ? 0.8 : 1)), M.tee, sh, V(0, 0.8, 0));                                                          // sleeve
       const slHem = new THREE.TorusGeometry(5.25 * B.sl, 0.45, 8, 28); slHem.rotateX(Math.PI / 2);
