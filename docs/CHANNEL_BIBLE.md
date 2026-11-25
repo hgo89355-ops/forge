@@ -18,6 +18,11 @@ Open this when making or reviewing any video. Owner-supplied references: the gui
   is worse than none.
 
 ## 2. The guide character
+**MASTER (owner ✓ 2026-11-25): lib/components/hero3d.js** — approval pack videos/character-test/deliver/.
+Movement rules: always run poses through `Hero3D.lagged()` (head/arms follow the body ~0.07–0.1 s late) and
+`Hero3D.human()` (breathing, weight shift, micro head moves); effort = smooth pull cycles, never a fast shake;
+blend between poses over 0.2–0.3 s; blink every ~3 s. The stickman notes below are retired.
+
 **Current (2026-11-24, owner decision): 3D stickman, signature look** — lib/components/stick3d.js, test sheet
 videos/lock-short/tests/guide3d-sheet.html?rig=stick. Built in Three.js from code. ~165 cm.
 - Head: big glossy white sphere with an ink outline; face = black oval eyes with a glint, ink brows, ink mouth

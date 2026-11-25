@@ -63,3 +63,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   gives a cel look that still matches the 3D machines. Faces as CanvasTextures on a shell over the head front
   (150°×110° sphere patch, u flipped) make expressions cheap to add. Check close-ups at the right canvas size —
   a mismatched viewport rendered blank frames.
+- "Less bot-like" movement, deterministic: evaluate the pose function at t − 0.07 s for the head and t − 0.1 s for the
+  arms (overlapping action), add sum-of-sines micro-motion (breath, weight shift, head micro-looks), replace jitter with
+  slow smooth effort cycles, and cross-fade pose changes over ~0.3 s. Refined edges = thinner outline (0.4 cm body,
+  0.26 cm small parts) + denser geometry (40-segment limbs, 72-segment torso) + heavier bevels on the shoes.

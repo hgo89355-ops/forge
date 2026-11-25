@@ -31,11 +31,12 @@ Open the detail files below **only when the task needs them**.
   background, soft shadows.
 - White rounded label boxes with a thin line to a dot on the part. Title tag top-left: white box with a
   blue accent bar ("The Two Hidden Tracks").
-- The guide (owner decision 2026-11-24): a **3D stickman in the signature look**, built in code
-  (lib/components/stick3d.js): round glossy white head with a simple ink face, black stick limbs with ink outlines,
-  signature blue tee (white gear logo, yellow sleeve trim), signature cap (blue crown, gear logo, yellow brim),
-  white sneakers. Lives in the 3D scene, casts shadows, hands placed by IK; 1–3 jokes per video.
-  Moods: curious · oops · shocked · confident. (Retired: 2D rig guide.js, realistic 3D guide3d.js.)
+- **THE character (owner ✓ 2026-11-25, master): lib/components/hero3d.js** — the model-sheet guy as a 3D toon
+  figure: pure white skin, messy black hair (no hat), small black oval eyes, expressive brows, electric-blue tee with a
+  small white gear, dark navy jeans, white sneakers, ~18-year-old build. Cel shading + thin dark outline, lit like the
+  machines, soft contact shadow. 13 face expressions, animation library (idle, walk, point, reach/IK, turn key, jump
+  back, celebrate, think) + human layers (`Hero3D.lagged`, `Hero3D.human`). Never redesign without the owner's ✓.
+  (Retired: 2D guide.js, realistic guide3d.js, stickman stick3d.js.)
 - Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,
   yellow keywords) in the lower third. Sound effects made in code. Voice: ElevenLabs "Liam" (owner OK'd, 2026-11-24),
   labelled as AI voice; the owner may record his own (videos/<slug>/RECORD_YOUR_VOICE.md).
