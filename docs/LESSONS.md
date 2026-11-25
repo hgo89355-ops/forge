@@ -59,3 +59,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   panic, arcs for joy, gritted-teeth bar, wavy mouth, blush) and add blinks every ~2.3 s.
 - View prediction method: compare (A) every same-topic Short from small channels in the last ~2 months (the realistic
   median) with (B) top breakout Shorts in the niche (the ceiling). Lock topic median ≈ 2.4K views; 1 in 14 broke out.
+- Toon 3D character (hero3d.js): MeshToonMaterial + a 3-step DataTexture ramp (NearestFilter) + inverted-hull outline
+  gives a cel look that still matches the 3D machines. Faces as CanvasTextures on a shell over the head front
+  (150°×110° sphere patch, u flipped) make expressions cheap to add. Check close-ups at the right canvas size —
+  a mismatched viewport rendered blank frames.

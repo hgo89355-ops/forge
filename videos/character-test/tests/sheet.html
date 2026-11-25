@@ -1,0 +1,37 @@
+<!doctype html><html><body style="margin:0;background:#DDE1E6;font-family:Inter,Arial,sans-serif">
+<canvas id="c"></canvas><div id="labels" style="position:absolute;inset:0;pointer-events:none"></div>
+<script src="../assets/vendor/three-0.158.min.js"></script>
+<script src="../assets/components/hero3d.js"></script>
+<script>
+const mode=(location.hash||'#turn').slice(1);
+const W=mode.startsWith('face-')?800:2000, H=mode==='turn'?1100:(mode.startsWith('face-')?800:900);
+const cv=document.getElementById('c'); cv.width=W; cv.height=H;
+const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,preserveDrawingBuffer:true});
+r.setSize(W,H,false); r.toneMapping=THREE.ACESFilmicToneMapping; r.toneMappingExposure=1.05; r.outputColorSpace=THREE.SRGBColorSpace; r.shadowMap.enabled=true; r.shadowMap.type=THREE.PCFSoftShadowMap;
+const sc=new THREE.Scene(); sc.background=new THREE.Color('#DDE1E6');
+sc.add(new THREE.HemisphereLight(0xffffff,0x8a9099,0.55));
+const key=new THREE.DirectionalLight(0xffffff,2.2); key.position.set(-260,420,520); key.castShadow=true; key.shadow.mapSize.set(2048,2048);
+Object.assign(key.shadow.camera,{left:-700,right:700,top:300,bottom:-60,near:10,far:2000}); key.shadow.bias=-0.0005; key.shadow.radius=4; sc.add(key);
+const rim=new THREE.DirectionalLight(0xdfe8ff,0.9); rim.position.set(300,250,-400); sc.add(rim);
+const fill=new THREE.DirectionalLight(0xffffff,0.6); fill.position.set(400,100,300); sc.add(fill);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.ShadowMaterial({opacity:0.16})); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; sc.add(ground);
+const L=document.getElementById('labels'); const lab=(t,x,y)=>{const d=document.createElement('div');d.textContent=t;Object.assign(d.style,{position:'absolute',left:x+'px',top:y+'px',transform:'translateX(-50%)',font:'800 24px Inter,Arial',color:'#15171C'});L.appendChild(d);};
+let cam=new THREE.PerspectiveCamera(30,W/H,1,6000);
+if(mode==='turn'){
+  [['FRONT',0],['3/4',-0.75],['SIDE',-Math.PI/2],['BACK',Math.PI]].forEach(([n,f],i)=>{const h=Hero3D.create(THREE); sc.add(h.root); h.pose(Object.assign({x:(i-1.5)*80,face:f},Hero3D.ANIM.idle(0.3),{expr:'neutral',blink:0})); lab(n,(i+0.5)*W/4,H-70);});
+  cam.position.set(0,105,560); cam.lookAt(0,92,0);
+} else if(mode==='expr'){
+  const E=['curious','oops','shocked','confident','amazed','scared','proud','confused'];
+  E.forEach((e,i)=>{const h=Hero3D.create(THREE); sc.add(h.root); h.pose({x:(i-3.5)*36,face:0.12,expr:e}); window._L=(window._L||[]).concat([[e,(i-3.5)*36]]);});
+  cam.position.set(0,160,380); cam.lookAt(0,150,0);
+} else if(mode.startsWith('face-')){
+  const e=mode.slice(5); const h=Hero3D.create(THREE); sc.add(h.root); h.pose({face:0.18,expr:e,head:[0,0,0]});
+  cam=new THREE.PerspectiveCamera(30,W/H,1,6000); cam.position.set(14,166,92); cam.lookAt(0,160,0);
+} else if(mode==='poses'){
+  const A=Hero3D.ANIM, P=[['idle',A.idle(0.5)],['walk',A.walk(0.15)],['point',A.point(1)],['reach',A.reach(1)],['jump back',A.jumpBack(0.42)],['celebrate',A.celebrate(0.12)],['think',A.think(0.4)]];
+  P.forEach(([n,st],i)=>{const h=Hero3D.create(THREE); sc.add(h.root); const s=Object.assign({},st); s.x=(i-3)*100+(s.x||0); s.face=0.35; h.pose(s); lab(n.toUpperCase(),(i+0.5)*W/7,H-70);});
+  cam=new THREE.PerspectiveCamera(30,W/H,1,6000); cam.position.set(0,115,1250); cam.lookAt(0,100,0);
+}
+r.render(sc,cam);
+if(window._L){ window._L.forEach(([e,x])=>{const v=new THREE.Vector3(x,128,0).project(cam); lab(e.toUpperCase(),(v.x*0.5+0.5)*W,H-80);}); }
+</script></body></html>
