@@ -115,11 +115,11 @@ const Hero3D = (function () {
     const toon = (c) => new THREE.MeshToonMaterial({ color: c, gradientMap: ramp });
     const M = {
       skin: toon('#FFFFFF'), tee: toon('#1E5BFF'), teeDark: toon('#1746D0'), jeans: toon('#25304A'), jeansDark: toon('#1C2538'),
-      hair: toon('#17181C'), shoe: toon('#FFFFFF'), sole: toon('#C9CED6'), lace: toon('#A4ACB8'), white: toon('#FFFFFF'),
+      hair: toon('#17181C'), shoe: toon('#FFFFFF'), phone: toon('#23262E'), cup: toon('#1E5BFF'), yellow: toon('#F2C230'), sole: toon('#C9CED6'), lace: toon('#A4ACB8'), white: toon('#FFFFFF'),
     };
     const INK = 0x14151a;
     const outline = (w) => { const m = new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide }); m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normal * ${w.toFixed(2)};`); }; return m; };
-    const OL = { s: outline(0.26), m: outline(0.4) };
+    const OL = { s: outline(opts.build === 'stick' ? 0.36 : 0.26), m: outline(opts.build === 'stick' ? 0.6 : 0.4) };
     const mesh = (g, m, parent, p, r, ol = 'm') => {
       const o = new THREE.Mesh(g, m); o.castShadow = true; o.receiveShadow = true;
       if (p) o.position.copy(p); if (r) o.rotation.set(r[0], r[1], r[2]);
@@ -138,39 +138,52 @@ const Hero3D = (function () {
     const scaled = (g, sx, sy, sz) => { g.scale(sx, sy, sz); return g; };
 
     const root = new THREE.Group(); root.name = 'hero3d';
-    const H = 90;
+    // build: 'hero' (default, ~18-year-old proportions) or 'stick' (stickman: big round head, simple body, even, normal-thickness limbs)
+    const STICK = opts.build === 'stick';
+    const B = STICK
+      ? { H: 74, TH: 30, SH: 29, UA: 22, FA: 20, faceS: 1.72, faceY: 16.6, ts: [0.7, 0.72, 0.78], ua: [2.9, 2.9], fa: [2.9, 2.9], el: 2.9, th: [3.6, 3.6], sh: [3.6, 3.6], kn: 3.6, mitt: [3.1, 3.1, 3.1], mittY: -2.6, hipX: 4.0, sl: 0.66, shoeS: 0.82 }
+      : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4, sl: 1, shoeS: 1 };
+    const H = B.H, TS = B.ts;
     const hips = group(root, V(0, H, 0));
     // jeans: seat / hips
-    mesh(scaled(new THREE.SphereGeometry(1, 28, 18), 11.8, 7.0, 7.4), M.jeans, hips, V(0, -6.2, -0.4), null, null);
+    mesh(scaled(new THREE.SphereGeometry(1, 28, 18), 11.8 * TS[0], 7.0, 7.4 * TS[2]), M.jeans, hips, V(0, -6.2, -0.4), null, null);
     const spine = group(hips), chest = group(spine);
     // t-shirt torso (rounded), hem, collar, gear emblem
-    { const prof = [[13.6, -8], [13.4, -4], [12.6, 6], [13.0, 16], [14.4, 26], [15.0, 33], [14.4, 39], [12.0, 43], [8.0, 45.4], [5.2, 46.1], [4.6, 46.2]];
-      const g = new THREE.LatheGeometry(prof.map(([r, y]) => new THREE.Vector2(r, y)), 72); g.scale(1.1, 1, 0.66);
-      mesh(g, M.tee, chest);
-      const hem = new THREE.TorusGeometry(13.6, 0.55, 8, 48); hem.rotateX(Math.PI / 2); hem.scale(1.1, 1, 0.66);
-      mesh(hem, M.teeDark, chest, V(0, -7.6, 0), null, null);
+    { if (STICK) {   // egg/bean body wearing the tee (stickman look)
+        const bean = [[0, -9.5], [7.5, -9.3], [11.0, -7.2], [12.6, -3], [13.0, 3], [12.5, 10], [11.2, 17], [9.6, 23], [7.8, 28], [5.6, 31.6], [3.9, 33.0], [3.4, 33.2]];
+        const g = new THREE.LatheGeometry(bean.map(([r, y]) => new THREE.Vector2(r, y)), 72); g.scale(1, 1, 0.82);
+        mesh(g, M.tee, chest);
+        const hem = new THREE.TorusGeometry(11.6, 0.5, 8, 48); hem.rotateX(Math.PI / 2); hem.scale(1, 1, 0.82);
+        mesh(hem, M.teeDark, chest, V(0, -6.6, 0), null, null);
+      } else {
+        const prof = [[13.6, -8], [13.4, -4], [12.6, 6], [13.0, 16], [14.4, 26], [15.0, 33], [14.4, 39], [12.0, 43], [8.0, 45.4], [5.2, 46.1], [4.6, 46.2]];
+        const g = new THREE.LatheGeometry(prof.map(([r, y]) => new THREE.Vector2(r, y)), 72); g.scale(1.1 * TS[0], TS[1], 0.66 * TS[2]);
+        mesh(g, M.tee, chest);
+        const hem = new THREE.TorusGeometry(13.6, 0.55, 8, 48); hem.rotateX(Math.PI / 2); hem.scale(1.1 * TS[0], 1, 0.66 * TS[2]);
+        mesh(hem, M.teeDark, chest, V(0, -7.6 * TS[1], 0), null, null);
+      }
       const col = new THREE.TorusGeometry(5.0, 0.7, 8, 32); col.rotateX(Math.PI / 2 - 0.12); col.scale(1.05, 1, 0.8);
-      mesh(col, M.teeDark, chest, V(0, 45.8, 0.2), null, 's');
+      mesh(col, M.teeDark, chest, V(0, 45.8 * TS[1], 0.2), null, 's');
       const gs = new THREE.Shape(), n = 8;
       for (let i = 0; i < n * 4; i++) { const a = (i / (n * 4)) * Math.PI * 2, rr = (i % 4 < 2) ? 2.0 : 1.55; i ? gs.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : gs.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
       const hole = new THREE.Path(); hole.absarc(0, 0, 0.7, 0, Math.PI * 2, true); gs.holes.push(hole);
-      const gear = mesh(new THREE.ExtrudeGeometry(gs, { depth: 0.12, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: '#FFFFFF' }), chest, V(5.6, 31, 9.7), [0, 0.33, 0], null);
+      const gear = mesh(new THREE.ExtrudeGeometry(gs, { depth: 0.12, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: '#FFFFFF' }), chest, STICK ? V(4.4, 19, 9.25) : V(5.6 * TS[0], 31 * TS[1], 9.7 * TS[2]), [0, STICK ? 0.42 : 0.33, 0], null);
       gear.castShadow = false;
     }
     // neck + head
-    const neck = group(chest, V(0, 45, -0.3));
-    mesh(limb(3.6, 4.0, 7), M.skin, neck, V(0, 6.5, 0), null, 's');
+    const neck = group(chest, V(0, 45 * TS[1], -0.3));
+    if (STICK) mesh(limb(2.6, 2.6, 4), M.skin, neck, V(0, 4.5, 0), null, 's'); else mesh(limb(3.6, 4.0, 7), M.skin, neck, V(0, 6.5, 0), null, 's');
     const head = group(neck, V(0, 4.6, 0.4));
-    const face = group(head, V(0, 13.2, 0.6)); face.scale.setScalar(1.16);
+    const face = group(head, V(0, B.faceY, 0.6)); face.scale.setScalar(B.faceS);
     const R = 10.6;
     const deform = (g, rr) => {   // rounded head with a slightly longer jaw
       const pos = g.attributes.position, v = new THREE.Vector3();
       for (let i = 0; i < pos.count; i++) {
         v.fromBufferAttribute(pos, i); const k = rr / R; let x = v.x / k, y = v.y / k, z = v.z / k;
-        const t = Math.max(0, Math.min(1, (-y - 1.0) / 8.5));
+        const t = STICK ? 0 : Math.max(0, Math.min(1, (-y - 1.0) / 8.5));
         x *= 1 - 0.2 * t * t; if (z > 0) z = z * (1 - 0.12 * t) + 0.7 * t * t * (z / R);
         y -= 0.9 * t * t;                                    // slightly longer jaw
-        pos.setXYZ(i, x * 0.97 * k, y * 1.08 * k, z * 0.97 * k);
+        pos.setXYZ(i, x * (STICK ? 1 : 0.97) * k, y * (STICK ? 1.02 : 1.08) * k, z * (STICK ? 0.98 : 0.97) * k);
       }
       g.computeVertexNormals(); return g;
     };
@@ -192,7 +205,38 @@ const Hero3D = (function () {
       drawFace(faceCanvas.getContext('2d'), ex, blink); faceTex.needsUpdate = true;
     };
     // ears (small, white)
-    for (const s of [-1, 1]) mesh(scaled(new THREE.SphereGeometry(1.5, 24, 16), 0.5, 1.0, 0.75), M.skin, face, V(s * 9.35, -0.6, -0.6), [0, s * 0.3, 0], 's');
+    if (!STICK) for (const s of [-1, 1]) mesh(scaled(new THREE.SphereGeometry(1.5, 24, 16), 0.5, 1.0, 0.75), M.skin, face, V(s * 9.35, -0.6, -0.6), [0, s * 0.3, 0], 's');
+    if (STICK) {   // smooth sculpted hair: one shell with a swept quiff + a few long smooth locks
+      const hair = group(face);
+      const g = new THREE.SphereGeometry(R, 96, 64, 0, Math.PI * 2, 0, Math.PI * 0.64), pos = g.attributes.position, n = new THREE.Vector3();
+      const sm = (e0, e1, x) => { const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+      for (let i = 0; i < pos.count; i++) {
+        n.fromBufferAttribute(pos, i).normalize();
+        const side = Math.atan2(n.x, n.z);                                         // 0 = front
+        const hy = n.z > 0 ? 0.34 + 0.16 * n.z - 0.12 * Math.max(0, n.x) : 0.1 + 0.4 * n.z;   // side part, lower on one side
+        const m = sm(hy - 0.03, hy + 0.08, n.y);
+        const quiff = 0.30 * Math.exp(-((n.z - 0.55) ** 2 / 0.09 + (n.y - 0.78) ** 2 / 0.05 + (n.x + 0.12) ** 2 / 0.12));
+        const sweep = 0.05 * Math.sin(side * 6 + n.y * 3) * m;
+        const r = R * (0.9 + m * (0.16 + 0.07 * Math.max(0, n.y) + quiff + sweep));
+        pos.setXYZ(i, n.x * r, n.y * r * 1.02, n.z * r * 0.98);
+      }
+      g.computeVertexNormals(); mesh(g, M.hair, hair);
+      const lock = new THREE.LatheGeometry([[0, 0], [1.0, 0.1], [1.0, 0.3], [0.72, 0.58], [0.38, 0.84], [0.1, 0.98], [0, 1]].map(([r, y]) => new THREE.Vector2(r, y)), 24);
+      for (const [x, y, z, rx, rz, w, l] of [[-3.5, 8.6, 6.8, 1.1, 0.55, 3.0, 8.5], [0.5, 9.6, 6.0, 1.0, 0.2, 3.3, 9.5], [4.2, 8.8, 5.6, 0.9, -0.35, 2.8, 8.0], [-7.6, 5.2, 2.2, 0.4, 1.3, 2.4, 6.0], [6.6, 8.2, -2.6, -0.4, -0.7, 2.6, 6.5]]) {
+        const c = mesh(lock, M.hair, hair, V(x, y, z), [rx, 0, rz]); c.scale.set(w, l, w * 0.55);
+      }
+      // headphones (signature): band over the hair, blue cups with a yellow ring
+      const band = new THREE.TorusGeometry(R * 1.13, 0.95, 12, 64, Math.PI);
+      const hp = group(face, V(0, 0.4, -0.6)); hp.rotation.z = 0;
+      mesh(band, M.phone, hp);
+      for (const s2 of [-1, 1]) {
+        const cup = group(hp, V(s2 * R * 1.08, -0.2, 0)); cup.rotation.z = Math.PI / 2;
+        const shell = new THREE.CylinderGeometry(3.6, 3.9, 2.6, 40); mesh(shell, M.cup, cup);
+        const ring = new THREE.TorusGeometry(3.7, 0.42, 10, 40); ring.rotateX(Math.PI / 2); mesh(ring, M.yellow, cup, V(0, s2 * 1.35, 0), null, null);
+        mesh(new THREE.CylinderGeometry(2.6, 2.6, 0.5, 32), M.phone, cup, V(0, s2 * 1.6, 0), null, null);
+        mesh(new THREE.CylinderGeometry(0.9, 0.9, 3.0, 16), M.phone, hp, V(s2 * R * 1.11, 2.6, 0), null, 's');
+      }
+    } else {
     // hair: cap shell + chunky stylised clumps swept up and to one side (messy)
     { const hair = group(face);
       const g = new THREE.SphereGeometry(R, 72, 48, 0, Math.PI * 2, 0, Math.PI * 0.62), pos = g.attributes.position, n = new THREE.Vector3();
@@ -217,40 +261,41 @@ const Hero3D = (function () {
         c.scale.set(sz, len, sz * 0.6);
       }
     }
+    }
     // arms (white, tapered) with sleeves that follow the upper arm
-    const UA = 27, FA = 24;
+    const UA = B.UA, FA = B.FA;
     const arms = {};
     for (const [side, s] of [['L', 1], ['R', -1]]) {
-      const sh = group(chest, V(s * 15.2, 40.5, -0.4));
-      mesh(scaled(new THREE.SphereGeometry(5.6, 40, 28), 1, 0.95, 0.92), M.tee, sh, V(-s * 0.8, 0.6, 0));                  // shoulder
-      const sl = mesh(limb(5.7, 5.2, 9.5), M.tee, sh, V(0, 0.8, 0));                                                          // sleeve
-      const slHem = new THREE.TorusGeometry(5.25, 0.45, 8, 28); slHem.rotateX(Math.PI / 2);
-      mesh(slHem, M.teeDark, sh, V(0, -9.2, 0), null, null);
-      mesh(limb(4.1, 3.6, UA - 1.5), M.skin, sh, V(0, -1.5, 0));
+      const sh = group(chest, STICK ? V(s * 9.0, 27.5, -0.2) : V(s * 15.2 * TS[0], 40.5 * TS[1], -0.4));
+      mesh(scaled(new THREE.SphereGeometry(5.6 * B.sl, 40, 28), 1, 0.95, 0.92), M.tee, sh, V(-s * 0.8 * B.sl, 0.6, 0));                  // shoulder
+      const sl = mesh(limb(5.7 * B.sl, 5.2 * B.sl, 9.5 * (STICK ? 0.8 : 1)), M.tee, sh, V(0, 0.8, 0));                                                          // sleeve
+      const slHem = new THREE.TorusGeometry(5.25 * B.sl, 0.45, 8, 28); slHem.rotateX(Math.PI / 2);
+      mesh(slHem, M.teeDark, sh, V(0, STICK ? -7.4 : -9.2, 0), null, null);
+      mesh(limb(B.ua[0], B.ua[1], UA - 1.5), M.skin, sh, V(0, -1.5, 0));
       const el = group(sh, V(0, -UA, 0));
-      mesh(new THREE.SphereGeometry(3.6, 32, 20), M.skin, el, null, null, null);
-      mesh(limb(3.6, 2.8, FA), M.skin, el);
+      mesh(new THREE.SphereGeometry(B.el, 32, 20), M.skin, el, null, null, null);
+      mesh(limb(B.fa[0], B.fa[1], FA), M.skin, el);
       const wr = group(el, V(0, -FA, 0));
       const hand = group(wr);
       // mitt: palm block + thumb + optional index finger
-      const mitt = mesh(scaled(new THREE.SphereGeometry(1, 40, 28), 2.0, 4.6, 3.6), M.skin, hand, V(0, -4.4, 0.2), null, 's');
+      const mitt = mesh(scaled(new THREE.SphereGeometry(1, 40, 28), B.mitt[0], B.mitt[1], B.mitt[2]), M.skin, hand, V(0, B.mittY, 0.2), null, 's');
       const thumb = group(hand, V(-s * 0.6, -2.2, 2.9)); mesh(limb(1.25, 1.05, 3.0, 12), M.skin, thumb, null, null, 's');
       const index = group(hand, V(0, -7.0, 1.6)); mesh(limb(1.05, 0.95, 4.2, 12), M.skin, index, null, null, 's');
       arms[side] = { s, sh, el, wr, hand, mitt, thumb, index };
     }
     // legs (navy jeans, tapered) + rounded white sneakers
-    const TH = 39, SH = 37;
+    const TH = B.TH, SH = B.SH;
     const legs = {};
     for (const [side, s] of [['L', 1], ['R', -1]]) {
-      const hp = group(hips, V(s * 6.4, -8, 0));
-      mesh(limb(6.6, 5.2, TH), M.jeans, hp);
+      const hp = group(hips, V(s * B.hipX, -8, 0));
+      mesh(limb(B.th[0], B.th[1], TH), M.jeans, hp);
       const kn = group(hp, V(0, -TH, 0));
-      mesh(new THREE.SphereGeometry(5.2, 32, 20), M.jeans, kn, null, null, null);
-      mesh(limb(5.1, 4.6, SH - 2.5), M.jeans, kn);
-      const cuff = new THREE.TorusGeometry(4.9, 0.6, 8, 24); cuff.rotateX(Math.PI / 2);
+      mesh(new THREE.SphereGeometry(B.kn, 32, 20), M.jeans, kn, null, null, null);
+      mesh(limb(B.sh[0], B.sh[1], SH - 2.5), M.jeans, kn);
+      const cuff = new THREE.TorusGeometry(STICK ? 3.7 : 4.9, 0.6, 8, 24); cuff.rotateX(Math.PI / 2);
       mesh(cuff, M.jeansDark, kn, V(0, -SH + 3.0, 0), null, null);
       const an = group(kn, V(0, -SH, 0));
-      const foot = group(an);
+      const foot = group(an); foot.scale.setScalar(B.shoeS);
       const sp = new THREE.Shape();
       sp.moveTo(-6.4, 0); sp.lineTo(17.5, 0); sp.quadraticCurveTo(21.6, 0.2, 21.4, 3.6); sp.quadraticCurveTo(20.6, 6.6, 15.5, 7.4);
       sp.quadraticCurveTo(9, 8.6, 5.5, 10.2); sp.quadraticCurveTo(2.2, 11.6, -3.5, 11.2); sp.quadraticCurveTo(-7.2, 10.6, -7.3, 6.4); sp.lineTo(-7.3, 2.2); sp.quadraticCurveTo(-7.2, 0, -6.4, 0);
@@ -271,6 +316,7 @@ const Hero3D = (function () {
     let state = Object.assign({}, D);
     function handShape(A, kind) {
       A.index.visible = kind === 'point';
+      if (STICK) { A.mitt.scale.set(1, 1, 1); A.thumb.visible = false; A.index.rotation.set(0.25, 0, 0); return; }
       if (kind === 'open') { A.mitt.scale.set(1, 1.1, 1.08); A.thumb.rotation.set(1.05, 0, -A.s * 0.25); }
       else if (kind === 'point') { A.mitt.scale.set(1.1, 0.72, 1.0); A.thumb.rotation.set(0.6, 0, A.s * 0.35); A.index.rotation.set(0.25, 0, 0); }
       else if (kind === 'hold') { A.mitt.scale.set(1.15, 0.78, 1.02); A.thumb.rotation.set(0.25, 0, A.s * 0.5); }

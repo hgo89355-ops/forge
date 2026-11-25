@@ -31,12 +31,12 @@ Open the detail files below **only when the task needs them**.
   background, soft shadows.
 - White rounded label boxes with a thin line to a dot on the part. Title tag top-left: white box with a
   blue accent bar ("The Two Hidden Tracks").
-- **THE character (owner ✓ 2026-11-25, master): lib/components/hero3d.js** — the model-sheet guy as a 3D toon
-  figure: pure white skin, messy black hair (no hat), small black oval eyes, expressive brows, electric-blue tee with a
-  small white gear, dark navy jeans, white sneakers, ~18-year-old build. Cel shading + thin dark outline, lit like the
-  machines, soft contact shadow. 13 face expressions, animation library (idle, walk, point, reach/IK, turn key, jump
-  back, celebrate, think) + human layers (`Hero3D.lagged`, `Hero3D.human`). Never redesign without the owner's ✓.
-  (Retired: 2D guide.js, realistic guide3d.js, stickman stick3d.js.)
+- **THE character (owner ✓ 2026-11-25): lib/components/hero3d.js with `{ build: 'stick' }`** — our guy as a 3D
+  animated stickman: big round white head + bold outline, egg-shaped body in the electric-blue gear tee, normal-
+  thickness white limbs, ball hands, navy jeans, white sneakers, smooth swept black hair, blue headphones with yellow
+  rings. Cel shading, lit like the machines, soft shadow. 13 expressions; animation library + human layers
+  (`Hero3D.lagged`, `Hero3D.human`); natural reactions (beat before reacting, freeze, eye glances, head drop).
+  Never redesign without the owner's ✓. (Retired: guide.js, guide3d.js, stick3d.js, the non-stick 'hero' build.)
 - Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,
   yellow keywords) in the lower third. Sound effects made in code. Voice: ElevenLabs "Liam" (owner OK'd, 2026-11-24),
   labelled as AI voice; the owner may record his own (videos/<slug>/RECORD_YOUR_VOICE.md).

@@ -1,6 +1,8 @@
 # Progress
 
 ## Now
+- **Lock Short v9** rendering with the stickman build (headphones, sculpted hair, natural reactions) →
+  videos/lock-short/renders/lock-short-v9.mp4. Then owner's ✓ + a new title before posting.
 - **Stickman build demo (awaiting owner ✓):** `Hero3D.create(THREE, { build: 'stick' })` — same design, big round head, simple
   body, normal-thickness limbs. Demo: videos/character-test/deliver/5-stickman-build-demo.png. If ✓: switch the films to
   build 'stick' and re-render the lock Short.

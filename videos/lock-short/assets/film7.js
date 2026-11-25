@@ -152,7 +152,7 @@ const Film7 = (function () {
     const doorKey = new THREE.Mesh(keyGeometry(RIGHT), M.key); doorKey.scale.setScalar(0.22); doorKey.rotation.y = Math.PI / 2; hinge.add(doorKey);
     const doorTag = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.4, 2.4), M.tag); doorTag.position.set(-11.6, -5.2, 0); doorKey.add(doorTag);
     const LOCKFACE = [X0 - 46 + 80, FL + 106, 3.8];
-    const RIG = window.Hero3D || window.Stick3D; const guide = RIG.create(THREE); scene.add(guide.root); guide.root.visible = false;
+    const RIG = window.Hero3D || window.Stick3D; const guide = RIG.create(THREE, { build: 'stick' }); scene.add(guide.root); guide.root.visible = false;
     guide.root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
     // ---------- overlay helpers
     const vtmp = new THREE.Vector3();
@@ -215,13 +215,13 @@ const Film7 = (function () {
       const L = (text, mm, bx, by, a, opt) => labels.push([text, mm, bx, by, a, opt || {}]);
       const pulse = (a, d = 0.5) => (t >= a && t < a + d ? Math.sin(((t - a) / d) * Math.PI) : 0);
       let openAmt = 0, keyJiggle = 0;
-      const HK = [LOCKFACE[0] - 1, LOCKFACE[1] - 3, 10, 100, 60, 10], HK1 = [LOCKFACE[0] - 1, LOCKFACE[1] - 2.5, 9, 86, 50, 8];
+      const HK = [LOCKFACE[0] + 5, LOCKFACE[1] - 4, 10, 96, 70, 6], HK1 = [LOCKFACE[0] + 4, LOCKFACE[1] - 3.5, 9, 84, 60, 5];
       const WIDE0 = [X0 + 12, 100, 12, 440, 54, 4], WIDE1 = [X0 + 12, 100, 12, 385, 44, 4];
       switch (name) {
         case 'hookIn': case 'loop': case 'hookJam': case 'dive': case 'doorOpen': case 'lockedOut': {
           door = 1; doorKeyBit = WRONG; doorKeyTag = true; doorKeyZ = 4;
           if (name === 'hookIn') { doorKeyZ = K(t, [[0, 11], [t1 - 0.12, 4, 'o3']]); camLerp(u, HK, HK1); }
-          if (name === 'loop') { doorKeyZ = lerp(17, 11, u); camLerp(u, [LOCKFACE[0], LOCKFACE[1] - 3.5, 11, 114, 68, 12], HK); }
+          if (name === 'loop') { doorKeyZ = lerp(17, 11, u); camLerp(u, [LOCKFACE[0] + 6, LOCKFACE[1] - 4.5, 11, 110, 78, 7], HK); }
           if (name === 'hookJam') { doorShake = 1; keyJiggle = 1; camLerp(u, WIDE0, WIDE1); }
           if (name === 'dive') {
             const e = E.i3(u);
@@ -380,31 +380,41 @@ const Film7 = (function () {
       const faceLock = faceTo(LOCKFACE[0], LOCKFACE[2], at), faceCam = faceTo(camera.position.x, camera.position.z, at);
       const win = (x, a, b) => Math.max(0, Math.min(1, (x - a) / (b - a)));
       doorSet.updateMatrixWorld(true);
-      const bow = doorKey.localToWorld(new THREE.Vector3(-34, -0.5, 0));
+      const bow = doorKey.localToWorld(new THREE.Vector3(-26, -0.5, 0));
       // effort: organic pull-and-twist cycles instead of a mechanical shake
       const effort = (tt) => { const e = 0.5 + 0.5 * Math.sin((tt - t0) * 2 * Math.PI * 1.9 - 1.2); return e * e * (3 - 2 * e); };
-      const S = (tt) => {   // pure: state at time tt for this shot
+      const S = (tt) => {   // pure: state at time tt for this shot — with natural reaction timing
         const blink = ((tt + 0.37) % 2.9) < 0.1 ? 1 : 0;
         const base = (p, extra) => Object.assign({}, P[p], at, { face: faceLock, blink }, extra);
-        if (name === 'hookIn' || name === 'loop') return base('confident', { lean: 0.1, handR: 'hold', gaze: [0.3, -0.3] });
+        const dart = (k) => (Math.floor(k / 0.55) % 3 === 1 ? [0.55, 0.05] : [0.05, -0.2]);   // eyes flick between key and camera
+        if (name === 'hookIn' || name === 'loop') return base('confident', { lean: 0.1, handR: 'hold', gaze: name === 'hookIn' && tt > 0.75 && tt < 1.15 ? [0.6, 0.1] : [0.25, -0.3] });
         if (name === 'hookJam') {
-          const e = effort(tt), k = tt - t0, stuck = tt > A_.wont.start;
-          const st = base('struggle', { lean: -0.05 - 0.09 * e, twist: 0.07 * e, crouch: 0.04 + 0.05 * e, handR: 'hold', expr: stuck ? 'panic' : k < 0.35 ? 'determined' : 'worried', gaze: [0, -0.2] });
-          if (stuck) { const w = E.io(win(tt, A_.wont.start, A_.wont.start + 0.25)); st.face = faceLock + (faceCam - faceLock) * 0.4 * w; st.head = [-0.15 * w, 0.25 * w, 0.1 * w]; }
-          return st;
+          const e = effort(tt), k = tt - t0, wT = A_.wont.start + 0.12;              // react a beat after the word
+          const st = base('struggle', { lean: -0.05 - 0.09 * e, twist: 0.07 * e, crouch: 0.04 + 0.05 * e, handR: 'hold', expr: k < 0.35 ? 'determined' : 'worried', gaze: k < 0.35 ? [0, -0.2] : dart(k) });
+          if (tt < wT) return st;
+          if (tt < wT + 0.16) return Object.assign(st, { expr: 'shocked', lean: -0.14, head: [-0.12, 0.1, 0], blink: 0, gaze: [0.3, 0.2] });   // freeze
+          const pan = base('panic', { face: faceLock + (faceCam - faceLock) * 0.45, blink: 0, head: [-0.12, 0.25, 0.08], lean: -0.1 });
+          return mix(st, pan, E.spring(win(tt, wT + 0.16, wT + 0.5), 13, 6));
         }
-        if (name === 'dive') return base('panic', { x: at.x - 6, face: faceLock + (faceCam - faceLock) * 0.6 });
-        if (name === 'doorOpen') { const g = { x: X0 - 26, y: FL, z: 46 }; return Object.assign(A.celebrate(tt - t0), g, { face: faceTo(camera.position.x, camera.position.z, g) }); }
-        // lockedOut: struggles again, then gives up with a sheepish "oops"
-        const e = effort(tt), k = tt - t0;
-        const strug = base('struggle', { lean: -0.04 - 0.07 * e, twist: 0.05 * e, crouch: 0.03 + 0.04 * e, handR: 'hold', expr: k < 0.5 ? 'determined' : 'worried' });
-        const oops = base('oops', { face: faceLock + (faceCam - faceLock) * 0.7 });
-        return mix(strug, oops, E.io(win(tt, A_.out.start - 0.2, A_.out.start + 0.1)));
+        if (name === 'dive') return base('panic', { x: at.x - 6, face: faceLock + (faceCam - faceLock) * 0.6, head: [-0.12, 0.25, 0.08] });
+        if (name === 'doorOpen') {
+          const g = { x: X0 - 26, y: FL, z: 46 }, fc = faceTo(camera.position.x, camera.position.z, g), k = tt - t0;
+          if (k < 0.16) return Object.assign({}, g, { face: fc, expr: 'amazed', crouch: 0.15 * Math.sin(Math.PI * k / 0.16), armL: { fwd: 0.2, out: 0.4, bend: 0.6 }, armR: { fwd: 0.2, out: 0.4, bend: 0.6 } });   // anticipation
+          return Object.assign(A.celebrate(k - 0.16), g, { face: fc });
+        }
+        // lockedOut: tries again → worried glances → beat → head drops into a sheepish "oops"
+        const e = effort(tt), k = tt - t0, oT = A_.out.start - 0.15;
+        const strug = base('struggle', { lean: -0.04 - 0.07 * e, twist: 0.05 * e, crouch: 0.03 + 0.04 * e, handR: 'hold', expr: k < 0.5 ? 'determined' : 'worried', gaze: k < 0.5 ? [0, -0.2] : dart(k) });
+        if (tt < oT) return strug;
+        if (tt < oT + 0.14) return Object.assign(strug, { expr: 'flat' in H.EX ? 'flat' : 'neutral', head: [0.25, 0, 0], blink: 1 });   // beat: head drops, eyes close
+        const oops = base('oops', { face: faceLock + (faceCam - faceLock) * 0.7, gaze: [0.5, 0.1] });
+        return mix(strug, oops, E.spring(win(tt, oT + 0.14, oT + 0.5), 12, 6));
       };
       let st = H.lagged(S, t);
       st = H.human(t, st, name === 'dive' ? 0.3 : 1);
       guide.pose(st);
-      const ik = name === 'hookIn' || name === 'loop' || name === 'hookJam' ? 1 : name === 'lockedOut' ? 1 - E.io(win(t, A_.out.start - 0.2, A_.out.start + 0.1)) : 0;
+      const wT = A_.wont.start + 0.12, oT = A_.out.start - 0.15;
+      const ik = name === 'hookIn' || name === 'loop' ? 1 : name === 'hookJam' ? 1 - E.io(win(t, wT + 0.16, wT + 0.42)) : name === 'lockedOut' ? 1 - E.io(win(t, oT + 0.14, oT + 0.4)) : 0;
       if (ik > 0) guide.reach('R', bow, ik);
     }
     return { renderAt, project, camera, DUR, SHOTS };

@@ -67,3 +67,6 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   arms (overlapping action), add sum-of-sines micro-motion (breath, weight shift, head micro-looks), replace jitter with
   slow smooth effort cycles, and cross-fade pose changes over ~0.3 s. Refined edges = thinner outline (0.4 cm body,
   0.26 cm small parts) + denser geometry (40-segment limbs, 72-segment torso) + heavier bevels on the shoes.
+- Natural reactions read better than more motion: react ~0.12 s after the cue word, hold a 0.15 s "freeze" face before
+  a big reaction, flick the eyes between object and camera, drop the head before an "oops", and spring (not lerp) into
+  the new pose. Release IK before hands go to the head so the arm doesn't snap.
