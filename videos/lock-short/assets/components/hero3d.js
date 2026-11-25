@@ -115,7 +115,7 @@ const Hero3D = (function () {
     const toon = (c) => new THREE.MeshToonMaterial({ color: c, gradientMap: ramp });
     const M = {
       skin: toon('#FFFFFF'), tee: toon('#1E5BFF'), teeDark: toon('#1746D0'), jeans: toon('#25304A'), jeansDark: toon('#1C2538'),
-      hair: toon('#17181C'), shoe: toon('#FFFFFF'), phone: toon('#23262E'), cup: toon('#1E5BFF'), yellow: toon('#F2C230'), sole: toon('#C9CED6'), lace: toon('#A4ACB8'), white: toon('#FFFFFF'),
+      hair: toon(opts.build === 'stick' ? '#33363F' : '#17181C'), shoe: toon('#FFFFFF'), phone: toon('#23262E'), cup: toon('#1E5BFF'), yellow: toon('#F2C230'), sole: toon('#C9CED6'), lace: toon('#A4ACB8'), white: toon('#FFFFFF'),
     };
     const INK = 0x14151a;
     const outline = (w) => { const m = new THREE.MeshBasicMaterial({ color: INK, side: THREE.BackSide }); m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `vec3 transformed = position + normal * ${w.toFixed(2)};`); }; return m; };
@@ -208,41 +208,46 @@ const Hero3D = (function () {
     if (!STICK) for (const s of [-1, 1]) mesh(scaled(new THREE.SphereGeometry(1.5, 24, 16), 0.5, 1.0, 0.75), M.skin, face, V(s * 9.35, -0.6, -0.6), [0, s * 0.3, 0], 's');
     if (STICK) {   // smooth sculpted hair: one shell with a swept quiff + a few long smooth locks
       const hair = group(face);
-      const g = new THREE.SphereGeometry(R, 96, 64, 0, Math.PI * 2, 0, Math.PI * 0.8), pos = g.attributes.position, n = new THREE.Vector3();
+      const g = new THREE.SphereGeometry(R, 96, 64, 0, Math.PI * 2, 0, Math.PI * 0.64), pos = g.attributes.position, n = new THREE.Vector3();
       const sm = (e0, e1, x) => { const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
       for (let i = 0; i < pos.count; i++) {
         n.fromBufferAttribute(pos, i).normalize();
         const side = Math.atan2(n.x, n.z);                                         // 0 = front
-        const hy = n.z > 0 ? 0.3 + 0.16 * n.z - 0.12 * Math.max(0, n.x) : -0.05 + 0.45 * n.z;   // reaches lower at the back (longer hair)
+        const hy = n.z > 0 ? 0.32 + 0.16 * n.z - 0.12 * Math.max(0, n.x) : 0.12 + 0.4 * n.z;
         const m = sm(hy - 0.03, hy + 0.08, n.y);
         const quiff = 0.12 * Math.exp(-((n.z - 0.45) ** 2 / 0.12 + (n.y - 0.8) ** 2 / 0.08));
         const sweep = 0.05 * Math.sin(side * 6 + n.y * 3) * m;
+        const up = Math.pow(Math.max(0, n.y), 1.6);
         const r = R * (0.9 + m * (0.17 + 0.08 * Math.max(0, n.y) + quiff + sweep * 0.4));
-        pos.setXYZ(i, n.x * r, n.y * r * 1.02, n.z * r * 0.98);
+        pos.setXYZ(i, n.x * r * (1 - 0.08 * up * m), n.y * r * 1.02 + m * up * R * 0.55, n.z * r * 0.98);
       }
       g.computeVertexNormals(); mesh(g, M.hair, hair);
       // curls: round blobs spread over the hair + a few spiral curls falling over the forehead
       const blob = new THREE.SphereGeometry(1, 20, 14);
-      const N = 150, ga = Math.PI * (3 - Math.sqrt(5));
+      const N = 170, ga = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < N; i++) {
-        const y = 1 - (i / (N - 1)) * 1.75, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = i * ga;
+        const y = 1 - (i / (N - 1)) * 1.4, rr = Math.sqrt(Math.max(0, 1 - y * y)), th = i * ga;
         const d = V(Math.cos(th) * rr, y, Math.sin(th) * rr);
-        const hy = d.z > 0 ? 0.3 + 0.16 * d.z : -0.05 + 0.45 * d.z;
-        if (d.y < hy + 0.02) continue;
-        if (d.z > 0.55 && d.y < 0.55) continue;                                     // keep the face clear
-        const rad = R * (1.02 + 0.1 * Math.max(0, d.y)), sz = 1.6 + 0.8 * ((i * 37) % 7) / 6;
-        const c = mesh(blob, M.hair, hair, V(d.x * rad, d.y * rad * 1.02, d.z * rad * 0.98), null, 's');
+        const hy = d.z > 0 ? 0.32 + 0.16 * d.z : 0.12 + 0.4 * d.z;
+        if (d.y < hy + 0.03) continue;
+        const up = Math.pow(Math.max(0, d.y), 1.6), rad = R * (1.03 + 0.08 * Math.max(0, d.y)), sz = 1.6 + 0.8 * ((i * 37) % 7) / 6;
+        const c = mesh(blob, M.hair, hair, V(d.x * rad * (1 - 0.08 * up), d.y * rad * 1.02 + up * R * 0.55, d.z * rad * 0.98), null, 's');
         c.scale.set(sz, sz * 0.92, sz);
       }
-      const spiral = (turns, r0, len) => { const pts = []; for (let k = 0; k <= 60; k++) { const u = k / 60, a = u * turns * Math.PI * 2; pts.push(V(Math.cos(a) * r0 * (1 - 0.3 * u), -u * len, Math.sin(a) * r0 * (1 - 0.3 * u))); } return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 90, 0.7, 10); };
-      for (const [x, y, z, rz, t, r0, l] of [[-4.4, 9.2, 8.2, 0.25, 2.4, 1.5, 7.0], [-1.0, 10.2, 8.4, -0.05, 2.6, 1.6, 7.6], [2.6, 9.8, 8.2, -0.25, 2.3, 1.5, 6.6], [6.2, 8.2, 6.6, -0.55, 2.0, 1.4, 5.8],
-                                              [-9.6, 3.0, 3.0, 0.15, 2.8, 1.5, 8.5], [9.6, 3.0, 3.0, -0.15, 2.8, 1.5, 8.5], [-8.4, 1.5, -5.0, 0.1, 3.0, 1.6, 9.5], [8.4, 1.5, -5.0, -0.1, 3.0, 1.6, 9.5], [0, 0.5, -10.2, 0, 3.0, 1.7, 9.0]]) {
+      // a second, higher layer of curls so the top reads tall and bouncy
+      for (let i = 0; i < 40; i++) {
+        const th = i * ga, rr = 0.55 * Math.sqrt(i / 40), d = V(Math.cos(th) * rr, 1, Math.sin(th) * rr);
+        const c = mesh(blob, M.hair, hair, V(d.x * R * 0.85, R * 1.42 + 0.9 * Math.cos(i), d.z * R * 0.85 + 0.6), null, 's');
+        const sz = 1.7 + 0.7 * ((i * 53) % 5) / 4; c.scale.set(sz, sz * 0.92, sz);
+      }
+      const spiral = (turns, r0, len) => { const pts = []; for (let k = 0; k <= 50; k++) { const u = k / 50, a = u * turns * Math.PI * 2; pts.push(V(Math.cos(a) * r0 * (1 - 0.3 * u), -u * len, Math.sin(a) * r0 * (1 - 0.3 * u))); } return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 70, 0.7, 10); };
+      for (const [x, y, z, rz, t, r0, l] of [[-4.4, 9.4, 8.2, 0.25, 1.8, 1.5, 5.2], [-1.0, 10.4, 8.4, -0.05, 2.0, 1.6, 5.8], [2.6, 10.0, 8.2, -0.25, 1.7, 1.5, 5.0], [6.2, 8.4, 6.6, -0.55, 1.5, 1.4, 4.4]]) {
         mesh(spiral(t, r0, l), M.hair, hair, V(x, y, z), [0.3, 0, rz], 's');
       }
       // headphones (signature): band over the hair, blue cups with a yellow ring
       const band = new THREE.TorusGeometry(R * 1.13, 0.95, 12, 64, Math.PI);
       const hp = group(face, V(0, 0.4, -0.6)); hp.rotation.z = 0;
-      mesh(band, M.phone, hp);
+      const bandM = mesh(band, M.phone, hp); bandM.scale.set(1, 1.42, 1);
       for (const s2 of [-1, 1]) {
         const cup = group(hp, V(s2 * R * 1.08, -0.2, 0)); cup.rotation.z = Math.PI / 2;
         const shell = new THREE.CylinderGeometry(3.6, 3.9, 2.6, 40); mesh(shell, M.cup, cup);
