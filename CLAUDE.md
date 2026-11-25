@@ -31,12 +31,12 @@ Open the detail files below **only when the task needs them**.
   background, soft shadows.
 - White rounded label boxes with a thin line to a dot on the part. Title tag top-left: white box with a
   blue accent bar ("The Two Hidden Tracks").
-- **THE character (owner ✓ 2026-11-25): lib/components/hero3d.js with `{ build: 'stick' }`** — our guy as a 3D
-  animated stickman: big round white head + bold outline, egg-shaped body in the electric-blue gear tee, normal-
-  thickness white limbs, ball hands, navy jeans, white sneakers, smooth swept black hair, blue headphones with yellow
-  rings. Cel shading, lit like the machines, soft shadow. 13 expressions; animation library + human layers
-  (`Hero3D.lagged`, `Hero3D.human`); natural reactions (beat before reacting, freeze, eye glances, head drop).
-  Never redesign without the owner's ✓. (Retired: guide.js, guide3d.js, stick3d.js, the non-stick 'hero' build.)
+- **THE character (owner ✓ 2026-11-25): lib/components/hero3d.js with `{ build: 'rick' }`** — our guy as a full 3D
+  stickman: big round white head + bold outline, slim egg-shaped body in the electric-blue gear tee, thin black stick
+  arms with small ball hands, slightly thicker black stick legs, white sneakers, curly-top black hair, blue headphones
+  with yellow rings. Cel shading, lit like the machines, soft shadow. Expressions incl. suspicious/deadpan/annoyed;
+  animation library + human layers. Never redesign without the owner's ✓. (Retired: guide.js, guide3d.js, stick3d.js,
+  the 'hero' and 'stick' builds.)
   **Personality matters most (owner, 2026-11-25): docs/CHARACTER.md** — overconfident, deadpan, sneaky; signature deadpan
   stare at camera, sneak, yank, pratfall. Read it before writing any scene.
 - Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,

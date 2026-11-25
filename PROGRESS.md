@@ -1,6 +1,8 @@
 # Progress
 
 ## Now
+- **Lock Short v11** (final look: full stickman 'rick', thicker legs, slimmer body) — door scenes re-rendered and spliced
+  into v9 → renders/lock-short-v11.mp4. Then owner ✓ + new title → post.
 - **Lock Short v9 (personality pass)** rendering: sneaks up suspiciously, strains, plants a foot and yanks the stuck key,
   deadpan stare, smug cheer, key pops out → pratfall → deadpan stare. Character = curly-top stickman, normal build.
   Personality bible: docs/CHARACTER.md (use in every video).

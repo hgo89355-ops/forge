@@ -10,8 +10,8 @@ Part C (the month-1 plan) lives in docs/CALENDAR.md and is kept updated there.
 - **Niche:** "The hidden engineering of everyday things": how machines, vehicles and systems people see every day
   actually work, plus famous giant machines and physics phenomena.
 - **Audience:** curious teens and adults, English, worldwide. Not "made for kids".
-- **Character (LOCKED, owner ✓ 2026-11-25): our guy as a 3D animated stickman** — hero3d.js `{ build: 'stick' }`:
-  round white head, egg body in the blue gear tee, normal-thickness white limbs, ball hands, jeans, white sneakers,
+- **Character (LOCKED, owner ✓ 2026-11-25): our guy as a 3D animated stickman** — hero3d.js `{ build: 'rick' }`:
+  round white head, slim egg body in the blue gear tee, thin black stick arms + slightly thicker stick legs, ball hands, white sneakers, curly-top
   swept black hair, blue headphones with yellow rings. Style inspiration: 3D stickman Shorts with big round heads,
   bean bodies and dry reactions — customised, never copied. Never redesign without the owner's ✓.
 - **Look:** machines in the clean 3D style of the v5 lock; the character is a 3D toon figure in the same scene, same light, real
