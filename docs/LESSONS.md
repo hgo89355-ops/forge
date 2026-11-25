@@ -70,3 +70,6 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Natural reactions read better than more motion: react ~0.12 s after the cue word, hold a 0.15 s "freeze" face before
   a big reaction, flick the eyes between object and camera, drop the head before an "oops", and spring (not lerp) into
   the new pose. Release IK before hands go to the head so the arm doesn't snap.
+- Hair notes from the owner: "curly" = a curly top with a short taper (ringlet spirals on top falling forward over the
+  forehead, close sides), not a dome of blobs. Ask for a reference photo before restyling hair; it saved two rounds.
+  Dark-charcoal hair (#33363F) instead of pure black lets the outline show individual curls.
