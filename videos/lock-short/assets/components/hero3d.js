@@ -14,7 +14,7 @@
  *          expr: neutral|curious|oops|shocked|confident|amazed|scared|proud|confused, blink: 0|1, gaze:[x,y] }
  */
 const Hero3D = (function () {
-  const EXPRS = ['neutral', 'curious', 'oops', 'shocked', 'confident', 'amazed', 'scared', 'proud', 'confused', 'determined', 'worried', 'panic', 'joy'];
+  const EXPRS = ['neutral', 'curious', 'oops', 'shocked', 'confident', 'amazed', 'scared', 'proud', 'confused', 'determined', 'worried', 'panic', 'joy', 'suspicious', 'deadpan', 'annoyed'];
   const D = {
     x: 0, y: 0, z: 0, face: 0, lean: 0, side: 0, twist: 0, crouch: 0, bob: 0, breathe: 0, head: [0, 0, 0],
     armL: { fwd: 0, out: 0.1, twist: 0, bend: 0.18, wrist: 0 }, armR: { fwd: 0, out: 0.1, twist: 0, bend: 0.18, wrist: 0 },
@@ -105,6 +105,9 @@ const Hero3D = (function () {
     worried: { eyes: 'open', browL: [0.55, 0.5], browR: [0.55, 0.5], mouth: 'wavy' },
     panic: { eyes: 'wide', eyeS: 1.1, browL: [1.0, 0.45], browR: [1.0, 0.45], mouth: 'scream' },
     joy: { eyes: 'happy', browL: [0.6, 0.15], browR: [0.6, 0.15], mouth: 'bigGrin' },
+    suspicious: { eyes: 'half', browL: [0.45, -0.1], browR: [-0.15, -0.35], mouth: 'flat', look: [0.8, 0] },
+    deadpan: { eyes: 'half', browL: [0, 0], browR: [0, 0], mouth: 'flat' },
+    annoyed: { eyes: 'half', browL: [-0.2, -0.45], browR: [-0.2, -0.45], mouth: 'frown' },
   };
 
   function create(THREE, opts = {}) {
@@ -443,6 +446,28 @@ const Hero3D = (function () {
       const ph = (t % 0.6) / 0.6, air = Math.max(0, Math.sin(Math.PI * Math.min(1, ph * 1.4)));
       return { bob: 14 * air, crouch: 0.18 * Math.max(0, Math.sin(Math.PI * (ph * 1.4 - 1))), armL: { fwd: 0.2, out: 2.6 + 0.2 * air, bend: 0.3 }, armR: { fwd: 0.2, out: 2.6 + 0.2 * air, bend: 0.3 },
         handL: 'fist', handR: 'fist', expr: 'proud', head: [-0.15, 0, 0.08 * Math.sin(t * 9)] };
+    },
+    sneak(t, f = 1.25) {   // crouched tiptoe, head snaps left/right with holds, eyes lead
+      const p = Math.sin(t * Math.PI * f * 2), q = Math.cos(t * Math.PI * f * 2);
+      const look = Math.tanh(3 * Math.sin(t * 2.4)), lookE = Math.tanh(3 * Math.sin(t * 2.4 + 0.35));
+      return { crouch: 0.22, lean: 0.2, bob: Math.abs(q) * 1.6, twist: 0.06 * p,
+        legL: { fwd: 0.45 * p + 0.05, bend: Math.max(0, p) * 1.0 + 0.25 }, legR: { fwd: -0.45 * p + 0.05, bend: Math.max(0, -p) * 1.0 + 0.25 },
+        armL: { fwd: 0.55, out: 0.3, twist: -0.4, bend: 1.7 }, armR: { fwd: 0.75, out: 0.15, bend: 1.25 }, handL: 'open', handR: 'hold',
+        head: [0.05, 0.5 * look, 0.04 * look], gaze: [0.9 * lookE, 0], expr: 'suspicious' };
+    },
+    tug(t, f = 1.6) {      // foot on the machine, both hands yanking, leaning way back
+      const e = 0.5 + 0.5 * Math.sin(t * Math.PI * f * 2 - 1.2), k = e * e * (3 - 2 * e);
+      return { lean: -0.28 - 0.14 * k, crouch: 0.12 + 0.05 * k, twist: -0.08 * k, legL: { fwd: 1.25, out: 0.05, bend: 0.75 - 0.2 * k }, legR: { fwd: -0.25, bend: 0.3 },
+        handL: 'hold', handR: 'hold', expr: 'determined', head: [-0.1 - 0.06 * k, 0, 0] };
+    },
+    sit(u) {               // pratfall: lands on his backside, legs out, hands behind
+      const d = ease.backOut(clamp01(u), 1.2);
+      return { bob: -76 * Math.min(1, d), lean: -0.18 * d, legL: { fwd: 1.45 * d, out: 0.18, bend: 0.15 }, legR: { fwd: 1.4 * d, out: 0.14, bend: 0.2 },
+        armL: { fwd: -0.55 * d, out: 0.4, bend: 0.2 }, armR: { fwd: -0.55 * d, out: 0.4, bend: 0.2 }, handL: 'open', handR: 'open' };
+    },
+    adjustPhones(u) {      // smug: taps a headphone cup
+      const k = Math.sin(Math.PI * clamp01(u));
+      return { armR: { fwd: 0.35 * k, out: 1.5 * k + 0.1, twist: 1.3 * k, bend: 2.2 * k }, handR: 'open', head: [0, 0.1 * k, -0.1 * k], expr: 'confident', gaze: [0.6, 0] };
     },
     think(t) { const s = Math.sin(t * 2.2); return { armR: { fwd: 0.55, out: 0.15, twist: -0.95, bend: 2.3 }, handR: 'fist', armL: { fwd: 0.3, out: 0.05, twist: -0.9, bend: 1.5 }, head: [-0.1, 0.12 * s, 0.14], expr: 'curious', gaze: [0.4 * s, 0.6], blink: blinkAt(t, 1.3) }; },
   };

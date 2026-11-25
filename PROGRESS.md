@@ -1,6 +1,9 @@
 # Progress
 
 ## Now
+- **Lock Short v9 (personality pass)** rendering: sneaks up suspiciously, strains, plants a foot and yanks the stuck key,
+  deadpan stare, smug cheer, key pops out → pratfall → deadpan stare. Character = curly-top stickman, normal build.
+  Personality bible: docs/CHARACTER.md (use in every video).
 - **Lock Short v9** rendering with the stickman build (headphones, sculpted hair, natural reactions) →
   videos/lock-short/renders/lock-short-v9.mp4. Then owner's ✓ + a new title before posting.
 - **Stickman build demo (awaiting owner ✓):** `Hero3D.create(THREE, { build: 'stick' })` — same design, big round head, simple

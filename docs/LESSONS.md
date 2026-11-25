@@ -73,3 +73,6 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Hair notes from the owner: "curly" = a curly top with a short taper (ringlet spirals on top falling forward over the
   forehead, close sides), not a dome of blobs. Ask for a reference photo before restyling hair; it saved two rounds.
   Dark-charcoal hair (#33363F) instead of pure black lets the outline show individual curls.
+- Owner feedback: personality beats polish. A character "toy" that only poses reads childish; give him intent and
+  comedy beats (sneak, yank, pratfall, deadpan stare to camera) with holds. New moves live in Hero3D.ANIM (sneak, tug,
+  sit, adjustPhones) and expressions (suspicious, deadpan, annoyed).
