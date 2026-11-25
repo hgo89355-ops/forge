@@ -38,13 +38,13 @@ const Hero3D = (function () {
       ctx.fillStyle = INK; ctx.strokeStyle = INK;
       if (e === 'open' || e === 'wide' || e === 'small') {
         const k = e === 'wide' ? 1.3 : e === 'small' ? 0.75 : 1;
-        ctx.beginPath(); ctx.ellipse(cx, cy, (bold ? 0.62 : 0.55) * k * P.eyeS, (bold ? 0.82 : 0.95) * k * P.eyeS, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(cx + 0.18 * k, cy - 0.38 * k, 0.17 * k, 0.24 * k, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx, cy, (bold ? 0.86 : 0.55) * k * P.eyeS, (bold ? 1.12 : 0.95) * k * P.eyeS, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(cx + (bold ? 0.26 : 0.18) * k, cy - (bold ? 0.45 : 0.38) * k, (bold ? 0.24 : 0.17) * k, (bold ? 0.3 : 0.24) * k, 0, 0, Math.PI * 2); ctx.fill();
       } else if (e === 'happy') {
-        ctx.lineWidth = 0.32; ctx.beginPath(); ctx.moveTo(cx - 0.75, cy + 0.25); ctx.quadraticCurveTo(cx, cy - 0.85, cx + 0.75, cy + 0.25); ctx.stroke();
+        { const hk = bold ? 1.35 : 1; ctx.lineWidth = 0.32 * hk; ctx.beginPath(); ctx.moveTo(cx - 0.75 * hk, cy + 0.25); ctx.quadraticCurveTo(cx, cy - 0.85 * hk, cx + 0.75 * hk, cy + 0.25); ctx.stroke(); }
       } else if (e === 'half') {
-        ctx.beginPath(); ctx.ellipse(cx, cy + 0.25, 0.55, 0.6, 0, 0, Math.PI); ctx.fill();
-        ctx.lineWidth = 0.28; ctx.beginPath(); ctx.moveTo(cx - 0.75, cy + 0.2); ctx.lineTo(cx + 0.75, cy + 0.2); ctx.stroke();
+        const hk = bold ? 1.45 : 1; ctx.beginPath(); ctx.ellipse(cx, cy + 0.25, 0.55 * hk, 0.6 * hk, 0, 0, Math.PI); ctx.fill();
+        ctx.lineWidth = 0.28 * hk; ctx.beginPath(); ctx.moveTo(cx - 0.75 * hk, cy + 0.2); ctx.lineTo(cx + 0.75 * hk, cy + 0.2); ctx.stroke();
       } else { // closed
         ctx.lineWidth = 0.3; ctx.beginPath(); ctx.moveTo(cx - 0.7, cy + 0.1); ctx.quadraticCurveTo(cx, cy + 0.55, cx + 0.7, cy + 0.1); ctx.stroke();
       }
@@ -149,7 +149,7 @@ const Hero3D = (function () {
     const B = STICK
       ? { H: 86, TH: 36, SH: 35, UA: 25, FA: 23, faceS: 1.5, faceY: 14.8, ts: [0.7, 0.72, 0.78], ua: [3.4, 3.3], fa: [3.3, 3.2], el: 3.35, th: [4.4, 4.3], sh: [4.3, 4.2], kn: 4.35, mitt: [3.3, 3.3, 3.3], mittY: -2.7, hipX: 4.9, sl: 0.76, shoeS: 0.82 }
       : { H: 90, TH: 39, SH: 37, UA: 27, FA: 24, faceS: 1.16, faceY: 13.2, ts: [1, 1, 1], ua: [4.1, 3.6], fa: [3.6, 2.8], el: 3.6, th: [6.6, 5.2], sh: [5.1, 4.6], kn: 5.2, mitt: [2.0, 4.6, 3.6], mittY: -4.4, hipX: 6.4, sl: 1, shoeS: 1 };
-    if (RICK) Object.assign(B, { ua: [1.2, 1.15], fa: [1.15, 1.1], el: 1.2, th: [3.3, 3.15], sh: [3.15, 3.0], kn: 3.25, mitt: [2.1, 2.1, 2.1], mittY: -1.7, hipX: 4.6, shoeS: 0.7 });
+    if (RICK) Object.assign(B, { faceS: 1.66, faceY: 16.2, ua: [1.2, 1.15], fa: [1.15, 1.1], el: 1.2, th: [3.3, 3.15], sh: [3.15, 3.0], kn: 3.25, mitt: [2.1, 2.1, 2.1], mittY: -1.7, hipX: 4.6, shoeS: 0.7 });
     const H = B.H, TS = B.ts;
     const hips = group(root, V(0, H, 0));
     // jeans: seat / hips
