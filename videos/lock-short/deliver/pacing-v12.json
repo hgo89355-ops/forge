@@ -1,0 +1,12 @@
+{
+ "duration_s": 26.87,
+ "cuts": 15,
+ "cuts_per_10s": 5.6,
+ "total_silence_s": 0,
+ "silences_over_0.3s": [],
+ "dead_windows_1.5s": [],
+ "motion_in_first_second": true,
+ "static_end_s": 0.0,
+ "fails": [],
+ "pass": true
+}
