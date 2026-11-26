@@ -7,7 +7,7 @@
   deadpan stare, points at the keyhole, camera dives into the keyhole → the 3D pin explanation (unchanged). Right key →
   door swings open, he jumps and cheers. End: twists the wrong key, yanks, it pops, pratfall, deadpan stare, back to the
   bush (loops). Only segments A (0–4.2 s), B (19.2–19.87 s), C (24.07 s–end) re-rendered and spliced into v9 →
-  videos/lock-short/renders/lock-short-v13.mp4. Turn 2D off with `window.DOOR2D = false`.
+  videos/lock-short/renders/lock-short-v13.mp4 (sound: new tiptoe steps + bush rustle, sfx_v13.py). Turn 2D off with `window.DOOR2D = false`.
 - Waiting for the owner: ✓ on v13 + a new title (copycat uses "How a Lock Knows Your Key"). Owner's earlier message
   cut off ("So then just maybe make…"); Creative Engine Parts B–E never arrived.
 - Older renders (v6–v12, 3D outside scenes) are kept in videos/lock-short/renders/ for comparison only.

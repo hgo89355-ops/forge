@@ -5,3 +5,4 @@ videos/*/snap*/
 videos/*/.hyperframes/
 videos/*/renders/.*hf-transaction*/
 videos/*/renders/seg/
+videos/*/renders/seg2d/
