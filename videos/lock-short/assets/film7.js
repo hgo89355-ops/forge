@@ -241,8 +241,12 @@ const Film7 = (function () {
     const tipX = (s) => G.tipLen - s;
     const hookCam = (s, u) => [tipX(s) - 3, 5.5, 0, lerp(44, 38, u), lerp(36, 28, u), 9];
 
+    const D2 = window.DOOR2D !== false && window.Door2D;   // owner 2026-11-26: all outside shots are flat 2D
+    const D2SHOTS = { hookIn: 1, hookJam: 1, dive: 1, doorOpen: 1, lockedOut: 1, loop: 1 };
+    const D2INFO = { S: Object.fromEntries(SHOTS.map((s) => [s[0], s[1]])), A: ANCH, DUR };
     function renderAt(t) {
       const [name, t0, t1] = shotAt(t);
+      if (D2 && D2SHOTS[name]) { svg.innerHTML = D2.render(name, t, D2INFO); return; }
       const u = clamp01((t - t0) / Math.max(0.01, t1 - t0));
       // defaults
       let keySt = null, turnReq = 0, showShear = 0, shearState = 'neutral', crossA = 0, gap = [0, 0, 0, 0, 0], morph = null, springPush = 0;

@@ -49,3 +49,5 @@ _Not received yet: the owner's handoff message was cut off. Paste Part C here wh
 - Pattern: fear/safety ("falls", "stuck") and Mindbite's "How a [thing] becomes [machine]". Model channel to study: Mindbite.
 
 Caveat: tank and airplane searches matched mostly on titles in the last year (Shorts: last 3 months), so those lists are noisier.
+
+- 2026-11-26: lock Short v13 — outside scenes redone in flat 2D (owner request). Still unposted: needs owner ✓ + new title.

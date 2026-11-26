@@ -1,7 +1,8 @@
 # The guide — personality bible (read before writing any scene with him)
 
-Look: lib/components/hero3d.js `{ build: 'rick' }` (full 3D stickman: curly-top hair, blue headphones, blue gear tee,
-black stick limbs, white sneakers). Name: _owner to decide_ (working name in scripts: "the guide").
+Look: in story scenes, lib/components/guide2d.js (flat 2D, bendy rubber-hose limbs — owner 2026-11-26); the 3D build
+hero3d.js `{ build: 'rick' }` only when he must stand inside a 3D machine shot. Same design: curly-top hair, blue
+headphones with yellow rings, blue gear tee, white arms, thick black legs, white sneakers. Name: _owner to decide_ (working name in scripts: "the guide").
 
 ## Who he is
 - **Overconfident tinkerer.** He's sure he can figure anything out in 2 seconds — and is usually wrong first.

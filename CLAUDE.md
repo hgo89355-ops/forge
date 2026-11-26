@@ -37,6 +37,9 @@ Open the detail files below **only when the task needs them**.
   with yellow rings. Cel shading, lit like the machines, soft shadow. Expressions incl. suspicious/deadpan/annoyed;
   animation library + human layers. Never redesign without the owner's ✓. (Retired: guide.js, guide3d.js, stick3d.js,
   the 'hero' and 'stick' builds.)
+  **Story / outside scenes are flat 2D (owner, 2026-11-26): lib/components/guide2d.js** — the same guy drawn in SVG with
+  bendy rubber-hose arms and legs (fully flexible, Rick's-Clips-like, customised), in 2D places (lib/components/door2d.js).
+  The machine explanation stays 3D. Camera dives from the 2D world into the 3D cutaway.
   **Personality matters most (owner, 2026-11-25): docs/CHARACTER.md** — overconfident, deadpan, sneaky; signature deadpan
   stare at camera, sneak, yank, pratfall. Read it before writing any scene.
 - Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,

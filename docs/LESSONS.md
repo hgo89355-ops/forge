@@ -87,3 +87,8 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   window, lamp, sky). Give him something to hide behind or lean on — it creates action and depth for free.
 - "Walks like a box" fix: step–pause rhythm with eased steps, knee lift only on the stepping leg, hips side-sway,
   shoulders counter-twist, body rises on each step; keep the root moving with the steps so feet don't slide.
+- 2026-11-26: owner rejected the 3D outside scenes ("too boxed", "looks like a bot"). Flat 2D SVG with rubber-hose
+  limbs (quadratic curves shoulder→hand, hip→foot) reads flexible and alive instantly, and renders far faster than 3D.
+  Feet live in ground space so crouch/bob/sit move only the hip (no sliding). `Guide2D.reach()` puts a hand exactly on a
+  point (key bow) — use it for every grab. 2D→3D handoff: exponential zoom into the keyhole + 0.15 s darken, then cut.
+- Pin 2D action to the existing SFX times (clacks, pop, thud) so a video-only re-render can keep the old audio.
