@@ -1,17 +1,17 @@
 {
- "run_time_utc": "2026-11-26 00:43",
+ "run_time_utc": "2026-11-27 00:43",
  "paper_start": "2026-10-26",
  "last_stock_candle": "2026-11-25",
- "last_crypto_candle": "2026-11-25",
+ "last_crypto_candle": "2026-11-26",
  "markets_missing": [],
  "setups": {
   "main": {
-   "account_value": 9944.56,
-   "total_profit": -55.44,
-   "total_return_pct": -0.55,
-   "last_day": "2026-11-25",
-   "last_day_pnl": 86.3,
-   "main_bucket": 6816.45,
+   "account_value": 9947.03,
+   "total_profit": -52.97,
+   "total_return_pct": -0.53,
+   "last_day": "2026-11-26",
+   "last_day_pnl": -0.11,
+   "main_bucket": 6818.92,
    "high_reward_bucket": 3128.11,
    "worst_drop_pct": -4.4,
    "open_trades": 12,
@@ -20,7 +20,7 @@
      "status": "BUY AT NEXT OPEN",
      "symbol": "PYPL",
      "strategy": "Pullback in trend",
-     "quantity": 1.491293,
+     "quantity": 1.535856,
      "stop_loss": 56.0852,
      "take_profit": 75.0577
     }
@@ -31,33 +31,8 @@
    "left_on_table_total": 953.1,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-25",
-    "bought": [
-     {
-      "symbol": "LIN",
-      "strategy": "Pullback in trend",
-      "price": 515.6351,
-      "value_usd": 684.73
-     },
-     {
-      "symbol": "SBUX",
-      "strategy": "Pullback in trend",
-      "price": 105.6656,
-      "value_usd": 686.23
-     },
-     {
-      "symbol": "V",
-      "strategy": "Pullback in trend",
-      "price": 415.8354,
-      "value_usd": 686.86
-     },
-     {
-      "symbol": "XLV",
-      "strategy": "Pullback in trend",
-      "price": 184.4443,
-      "value_usd": 37.94
-     }
-    ],
+    "date": "2026-11-26",
+    "bought": [],
     "sold": [],
     "profit_from_winners": 0,
     "loss_from_losers": 0,
@@ -65,121 +40,63 @@
    }
   },
   "setup5": {
-   "account_value": 9777.47,
-   "total_profit": -222.53,
-   "total_return_pct": -2.23,
-   "last_day": "2026-11-25",
-   "last_day_pnl": 22.11,
-   "main_bucket": 6676.1,
+   "account_value": 9754.51,
+   "total_profit": -245.49,
+   "total_return_pct": -2.45,
+   "last_day": "2026-11-26",
+   "last_day_pnl": 4.22,
+   "main_bucket": 6653.13,
    "high_reward_bucket": 3101.38,
-   "worst_drop_pct": -6.47,
+   "worst_drop_pct": -6.63,
    "open_trades": 13,
    "orders_next_open": [
     {
      "status": "BUY AT NEXT OPEN",
      "symbol": "AAPL",
      "strategy": "Triple MA",
-     "quantity": 1.28749,
+     "quantity": 1.170809,
      "stop_loss": 329.8988,
      "take_profit": ""
     }
    ],
-   "closed_trades_total": 36,
+   "closed_trades_total": 37,
    "wins": 3,
-   "closed_last_day": [
-    {
-     "symbol": "AMD",
-     "engine": "X Stochastic reversal",
-     "reason": "stop_gap",
-     "pnl_usd": -39.74
-    },
-    {
-     "symbol": "MSFT",
-     "engine": "X Stochastic reversal",
-     "reason": "stop",
-     "pnl_usd": -3.55
-    },
-    {
-     "symbol": "AAPL",
-     "engine": "X Hammer tech",
-     "reason": "stop",
-     "pnl_usd": -0.79
-    }
-   ],
-   "left_on_table_total": 1265.98,
+   "closed_last_day": [],
+   "left_on_table_total": 1293.33,
    "learn_from_mistakes": [],
    "day": {
-    "date": "2026-11-25",
-    "bought": [
-     {
-      "symbol": "PG",
-      "strategy": "Triple MA",
-      "price": 173.4333,
-      "value_usd": 664.62
-     },
-     {
-      "symbol": "LOW",
-      "strategy": "Triple MA",
-      "price": 232.3521,
-      "value_usd": 52.13
-     }
-    ],
-    "sold": [
-     {
-      "symbol": "AMD",
-      "strategy": "X Stochastic reversal",
-      "reason": "stop_gap",
-      "pnl_usd": -39.74,
-      "left_on_table_usd": 119.67
-     },
-     {
-      "symbol": "MSFT",
-      "strategy": "X Stochastic reversal",
-      "reason": "stop",
-      "pnl_usd": -3.55,
-      "left_on_table_usd": 2.67
-     },
-     {
-      "symbol": "AAPL",
-      "strategy": "X Hammer tech",
-      "reason": "stop",
-      "pnl_usd": -0.79,
-      "left_on_table_usd": 0.28
-     }
-    ],
+    "date": "2026-11-26",
+    "bought": [],
+    "sold": [],
     "profit_from_winners": 0,
-    "loss_from_losers": -44.08,
-    "left_on_table": 122.62
+    "loss_from_losers": 0,
+    "left_on_table": 0
    }
   }
  },
  "data_ok": true,
  "expected_stock_candle": "2026-11-25",
  "records": {
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "markets_recorded": 357,
-  "signals_today": 37,
-  "bot_signals": 36,
+  "signals_today": 38,
+  "bot_signals": 37,
   "shadow_signals": 1,
   "alerts": [
-   "Unusual move: BIGTIME +58.5% (15.0x its normal daily move)",
-   "Unusual move: ACE +22.4% (4.3x its normal daily move)",
-   "Unusual move: BLUR +26.6% (4.1x its normal daily move)",
-   "Volume spike: BIGTIME traded 103.0x its usual volume (+58.5%)",
-   "Volume spike: io:GPRO traded 7.5x its usual volume (+6.5%)",
-   "Volume spike: LAYER traded 7.4x its usual volume (+7.8%)",
-   "Volume spike: BLUR traded 6.3x its usual volume (+26.6%)",
-   "Volume spike: STBL traded 6.0x its usual volume (+6.0%)",
-   "Volume spike: xyz:ICE traded 5.6x its usual volume (+1.7%)",
-   "Volume spike: xyz:DELL traded 4.7x its usual volume (-0.4%)",
-   "Volume spike: xyz:SNDK traded 4.7x its usual volume (-3.2%)",
-   "Volume spike: xyz:PLATINUM traded 4.5x its usual volume (+1.3%)",
-   "Volume spike: MANTA traded 4.4x its usual volume (+5.5%)",
+   "Unusual move: INIT +65.9% (5.6x its normal daily move)",
+   "Unusual move: SEI +16.7% (4.1x its normal daily move)",
+   "Volume spike: MOVE traded 53.5x its usual volume (+12.6%)",
+   "Volume spike: ME traded 15.6x its usual volume (+12.3%)",
+   "Volume spike: STBL traded 7.8x its usual volume (+8.4%)",
+   "Volume spike: xyz:HYUNDAI traded 5.3x its usual volume (-3.6%)",
+   "Volume spike: para:SOFI traded 4.4x its usual volume (+1.1%)",
+   "Volume spike: SEI traded 4.3x its usual volume (+16.7%)",
+   "Volume spike: XMR traded 4.1x its usual volume (-11.5%)",
+   "Signal skipped: PYPL (PB rest); its outcome will be tracked",
    "Signal skipped: SBUX (Triple MA); its outcome will be tracked",
    "Signal skipped: UPS (Triple MA); its outcome will be tracked",
    "Signal skipped: LIN (Triple MA); its outcome will be tracked",
-   "Signal skipped: XLP (Triple MA); its outcome will be tracked",
-   "Signal skipped: PYPL (PB rest); its outcome will be tracked"
+   "Signal skipped: XLP (Triple MA); its outcome will be tracked"
   ]
  }
 }

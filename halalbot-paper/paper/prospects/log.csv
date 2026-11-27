@@ -138,7 +138,7 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-08,liquid:RSR,Inside-day breakout,0.0017,0.0001,finished,4,-1.022,stop,False
 2026-11-09,liquid:INIT,Big jump on volume,0.1843,0.039,finished,2,-1.009,stop,False
 2026-11-09,liquid:RSR,Big jump on volume,0.0017,0.0002,finished,2,-1.022,stop,False
-2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,16,2.629,open,False
+2026-11-09,liquid:xyz_NATGAS,Big jump on volume,3.3867,0.1102,open,17,1.763,open,False
 2026-11-09,EEM,Inside-day breakout,61.03,1.3996,finished,5,-1.087,stop,True
 2026-11-09,META,Inside-day breakout,641.37,24.7357,finished,7,-1.052,stop,True
 2026-11-09,SNPS,Inside-day breakout,466.97,20.2361,finished,5,-1.046,stop,True
@@ -189,22 +189,22 @@ date,market,prospect,close,atr,status,days,R,why,bot_also
 2026-11-20,VZ,Strong on a red day,46.48,0.9779,open,3,0.938,open,True
 2026-11-20,WMT,Strong on a red day,127.95,3.1471,open,3,1.604,open,False
 2026-11-20,liquid:HMSTR,Strong on a red day,0.0001,0.0,finished,4,-1.02,stop,False
-2026-11-20,liquid:USUAL,Strong on a red day,0.0111,0.001,open,5,0.272,open,False
+2026-11-20,liquid:USUAL,Strong on a red day,0.0111,0.001,open,6,0.394,open,False
 2026-11-20,liquid:xyz_NATGAS,Strong on a red day,3.7784,0.1491,finished,2,-1.051,stop,False
 2026-11-23,liquid:ALGO,Inside-day breakout,0.0814,0.0055,finished,2,-1.03,stop,False
 2026-11-23,liquid:JUP,Inside-day breakout,0.237,0.0233,finished,2,-1.02,stop,False
-2026-11-23,liquid:KAS,Inside-day breakout,0.027,0.002,open,2,-0.211,open,False
-2026-11-23,liquid:LTC,Inside-day breakout,41.449,2.8038,open,2,0.444,open,False
+2026-11-23,liquid:KAS,Inside-day breakout,0.027,0.002,open,3,-0.173,open,False
+2026-11-23,liquid:LTC,Inside-day breakout,41.449,2.8038,open,3,0.811,open,False
 2026-11-23,liquid:NIL,Inside-day breakout,0.048,0.0038,finished,2,-1.025,stop,False
-2026-11-23,liquid:SAGA,Inside-day breakout,0.0134,0.001,open,2,0.284,open,False
-2026-11-23,liquid:UNI,Inside-day breakout,4.8418,0.5009,open,2,-0.213,open,False
+2026-11-23,liquid:SAGA,Inside-day breakout,0.0134,0.001,open,3,1.069,open,False
+2026-11-23,liquid:UNI,Inside-day breakout,4.8418,0.5009,open,3,-0.389,open,False
 2026-11-24,BRK-B,Inside-day breakout,577.21,10.4979,open,1,0.135,open,False
 2026-11-24,CRM,Inside-day breakout,193.26,8.5203,open,1,0.759,open,True
 2026-11-24,DHR,Inside-day breakout,229.09,6.1993,open,1,0.281,open,False
 2026-11-24,MRK,Inside-day breakout,141.57,4.4439,open,1,-0.503,open,True
-2026-11-24,PYPL,Inside-day breakout,56.17,1.7154,open,1,1.34,open,True
+2026-11-24,PYPL,Inside-day breakout,56.17,1.7154,open,1,1.317,open,True
 2026-11-24,XLF,Inside-day breakout,56.11,1.1064,open,1,0.813,open,True
 2026-11-24,XLV,Inside-day breakout,184.72,3.905,open,1,-0.243,open,True
 2026-11-25,GM,Inside-day breakout,83.99,2.7814,open,0,,waiting for entry,True
 2026-11-25,META,Inside-day breakout,609.89,24.3136,open,0,,waiting for entry,True
-2026-11-25,liquid:RUNE,Inside-day breakout,0.551,0.0407,open,0,,waiting for entry,False
+2026-11-25,liquid:RUNE,Inside-day breakout,0.551,0.0407,open,1,0.126,open,False
