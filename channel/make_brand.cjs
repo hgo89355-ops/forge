@@ -40,6 +40,22 @@ const planeIcon = () =>   // side view: fuselage, wing, tail, engine
   [70, 90, 110, 130, 150].map((x) => `<circle cx="${x}" cy="88" r="5" fill="#1F4FE0" stroke="${INK}" stroke-width="3"/>`).join('') +
   `<path d="M180,86 Q186,92 180,98" fill="none" stroke="${INK}" stroke-width="4"/>`;
 
+
+const engineIcon = () =>   // piston in a cylinder + crank
+  `<rect x="70" y="22" width="70" height="92" rx="6" fill="#5D6A86" stroke="${INK}" stroke-width="6"/><rect x="78" y="44" width="54" height="34" rx="6" fill="#AEB6C1" stroke="${INK}" stroke-width="5"/>` +
+  `<path d="M105,78 L128,140" stroke="${INK}" stroke-width="13" stroke-linecap="round"/><path d="M105,78 L128,140" stroke="#C9D0D8" stroke-width="6" stroke-linecap="round"/>` +
+  `<circle cx="112" cy="142" r="22" fill="none" stroke="${INK}" stroke-width="6"/><circle cx="112" cy="142" r="6" fill="${INK}"/><path d="M84,32 L84,20 M126,32 L126,20" stroke="#E0393E" stroke-width="6"/>`;
+const gearsIcon = () =>
+  `<path d="${gearPath(80, 96, 50, 10)}" fill="#D8AD4F" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/><circle cx="80" cy="96" r="14" fill="#1C2440" stroke="${INK}" stroke-width="5"/>` +
+  `<path d="${gearPath(148, 72, 34, 8)}" fill="#AEB6C1" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/><circle cx="148" cy="72" r="10" fill="#1C2440" stroke="${INK}" stroke-width="5"/>`;
+const tankIcon = () =>
+  `<rect x="22" y="104" width="166" height="46" rx="23" fill="#4A5A3A" stroke="${INK}" stroke-width="6"/>` + [46, 76, 106, 136, 164].map((x) => `<circle cx="${x}" cy="127" r="11" fill="#8A93A0" stroke="${INK}" stroke-width="4"/>`).join('') +
+  `<path d="M40,104 L58,80 L152,80 L170,104 Z" fill="#6B7B4E" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/><rect x="78" y="56" width="58" height="26" rx="8" fill="#6B7B4E" stroke="${INK}" stroke-width="6"/><path d="M136,66 L192,58" stroke="${INK}" stroke-width="11" stroke-linecap="round"/>`;
+const craneIcon = () => {
+  let o = `<path d="M60,160 L60,34 L180,34" fill="none" stroke="#F2C230" stroke-width="12"/><path d="M60,160 L60,34 L180,34" fill="none" stroke="${INK}" stroke-width="3"/>`;
+  for (let y = 46; y < 160; y += 22) o += `<path d="M52,${y} L68,${y + 18}" stroke="${INK}" stroke-width="3"/>`;
+  return o + `<path d="M160,34 L160,100" stroke="#C9D0D8" stroke-width="4"/><rect x="146" y="100" width="28" height="22" rx="3" fill="#E0393E" stroke="${INK}" stroke-width="5"/><rect x="30" y="152" width="60" height="16" fill="#5D6A86" stroke="${INK}" stroke-width="5"/>`;
+};
 // ---- BANNER 2560×1440. Safe area (all devices): x 507–2053, y 508–931.
 const host = G.draw({ x: 1500, y: 928, s: 0.82, face: 0.45, expr: 'confident', look: [1, 0], lean: 0.02,
   armR: { x: 104, y: -34, bend: -0.15 }, handR: 'point', armL: { x: -18, y: 110, bend: 0.25 } });
@@ -54,7 +70,7 @@ const banner = `<svg width="2560" height="1440" viewBox="0 0 2560 1440" xmlns="h
 ${txt(560, 690, 126, '#FFFFFF', 'HIDDEN', 16)}${txt(560, 818, 126, '#FFD21F', 'ENGINEERING', 16)}
 <text x="566" y="890" font-family="Inter" font-weight="800" font-size="44" fill="#E8ECF4" stroke="#0B0C0F" stroke-width="10" paint-order="stroke">How everyday machines really work</text>
 ${host}
-${card(1610, 528, lockIcon())}${card(1832, 528, escalatorIcon())}${card(1610, 730, elevatorIcon())}${card(1832, 730, planeIcon())}
+${card(80, 528, engineIcon())}${card(302, 528, gearsIcon())}${card(2054, 528, tankIcon())}${card(2276, 528, craneIcon())}${card(80, 730, craneIcon())}${card(302, 730, tankIcon())}${card(2054, 730, gearsIcon())}${card(2276, 730, engineIcon())}${card(1610, 528, lockIcon())}${card(1832, 528, escalatorIcon())}${card(1610, 730, elevatorIcon())}${card(1832, 730, planeIcon())}
 </svg>`;
 
 // ---- AVATAR 800×800: his face, warm key light, same blueprint background

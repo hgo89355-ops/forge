@@ -128,3 +128,4 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Channel-setup lessons from a faceless-channel blueprint video: 2-step verification first, set the channel up fully
   before posting (picture, banner, description, keywords), verify by phone, upload as Unlisted, let processing and
   checks finish, then publish; rename the file to the title; turn on auto-dubbing when available.
+- YouTube banners: TV shows the full 2560×1440, laptops a full-width strip (y 508–931), phones only the centre (x 507–2053). Fill the laptop strip's sides with decor so it never looks empty.
