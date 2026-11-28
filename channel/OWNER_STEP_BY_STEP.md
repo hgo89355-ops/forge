@@ -1,9 +1,10 @@
 # Your steps (plain English)
 
-1. Turn on 2-step verification for your Google account (Google account → Security → 2-Step Verification). Write the
-   backup codes on paper.
-2. Verify your phone for YouTube: go to youtube.com/verify and enter the code it texts you.
-3. Save avatar.png and banner.png (I sent them) into your Downloads folder.
-4. Open YouTube Studio, open the Claude extension, paste the prompt, and answer it if it asks you anything.
-5. When you upload a video: rename the file to the video's title first, upload it (it'll be unlisted), wait until the
-   checks say "no issues", watch it once on your phone, then make it public.
+1. Save avatar.png, banner.png and the video into your Downloads folder. Rename the video file to:
+   Why a Burglar's Key Can't Open Your Door.mp4
+2. Open YouTube Studio in Chrome, open the Claude extension, paste Prompt A. If it asks you to pick a file or type a
+   phone code, do that.
+3. If it says your phone isn't verified: go to youtube.com/verify and type in the code it texts you.
+4. Paste Prompt B to upload the Short. Pick the video file when it asks. It will stay Unlisted.
+5. Watch the unlisted video once on your phone. If it looks good, make it Public (Studio → Content → the video →
+   Visibility → Public), ideally on a weekday afternoon (2–5 pm New York time).

@@ -30,3 +30,6 @@
 - Decide the channel name (my pick: Hidden Engineering), then paste channel/CHANNEL_SETUP_PROMPT.md into the Claude
   Chrome extension. You only do: 2-step verification, the phone code for youtube.com/verify, choosing the country.
 - Optional, helps me analyse results from here: connect the channel to vidIQ (vidIQ → connect YouTube channel).
+
+- Ad categories (owner 2026-11-28: no haram ads): blocking ad categories lives in AdSense, a money account our rules say
+  I never touch — the owner must do it himself, and only once the channel is monetized (YPP). Not monetized = no control.
