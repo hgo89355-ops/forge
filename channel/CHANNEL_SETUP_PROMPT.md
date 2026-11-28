@@ -1,9 +1,9 @@
 # Prompt for the Claude browser extension — full channel setup
 
-**How to use:** download `avatar.png` and `banner.png` (sent with this file) into your Downloads folder. Open
-YouTube in Chrome, signed in to the Google account that should own the channel. Open the Claude extension and paste
-everything between the two lines below. When it asks for a password, a phone code or a choice, you answer — it must
-never type those itself.
+**How to use:** this is Phase 3 of `OWNER_STEP_BY_STEP.md`. First do Phases 1–2 yourself (2-step verification,
+create the channel, phone-verify it). Put `avatar.png` and `banner.png` in your Downloads folder, open
+studio.youtube.com on the *Hidden Engineering* channel, open the Claude extension and paste everything between the
+two lines below. When it asks for a password, a phone code or a choice, you answer — it must never type those.
 
 ---
 
@@ -35,18 +35,19 @@ CHANNEL FACTS (use exactly):
   locks, how locks work, escalator, elevator, airplane engineering
 
 CHECKLIST:
-1. **2-step verification.** Open myaccount.google.com/security. If 2-Step Verification is OFF, stop and ask me to turn
-   it on myself (it needs my phone). If it's ON, say so and continue. Also check that a recovery email and recovery
-   phone exist; if not, tell me (don't add them yourself).
-2. **Channel exists.** If this account has no YouTube channel yet, create one with the name above (choose "use a
-   custom name" / brand name, not my personal name). If one exists, open it in YouTube Studio.
+1. **Check (read only) 2-step verification.** Open myaccount.google.com/security in a new tab. Report whether
+   2-Step Verification is ON and whether a recovery email and phone exist. If anything is missing, tell me — I do it
+   myself. Close the tab and continue either way.
+2. **Right channel.** In YouTube Studio, confirm the channel shown (top-right picture → name) is **Hidden
+   Engineering**, not my personal channel. If it's wrong, stop and ask me to switch. If no such channel exists, stop
+   and tell me (I create it myself).
 3. **Customization → Profile:** set name, handle, description (all from CHANNEL FACTS). Add a contact email ONLY if I
    give you one when you ask. Publish the changes.
 4. **Customization → Branding:** upload the profile picture and banner. Add a video watermark using `avatar.png`,
    display "End of video". Publish.
-5. **Feature eligibility:** Settings → Channel → Feature eligibility. If "Intermediate features" is not enabled, open
-   youtube.com/verify and stop: ask me to enter my phone number and the code myself. Then confirm it shows enabled.
-   Also tell me whether "Advanced features" is on (if not, it unlocks on its own over time; don't submit ID for me).
+5. **Feature eligibility (check):** Settings → Channel → Feature eligibility. Report whether "Standard",
+   "Intermediate" and "Advanced" features are enabled. If Intermediate is off, tell me to do youtube.com/verify
+   myself (phone code) and wait for my "done". Don't submit ID or video verification for me.
 6. **Settings → Channel → Basic info:** country = ask me which country to set (don't guess). Keywords = the channel
    keywords above.
 7. **Settings → Channel → Advanced settings:** Audience = "No, set this channel as not made for kids". Leave
@@ -75,7 +76,9 @@ CHECKLIST:
     Description for both: "Cutaways of everyday machines, explained." Don't add videos.
 13. **Customization → Layout:** if there's a "For you"/featured section option, turn on a "Shorts" section and a
     "Videos" section. Skip the channel trailer for now.
-14. **Final check:** open the public channel page (youtube.com/@handle) on desktop and in the phone-size view
+14. **Links & contact:** Customization → Profile → Links: leave empty for now. Contact email: only if I gave one.
+15. **Studio language/notifications:** leave as they are.
+16. **Final check:** open the public channel page (youtube.com/@handle) on desktop and in the phone-size view
     (resize the window narrow). Confirm picture, banner, name and description look right. Screenshot-check nothing
     is cut off.
 

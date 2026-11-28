@@ -44,6 +44,9 @@ them by default so the owner doesn't have to repeat them. Newest notes win if an
 - Something new every 2–3 s; camera always moving; cuts on words.
 - When the voice must wait, the action must still be interesting (no dead air).
 
+## Long videos
+- Don't pad: ~5–6 min is fine (owner 2026-11-28). Thumbnail + title designed together for click-through; test variants.
+
 ## Process
 - **Before any long re-render after a style change, send ONE still frame** and wait for ✓.
 - Re-render only the changed parts (splice), never the whole video when avoidable.

@@ -10,7 +10,8 @@ Open the detail files below **only when the task needs them**.
 ## The channel
 - Faceless YouTube channel: **hidden engineering, visualized** — how everyday machines really work
   (escalators, tanks, airplanes, locks…), shown as big, accurate 3D cutaways with one cartoon guide.
-- Formats: Shorts (9:16, 30–45 s) and long videos (16:9, **8–10 min, never longer**) with chapters.
+- Formats: Shorts (9:16, 25–45 s) and long videos (16:9) with chapters: **aim ~5–6 min, never padded, never over
+  10 min** (owner 2026-11-28: shorter is fine; percentage watched matters more than length).
 - Every week's Shorts tease the NEXT long videos; each teaser Short gets its long video set as its
   Related video once that video is out.
 
