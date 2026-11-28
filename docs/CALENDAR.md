@@ -51,3 +51,4 @@ _Not received yet: the owner's handoff message was cut off. Paste Part C here wh
 Caveat: tank and airplane searches matched mostly on titles in the last year (Shorts: last 3 months), so those lists are noisier.
 
 - 2026-11-26: lock Short v13 — outside scenes redone in flat 2D (owner request). Still unposted: needs owner ✓ + new title.
+- 2026-11-28: lock Short v14 (side-view door, three-step sneak, taller character). Still unposted: owner ✓ + title.

@@ -1,6 +1,11 @@
 # Progress
 
 ## Now
+- **Lock Short v14 (owner notes 2026-11-28)**: camera now sees the door from the side (3/4 angle, oblique
+  projection in door2d.js); he hides farther away and takes three sneaky steps to the door; he is taller and slimmer
+  (guide2d.js LEG/BRY/BRX constants). Owner's reference Short (youtube.com/shorts/_vcLT_kLGUk) could not be watched:
+  YouTube blocked here, vidIQ credits 0 until 2026-11-30 — ask for a screenshot or rewatch after the 30th.
+  Render: videos/lock-short/renders/lock-short-v14.mp4. Waiting for owner ✓ + new title.
 - **Lock Short v13 (2D outside, owner request 2026-11-26)**: every outside shot is now flat 2D cartoon (lib/components/
   guide2d.js character with bendy rubber-hose limbs + lib/components/door2d.js house-front scenes). Story: hides in a bush,
   peeks, tiptoes to the door, puts the key in and keeps twisting (6 tries, gets desperate, foot on the door), freezes,

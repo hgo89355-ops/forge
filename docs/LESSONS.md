@@ -92,3 +92,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   Feet live in ground space so crouch/bob/sit move only the hip (no sliding). `Guide2D.reach()` puts a hand exactly on a
   point (key bow) — use it for every grab. 2D→3D handoff: exponential zoom into the keyhole + 0.15 s darken, then cut.
 - Pin 2D action to the existing SFX times (clacks, pop, thud) so a video-only re-render can keep the old audio.
+- 2026-11-28: a 3/4 side view in flat 2D = one oblique projection P3(xw,y,z) for every wall/ground shape; the key
+  then points at the character and the twist shows as the bow narrowing. Taller/slimmer: change only guide2d.js
+  constants (LEG, BRY, BRX), poses keep working because feet are in ground space.
+- YouTube links can't be opened from this workspace; vidIQ's watcher needs credits (10 per Short).

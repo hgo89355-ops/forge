@@ -13,9 +13,12 @@
 const Guide2D = (function () {
   const INK = '#121317', TEE = '#1E5BFF', TEE_D = '#1746D0', HAIR = '#2B2E36', HAIR_L = '#4A4E58', PHONE = '#23262E', CUP = '#1E5BFF', YEL = '#F2C230', W = '#FFFFFF';
   const f = (n) => (Math.round(n * 10) / 10).toString();
+  // proportions (owner 2026-11-28: a bit taller, less fat): hip height, body half-height / half-width, shoulder offset
+  const LEG = 188, BRY = 66, BRX = 35, CROUCH = 60;
+  const shoulderX = (st) => 25 * (1 - 0.45 * Math.min(1, Math.abs(st.face)));
   const D = {
     x: 540, y: 1500, s: 1, dir: 1, bob: 0, crouch: 0, lean: 0, squash: 1, headTilt: 0, headDX: 0, face: 0.35, expr: 'neutral', blink: 0, look: [0, 0],
-    armL: { x: -34, y: 92, bend: 0.25 }, armR: { x: 34, y: 92, bend: -0.25 }, handL: 'open', handR: 'open', handRotL: 0, handRotR: 0,
+    armL: { x: -28, y: 112, bend: 0.25 }, armR: { x: 28, y: 112, bend: -0.25 }, handL: 'open', handR: 'open', handRotL: 0, handRotR: 0,
     legL: { x: -26, y: 150, bend: 0.12 }, legR: { x: 26, y: 150, bend: -0.12 }, alpha: 1,
   };
   // ---------- faces
@@ -119,7 +122,9 @@ const Guide2D = (function () {
     const cup = (x, k) => `<ellipse cx="${f(x)}" cy="${f(cy + 2)}" rx="${f(17 * k)}" ry="27" fill="${CUP}" stroke="${INK}" stroke-width="6"/><ellipse cx="${f(x)}" cy="${f(cy + 2)}" rx="${f(10 * k)}" ry="19" fill="none" stroke="${YEL}" stroke-width="4"/>`;
     const xl = cL + (backL ? 0 : Math.max(0, fx) * 8), xr = cR + (backR ? 0 : Math.min(0, fx) * 8);
     if (layer === 'back') return (backL ? cup(cx - r * Math.cos(th) - 6, 0.9) : '') + (backR ? cup(cx + r * Math.cos(th) + 6, 0.9) : '');
-    const band = `M${f(xl)},${f(cy - 8)} C${f(xl - 6)},${f(cy - r * 1.75)} ${f(xr + 6)},${f(cy - r * 1.75)} ${f(xr)},${f(cy - 8)}`;
+    const yl = backL ? cy - r * 0.62 : cy - 8, yr = backR ? cy - r * 0.62 : cy - 8;   // band tucks into the hair on the far side
+    const xl2 = backL ? cx - r * 0.75 : xl, xr2 = backR ? cx + r * 0.75 : xr;
+    const band = `M${f(xl2)},${f(yl)} C${f(xl2 - 6)},${f(cy - r * 1.75)} ${f(xr2 + 6)},${f(cy - r * 1.75)} ${f(xr2)},${f(yr)}`;
     let o = `<path d="${band}" stroke="${INK}" stroke-width="20" fill="none" stroke-linecap="round"/><path d="${band}" stroke="${PHONE}" stroke-width="10" fill="none" stroke-linecap="round"/>`;
     if (!backL) o += cup(xl, 1 - Math.max(0, fx) * 0.3);
     if (!backR) o += cup(xr, 1 + Math.min(0, fx) * 0.3);
@@ -137,14 +142,14 @@ const Guide2D = (function () {
     st.legL = Object.assign({}, D.legL, pin.legL); st.legR = Object.assign({}, D.legR, pin.legR);
     if (st.alpha <= 0) return '';
     const d = st.dir;
-    const hipY = -150 + st.crouch * 46 - st.bob + (st.sit || 0) * 110;
+    const hipY = -LEG + st.crouch * CROUCH - st.bob + (st.sit || 0) * (LEG - 42);
     const hip = [0, hipY];
     // lower body: legs (thick black hoses) + shoes, in local space (not leaned)
     const legs = [['legL', -1], ['legR', 1]];
     let lower = '';
     for (const [k, sgn] of legs) {
       const L = st[k];
-      const root = [hip[0] + sgn * 17, hip[1] + 4];
+      const root = [hip[0] + sgn * 13, hip[1] + 4];
       // feet are in ground space (y = L.y − 150; 150 = on the floor), so crouch / bob / sit move the hip, not the feet
       const foot = [hip[0] + L.x, L.y - 150];
       const ankle = [foot[0] - d * 4, foot[1] - 16];
@@ -152,9 +157,9 @@ const Guide2D = (function () {
       lower += shoe(foot, d, L.rot || 0);
     }
     // upper body group, leaned around the hip
-    const sq = st.squash, bodyRy = 60 * sq, bodyRx = 45 / Math.sqrt(sq);
+    const sq = st.squash, bodyRy = BRY * sq, bodyRx = BRX / Math.sqrt(sq);
     const bodyC = [0, hipY - bodyRy + 8];
-    const shL = [bodyC[0] - 30, bodyC[1] - bodyRy * 0.55], shR = [bodyC[0] + 30, bodyC[1] - bodyRy * 0.55];
+    const sx = shoulderX(st), shL = [bodyC[0] - sx, bodyC[1] - bodyRy * 0.58], shR = [bodyC[0] + sx, bodyC[1] - bodyRy * 0.58];
     const headR = 66, headC = [st.headDX + d * 4, bodyC[1] - bodyRy - headR + 18];
     let up = '';
     // arms behind/in front: back arm first
@@ -175,17 +180,17 @@ const Guide2D = (function () {
     up += arm(...frontArm);
     const upper = `<g transform="rotate(${f((st.lean * 180) / Math.PI * d)} ${f(hip[0])} ${f(hip[1])})">${up}</g>`;
     return `<g transform="translate(${f(st.x)} ${f(st.y)}) scale(${f(st.s)})" opacity="${st.alpha}">` +
-      `<ellipse cx="0" cy="2" rx="70" ry="12" fill="#000" opacity="0.18"/>` + lower + upper + `</g>`;
+      `<ellipse cx="0" cy="2" rx="58" ry="11" fill="#000" opacity="0.18"/>` + lower + upper + `</g>`;
   }
   // ---------- geometry helpers (world space), so hands can grab exact points (keys, handles)
   function frame(pin) {
     const st = Object.assign({}, D, pin);
-    const hipY = -150 + st.crouch * 46 - st.bob + (st.sit || 0) * 110, sq = st.squash, bodyRy = 60 * sq;
-    const bodyCy = hipY - bodyRy + 8, shY = bodyCy - bodyRy * 0.55;
+    const hipY = -LEG + st.crouch * CROUCH - st.bob + (st.sit || 0) * (LEG - 42), sq = st.squash, bodyRy = BRY * sq;
+    const bodyCy = hipY - bodyRy + 8, shY = bodyCy - bodyRy * 0.58, sx = shoulderX(st);
     const ang = st.lean * st.dir, c = Math.cos(ang), sn = Math.sin(ang);
     const toW = (lx, ly) => { const dx = lx, dy = ly - hipY; return [st.x + st.s * (dx * c - dy * sn), st.y + st.s * (hipY + dx * sn + dy * c)]; };
     const toL = (wx, wy) => { const lx = (wx - st.x) / st.s, ly = (wy - st.y) / st.s - hipY; return [lx * c + ly * sn, hipY - lx * sn + ly * c]; };
-    return { st, hipY, shL: [-30, shY], shR: [30, shY], toW, toL };
+    return { st, hipY, shL: [-sx, shY], shR: [sx, shY], toW, toL };
   }
   // world position of a hand
   function handPos(pin, side) { const F = frame(pin), sh = side === 'L' ? F.shL : F.shR, A = Object.assign({}, side === 'L' ? D.armL : D.armR, pin[side === 'L' ? 'armL' : 'armR']); return F.toW(sh[0] + A.x, sh[1] + A.y); }

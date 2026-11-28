@@ -14,15 +14,8 @@ def rustle(d=0.45):
     t = t_(d); am = (0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 9 * t))) * np.minimum(1, t / 0.03) * np.exp(-t * 4)
     return n * am * 0.35
 def tiptoe(): return thud(260, 0.09, 1.4) * 0.5
-def step_times():   # same maths as door2d.js hookIn sneak: feet land when the phase crosses k*pi
-    xs, xe, tS, tE = -420.0, 95.0, 0.42, 1.1
-    io = lambda u: 4*u**3 if u < 0.5 else 1 - (-2*u + 2)**3 / 2
-    out_, last = [], 0
-    for i in range(int(tS * 1000), int(tE * 1000)):
-        t = i / 1000; u = (t - tS) / (tE - tS); x = xs + (xe - xs) * (io(u) * 0.88 + u * 0.12)
-        k = int(((x - xs) / 108)); 
-        if k > last: out_.append(t); last = k
-    return out_ + [tE + 0.06]
+def step_times():   # foot plants of the three sneaky steps (= Door2D.stepTimes()) + the planting step at the door
+    return [0.59, 0.825, 1.06, 1.16]
 
 # whoosh on every cut (alternating size)
 for k, ct in enumerate(sorted(S.values())): add(whoosh(0.22 + 0.06 * (k % 3)), ct - 0.12, 0.26 + 0.06 * (k % 2))
