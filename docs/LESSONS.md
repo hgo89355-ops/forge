@@ -96,3 +96,9 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   then points at the character and the twist shows as the bow narrowing. Taller/slimmer: change only guide2d.js
   constants (LEG, BRY, BRX), poses keep working because feet are in ground space.
 - YouTube links can't be opened from this workspace; vidIQ's watcher needs credits (10 per Short).
+- Pacing reference (owner, 2026-11-28; ViewMax analysis of a stickman story Short): hard cut every 3–6 s, quick
+  1–2 s sub-cuts inside a scene, camera never static (dolly/pan/track), comedic gag every 2–3 s, extreme cartoon
+  expressions (star eyes on wins, bug eyes + jaw drop on shock, sweat drops on stress), pose-to-pose with short holds.
+- 2D staging: owner wants to SEE where he stands. Raise the oblique camera (ZY ≈ 0.5) so the ground plane, sidewalk
+  and step read clearly; side-on/edge-on ground (ZY < 0.2) looks like he stands on a thin strip.
+- YouTube links can't be fetched here, but ViewMax analyze_video can watch them (≈2 credits for a Short; slow, ~10 min).

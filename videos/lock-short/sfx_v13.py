@@ -15,7 +15,7 @@ def rustle(d=0.45):
     return n * am * 0.35
 def tiptoe(): return thud(260, 0.09, 1.4) * 0.5
 def step_times():   # foot plants of the three sneaky steps (= Door2D.stepTimes()) + the planting step at the door
-    return [0.59, 0.825, 1.06, 1.16]
+    return [0.6, 0.84, 1.08, 1.2]
 
 # whoosh on every cut (alternating size)
 for k, ct in enumerate(sorted(S.values())): add(whoosh(0.22 + 0.06 * (k % 3)), ct - 0.12, 0.26 + 0.06 * (k % 2))
