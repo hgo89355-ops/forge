@@ -104,3 +104,6 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - YouTube links can't be fetched here, but ViewMax analyze_video can watch them (≈2 credits for a Short; slow, ~10 min).
 - Owner taste (2026-11-28): the camera should sit LOW and CLOSE, like a person standing on the walkway — not high
   and far. Expressions must read mature: small eyes, narrowed lids, small mouths; avoid star eyes, bug eyes, teeth.
+- Night look without haze: darken with a normal-blend radial falloff (transparent at the lamp → 70% near-black at the
+  edges) and add warmth with an OVERLAY-blend radial gradient. A screen-blend glow washes everything grey.
+- Before a long re-render after a big style change, send the owner ONE still frame to confirm the direction.

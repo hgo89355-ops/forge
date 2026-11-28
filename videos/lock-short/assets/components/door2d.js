@@ -51,17 +51,23 @@ const Door2D = (function () {
   const STAND = gpos(W_STAND), HIDE = gpos(W_HIDE);
   const walkAt = (s) => [lerp(HIDE[0], STAND[0], s), lerp(HIDE[1], STAND[1], s)];   // s = 0 (bush) … 1 (door), linear on screen
 
+  // ---------- palette: night (owner 2026-11-28) — muted, cool, lit by the porch lamp; set window.DOOR2D_DAY = true for day
+  const DAY = typeof window !== 'undefined' && window.DOOR2D_DAY;
+  const C = DAY ? { wall: '#F0E4C6', siding: '#D9C9A2', trim: '#FFFFFF', roof: '#5A4B47', base: '#C9C2B4', glass: '#BFE2F4', lawn: '#86C25E', tuft: '#5E9E43',
+    deck: '#C99460', plank: '#A9733F', deckFace: '#94612F', door: '#2E7258', panel: '#276550', panelLine: '#1D4B3B', hole: '#F0E4C6', bg: '#F0E4C6', leaf: '#4FA548', leafHi: '#6CC05C', leafLine: '#3A8636' }
+    : { wall: '#323A52', siding: '#283046', trim: '#A3ABBA', roof: '#1A1D27', base: '#2C303C', glass: '#F2C46A', lawn: '#253B2B', tuft: '#1C2E21',
+    deck: '#5C4636', plank: '#4A382B', deckFace: '#3B2C22', door: '#1E4539', panel: '#1A3C32', panelLine: '#132E26', hole: '#2A2F3A', bg: '#1B2030', leaf: '#2A4A30', leafHi: '#35593A', leafLine: '#1E3523' };
   // ---------- scenery
   function wall() {
-    let o = poly(wallQuad(-3000, 3000, -1400, 0), '#F0E4C6', 0);
-    for (let y = -1380; y < 0; y += 38) o += line(P3(-3000, y, 0), P3(3000, y, 0), '#D9C9A2', 3.5);
-    o += poly(wallQuad(-3000, 3000, -1300, -1254), '#FFFFFF', 6) + poly(wallQuad(-3000, 3000, -1600, -1300), '#5A4B47', 0);
-    o += poly(wallQuad(-3000, 3000, -34, 0), '#C9C2B4', 0) + line(P3(-3000, -34, 0), P3(3000, -34, 0), INK, 5);
+    let o = poly(wallQuad(-3000, 3000, -1400, 0), C.wall, 0);
+    for (let y = -1380; y < 0; y += 38) o += line(P3(-3000, y, 0), P3(3000, y, 0), C.siding, 3.5);
+    o += poly(wallQuad(-3000, 3000, -1300, -1254), C.trim, 6) + poly(wallQuad(-3000, 3000, -1600, -1300), C.roof, 0);
+    o += poly(wallQuad(-3000, 3000, -34, 0), C.base, 0) + line(P3(-3000, -34, 0), P3(3000, -34, 0), INK, 5);
     return o;
   }
   function windowAt(x0, x1, y0, y1) {
-    let o = poly(wallQuad(x0 - 22, x1 + 22, y0 - 22, y1 + 22), '#FFFFFF', 6);
-    o += poly(wallQuad(x0, x1, y0, y1), '#BFE2F4', 5);
+    let o = poly(wallQuad(x0 - 22, x1 + 22, y0 - 22, y1 + 22), C.trim, 6);
+    o += poly(wallQuad(x0, x1, y0, y1), C.glass, 5);
     const w = x1 - x0, h = y1 - y0;
     o += line(P3(x0 + w * 0.15, y0 + h * 0.8, 0), P3(x0 + w * 0.5, y0 + h * 0.12, 0), '#E6F5FC', 14);
     o += line(P3(x0 + w / 2, y0, 0), P3(x0 + w / 2, y1, 0), '#FFFFFF', 12) + line(P3(x0, y0 + h / 2, 0), P3(x1, y0 + h / 2, 0), '#FFFFFF', 12);
@@ -77,7 +83,7 @@ const Door2D = (function () {
   }
   function lamp(xw, y) {
     const b = P3(xw, y, 0), q = P3(xw, y, 30);
-    return line(b, q, INK, 14) + line(b, q, '#2A2C31', 7) + `<circle cx="${f(q[0])}" cy="${f(q[1] + 20)}" r="66" fill="#FFE9A6" opacity="0.35"/>` +
+    return line(b, q, INK, 14) + line(b, q, '#2A2C31', 7) + (DAY ? `<circle cx="${f(q[0])}" cy="${f(q[1] + 20)}" r="66" fill="#FFE9A6" opacity="0.35"/>` : `<circle cx="${f(q[0])}" cy="${f(q[1] + 20)}" r="90" fill="#FFD27A" opacity="0.10"/><circle cx="${f(q[0])}" cy="${f(q[1] + 20)}" r="52" fill="#FFD27A" opacity="0.16"/>`) +
       `<path d="M${f(q[0] - 24)},${f(q[1] - 8)} L${f(q[0] + 24)},${f(q[1] - 8)} L${f(q[0] + 18)},${f(q[1] + 50)} L${f(q[0] - 18)},${f(q[1] + 50)} Z" fill="#FFE07A" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>` +
       `<path d="M${f(q[0] - 32)},${f(q[1] - 10)} L${f(q[0] + 32)},${f(q[1] - 10)} L${f(q[0])},${f(q[1] - 38)} Z" fill="#2A2C31" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>` +
       `<rect x="${f(q[0] - 22)}" y="${f(q[1] + 48)}" width="44" height="12" rx="4" fill="#2A2C31" stroke="${INK}" stroke-width="5"/>`;
@@ -88,19 +94,16 @@ const Door2D = (function () {
     return poly(q, '#2A2C31', 5) + `<text x="${f(c[0])}" y="${f(c[1])}" font-family="Inter" font-weight="900" font-size="50" text-anchor="middle" fill="#FFFFFF" transform="skewY(${f((Math.atan2(KY, KX) * 180) / Math.PI)}) " transform-origin="${f(c[0])} ${f(c[1])}">7</text>`;
   }
   function ground() {
-    let o = poly([P3(-3000, 0, 0), P3(3000, 0, 0), [6000, 6000], [-6000, 6000]], '#86C25E', 0);
-    // walkway along the house front (wide concrete slabs)
-    o += poly(groundQuad(-3000, 3000, 0, 330), '#DCD6CB', 6);
-    for (let x = -3000; x < 3000; x += 170) o += line(P3(x, 0, 0), P3(x, 0, 330), '#BDB4A5', 4);
-    o += line(P3(-3000, 0, 165), P3(3000, 0, 165), '#C9C1B3', 3);
-    // front step at the door
-    o += poly(groundQuad(-40, 280, 0, 110, -16), '#EAE5DC', 5) + poly([P3(-40, -16, 110), P3(280, -16, 110), P3(280, 0, 110), P3(-40, 0, 110)], '#BDB6A8', 5);
-    o += poly(groundQuad(30, 210, 18, 92, -16), '#7A4E3A', 4);   // doormat
-    // grass tufts on the lawn
+    let o = poly([P3(-3000, 0, 0), P3(3000, 0, 0), [6000, 6000], [-6000, 6000]], C.lawn, 0);
     for (let i = 0; i < 60; i++) {
-      const xw = -2400 + hash(i) * 4800, z = 380 + hash(i + 9) * 1600, q = P3(xw, 0, z);
-      o += `<path d="M${f(q[0] - 12)},${f(q[1])} L${f(q[0] - 4)},${f(q[1] - 20)} L${f(q[0] + 2)},${f(q[1] - 4)} L${f(q[0] + 10)},${f(q[1] - 22)} L${f(q[0] + 14)},${f(q[1])}" fill="none" stroke="#5E9E43" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      const xw = -2400 + hash(i) * 4800, z = 300 + hash(i + 9) * 1600, q = P3(xw, 0, z);
+      o += `<path d="M${f(q[0] - 12)},${f(q[1])} L${f(q[0] - 4)},${f(q[1] - 20)} L${f(q[0] + 2)},${f(q[1] - 4)} L${f(q[0] + 10)},${f(q[1] - 22)} L${f(q[0] + 14)},${f(q[1])}" fill="none" stroke="${C.tuft}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`;
     }
+    // wooden porch deck in front of the door (he stands on it)
+    const x0 = -520, x1 = 520, z1 = 280;
+    o += poly(groundQuad(x0, x1, 0, z1), C.deck, 5);
+    for (let z = 40; z < z1; z += 40) o += line(P3(x0, 0, z), P3(x1, 0, z), C.plank, 3.5);
+    o += poly([P3(x0, 0, z1), P3(x1, 0, z1), P3(x1, 26, z1), P3(x0, 26, z1)], C.deckFace, 5);
     return o;
   }
   function bush(c, w, h, wob, seed) {   // flat cartoon bush: leaf-balls merged into one outlined mass; c = base centre (screen)
@@ -113,16 +116,16 @@ const Door2D = (function () {
     for (let i = 0; i < 4; i++) C.push([cx - w * 0.3 + i * w * 0.2, by - h * 0.35 + hash(i + seed + 3) * 20, w * 0.2]);
     let o = C.map(([x, y, r]) => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r + 7)}" fill="${INK}"/>`).join('');
     o += `<rect x="${f(cx - w / 2 + 8)}" y="${f(by - h * 0.45)}" width="${f(w - 16)}" height="${f(h * 0.45)}" fill="${INK}"/>`;
-    o += C.map(([x, y, r]) => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="#4FA548"/>`).join('');
-    o += `<rect x="${f(cx - w / 2 + 14)}" y="${f(by - h * 0.45)}" width="${f(w - 28)}" height="${f(h * 0.45 - 6)}" fill="#4FA548"/>`;
-    o += C.filter((_, i) => i % 2 === 0).map(([x, y, r]) => `<circle cx="${f(x - r * 0.22)}" cy="${f(y - r * 0.25)}" r="${f(r * 0.55)}" fill="#6CC05C"/>`).join('');
-    o += C.filter((_, i) => i % 3 === 1).map(([x, y, r]) => `<path d="M${f(x - r * 0.3)},${f(y + r * 0.2)} q${f(r * 0.3)},${f(-r * 0.3)} ${f(r * 0.6)},0" stroke="#3A8636" stroke-width="5" fill="none" stroke-linecap="round"/>`).join('');
+    o += C.map(([x, y, r]) => `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${C.leaf}"/>`).join('');
+    o += `<rect x="${f(cx - w / 2 + 14)}" y="${f(by - h * 0.45)}" width="${f(w - 28)}" height="${f(h * 0.45 - 6)}" fill="${C.leaf}"/>`;
+    o += C.filter((_, i) => i % 2 === 0).map(([x, y, r]) => `<circle cx="${f(x - r * 0.22)}" cy="${f(y - r * 0.25)}" r="${f(r * 0.55)}" fill="${C.leafHi}"/>`).join('');
+    o += C.filter((_, i) => i % 3 === 1).map(([x, y, r]) => `<path d="M${f(x - r * 0.3)},${f(y + r * 0.2)} q${f(r * 0.3)},${f(-r * 0.3)} ${f(r * 0.6)},0" stroke="${C.leafLine}" stroke-width="5" fill="none" stroke-linecap="round"/>`).join('');
     return o;
   }
   // the front door (in the wall), `open` 0..1 swings it inward around the far (hinge) side
   function door(open) {
     const { x0, x1, top } = DOOR, w = x1 - x0;
-    let o = poly(wallQuad(x0 - 28, x1 + 28, top - 28, 0), '#FFFFFF', 6);
+    let o = poly(wallQuad(x0 - 28, x1 + 28, top - 28, 0), C.trim, 6);
     o += poly(wallQuad(x0, x1, top, 0), '#2A211E', 5);
     if (open > 0.001) {   // warm hallway inside
       o += poly(wallQuad(x0, x1, top, 0), '#F3D9A4', 5) + poly(wallQuad(x0, x1, top * 0.16, 0), '#C9935A', 0);
@@ -131,9 +134,9 @@ const Door2D = (function () {
     const th = open * 1.35, c = Math.cos(th), s = Math.sin(th);
     // panel point: sx from latch edge (0) to hinge (1), v from top (0) to bottom (1)
     const PP = (sx, v) => P3(x1 - w * (1 - sx) * c, top * (1 - v), -w * (1 - sx) * s);
-    o += poly([PP(0, 0), PP(1, 0), PP(1, 1), PP(0, 1)], '#2E7258', 6);
+    o += poly([PP(0, 0), PP(1, 0), PP(1, 1), PP(0, 1)], C.door, 6);
     for (const [u0, u1, v0, v1] of [[0.12, 0.45, 0.07, 0.42], [0.55, 0.88, 0.07, 0.42], [0.12, 0.45, 0.56, 0.93], [0.55, 0.88, 0.56, 0.93]]) {
-      o += `<polygon points="${pts([PP(u0, v0), PP(u1, v0), PP(u1, v1), PP(u0, v1)])}" fill="#276550" stroke="#1D4B3B" stroke-width="5" stroke-linejoin="round"/>`;
+      o += `<polygon points="${pts([PP(u0, v0), PP(u1, v0), PP(u1, v1), PP(u0, v1)])}" fill="${C.panel}" stroke="${C.panelLine}" stroke-width="5" stroke-linejoin="round"/>`;
     }
     if (open < 0.02) o += lever() + lockFace();
     return o;
@@ -156,7 +159,7 @@ const Door2D = (function () {
     const st = rotK(deg, 0, -20), C = keyBow(deg), hole = rotK(deg, 0, -40);
     let o = line([LK0[0], LK0[1] - 2], st, INK, 15) + line([LK0[0], LK0[1] - 2], st, '#C9D0D8', 7);
     o += `<circle cx="${f(C[0])}" cy="${f(C[1])}" r="17" fill="#D3D9E0" stroke="${INK}" stroke-width="5"/>`;
-    o += `<circle cx="${f(hole[0])}" cy="${f(hole[1])}" r="4.5" fill="#F0E4C6" stroke="${INK}" stroke-width="3"/>`;
+    o += `<circle cx="${f(hole[0])}" cy="${f(hole[1])}" r="4.5" fill="${C.hole}" stroke="${INK}" stroke-width="3"/>`;
     if (tag) o += tagAt(hole[0], hole[1], swing);
     return o;
   }
@@ -431,10 +434,10 @@ const Door2D = (function () {
   // ---------- frame
   function render(name, t, info) {
     const R = shot(name, t, info);
-    const cam = R.cam;
+    const cam = info.cam || R.cam;
     let w = wall();
     w += windowAt(-560, -330, -600, -360) + windowAt(440, 660, -600, -360);
-    w += plaque(330, -640) + lamp(330, -500);
+    w += plaque(330, -640) + lamp(-120, -610);
     w += ground();
     w += door(R.open);
     w += bush(P3(DOOR.x1 + 330, 0, 30), 230, 170, 0, 7);
@@ -454,7 +457,13 @@ const Door2D = (function () {
     w += bush(gpos(W_BUSH), 400, 330, R.bushWob, 1);
     w += R.fx;
     const tf = `translate(540 960) scale(${cam.z.toFixed(4)}) translate(${f(-cam.cx)} ${f(-cam.cy)})`;
-    let o = `<rect x="0" y="0" width="1080" height="1920" fill="#F0E4C6"/><g transform="${tf}">${w}</g>`;
+    let o = `<rect x="0" y="0" width="1080" height="1920" fill="${C.bg}"/><g transform="${tf}">${w}</g>`;
+    if (!DAY) {   // porch lamp above-left of the lock: warm pool of light, everything else falls off into cool night
+      const Lw = P3(-115, -540, 30), lx = 540 + (Lw[0] - cam.cx) * cam.z, ly = 960 + (Lw[1] - cam.cy) * cam.z, r = 620 * Math.sqrt(cam.z / 1.6);
+      o += `<defs><radialGradient id="d2n-shade" gradientUnits="userSpaceOnUse" cx="${f(lx)}" cy="${f(ly)}" r="${f(r * 1.6)}"><stop offset="0" stop-color="#03050D" stop-opacity="0"/><stop offset="0.38" stop-color="#03050D" stop-opacity="0.12"/><stop offset="0.75" stop-color="#03050D" stop-opacity="0.5"/><stop offset="1" stop-color="#03050D" stop-opacity="0.72"/></radialGradient>` +
+        `<radialGradient id="d2n-warm" gradientUnits="userSpaceOnUse" cx="${f(lx)}" cy="${f(ly)}" r="${f(r)}"><stop offset="0" stop-color="#FFB45C" stop-opacity="0.75"/><stop offset="0.45" stop-color="#FF9E45" stop-opacity="0.3"/><stop offset="1" stop-color="#FF9E45" stop-opacity="0"/></radialGradient></defs>`;
+      o += `<rect x="0" y="0" width="1080" height="1920" fill="url(#d2n-shade)"/><rect x="0" y="0" width="1080" height="1920" fill="url(#d2n-warm)" style="mix-blend-mode:overlay"/>`;
+    }
     if (R.dark > 0) o += `<rect x="0" y="0" width="1080" height="1920" fill="#0B0906" opacity="${f(R.dark)}"/>`;
     return o;
   }

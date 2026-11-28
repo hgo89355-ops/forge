@@ -1,6 +1,11 @@
 # Progress
 
 ## Now
+- **Night look concept (owner 2026-11-28, late)**: owner: too cartoonish → make it NIGHT, no walkway running off to
+  the right, crop so the door reads like a wall he's sticking the key into. Built in door2d.js (night palette + porch
+  lamp light + falloff; day kept behind window.DOOR2D_DAY). One still sent for approval:
+  videos/lock-short/deliver/night-concept-frame.png. Next: on owner ✓, tighten all outside shots to this close crop and
+  re-render v17.
 - **Lock Short v16 (owner notes 2026-11-28, evening)**: camera low (near eye level) facing the house front, starting
   between the bush and the door and moving in close; he rises from the bush, walks a few steps along the walkway,
   stops, glances over his shoulder and at the camera, then puts the key in (at "lock", 1.42 s) and twists 5×.
