@@ -118,3 +118,5 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   shot list working when the hook's words change.
 - Keep owner feedback in ONE standing file (docs/OWNER_TASTE.md) and re-read it before each animation pass — the
   same notes (too cartoonish, camera too high/far, no emotion, not low enough when sneaking) kept coming back.
+- Speeding part of a finished video: trim at a frame, setpts=(PTS-STARTPTS)/k + fps=30 for video, atempo=k for the
+  mixed audio, then concat. No re-render needed.

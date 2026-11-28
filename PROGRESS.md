@@ -1,6 +1,10 @@
 # Progress
 
 ## Now
+- **Lock Short v20 (owner 2026-11-28)**: stronger effort face while he pulls (new 'maxEffort' expression: squeezed
+  eyes, hard brows, clenched teeth; head jerks back on each yank; strain lines). Everything after the hook (5.4 s →
+  end) plays at 1.05× (video setpts, audio atempo — voice pitch unchanged) for retention → 26.99 s.
+  Render: renders/lock-short-v20.mp4. Waiting for owner ✓ + title.
 - **Lock Short v19 (owner 2026-11-28)**: hook "A burglar is sneaking into your house in the middle of the night. But he
   can't get in. And the reason is hiding inside." (Liam take B, starts 0.26 s; anchors 'burglar>wrong', 'but>lock',
   'cant>wont'). Low, hunched tiptoe sneak; freezes at a sound (head snaps, eyes wide, then worried); key in → blocked

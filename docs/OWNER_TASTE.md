@@ -31,11 +31,14 @@ them by default so the owner doesn't have to repeat them. Newest notes win if an
   and not constantly.
 - **Struggles are real and physical**: key in → it won't turn → eyes widen → he fights it with his WHOLE BODY
   (both hands, leaning back, legs braced, shaking with effort) — real effort, not slapstick (no star eyes, no foot
-  kick gags, no gritted-teeth cartoon faces).
+  kick gags). Clenched teeth only at the peak of a max-effort pull (owner asked for more emotion there).
 - **Expressions**: small, mature eyes; narrowed lids for effort; small mouths. Avoid star eyes, bug eyes, huge grins.
 - Wins are cool and understated (smirk + small fist pump), not jumping around.
 
 ## Story & pacing
+- **Explanation at 1.05× speed** (owner 2026-11-28, for retention): speed the part after the hook by 5% (atempo keeps
+  the voice pitch). The hook itself stays at normal speed.
+- Max-effort moments need a clear effort face (squeezed eyes, hard brows, clenched teeth, head jerking) — 'maxEffort'.
 - **Hook = a story in the first second** ("A burglar is sneaking into your house in the middle of the night…"),
   second person ("you / your house"). Stakes first, then the "why".
 - Something new every 2–3 s; camera always moving; cuts on words.
