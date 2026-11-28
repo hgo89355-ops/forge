@@ -19,3 +19,9 @@
 - (Optional — Liam is OK'd) **Record your voice for the lock Short** (2026-11-24): script + tips in videos/lock-short/RECORD_YOUR_VOICE.md.
   Put the file in Google Drive and tell me its name (Vocaroo links can't be opened from the build machine).
 - Voice cloning (optional, costs money): ElevenLabs Starter (~$6/month) would let me clone your voice once. Not done — rule: spend no money.
+
+## Before the first upload (2026-11-28)
+- Finish the channel basics: name, profile picture, banner, short description (I can make the picture/banner in code).
+- Upload by hand from YouTube Studio (no third-party auto-posting tools at first). Turn on "Altered or synthetic
+  content" only if needed; mention the AI voice in the description.
+- Post 1–2 Shorts a day at most in the first weeks. Never buy views, likes or subscribers.

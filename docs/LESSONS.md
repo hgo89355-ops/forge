@@ -120,3 +120,6 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   same notes (too cartoonish, camera too high/far, no emotion, not low enough when sneaking) kept coming back.
 - Speeding part of a finished video: trim at a frame, setpts=(PTS-STARTPTS)/k + fps=30 for video, atempo=k for the
   mixed audio, then concat. No re-render needed.
+- New-channel safety (researched 2026-11-28): no official warm-up period. Flags come from fake engagement, automation /
+  bulk uploads, reused content and mass-produced templated videos (July 2026 'inauthentic content' clarification).
+  Upload by hand, keep each video clearly original, label AI voice, never buy views.

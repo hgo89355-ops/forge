@@ -1,6 +1,11 @@
 # Progress
 
 ## Now
+- **Lock Short v21 (owner 2026-11-28)**: same as v20 but the part after the hook plays at 1.12× (owner couldn't hear
+  1.05×) → 25.6 s. Render: renders/lock-short-v21.mp4. Waiting for owner ✓ + title.
+- New channel / spam check (owner asked): no official waiting period exists; YouTube's spam policy targets fake
+  engagement, bulk/automated uploads and re-uploads, not new channels posting original work. Plan: finish the
+  channel basics (name, picture, banner, description), upload by hand, 1–2 Shorts a day max at first, never buy views.
 - **Lock Short v20 (owner 2026-11-28)**: stronger effort face while he pulls (new 'maxEffort' expression: squeezed
   eyes, hard brows, clenched teeth; head jerks back on each yank; strain lines). Everything after the hook (5.4 s →
   end) plays at 1.05× (video setpts, audio atempo — voice pitch unchanged) for retention → 26.99 s.
