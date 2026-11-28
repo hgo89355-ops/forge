@@ -1,6 +1,12 @@
 # Progress
 
 ## Now
+- **Lock Short v19 (owner 2026-11-28)**: hook "A burglar is sneaking into your house in the middle of the night. But he
+  can't get in. And the reason is hiding inside." (Liam take B, starts 0.26 s; anchors 'burglar>wrong', 'but>lock',
+  'cant>wont'). Low, hunched tiptoe sneak; freezes at a sound (head snaps, eyes wide, then worried); key in → blocked
+  → eyes widen → full-body pull (braced legs, leaning back, rhythmic yanks) while the camera pushes in → keyhole dive.
+  Owner feedback saved permanently in docs/OWNER_TASTE.md (linked from CLAUDE.md). View estimate:
+  deliver/VIEW_PREDICTION_v19.md (3K–20K most likely). Render: renders/lock-short-v19.mp4.
 - **Lock Short v18 (owner 2026-11-28)**: new spoken hook "Your neighbor is sneaking into your house at 2 a.m. But his
   key won't turn. And the reason is hiding inside." (ElevenLabs Liam, eleven_v4, take A, pauses trimmed, ×1.08,
   starts at 0.2 s; 216 free-tier credits). Approach = three bursts of quick steps (3+3+2) with stops to look around

@@ -56,3 +56,4 @@ Caveat: tank and airplane searches matched mostly on titles in the last year (Sh
 - 2026-11-28: lock Short v16 (low close camera, walk + glance, mature faces). Unposted: owner ✓ + title.
 - 2026-11-28: lock Short v17 (night, close crop, 2.5 s walk, real struggle; voice starts at 1.2 s; 28.1 s). Unposted: owner ✓ + title.
 - 2026-11-28: lock Short v18 — new hook "Your neighbor is sneaking into your house at 2 a.m.…", quick look-around steps. Unposted: owner ✓ + title.
+- 2026-11-28: lock Short v19 — burglar hook, low sneak, full-body pull. Estimate 3K–20K/30 days. Unposted: owner ✓ + title.

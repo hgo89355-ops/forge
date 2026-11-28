@@ -49,6 +49,7 @@ Open the detail files below **only when the task needs them**.
 ## Where things are (open only when needed)
 | File | What's in it |
 |---|---|
+| **docs/OWNER_TASTE.md** | **The owner's standing preferences (look, camera, acting, hooks) — read before animating anything** |
 | docs/CHANNEL_BIBLE.md | Full style, character, voice, music, captions and chapter rules |
 | docs/CALENDAR.md | Posting plan, topic-check evidence, what's been posted |
 | docs/LESSONS.md | What worked / what failed (tools, renders, network, timings) |

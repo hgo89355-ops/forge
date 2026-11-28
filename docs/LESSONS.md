@@ -116,3 +116,5 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   same time as before (offset the clip), splice voice = new hook + old voice from the next word, and keep all later
   anchors identical → only the first segment needs rendering. Anchor aliases (window.FILM_ORDER 'key>lock') keep the
   shot list working when the hook's words change.
+- Keep owner feedback in ONE standing file (docs/OWNER_TASTE.md) and re-read it before each animation pass — the
+  same notes (too cartoonish, camera too high/far, no emotion, not low enough when sneaking) kept coming back.

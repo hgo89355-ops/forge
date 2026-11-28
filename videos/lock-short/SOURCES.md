@@ -29,3 +29,4 @@ Note: ElevenLabs' free tier requires attribution and does not include a commerci
 monetising, or swap to the local Kokoro voice (free, Apache-2.0).
 
 Hook line (v18): ElevenLabs "Liam" (premade), eleven_v4, free tier (216 credits, $0). AI voice — label it as AI on upload.
+Hook line (v19): same voice/model, 238 credits, $0.
