@@ -25,3 +25,8 @@
 - Upload by hand from YouTube Studio (no third-party auto-posting tools at first). Turn on "Altered or synthetic
   content" only if needed; mention the AI voice in the description.
 - Post 1–2 Shorts a day at most in the first weeks. Never buy views, likes or subscribers.
+
+## Channel setup (2026-11-28)
+- Decide the channel name (my pick: Hidden Engineering), then paste channel/CHANNEL_SETUP_PROMPT.md into the Claude
+  Chrome extension. You only do: 2-step verification, the phone code for youtube.com/verify, choosing the country.
+- Optional, helps me analyse results from here: connect the channel to vidIQ (vidIQ → connect YouTube channel).

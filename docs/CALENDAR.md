@@ -59,3 +59,5 @@ Caveat: tank and airplane searches matched mostly on titles in the last year (Sh
 - 2026-11-28: lock Short v19 — burglar hook, low sneak, full-body pull. Estimate 3K–20K/30 days. Unposted: owner ✓ + title.
 - 2026-11-28: lock Short v20 — max-effort face, explanation at 1.05× (27.0 s). Unposted: owner ✓ + title.
 - 2026-11-28: lock Short v21 — explanation at 1.12× (25.6 s). Unposted: owner ✓ + title. No warm-up period needed (see LESSONS).
+- 2026-11-28: proposed first long video "How Locks Really Work" (≈ Dec 8) so the lock Short has a Related video; confirm
+  with vidIQ long-form outliers on 2026-11-30, else airplane first. Channel setup prompt ready (channel/).

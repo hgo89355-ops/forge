@@ -1,6 +1,17 @@
 # Progress
 
 ## Now
+- **Channel setup kit (2026-11-28)**: channel/CHANNEL_SETUP_PROMPT.md (paste into the Claude Chrome extension; it sets
+  name/handle/description/keywords/branding/upload defaults = Unlisted, category, comments, playlists; stops for any
+  password/code), channel/avatar.png + channel/banner.png (made in code), channel/POST_LAUNCH_ANALYSIS_PROMPT.md
+  (read-only Studio numbers 48 h / 7 days after posting). From the owner's reference video (ViewMax analysis of
+  "Complete Blueprint to Create a Faceless AI YouTube Channel"): 2-step verification, proper channel setup, phone
+  verification, channel keywords, upload as Unlisted then publish, rename the file to the title, auto-dubbing.
+  Channel name "Hidden Engineering" is my recommendation — owner can change it before pasting the prompt.
+- **Long-form plan (proposal, awaiting owner)**: first long video = "How Locks Really Work" (8–10 min) reusing the
+  3D lock rig + the night-porch burglar story, so the lock Short can link to it as its Related video. Check vidIQ
+  long-form outliers for locks on 2026-11-30 (credits refill); if weak, do the airplane video first. Build one chapter
+  a day → first long video ≈ 2026-12-08.
 - **Lock Short v21 (owner 2026-11-28)**: same as v20 but the part after the hook plays at 1.12× (owner couldn't hear
   1.05×) → 25.6 s. Render: renders/lock-short-v21.mp4. Waiting for owner ✓ + title.
 - New channel / spam check (owner asked): no official waiting period exists; YouTube's spam policy targets fake

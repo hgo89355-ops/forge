@@ -123,3 +123,8 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - New-channel safety (researched 2026-11-28): no official warm-up period. Flags come from fake engagement, automation /
   bulk uploads, reused content and mass-produced templated videos (July 2026 'inauthentic content' clarification).
   Upload by hand, keep each video clearly original, label AI voice, never buy views.
+- YouTube links: yt-dlp is blocked here (proxy), but ViewMax analyze_video watches any public YouTube URL (a 20-min
+  video took ~15 min, low credits). Use it for reference videos.
+- Channel-setup lessons from a faceless-channel blueprint video: 2-step verification first, set the channel up fully
+  before posting (picture, banner, description, keywords), verify by phone, upload as Unlisted, let processing and
+  checks finish, then publish; rename the file to the title; turn on auto-dubbing when available.
