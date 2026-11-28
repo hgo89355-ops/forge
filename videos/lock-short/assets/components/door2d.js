@@ -454,6 +454,7 @@ const Door2D = (function () {
   function render(name, t, info) {
     const R = shot(name, t, info);
     const cam = info.cam || R.cam;
+    const FW = info.W || 1080, FH = info.H || 1920;   // frame size (banners/thumbnails can pass their own)
     let w = wall();
     w += windowAt(-720, -500, -600, -360) + windowAt(440, 660, -600, -360);
     w += plaque(330, -640) + lamp(-120, -610);
@@ -475,23 +476,23 @@ const Door2D = (function () {
     }
     w += bush(gpos(W_BUSH), 400, 330, R.bushWob, 1);
     w += R.fx;
-    const tf = `translate(540 960) scale(${cam.z.toFixed(4)}) translate(${f(-cam.cx)} ${f(-cam.cy)})`;
-    let o = `<rect x="0" y="0" width="1080" height="1920" fill="${C.bg}"/><g transform="${tf}">${w}</g>`;
+    const tf = `translate(${FW / 2} ${FH / 2}) scale(${cam.z.toFixed(4)}) translate(${f(-cam.cx)} ${f(-cam.cy)})`;
+    let o = `<rect x="0" y="0" width="${FW}" height="${FH}" fill="${C.bg}"/><g transform="${tf}">${w}</g>`;
     if (!DAY) {   // night: darkness everywhere except pools of warm light (porch lamp, lit window)
       const lights = [[P3(-115, -540, 30), 640, 0.78], [P3(-610, -470, 20), 420, 0.5], [P3(-1000, -300, 400), 420, 0.3]];   // lamp, window, a little moonlight on the bush
-      const sc = (p) => [540 + (p[0] - cam.cx) * cam.z, 960 + (p[1] - cam.cy) * cam.z];
+      const sc = (p) => [FW / 2 + (p[0] - cam.cx) * cam.z, FH / 2 + (p[1] - cam.cy) * cam.z];
       let defs = `<radialGradient id="d2n-hole"><stop offset="0" stop-color="#000"/><stop offset="0.45" stop-color="#000" stop-opacity="0.75"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>`;
-      let mask = `<rect x="0" y="0" width="1080" height="1920" fill="#fff"/>`, warm = '';
+      let mask = `<rect x="0" y="0" width="${FW}" height="${FH}" fill="#fff"/>`, warm = '';
       lights.forEach(([p, r0, k], i) => {
         const [x, y] = sc(p), r = r0 * cam.z * 0.55 * Math.pow(1.9 / cam.z, 0.25);
         mask += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r * 1.5)}" fill="url(#d2n-hole)" opacity="${k}"/>`;
         defs += `<radialGradient id="d2n-w${i}" gradientUnits="userSpaceOnUse" cx="${f(x)}" cy="${f(y)}" r="${f(r)}"><stop offset="0" stop-color="#FFB45C" stop-opacity="${f(0.75 * k)}"/><stop offset="0.45" stop-color="#FF9E45" stop-opacity="${f(0.3 * k)}"/><stop offset="1" stop-color="#FF9E45" stop-opacity="0"/></radialGradient>`;
-        warm += `<rect x="0" y="0" width="1080" height="1920" fill="url(#d2n-w${i})" style="mix-blend-mode:overlay"/>`;
+        warm += `<rect x="0" y="0" width="${FW}" height="${FH}" fill="url(#d2n-w${i})" style="mix-blend-mode:overlay"/>`;
       });
-      o += `<defs>${defs}<mask id="d2n-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1080" height="1920">${mask}</mask></defs>`;
-      o += `<rect x="0" y="0" width="1080" height="1920" fill="#03050D" opacity="0.6" mask="url(#d2n-mask)"/>` + warm;
+      o += `<defs>${defs}<mask id="d2n-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="${FW}" height="${FH}">${mask}</mask></defs>`;
+      o += `<rect x="0" y="0" width="${FW}" height="${FH}" fill="#03050D" opacity="0.6" mask="url(#d2n-mask)"/>` + warm;
     }
-    if (R.dark > 0) o += `<rect x="0" y="0" width="1080" height="1920" fill="#0B0906" opacity="${f(R.dark)}"/>`;
+    if (R.dark > 0) o += `<rect x="0" y="0" width="${FW}" height="${FH}" fill="#0B0906" opacity="${f(R.dark)}"/>`;
     return o;
   }
   return { render, shot, stepTimes, events, LK };
