@@ -112,3 +112,7 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   changed 2D segments need rendering.
 - In door2d.js, bush() has a local `C` array — use PAL (palette alias) inside it or colours come out "undefined"/black.
 - videos/lock-short/package.json is "type":"module": require() the lib/components copies from node scripts instead.
+- Changing the spoken hook without touching the rest: make the new hook's last anchor word ("inside") start at the
+  same time as before (offset the clip), splice voice = new hook + old voice from the next word, and keep all later
+  anchors identical → only the first segment needs rendering. Anchor aliases (window.FILM_ORDER 'key>lock') keep the
+  shot list working when the hook's words change.

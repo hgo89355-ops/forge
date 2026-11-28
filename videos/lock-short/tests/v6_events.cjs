@@ -6,7 +6,7 @@ const words = require(process.env.WORDS ? require('path').resolve(process.env.WO
 const ORDER = ['wrong','lock','wont','and','inside','every','pins','stacked','pairs','springs','top','block','cylinder','until','right','lifts','exactly','height','then','gap','line','click','turns','the','wrong','less','so','tiny','pin','all','out','and','why'];
 const norm = (s) => s.toLowerCase().replace(/[^a-z]/g, '');
 const A = {}, seen = {}; let i = 0, last = { start: 0, end: 0.3 };
-for (const w of ORDER) { let j = i; while (j < words.length && norm(words[j].text) !== w) j++; const k = seen[w] ? w + (seen[w] + 1) : w; seen[w] = (seen[w] || 0) + 1; if (j < words.length) { A[k] = words[j]; last = words[j]; i = j + 1; } else A[k] = { start: last.end + 0.3, end: last.end + 0.6 }; }
+for (const item of (process.env.ORDER ? process.env.ORDER.split(',') : ORDER)) { const [w, as] = item.includes('>') ? item.split('>') : [item, item]; let j = i; while (j < words.length && norm(words[j].text) !== w) j++; const k = seen[as] ? as + (seen[as] + 1) : as; seen[as] = (seen[as] || 0) + 1; if (j < words.length) { A[k] = words[j]; last = words[j]; i = j + 1; } else A[k] = { start: last.end + 0.3, end: last.end + 0.6 }; }
 const c = (w, d = 0.06) => Math.max(0, A[w].start - d);
 const DUR = Math.round((A.why.end + 0.3) * 30) / 30;
 const shots = { hookJam: c('lock'), dive: c('and'), reveal: c('inside'), pinsA: c('every'), pinsB: c('stacked'), block: c('top', 0.18), rightIn: c('until'),

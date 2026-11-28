@@ -211,29 +211,36 @@ const Door2D = (function () {
     return pose;
   }
   const footAt = (pose, wp) => ({ x: (wp[0] - pose.x) / pose.s, y: 150 + (wp[1] - pose.y) / pose.s });
-  // the walk (owner 2026-11-28: the bush is far — ~2.5 s to reach the door): six careful steps, feet tracked in world
-  // space so the planted foot never slides
-  const N_STEPS = 6, STEP_T0 = 0.36, STEP_DUR = 0.27, STEP_PAUSE = 0.035;
-  const STEP_END = STEP_T0 + N_STEPS * (STEP_DUR + STEP_PAUSE) - STEP_PAUSE;
-  function stepTimes() { return Array.from({ length: N_STEPS }, (_, k) => STEP_T0 + k * (STEP_DUR + STEP_PAUSE) + STEP_DUR * 0.92); }
+  // the approach (owner 2026-11-28: "a few quick steps whilst looking around for someone"): short bursts of quick,
+  // light steps, stopping between bursts to check left, right, and over his shoulder. Feet tracked in world space.
+  const QSTEP = 0.17;
+  const STEP_STARTS = [0.42, 0.59, 0.76, 1.32, 1.49, 1.66, 2.22, 2.39];   // three bursts: 3 + 3 + 2 steps
+  const N_STEPS = STEP_STARTS.length, STEP_T0 = STEP_STARTS[0], STEP_END = STEP_STARTS[N_STEPS - 1] + QSTEP;
+  function stepTimes() { return STEP_STARTS.map((s) => +(s + QSTEP * 0.9).toFixed(3)); }
+  // where his eyes/head go in the pauses: [time, face, lookX]
+  const LOOKS = [[0.0, 0.85, 1], [0.95, 0.85, 1], [1.0, -0.5, -1], [1.12, -0.5, -1], [1.17, 0.85, 1], [1.27, 0.85, 1],
+    [1.85, 0.85, 1], [1.9, 0.05, 0], [2.12, 0.05, 0], [2.17, 0.85, 1], [9, 0.85, 1]];
+  function lookAt(t) {
+    for (let i = 0; i < LOOKS.length - 1; i++) { const [a, fa, la] = LOOKS[i], [b, fb, lb] = LOOKS[i + 1]; if (t >= a && t <= b) { const u = o3(win(t, a, b)); return [lerp(fa, fb, u), lerp(la, lb, u)]; } }
+    return [0.85, 1];
+  }
   function sneakSteps(t) {
-    let k = Math.floor((t - STEP_T0) / (STEP_DUR + STEP_PAUSE)); k = Math.max(0, Math.min(N_STEPS - 1, k));
-    const ts = STEP_T0 + k * (STEP_DUR + STEP_PAUSE), u = win(t, ts, ts + STEP_DUR), e = io(u);
+    let k = 0; for (let i = 0; i < N_STEPS; i++) if (t >= STEP_STARTS[i]) k = i;
+    const u = win(t, STEP_STARTS[k], STEP_STARTS[k] + QSTEP), e = io(u);
     const body = walkAt((k + e) / N_STEPS), lift = Math.sin(Math.PI * u);
     const movW = walkAt((k - 0.5 + 2 * e) / N_STEPS), plW = walkAt((k + 0.5) / N_STEPS);
-    const sw = k % 2 === 0 ? 1 : -1;
+    const sw = k % 2 === 0 ? 1 : -1, moving_ = u > 0 && u < 1;
+    const [face, lx] = lookAt(t);
     const pose = P({
-      x: body[0], y: body[1], crouch: 0.2 - 0.08 * lift, bob: 3 * lift, lean: 0.1 + 0.03 * lift, headDX: 5, headTilt: 0.015 * sw * lift, expr: 'suspicious',
-      armR: { x: 30 + 14 * sw * (2 * e - 1), y: 94, bend: -0.25 }, handR: 'fist',
-      armL: { x: -12 - 16 * sw * (2 * e - 1), y: 104, bend: 0.25 }, handL: 'open',
-      face: 0.85, look: [1, 0.1],
+      x: body[0], y: body[1], crouch: 0.3 - 0.08 * lift, bob: 4 * lift, lean: 0.16 + 0.04 * lift, headDX: 6, headTilt: 0.02 * sw * lift, expr: 'suspicious',
+      armR: { x: 32 + 12 * sw * (2 * e - 1), y: 90, bend: -0.25 }, handR: 'fist',
+      armL: { x: -10 - 14 * sw * (2 * e - 1), y: 100, bend: 0.25 }, handL: 'open',
+      face, look: [lx, 0.05],
     });
-    const moving = Object.assign(footAt(pose, movW), { bend: -0.15 - 0.45 * lift, rot: -0.25 * lift }); moving.y -= 40 * lift;
+    if (!moving_) { pose.bob = 0; pose.crouch = 0.3; }
+    const moving = Object.assign(footAt(pose, movW), { bend: -0.15 - 0.4 * lift, rot: -0.25 * lift }); moving.y -= 34 * lift;
     const planted = Object.assign(footAt(pose, plW), { bend: -0.12 });
     Object.assign(pose, k % 2 === 0 ? { legR: moving, legL: planted } : { legL: moving, legR: planted });
-    // halfway he checks over his shoulder once (eyes first, then the head)
-    const chk = bump(t, STEP_T0 + 2.6 * (STEP_DUR + STEP_PAUSE), STEP_T0 + 3.6 * (STEP_DUR + STEP_PAUSE));
-    if (chk > 0) { pose.look = [lerp(1, -1, Math.min(1, chk * 2)), 0]; pose.face = lerp(0.85, -0.35, chk); }
     return { pose };
   }
   // a REAL struggle (owner: "real but not too comical"): turn blocked → other way blocked → jiggle → both hands, hard
@@ -249,7 +256,8 @@ const Door2D = (function () {
     }
     return { deg, push };
   }
-  const HOOK_PLAN = [[0.12, 0.28, 13, 'turn'], [0.36, 0.48, -11, 'turn'], [0.52, 0.72, 5, 'jiggle'], [0.76, 1.0, 17, 'hard']];
+  const HOOK_PLAN_F = [[0.07, 0.2, 13, 'turn'], [0.25, 0.35, -11, 'turn'], [0.39, 0.55, 5, 'jiggle'], [0.6, 0.86, 17, 'hard']];   // × shot length
+  const scalePlan = (plan, d) => plan.map(([a, b, x, k]) => [a * d, b * d, x, k]);
   const OUT_PLAN = [[0.06, 0.2, 13, 'turn'], [0.26, 0.38, -11, 'turn'], [0.42, 0.62, 5, 'jiggle'], [0.66, 0.9, 17, 'hard']];
   // contact clicks for the sound effects (stops of each turn, jiggle ticks)
   function struggleClicks(t0, plan) {
@@ -318,13 +326,13 @@ const Door2D = (function () {
       }
       const a = win(t, STEP_END, STEP_END + 0.12);
       const last = sneakSteps(STEP_END - 0.001).pose;
-      const gl = win(t, STEP_END + 0.03, STEP_END + 0.1), gd = win(t, STEP_END + 0.2, STEP_END + 0.27);
-      const face = gd > 0 ? lerp(0.05, 0.85, o3(gd)) : lerp(0.85, 0.05, o3(gl));
-      const stand = standPose({ crouch: lerp(0.2, 0.06, o3(a)), lean: lerp(0.1, 0.04, a), expr: 'suspicious', face, look: [face < 0.3 ? 0 : 1, 0],
+      const gl = win(t, STEP_END + 0.04, STEP_END + 0.1), gd = win(t, STEP_END + 0.2, STEP_END + 0.26);
+      const face = gd > 0 ? lerp(-0.5, 0.85, o3(gd)) : lerp(0.85, -0.5, o3(gl));   // one last check behind him
+      const stand = standPose({ crouch: lerp(0.3, 0.06, o3(a)), lean: lerp(0.16, 0.04, a), expr: 'suspicious', face, look: [face < 0.3 ? -1 : 1, 0],
         legL: { x: lerp(last.legL.x, -28, o3(a)), y: 150, bend: 0.1 }, legR: { x: lerp(last.legR.x, 30, o3(a)), y: 150, bend: -0.12 },
         armL: { x: -12, y: 104, bend: 0.25 }, handL: 'open' });
       R.pose = stand;
-      const reachU = io(win(t, STEP_END + 0.2, tick));
+      const reachU = io(win(t, Math.min(STEP_END + 0.28, tick - 0.2), tick));
       const hand0 = G.handPos(Object.assign({}, stand, { armR: { x: 30, y: 94 } }), 'R');
       const bow = keyBow(0);
       const tgt = [lerp(hand0[0], bow[0], reachU), lerp(hand0[1], bow[1] - 30 * (1 - win(t, tick - 0.08, tick)), reachU)];
@@ -334,27 +342,13 @@ const Door2D = (function () {
       return R;
     }
     if (name === 'hookJam') {
-      // key in → turn (blocked) → other way (blocked) → jiggle → both hands, hard turn on "won't" → lets go, sighs →
-      // slow look to the camera, deadpan
-      const t0 = S.hookJam, T1 = S.dive;
-      const { deg, push } = struggle(t, t0, HOOK_PLAN);
-      const both = io(win(t, t0 + 0.72, t0 + 0.8)) * (1 - io(win(t, t0 + 1.08, t0 + 1.18)));
-      const letGo = io(win(t, t0 + 1.08, t0 + 1.2));
-      const pose = tryPose(t, deg, push, both);
-      if (letGo > 0) {   // hands drop, half a step back, shoulders sink (exhale), then the look
-        const g0 = G.reach(pose, 'R', keyBow(0));
-        pose.armR = { x: lerp(g0.x, 26, letGo), y: lerp(g0.y, 100, letGo), bend: lerp(0.3, -0.2, letGo) }; pose.handR = letGo > 0.5 ? 'open' : 'grip';
-        pose.x = STAND[0] - 14 * letGo; pose.crouch = 0.06 + 0.06 * bump(t, t0 + 1.12, t0 + 1.32); pose.squash = 1 - 0.03 * bump(t, t0 + 1.12, t0 + 1.32);
-        pose.expr = 'annoyed'; pose.bob = 0; pose.lean = 0.02;
-        const turn = io(win(t, t0 + 1.25, t0 + 1.5));
-        pose.face = lerp(0.85, 0, turn); pose.look = [lerp(1, 0, turn), 0];
-        if (turn > 0.5) pose.expr = 'deadpan';
-        pose.blink = blinkAt(t, [t0 + 1.17]);
-      }
-      R.pose = pose;
+      // key in → turn (blocked) → other way (blocked) → jiggle → braces a hand on the door, hard turn on "won't turn"
+      const t0 = S.hookJam, T1 = S.dive, d = T1 - t0, plan = scalePlan(HOOK_PLAN_F, d);
+      const { deg, push } = struggle(t, t0, plan);
+      const both = io(win(t, t0 + plan[3][0] - 0.06, t0 + plan[3][0] + 0.02));
+      R.pose = tryPose(t, deg, push, both);
       R.keyLock = { deg, tag: true, swing: -deg * 1.1 + 6 * Math.sin((t - t0) * 14) * Math.exp(-(t - t0) * 2) };
-      R.fx = impact(LK0[0], LK0[1], 1 - win(t, t0, t0 + 0.1), 24) * 0;
-      R.cam = { cx: lerp(-50, -40, win(t, t0, T1)), cy: -265, z: lerp(2.15, 2.3, io(win(t, t0, T1))) };
+      R.cam = { cx: lerp(-50, -42, win(t, t0, T1)), cy: -265, z: lerp(2.15, 2.28, io(win(t, t0, T1))) };
       R.cam.cx += noise(t * 30, 7) * 2 * push; R.cam.cy += noise(t * 30, 8) * 2 * push;
       return R;
     }
@@ -405,18 +399,20 @@ const Door2D = (function () {
       return R;
     }
     if (name === 'dive') {
-      // he gestures at the lock with an open hand, eyes on us ("the reason…"), then we push into the keyhole
-      const t0 = S.dive, tZ = t0 + 0.42, T1 = S.reveal;
-      const gest = io(win(t, t0 + 0.02, t0 + 0.2));
-      const pose = standPose({ x: STAND[0] - 14, crouch: 0.06, lean: 0.02, expr: 'deadpan', face: lerp(0, 0.15, gest), look: [0.15, 0], bob: breathe(t),
+      const t0 = S.dive, T1 = S.reveal, tZ = T1 - 0.78;
+      const letGo = io(win(t, t0, t0 + 0.14)), turn = io(win(t, t0 + 0.12, t0 + 0.36)), gest = io(win(t, t0 + 0.42, t0 + 0.6));
+      const pose = standPose({ x: STAND[0] - 14 * letGo, crouch: 0.06 + 0.06 * bump(t, t0 + 0.04, t0 + 0.26), squash: 1 - 0.03 * bump(t, t0 + 0.04, t0 + 0.26),
+        lean: 0.02, expr: turn > 0.5 ? 'deadpan' : 'annoyed', face: lerp(0.85, 0, turn) + 0.15 * gest, look: [lerp(1, 0, turn) + 0.15 * gest, 0], bob: breathe(t),
         armL: { x: -14, y: 104, bend: 0.25 }, handL: 'open' });
-      const pR = G.reach(pose, 'R', [LK0[0] - 40, LK0[1] + 30]);
-      pose.armR = { x: lerp(26, pR.x, gest), y: lerp(100, pR.y, gest), bend: lerp(-0.2, 0.15, gest) }; pose.handR = 'open'; pose.handRotR = -0.2;
-      pose.blink = blinkAt(t, [t0 + 0.3]);
+      const g0 = G.reach(pose, 'R', keyBow(0)), pR = G.reach(pose, 'R', [LK0[0] - 40, LK0[1] + 30]);
+      const rx = lerp(g0.x, 26, letGo), ry = lerp(g0.y, 100, letGo);
+      pose.armR = { x: lerp(rx, pR.x, gest), y: lerp(ry, pR.y, gest), bend: lerp(lerp(0.3, -0.2, letGo), 0.15, gest) };
+      pose.handR = letGo > 0.5 ? 'open' : 'grip'; pose.handRotR = -0.2 * gest;
+      pose.blink = blinkAt(t, [t0 + 0.4]);
       R.pose = pose;
-      R.keyLock = { deg: 0, tag: true, swing: lerp(0, 40, io(win(t, t0 + 0.2, tZ + 0.2))) };
+      R.keyLock = { deg: 0, tag: true, swing: lerp(6 * Math.sin((t - t0) * 12) * Math.exp(-(t - t0) * 4), 40, io(win(t, tZ - 0.2, tZ + 0.2))) };
       const push = io(win(t, t0, tZ));
-      const c1 = { cx: lerp(-40, -10, push), cy: lerp(-265, -285, push), z: lerp(2.3, 2.6, push) };
+      const c1 = { cx: lerp(-42, -10, push), cy: lerp(-265, -285, push), z: lerp(2.28, 2.6, push) };
       const zu = win(t, tZ, T1), ze = zu * zu * (1.2 - 0.2 * zu), cu = o3(Math.min(1, zu * 1.6));
       R.cam = { cx: lerp(c1.cx, LK0[0], cu), cy: lerp(c1.cy, LK0[1] + 6, cu), z: c1.z * Math.pow(95 / c1.z, ze) };
       R.dark = win(t, T1 - 0.16, T1 - 0.02);
@@ -443,7 +439,8 @@ const Door2D = (function () {
     return R;
   }
   function events(info) {   // for the sound effects
-    return { steps: stepTimes(), hook: [info.S.hookJam].concat(struggleClicks(info.S.hookJam, HOOK_PLAN)), out: struggleClicks(info.S.lockedOut, OUT_PLAN) };
+    const hp = scalePlan(HOOK_PLAN_F, info.S.dive - info.S.hookJam);
+    return { steps: stepTimes(), hook: [info.S.hookJam].concat(struggleClicks(info.S.hookJam, hp)), out: struggleClicks(info.S.lockedOut, OUT_PLAN) };
   }
 
   // ---------- frame

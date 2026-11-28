@@ -1,6 +1,14 @@
 # Progress
 
 ## Now
+- **Lock Short v18 (owner 2026-11-28)**: new spoken hook "Your neighbor is sneaking into your house at 2 a.m. But his
+  key won't turn. And the reason is hiding inside." (ElevenLabs Liam, eleven_v4, take A, pauses trimmed, ×1.08,
+  starts at 0.2 s; 216 free-tier credits). Approach = three bursts of quick steps (3+3+2) with stops to look around
+  (behind him, at the camera); key in on "key", struggle fills "won't turn", let-go + deadpan + gesture + keyhole dive
+  on "the reason is hiding inside". Everything after 5.4 s is unchanged from v17 (only 0–5.4 s re-rendered).
+  Files: transcript_v18.json, voice_v18.wav, words-liam18.js (sets window.FILM_ORDER aliases 'neighbor>wrong',
+  'key>lock'), v7_events_liam18.json (ORDER env), door2d_events_v18.json, sfx_v7_liam18.wav.
+  Render: renders/lock-short-v18.mp4. Waiting for owner ✓ + title.
 - **Lock Short v17 (owner ✓ night look, 2026-11-28)**: all outside shots at night (porch lamp + lit window + a little
   moonlight, darkness mask), close low camera, door cropped like a wall. Bush far away: he rises from it and takes six
   careful steps (~2.5 s) out of the dark into the lamp light, glances over his shoulder, then the key goes in on "lock".
