@@ -1,4 +1,5 @@
-"""v13 sound effects (2D outside scenes: tiptoe steps + bush rustle instead of the hook key-scrape). Was: v6 sound effects, all synthesized in code, anchored to words + lock physics (assets/audio/v6_events.json)."""
+"""v13/v17 sound effects (outside-scene timings come from Door2D.events → D2EV json).
+v13 sound effects (2D outside scenes: tiptoe steps + bush rustle instead of the hook key-scrape). Was: v6 sound effects, all synthesized in code, anchored to words + lock physics (assets/audio/v6_events.json)."""
 import numpy as np, soundfile as sf, json, sys
 EV = sys.argv[1] if len(sys.argv) > 1 else 'assets/audio/v6_events.json'; OUT = sys.argv[2] if len(sys.argv) > 2 else 'assets/audio/sfx_v6.wav'
 exec(open('sfx.py').read().split("# key slides")[0].replace("DUR = 39.0", "DUR = 40.0"))
@@ -20,10 +21,16 @@ def step_times():   # foot plants of the three sneaky steps (= Door2D.stepTimes(
 # whoosh on every cut (alternating size)
 for k, ct in enumerate(sorted(S.values())): add(whoosh(0.22 + 0.06 * (k % 3)), ct - 0.12, 0.26 + 0.06 * (k % 2))
 # hook: key slides into the front-door lock, then jams and rattles
-add(rustle(0.4), 0.2, 0.9)
-for st_ in step_times(): add(tiptoe(), st_, 0.8)
-add(metal_tick(2600), S['hookJam'] + F, 0.7)   # key goes in
-for k in range(5): add(clack(), S['hookJam'] + 0.2 + 0.2 * k, 0.55)
+import os
+D2 = json.load(open(os.environ['D2EV'])) if os.environ.get('D2EV') else None
+add(rustle(0.4), 0.24, 0.9)
+for st_ in (D2['steps'] if D2 else step_times()): add(tiptoe(), st_, 0.6)
+if D2:
+    add(metal_tick(2600), D2['hook'][0] + F, 0.7)   # key goes in
+    for c_ in D2['hook'][1:]: add(clack(), c_, 0.5)
+else:
+    add(metal_tick(2600), S['hookJam'] + F, 0.7)
+    for k in range(5): add(clack(), S['hookJam'] + 0.2 + 0.2 * k, 0.55)
 add(buzz(0.4), A['wont'], 0.9)
 add(whoosh(0.9), S['reveal'] - 0.75, 0.7)                      # dive into the lock
 add(scrape(S['pinsA'] - S['reveal'] - 0.1), S['reveal'], 0.8)
@@ -44,10 +51,10 @@ add(scrape(0.55, 1.2), S['wrongIn'], 0.85)
 for c in E['wrongClicks']: add(metal_tick(3000), c + F, 0.5)
 add(buzz(0.35), A['less'], 0.8)
 for k in range(4): add(clack(), A['pin'] + 0.12 * k, 0.5)
-for k in range(5): add(clack(), S['lockedOut'] + 0.08 + 0.2 * k, 0.5)
+for c_ in (D2['out'] if D2 else [S['lockedOut'] + 0.08 + 0.2 * k for k in range(5)]): add(clack(), c_, 0.5)
 add(thud(120, 0.25, 0.8), A['out'], 0.5)
 add(rustle(0.5), S['loop'] + 0.03, 0.8)   # ducks back into the bush
-add(thud(150, 0.12, 1.0), S['doorOpen'] + 0.42, 0.5)   # lands from the cheer jump
+
 out = out[:int(SR * DUR)]
 out = out / np.abs(out).max() * 0.5
 sf.write(OUT, np.stack([out, out], 1), SR); print('sfx ok', round(len(out) / SR, 2))

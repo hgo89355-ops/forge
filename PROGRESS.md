@@ -1,6 +1,14 @@
 # Progress
 
 ## Now
+- **Lock Short v17 (owner ✓ night look, 2026-11-28)**: all outside shots at night (porch lamp + lit window + a little
+  moonlight, darkness mask), close low camera, door cropped like a wall. Bush far away: he rises from it and takes six
+  careful steps (~2.5 s) out of the dark into the lamp light, glances over his shoulder, then the key goes in on "lock".
+  Real struggle (turn blocked → other way → jiggle → hand braced on the door, hard turn on "won't" → lets go, sighs →
+  deadpan look). To fit the walk the voice starts 1.2 s later: transcript_v17.json / voice_v17.wav / words-liam17,
+  events v7_events_liam17.json, SFX sfx_v7_liam17.wav (D2EV=assets/audio/door2d_events_v17.json). The 3D middle is
+  reused from v9 shifted by 36 frames (only the 2D parts were rendered). Render: renders/lock-short-v17.mp4.
+  Rebuild: `python3 build_v7.py assets/transcript_v17.json assets/audio/voice_v17.wav liam17`.
 - **Night look concept (owner 2026-11-28, late)**: owner: too cartoonish → make it NIGHT, no walkway running off to
   the right, crop so the door reads like a wall he's sticking the key into. Built in door2d.js (night palette + porch
   lamp light + falloff; day kept behind window.DOOR2D_DAY). One still sent for approval:

@@ -54,3 +54,4 @@ Caveat: tank and airplane searches matched mostly on titles in the last year (Sh
 - 2026-11-28: lock Short v14 (side-view door, three-step sneak, taller character). Still unposted: owner ✓ + title.
 - 2026-11-28: lock Short v15 (raised side camera, wide sidewalk, star/bug-eye expressions). Unposted: owner ✓ + title.
 - 2026-11-28: lock Short v16 (low close camera, walk + glance, mature faces). Unposted: owner ✓ + title.
+- 2026-11-28: lock Short v17 (night, close crop, 2.5 s walk, real struggle; voice starts at 1.2 s; 28.1 s). Unposted: owner ✓ + title.

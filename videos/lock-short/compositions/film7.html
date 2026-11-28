@@ -4,13 +4,13 @@
     #film-canvas { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
     #film-svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
   </style>
-  <div id="root" data-composition-id="film7" data-width="1080" data-height="1920" data-start="0" data-duration="26.866666666666667">
-    <canvas id="film-canvas" class="clip" data-start="0" data-duration="26.866666666666667" width="1080" height="1920"></canvas>
-    <svg id="film-svg" class="clip" data-start="0" data-duration="26.866666666666667" data-layout-allow-overflow viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="root" data-composition-id="film7" data-width="1080" data-height="1920" data-start="0" data-duration="28.066666666666666">
+    <canvas id="film-canvas" class="clip" data-start="0" data-duration="28.066666666666666" width="1080" height="1920"></canvas>
+    <svg id="film-svg" class="clip" data-start="0" data-duration="28.066666666666666" data-layout-allow-overflow viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
   <script>
     (function () {
-      const DUR = 26.866666666666667;
+      const DUR = 28.066666666666666;
       const film = Film7.mount(document.getElementById('film-canvas'), document.getElementById('film-svg'));
       window.__filmRender = film.renderAt;
       const tl = gsap.timeline({ paused: true });

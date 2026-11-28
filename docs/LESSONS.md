@@ -107,3 +107,8 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - Night look without haze: darken with a normal-blend radial falloff (transparent at the lamp → 70% near-black at the
   edges) and add warmth with an OVERLAY-blend radial gradient. A screen-blend glow washes everything grey.
 - Before a long re-render after a big style change, send the owner ONE still frame to confirm the direction.
+- Need more time at the start? Delay the voice by a whole number of frames (1.2 s = 36 frames), shift the word
+  timings, and reuse the old render's 3D frames shifted by the same count (tpad) — captions shift with them. Only the
+  changed 2D segments need rendering.
+- In door2d.js, bush() has a local `C` array — use PAL (palette alias) inside it or colours come out "undefined"/black.
+- videos/lock-short/package.json is "type":"module": require() the lib/components copies from node scripts instead.
