@@ -44,8 +44,8 @@ Open the detail files below **only when the task needs them**.
   **Personality matters most (owner, 2026-11-25): docs/CHARACTER.md** — overconfident, deadpan, sneaky; signature deadpan
   stare at camera, sneak, yank, pratfall. Read it before writing any scene.
 - Motion: spring physics, nothing linear; something new every 2–3 s. Big word-timed captions (white, black outline,
-  yellow keywords) in the lower third. Sound effects made in code. Voice: ElevenLabs "Liam" (owner OK'd, 2026-11-24),
-  labelled as AI voice; the owner may record his own (videos/<slug>/RECORD_YOUR_VOICE.md).
+  yellow keywords) in the lower third. Sound effects made in code. Voice: ElevenLabs "Liam" (owner OK'd, 2026-11-24)
+  (owner 2026-11-28: no "AI voice" line in descriptions; YouTube's altered-content box = No for our cartoons); the owner may record his own (videos/<slug>/RECORD_YOUR_VOICE.md).
 
 ## Where things are (open only when needed)
 | File | What's in it |

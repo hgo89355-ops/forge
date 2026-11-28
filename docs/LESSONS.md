@@ -129,3 +129,5 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
   before posting (picture, banner, description, keywords), verify by phone, upload as Unlisted, let processing and
   checks finish, then publish; rename the file to the title; turn on auto-dubbing when available.
 - YouTube banners: TV shows the full 2560×1440, laptops a full-width strip (y 508–931), phones only the centre (x 507–2053). Fill the laptop strip's sides with decor so it never looks empty.
+- YouTube Studio (Nov 2026): embedding, subscriptions-feed, remixing, auto-dubbing and altered-content are no longer in
+  Upload defaults — set them per video. "Block links" is now "Hold comments with hashtags and URLs for review".

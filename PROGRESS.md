@@ -1,6 +1,12 @@
 # Progress
 
 ## Now
+- **Channel setup done by the extension (2026-11-28)**: banner + profile picture live, description, 15 keywords, not
+  made for kids, upload defaults (Unlisted, Science & Technology, English, comments held for review), comment filter.
+  Owner removed "AI voice / animated in code" from channel + default video descriptions (owner decision).
+  Still open (owner): country, phone verification (youtube.com/verify → Intermediate features), optional watermark
+  (pick avatar.png). Channel not monetized (needs 500 subs); no ad-category blocking in Studio.
+  Next: upload the lock Short with Prompt B (stays Unlisted) → owner watches → Public.
 - **Channel setup kit (2026-11-28)**: channel/CHANNEL_SETUP_PROMPT.md (paste into the Claude Chrome extension; it sets
   name/handle/description/keywords/branding/upload defaults = Unlisted, category, comments, playlists; stops for any
   password/code), channel/avatar.png + channel/banner.png (made in code), channel/POST_LAUNCH_ANALYSIS_PROMPT.md

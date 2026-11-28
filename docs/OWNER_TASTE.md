@@ -52,3 +52,4 @@ them by default so the owner doesn't have to repeat them. Newest notes win if an
 - Re-render only the changed parts (splice), never the whole video when avoidable.
 - Report in plain words; ask only for real decisions.
 - Channel branding is channel-wide (owner 2026-11-28): host + machine cutaway cards on a blueprint background (channel/make_brand.cjs), not one video's scene.
+- Descriptions: don't mention "AI voice" or "animated in code" (owner 2026-11-28: irrelevant). Keep them about the topic.
