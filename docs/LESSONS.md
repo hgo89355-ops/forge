@@ -102,3 +102,5 @@ Add 1–3 lines at the end of every run. Newest at the bottom.
 - 2D staging: owner wants to SEE where he stands. Raise the oblique camera (ZY ≈ 0.5) so the ground plane, sidewalk
   and step read clearly; side-on/edge-on ground (ZY < 0.2) looks like he stands on a thin strip.
 - YouTube links can't be fetched here, but ViewMax analyze_video can watch them (≈2 credits for a Short; slow, ~10 min).
+- Owner taste (2026-11-28): the camera should sit LOW and CLOSE, like a person standing on the walkway — not high
+  and far. Expressions must read mature: small eyes, narrowed lids, small mouths; avoid star eyes, bug eyes, teeth.

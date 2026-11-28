@@ -15,15 +15,15 @@ def rustle(d=0.45):
     return n * am * 0.35
 def tiptoe(): return thud(260, 0.09, 1.4) * 0.5
 def step_times():   # foot plants of the three sneaky steps (= Door2D.stepTimes()) + the planting step at the door
-    return [0.6, 0.84, 1.08, 1.2]
+    return [0.49, 0.71, 0.93, 1.02]
 
 # whoosh on every cut (alternating size)
 for k, ct in enumerate(sorted(S.values())): add(whoosh(0.22 + 0.06 * (k % 3)), ct - 0.12, 0.26 + 0.06 * (k % 2))
 # hook: key slides into the front-door lock, then jams and rattles
-add(rustle(0.4), 0.33, 0.9)
+add(rustle(0.4), 0.2, 0.9)
 for st_ in step_times(): add(tiptoe(), st_, 0.8)
-add(metal_tick(2600), S['hookJam'] - 0.15 + F, 0.7)
-for k in range(6): add(clack(), S['hookJam'] + 0.1 + 0.2 * k, 0.55)
+add(metal_tick(2600), S['hookJam'] + F, 0.7)   # key goes in
+for k in range(5): add(clack(), S['hookJam'] + 0.2 + 0.2 * k, 0.55)
 add(buzz(0.4), A['wont'], 0.9)
 add(whoosh(0.9), S['reveal'] - 0.75, 0.7)                      # dive into the lock
 add(scrape(S['pinsA'] - S['reveal'] - 0.1), S['reveal'], 0.8)

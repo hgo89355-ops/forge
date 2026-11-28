@@ -28,7 +28,7 @@ const Door2D = (function () {
   const noise = (t, seed) => { const i = Math.floor(t), fr = t - i, a = hash(i + seed * 17.3), b = hash(i + 1 + seed * 17.3), u = fr * fr * (3 - 2 * fr); return a + (b - a) * u - 0.5; };
 
   // ---------- projection (oblique 3/4 side view)
-  const KX = 0.62, KY = -0.12, ZX = -0.75, ZY = 0.5;   // camera raised (owner 2026-11-28: see the sidewalk he stands on)
+  const KX = 1, KY = 0, ZX = -0.2, ZY = 0.3;   // owner 2026-11-28: low camera, house front facing us, between the bush and the door
   const P3 = (xw, y, z) => [xw * KX + z * ZX, y + xw * KY + z * ZY];
   const XD = [KX, KY], UP = [0, -1], ZD = [ZX, ZY];
   const ZN = Math.hypot(ZX, ZY), ZDN = [ZX / ZN, ZY / ZN];
@@ -46,7 +46,7 @@ const Door2D = (function () {
   const LKW = [36, -300];                       // lock cylinder on the wall (xw, y)
   const LK0 = P3(LKW[0], LKW[1], 7);            // front face of the cylinder (screen)
   const LK = LK0;
-  const W_STAND = [36, 150], W_HIDE = [-300, 600], W_BUSH = [-370, 690];   // (xw, z) on the ground
+  const W_STAND = [-62, 175], W_HIDE = [-610, 205], W_BUSH = [-650, 410];   // (xw, z) on the ground
   const gpos = (w) => P3(w[0], 0, w[1]);
   const STAND = gpos(W_STAND), HIDE = gpos(W_HIDE);
   const walkAt = (s) => [lerp(HIDE[0], STAND[0], s), lerp(HIDE[1], STAND[1], s)];   // s = 0 (bush) … 1 (door), linear on screen
@@ -89,22 +89,18 @@ const Door2D = (function () {
   }
   function ground() {
     let o = poly([P3(-3000, 0, 0), P3(3000, 0, 0), [6000, 6000], [-6000, 6000]], '#86C25E', 0);
-    o += line(P3(-3000, 2, 0), P3(3000, 2, 0), INK, 6);
-    // grass tufts (not on the sidewalk / step)
-    for (let i = 0; i < 70; i++) {
-      const xw = -1300 + hash(i) * 2600, z = 30 + hash(i + 9) * 1300;
-      if (xw > -230 && xw < 470 && z < 240) continue;
-      if (xw > -175 && xw < 415) continue;
-      const q = P3(xw, 0, z);
+    // walkway along the house front (wide concrete slabs)
+    o += poly(groundQuad(-3000, 3000, 0, 330), '#DCD6CB', 6);
+    for (let x = -3000; x < 3000; x += 170) o += line(P3(x, 0, 0), P3(x, 0, 330), '#BDB4A5', 4);
+    o += line(P3(-3000, 0, 165), P3(3000, 0, 165), '#C9C1B3', 3);
+    // front step at the door
+    o += poly(groundQuad(-40, 280, 0, 110, -16), '#EAE5DC', 5) + poly([P3(-40, -16, 110), P3(280, -16, 110), P3(280, 0, 110), P3(-40, 0, 110)], '#BDB6A8', 5);
+    o += poly(groundQuad(30, 210, 18, 92, -16), '#7A4E3A', 4);   // doormat
+    // grass tufts on the lawn
+    for (let i = 0; i < 60; i++) {
+      const xw = -2400 + hash(i) * 4800, z = 380 + hash(i + 9) * 1600, q = P3(xw, 0, z);
       o += `<path d="M${f(q[0] - 12)},${f(q[1])} L${f(q[0] - 4)},${f(q[1] - 20)} L${f(q[0] + 2)},${f(q[1] - 4)} L${f(q[0] + 10)},${f(q[1] - 22)} L${f(q[0] + 14)},${f(q[1])}" fill="none" stroke="#5E9E43" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`;
     }
-    // sidewalk from the yard to the door (wide concrete slabs) + a front step / landing
-    o += poly(groundQuad(-150, 390, 200, 3000), '#DCD6CB', 6);
-    for (let z = 330; z < 3000; z += 150) o += line(P3(-146, 0, z), P3(386, 0, z), '#B9B1A3', 5);
-    o += line(P3(120, 0, 210), P3(120, 0, 3000), '#B9B1A3', 4);
-    o += poly(groundQuad(-200, 440, 0, 210), '#E7E2D8', 6);
-    o += poly([P3(-200, 0, 210), P3(440, 0, 210), P3(440, 22, 210), P3(-200, 22, 210)], '#BDB6A8', 5);
-    o += poly(groundQuad(25, 215, 20, 110), '#7A4E3A', 4);   // doormat
     return o;
   }
   function bush(c, w, h, wob, seed) {   // flat cartoon bush: leaf-balls merged into one outlined mass; c = base centre (screen)
@@ -154,15 +150,14 @@ const Door2D = (function () {
     return o;
   }
   // key stuck in the lock, seen from the side: short stem out of the cylinder, bow in the plane (z, v); twisting turns v
-  function keyBow() { return [LK0[0] + ZDN[0] * 36, LK0[1] + ZDN[1] * 36]; }
+  const rotK = (deg, dx, dy) => { const a = (deg * Math.PI) / 180, c = Math.cos(a), s_ = Math.sin(a); return [LK0[0] + dx * c - dy * s_, LK0[1] + dx * s_ + dy * c]; };
+  function keyBow(deg = 0) { return rotK(deg, 0, -34); }
   function keyInLock(deg, tag, swing) {
-    const a = (deg * Math.PI) / 180, V = [Math.sin(a) * XD[0] * 1.9, -Math.cos(a) + Math.sin(a) * XD[1] * 1.9];
-    const st = [LK0[0] + ZDN[0] * 20, LK0[1] + ZDN[1] * 20], C = keyBow();
-    let o = line(LK0, st, INK, 15) + line(LK0, st, '#C9D0D8', 7);
-    o += poly(ring(C, ZDN, V, 18), '#D3D9E0', 5);
-    const hole = [C[0] + ZDN[0] * 8, C[1] + ZDN[1] * 8];
-    o += poly(ring(hole, ZDN, V, 4.5, 14), '#F0E4C6', 3);
-    if (tag) o += tagAt(hole[0] - 4, hole[1] + 3, swing);
+    const st = rotK(deg, 0, -20), C = keyBow(deg), hole = rotK(deg, 0, -40);
+    let o = line([LK0[0], LK0[1] - 2], st, INK, 15) + line([LK0[0], LK0[1] - 2], st, '#C9D0D8', 7);
+    o += `<circle cx="${f(C[0])}" cy="${f(C[1])}" r="17" fill="#D3D9E0" stroke="${INK}" stroke-width="5"/>`;
+    o += `<circle cx="${f(hole[0])}" cy="${f(hole[1])}" r="4.5" fill="#F0E4C6" stroke="${INK}" stroke-width="3"/>`;
+    if (tag) o += tagAt(hole[0], hole[1], swing);
     return o;
   }
   function tagAt(hx, hy, swing) {
@@ -181,11 +176,10 @@ const Door2D = (function () {
     return o;
   }
   // effects
-  function twistLines(a) {   // motion arcs around the key's axis while he twists
+  function twistLines(a) {   // motion arcs beside the key while he twists
     if (a <= 0.02) return '';
-    const C = keyBow();
-    const arc = (R, a0, a1) => { const p = []; for (let i = 0; i <= 10; i++) { const t = a0 + (a1 - a0) * (i / 10); p.push([C[0] + R * (Math.cos(t) * UP[0] + Math.sin(t) * XD[0] * 1.9), C[1] + R * (Math.cos(t) * UP[1] + Math.sin(t) * XD[1] * 1.9)]); } return `<polyline points="${pts(p)}" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`; };
-    return `<g opacity="${f(clamp01(a))}">${arc(34, 0.25, 1.35)}${arc(46, 0.35, 1.25)}</g>`;
+    const [x, y] = LK0;
+    return `<g opacity="${f(clamp01(a))}" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"><path d="M${f(x + 28)},${f(y - 50)} A46,46 0 0 1 ${f(x + 46)},${f(y - 18)}"/><path d="M${f(x + 38)},${f(y - 62)} A60,60 0 0 1 ${f(x + 60)},${f(y - 22)}"/></g>`;
   }
   function impact(x, y, a, r0) {
     if (a <= 0.02) return '';
@@ -214,7 +208,7 @@ const Door2D = (function () {
   }
   const footAt = (pose, wp) => ({ x: (wp[0] - pose.x) / pose.s, y: 150 + (wp[1] - pose.y) / pose.s });
   // three sneaky tiptoe steps: step – pause rhythm, big knee lift on the stepping leg only, body rises on each step
-  const STEP_T0 = 0.42, STEP_DUR = 0.18, STEP_PAUSE = 0.06;
+  const STEP_T0 = 0.3, STEP_DUR = 0.19, STEP_PAUSE = 0.03;
   function stepTimes() { return [0, 1, 2].map((k) => STEP_T0 + k * (STEP_DUR + STEP_PAUSE) + STEP_DUR); }   // foot plants (for SFX)
   const STEP_END = STEP_T0 + 3 * (STEP_DUR + STEP_PAUSE) - STEP_PAUSE;
   // three big sneaky steps along the walk line; feet are tracked in world space so the planted foot never slides
@@ -225,17 +219,15 @@ const Door2D = (function () {
     const movW = walkAt((k - 0.5 + 2 * e) / 3), plW = walkAt((k + 0.5) / 3);
     const sw = k % 2 === 0 ? 1 : -1;
     const pose = P({
-      x: body[0], y: body[1], crouch: 0.42 - 0.14 * lift, bob: 0, lean: 0.22 + 0.06 * lift, headDX: 12, headTilt: 0.05 * sw * lift, expr: 'suspicious',
-      armR: { x: 40 + 14 * sw * e, y: 16, bend: -0.75 }, handR: 'fist', handRotR: 1.1,
-      armL: { x: 28 - 14 * sw * e, y: 24, bend: 0.75 }, handL: 'open', handRotL: 1.2,
-      face: 0.85, look: [1, 0.15],
+      x: body[0], y: body[1], crouch: 0.22 - 0.1 * lift, bob: 0, lean: 0.12 + 0.03 * lift, headDX: 6, headTilt: 0.02 * sw * lift, expr: 'suspicious',
+      armR: { x: 34 + 16 * sw * (2 * e - 1), y: 92, bend: -0.25 }, handR: 'fist',
+      armL: { x: -14 - 18 * sw * (2 * e - 1), y: 104, bend: 0.25 }, handL: 'open',
+      face: 0.85, look: [1, 0.1],
     });
-    const moving = Object.assign(footAt(pose, movW), { bend: -0.2 - 0.75 * lift, rot: -0.45 * lift }); moving.y -= 80 * lift;
+    const moving = Object.assign(footAt(pose, movW), { bend: -0.15 - 0.5 * lift, rot: -0.3 * lift }); moving.y -= 48 * lift;
     const planted = Object.assign(footAt(pose, plW), { bend: -0.12 });
     Object.assign(pose, k % 2 === 0 ? { legR: moving, legL: planted } : { legL: moving, legR: planted });
     // in the pauses his eyes dart: pause 1 → glance back at the camera, pause 2 → up at the door
-    if (k === 0 && u >= 1) { const g1 = bump(t, ts + STEP_DUR, ts + STEP_DUR + STEP_PAUSE + 0.02); pose.face = lerp(0.85, 0.05, Math.min(1, g1 * 1.6)); pose.look = [lerp(1, -0.2, g1), 0]; }
-    if (k === 1 && u >= 1) { pose.look = [1, -0.4]; pose.headTilt = -0.06; }
     return { pose };
   }
   // the key-twist rhythm: each attempt winds up to the clack, then snaps back (the pins block it)
@@ -255,7 +247,7 @@ const Door2D = (function () {
       legL: { x: -34, y: 150, bend: 0.4 }, legR: { x: 30, y: 150, bend: -0.4 }, headTilt: -0.04 * look,
     });
   }
-  const CAM_WIDE = { cx: -375, cy: 60, z: 1.08 }, CAM_MED = { cx: -25, cy: -240, z: 1.6 };
+  const CAM_WIDE = { cx: -330, cy: -250, z: 1.22 }, CAM_MED = { cx: -40, cy: -262, z: 1.75 };
   const camMix = (a, b, u) => ({ cx: lerp(a.cx, b.cx, u), cy: lerp(a.cy, b.cy, u), z: a.z * Math.pow(b.z / a.z, u) });
   const standPose = (o) => P(Object.assign({ x: STAND[0], y: STAND[1], legL: { x: -30, y: 150, bend: 0.1 }, legR: { x: 30, y: 150, bend: -0.12 } }, o));
 
@@ -264,7 +256,7 @@ const Door2D = (function () {
     const R = { cam: CAM_MED, pose: null, keyLock: null, keyHand: null, fx: '', bushWob: 0, open: 0 };
     if (name === 'loop') {
       const t0 = S.loop, T = info.DUR;
-      R.cam = camMix({ cx: -375, cy: 70, z: 1.0 }, CAM_WIDE, io(win(t, t0, T)));
+      R.cam = camMix({ cx: -330, cy: -245, z: 1.15 }, CAM_WIDE, io(win(t, t0, T)));
       R.bushWob = bump(t, t0 + 0.05, t0 + 0.45) * 0.8;
       R.pose = hookPeek(t, o3(win(t, t0 + 0.38, T - 0.18)), 1);
       R.pose.blink = blinkAt(t, [t0 + 0.2]);
@@ -272,77 +264,72 @@ const Door2D = (function () {
       return R;
     }
     if (name === 'hookIn') {
-      // 0–0.36 peek (eyes dart back, then at the door) → duck + spring out → three sneaky steps → reach → key in at the tick
-      const tick = S.hookJam - 0.15 + 1 / 30;
-      const look = t < 0.1 ? 1 : t < 0.14 ? lerp(1, -1, o3(win(t, 0.1, 0.14))) : t < 0.27 ? -1 : lerp(-1, 1, o3(win(t, 0.27, 0.31)));
-      R.cam = camMix(CAM_WIDE, CAM_MED, io(win(t, 0.45, 1.3)));
-      R.bushWob = bump(t, 0.34, 0.6) * 0.9;
-      if (t < 0.34) { R.pose = hookPeek(t, 1, look); R.pose.blink = blinkAt(t, [0.19]); if (t > 0.3) R.pose.expr = 'confident'; R.keyHand = { side: 'R', deg: -20, tag: true }; return R; }
-      if (t < STEP_T0) {   // anticipation: dip, then spring up out of the crouch
-        const u = win(t, 0.34, STEP_T0);
-        const p = hookPeek(t, 1 - 0.3 * Math.sin(Math.min(1, u * 1.6) * Math.PI) * (u < 0.62 ? 1 : 0), 1);
-        if (u > 0.62) { p.y = HIDE[1]; p.crouch = lerp(1, 0.45, sp(win(u, 0.62, 1))); }
-        p.expr = 'confident'; delete p.groundY; R.pose = p; R.keyHand = { side: 'R', deg: -20, tag: true }; return R;
+      // peek over the bush → rise out → a few steps to the door → stop, glance sideways (anyone watching?) → key to the lock
+      const tick = S.hookJam;
+      const look = t < 0.1 ? 1 : t < 0.13 ? lerp(1, -1, o3(win(t, 0.1, 0.13))) : t < 0.19 ? -1 : 1;
+      R.cam = camMix(CAM_WIDE, CAM_MED, io(win(t, 0.3, 1.2)));
+      R.bushWob = bump(t, 0.2, 0.42) * 0.8;
+      if (t < 0.22) { R.pose = hookPeek(t, 1, look); R.keyHand = { side: 'R', deg: -20, tag: true }; return R; }
+      if (t < STEP_T0) {   // rises out from behind the bush
+        const u = win(t, 0.22, STEP_T0);
+        const p = hookPeek(t, 1, 1); p.y = lerp(HIDE[1] + 80, HIDE[1], o3(u)); p.crouch = lerp(1, 0.22, o3(u)); p.expr = 'suspicious';
+        R.pose = p; R.keyHand = { side: 'R', deg: -20, tag: true }; return R;
       }
-      if (t < STEP_END) { const sn = sneakSteps(t); R.pose = sn.pose; R.keyHand = { side: 'R', deg: -20, tag: true }; return R; }
-      // arrive: plant, rise out of the crouch, carry the key to the lock and push it in
-      const a = win(t, STEP_END, STEP_END + 0.14);
+      if (t < STEP_END) { R.pose = sneakSteps(t).pose; R.keyHand = { side: 'R', deg: 10, tag: true }; return R; }
+      // stop at the door: feet settle, glance back over his shoulder, then a look to the camera, then at the lock
+      const a = win(t, STEP_END, STEP_END + 0.12);
       const last = sneakSteps(STEP_END - 0.001).pose;
-      const stand = standPose({ crouch: lerp(0.45, 0.08, o3(a)), lean: lerp(0.24, 0.07, a), expr: 'confident', look: [1, 0.1],
+      const gl = win(t, STEP_END + 0.04, STEP_END + 0.12), gr = win(t, STEP_END + 0.16, STEP_END + 0.22), gd = win(t, STEP_END + 0.26, STEP_END + 0.32);
+      const face = gd > 0 ? lerp(0.05, 0.85, o3(gd)) : gr > 0 ? lerp(-0.6, 0.05, o3(gr)) : lerp(0.85, -0.6, o3(gl));
+      const stand = standPose({ crouch: lerp(0.22, 0.06, o3(a)), lean: lerp(0.12, 0.04, a), expr: 'suspicious', face, look: [face < 0 ? -1 : face < 0.3 ? 0 : 1, 0],
+        headTilt: face < 0 ? 0.05 : 0,
         legL: { x: lerp(last.legL.x, -28, o3(a)), y: 150, bend: 0.1 }, legR: { x: lerp(last.legR.x, 30, o3(a)), y: 150, bend: -0.12 },
-        armL: { x: -10, y: 96, bend: 0.4 }, handL: 'open' });
+        armL: { x: -12, y: 104, bend: 0.25 }, handL: 'open' });
       R.pose = stand;
-      const reachU = io(win(t, STEP_END + 0.02, tick));
-      const hand0 = G.handPos(Object.assign({}, stand, { armR: { x: 40, y: 16 } }), 'R');
-      const bow = keyBow();
-      const tgt = [lerp(hand0[0], bow[0] - 46 * (1 - win(t, tick - 0.1, tick)), reachU), lerp(hand0[1], bow[1], reachU)];
-      if (t < tick) {
-        withGrip(stand, 'R', tgt, 1); stand.handR = 'fist';
-        R.keyHand = { at: tgt, deg: lerp(-20, 0, reachU), tag: true, clipX: LK0[0] };
-      } else {
-        withGrip(stand, 'R', bow, 1);
-        R.keyLock = { deg: 0, tag: true, swing: 14 * Math.sin((t - tick) * 26) * Math.exp(-(t - tick) * 6) };
-        R.fx += impact(LK0[0] + 4, LK0[1], 1 - win(t, tick, tick + 0.12), 30);
-      }
+      const reachU = io(win(t, STEP_END + 0.3, tick));
+      const hand0 = G.handPos(Object.assign({}, stand, { armR: { x: 34, y: 92 } }), 'R');
+      const bow = keyBow(0);
+      const tgt = [lerp(hand0[0], bow[0], reachU), lerp(hand0[1], bow[1] - 30 * (1 - win(t, tick - 0.08, tick)), reachU)];
+      withGrip(stand, 'R', tgt, 1); stand.handR = 'fist';
+      R.keyHand = { at: tgt, deg: lerp(10, 90, reachU), tag: true };
       return R;
     }
     if (name === 'hookJam' || name === 'lockedOut') {
       const t0 = name === 'hookJam' ? S.hookJam : S.lockedOut;
-      const n = name === 'hookJam' ? 6 : 5, c0 = name === 'hookJam' ? t0 + 0.1 : t0 + 0.08;
+      const n = 5, c0 = name === 'hookJam' ? t0 + 0.2 : t0 + 0.08;
       const clacks = Array.from({ length: n }, (_, k) => c0 + 0.2 * k);
       const last = clacks[n - 1];
       const twistEnd = name === 'hookJam' ? last + 0.1 : last + 0.06;
       const tw = twistAt(t, clacks);
       const effort = win(t, t0, last);                      // more desperate each try
-      const deg = tw * (22 + 16 * effort);
+      const deg = tw * (16 + 12 * effort);
       const both = name === 'hookJam' ? io(win(t, A.wont.start - 0.02, A.wont.start + 0.12)) : io(win(t, clacks[2] - 0.05, clacks[2] + 0.1));
       const footUp = o3(win(t, clacks[3] - 0.08, clacks[3] + 0.04));
       const shake = noise(t * 40, 3) * 2 * (0.4 + effort) * (t < twistEnd + 0.05 ? 1 : 0);
       const pose = standPose({
         x: STAND[0] - 10 * footUp, crouch: 0.1 + 0.12 * tw, lean: 0.06 + 0.05 * tw - 0.26 * footUp, squash: 1 - 0.05 * tw + 0.02 * footUp,
         headTilt: -0.07 * tw + 0.05 * footUp, headDX: 4 * tw, look: [1, 0.1],
-        expr: effort < 0.3 ? 'determined' : 'strain', bob: shake,
+        expr: effort < 0.35 ? 'determined' : effort < 0.7 ? 'annoyed' : 'effort', bob: shake,
         legL: { x: -34 - 14 * footUp, y: 150, bend: 0.12 + 0.2 * footUp },
         armL: { x: -12, y: 96, bend: 0.4 }, handL: 'open',
       });
       // planted foot against the door
       const fd = footAt(pose, P3(LKW[0] - 6, -120, 0));
       pose.legR = { x: lerp(30, fd.x, footUp), y: lerp(150, fd.y, footUp), bend: lerp(-0.12, -0.6, footUp), rot: -1.2 * footUp };
-      const bow = keyBow();
+      const bow = keyBow(deg);
       withGrip(pose, 'R', bow, 1); pose.handRotR = (deg * Math.PI) / 180 * 0.8;
       withGrip(pose, 'L', [bow[0] - 20, bow[1] + 10], both);
       R.keyLock = { deg, tag: true, swing: -deg * 1.2 + 8 * Math.sin(t * 19) * effort };
       R.fx += twistLines(tw * 0.9);
       for (const c of clacks) R.fx += impact(LK0[0] + 4, LK0[1], 1 - win(t, c, c + 0.12), 28);
-      R.fx += sweat(pose.x + 40, -600 + 50 * win(t, clacks[2], clacks[2] + 0.3), bump(t, clacks[2], clacks[2] + 0.35));
-      R.fx += sweat(pose.x - 50, -620 + 50 * win(t, clacks[4], clacks[4] + 0.3), bump(t, clacks[4], clacks[4] + 0.35));
-      R.cam = { cx: lerp(-25, -15, win(t, t0, twistEnd)), cy: -240, z: lerp(1.6, 1.8, io(win(t, t0, twistEnd + 0.4))) };
+      if (name === 'hookJam') R.fx += impact(LK0[0], LK0[1], 1 - win(t, t0, t0 + 0.12), 26);   // key goes in
+      R.cam = { cx: lerp(-40, -25, win(t, t0, twistEnd)), cy: -262, z: lerp(1.75, 1.9, io(win(t, t0, twistEnd + 0.4))) };
       R.cam.cx += noise(t * 30, 7) * 3 * tw; R.cam.cy += noise(t * 30, 8) * 3 * tw;
       R.pose = pose;
       if (name === 'hookJam') {   // freeze (0.1 s) in the yank pose → slow head turn to camera → deadpan hold
         const fz = twistEnd + 0.1;
         if (t > twistEnd) {
-          pose.bob = 0; pose.expr = 'strain';
+          pose.bob = 0; pose.expr = 'effort';
           const turn = io(win(t, fz, fz + 0.26));
           pose.face = lerp(0.85, 0, turn); pose.look = [lerp(1, 0, turn), lerp(0.1, 0, turn)]; pose.headTilt = lerp(pose.headTilt, 0, turn);
           if (turn > 0.35) pose.expr = 'deadpan';
@@ -354,19 +341,19 @@ const Door2D = (function () {
       const popT = A.out.start - 0.1;
       if (t >= twistEnd && t < popT) {
         const yank = io(win(t, twistEnd, popT));
-        pose.lean = -0.26 - 0.2 * yank; pose.expr = 'strain'; pose.bob = noise(t * 50, 4) * 3;
+        pose.lean = -0.26 - 0.2 * yank; pose.expr = 'effort'; pose.bob = noise(t * 50, 4) * 3;
         pose.x = STAND[0] - 10 - 14 * yank;
-        withGrip(pose, 'R', bow, 1); withGrip(pose, 'L', [bow[0] - 20, bow[1] + 10], 1);
+        const b0 = keyBow(0); withGrip(pose, 'R', b0, 1); withGrip(pose, 'L', [b0[0] - 20, b0[1] + 10], 1);
         R.keyLock = { deg: 0, tag: true, swing: 10 * Math.sin(t * 30) };
-        R.fx = sweat(pose.x + 44, -600 + 40 * yank, 0.9);
+        R.fx = '';
       }
       if (t >= popT) {
         const fl = win(t, popT, A.out.start), land = win(t, A.out.start, A.out.start + 0.25);
-        const g = gpos([lerp(36, 10, o3(fl)), lerp(W_STAND[1] + 12, W_STAND[1] + 150, o3(fl))]);
+        const g = gpos([lerp(W_STAND[0] - 10, W_STAND[0] - 190, o3(fl)), W_STAND[1] + 20 * o3(fl)]);
         const air = Math.sin(fl * Math.PI) * 80;
         const p2 = P({
           x: g[0], y: g[1] - air, sit: o3(fl), squash: 1 - 0.18 * bump(t, A.out.start, A.out.start + 0.16), lean: lerp(-0.5, -0.05, sp(land)), crouch: 0,
-          expr: 'bugeyed', face: lerp(0.85, 0.3, fl), look: [0.6, -0.4],
+          expr: 'surprised', face: lerp(0.85, 0.3, fl), look: [0.6, -0.4],
           legL: { x: lerp(-30, 70, o3(fl)), y: lerp(150, 90, fl), bend: 0.3, rot: -0.9 * fl },
           legR: { x: lerp(60, 110, o3(fl)), y: lerp(100, 40, fl), bend: -0.3, rot: -1.1 * fl },
           armL: { x: lerp(60, -70, o3(fl)), y: lerp(-10, 40, o3(fl)), bend: 0.4 }, handL: 'open',
@@ -380,7 +367,7 @@ const Door2D = (function () {
           p2.legL = { x: lerp(70, 92, sp(land)), y: lerp(90, 150, o3(land)), bend: 0.35, rot: lerp(-0.9, -0.35, land) };
           p2.legR = { x: lerp(110, 132, sp(land)), y: lerp(40, 146, o3(land)), bend: 0.2, rot: lerp(-1.1, -0.45, land) };
           p2.face = lerp(0.3, 0, turn); p2.look = [lerp(0.6, 0, turn), lerp(-0.4, 0, turn)];
-          p2.expr = turn > 0.4 ? 'deadpan' : 'bugeyed';
+          p2.expr = turn > 0.4 ? 'deadpan' : 'surprised';
           p2.blink = blinkAt(t, [A.out.start + 0.3]);
         }
         R.pose = p2;
@@ -388,7 +375,7 @@ const Door2D = (function () {
         R.keyLock = null;
         R.keyHand = { at: [hp[0] + 4, hp[1] - 6], deg: lerp(0, -120, o3(fl)) + (land > 0 ? -10 * win(t, A.out.start, A.out.start + 0.3) : 0), tag: true, swing: 20 * Math.sin(t * 22) * Math.exp(-(t - popT) * 3) };
         R.fx = impact(LK0[0] + 4, LK0[1], 1 - win(t, popT, popT + 0.14), 30) + impact(g[0], g[1] - 70, 1 - win(t, A.out.start, A.out.start + 0.16), 60);
-        R.cam = camMix({ cx: -15, cy: -240, z: 1.8 }, { cx: -170, cy: -180, z: 1.4 }, o3(win(t, popT, A.out.start + 0.05)));
+        R.cam = camMix({ cx: -25, cy: -262, z: 1.9 }, { cx: -150, cy: -200, z: 1.55 }, o3(win(t, popT, A.out.start + 0.05)));
         const sh = (1 - win(t, A.out.start, A.out.start + 0.25)) * (t >= A.out.start ? 1 : 0);
         R.cam.cx += noise(t * 60, 9) * 14 * sh; R.cam.cy += noise(t * 60, 10) * 14 * sh;
       }
@@ -405,18 +392,18 @@ const Door2D = (function () {
       });
       const fd = footAt(pose, P3(LKW[0] - 6, -120, 0));
       pose.legR = { x: lerp(fd.x, 30, drop), y: lerp(fd.y, 150, drop), bend: lerp(-0.6, -0.12, drop), rot: -1.2 * (1 - drop) };
-      const pR = G.reach(pose, 'R', [LK0[0] - 30, LK0[1] + 42]);
-      const g0 = G.reach(pose, 'R', keyBow());
+      const pR = G.reach(pose, 'R', [LK0[0] - 44, LK0[1] + 24]);
+      const g0 = G.reach(pose, 'R', keyBow(0));
       pose.armR = { x: lerp(g0.x, pR.x, pt), y: lerp(g0.y, pR.y, pt), bend: lerp(0.3, 0.1, pt) };
       pose.handR = pt > 0.4 ? 'point' : 'grip'; pose.handRotR = lerp(0, -0.3, pt);
       pose.blink = blinkAt(t, [t0 + 0.3]);
       R.pose = pose;
-      R.keyLock = { deg: 0, tag: true, swing: lerp(4 * Math.sin(t * 9), 55, io(win(t, t0 + 0.25, tZ + 0.2))) };
+      R.keyLock = { deg: 0, tag: true, swing: lerp(4 * Math.sin(t * 9), 40, io(win(t, t0 + 0.25, tZ + 0.2))) };
       // camera: slow push → exponential dive into the keyway beside the key stem
       const push = io(win(t, t0, tZ));
-      const c1 = { cx: lerp(-15, 0, push), cy: lerp(-240, -270, push), z: lerp(1.8, 2.2, push) };
+      const c1 = { cx: lerp(-25, 0, push), cy: lerp(-262, -285, push), z: lerp(1.9, 2.3, push) };
       const zu = win(t, tZ, T1), ze = zu * zu * (1.2 - 0.2 * zu), cu = o3(Math.min(1, zu * 1.6));
-      R.cam = { cx: lerp(c1.cx, LK0[0] + 1, cu), cy: lerp(c1.cy, LK0[1] - 6, cu), z: c1.z * Math.pow(95 / c1.z, ze) };
+      R.cam = { cx: lerp(c1.cx, LK0[0], cu), cy: lerp(c1.cy, LK0[1] + 6, cu), z: c1.z * Math.pow(95 / c1.z, ze) };
       R.dark = win(t, T1 - 0.16, T1 - 0.02);
       return R;
     }
@@ -424,20 +411,18 @@ const Door2D = (function () {
       const t0 = S.doorOpen, T1 = S.wrongIn;
       R.open = Math.min(1, sp(win(t, t0 + 0.04, t0 + 0.5), 0.55));
       R.keyLock = R.open < 0.02 ? { deg: 90, tag: false, swing: 0 } : null;
-      const ant = bump(t, t0, t0 + 0.14), jump = win(t, t0 + 0.1, t0 + 0.42), land = win(t, t0 + 0.42, T1);
-      const air = Math.sin(clamp01(jump) * Math.PI) * 120 * (jump > 0 && jump < 1 ? 1 : 0);
-      const up = io(win(t, t0 + 0.06, t0 + 0.2));
-      const tuck = bump(t, t0 + 0.14, t0 + 0.42);
+      const look = io(win(t, t0 + 0.08, t0 + 0.24));          // eyes go to the camera: told you
+      const pump = sp(win(t, t0 + 0.2, t0 + 0.42), 0.8);       // one small fist pump at the hip
       const pose = standPose({
-        y: STAND[1] - air, crouch: 0.5 * ant + 0.35 * bump(t, t0 + 0.42, t0 + 0.6), squash: 1 + 0.12 * bump(t, t0 + 0.1, t0 + 0.3) - 0.12 * bump(t, t0 + 0.42, t0 + 0.56),
-        expr: t < t0 + 0.08 ? 'shocked' : t < t0 + 0.45 ? 'starstruck' : 'joy', face: lerp(0.85, 0.2, up), look: [0, -0.3],
-        armL: { x: lerp(-10, -112, up), y: lerp(96, -118, up), bend: lerp(0.4, 0.12, up) }, armR: { x: lerp(28, 112, up), y: lerp(96, -118, up), bend: lerp(-0.4, -0.12, up) }, handL: 'fist', handR: 'fist',
-        legL: { x: -26 - 22 * tuck, y: 150 - 45 * tuck, bend: 0.3 }, legR: { x: 26 + 26 * tuck, y: 150 - 65 * tuck, bend: -0.4 },
+        crouch: 0.06 + 0.1 * bump(t, t0 + 0.2, t0 + 0.36), lean: 0.04 - 0.05 * look, headTilt: 0.06 * look,
+        expr: t < t0 + 0.1 ? 'surprised' : 'confident', face: lerp(0.85, 0.3, look), look: [lerp(1, 0.2, look), 0],
+        armL: { x: -12, y: 104, bend: 0.25 }, handL: 'open',
+        armR: { x: lerp(34, 40, look), y: lerp(92, 20, look) + 40 * pump, bend: lerp(-0.25, -0.9, look) }, handR: 'fist', handRotR: -0.6 * look,
+        bob: breathe(t),
       });
-      if (land > 0) { const pump = Math.sin(land * Math.PI * 3) * 0.5 + 0.5; pose.armR.y = -118 + 30 * pump; pose.armR.x = 112 - 10 * pump; pose.expr = land > 0.5 ? 'proud' : 'joy'; }
+      pose.blink = blinkAt(t, [t0 + 0.5]);
       R.pose = pose;
-      R.cam = { cx: -10, cy: -300, z: lerp(1.25, 1.35, io(win(t, t0, T1))) };
-      R.fx = impact(pose.x, STAND[1] - 640 - air, bump(t, t0 + 0.2, t0 + 0.4), 90);
+      R.cam = { cx: lerp(10, 30, io(win(t, t0, T1))), cy: -300, z: lerp(1.42, 1.5, io(win(t, t0, T1))) };
       return R;
     }
     return R;
@@ -449,7 +434,7 @@ const Door2D = (function () {
     const cam = R.cam;
     let w = wall();
     w += windowAt(-560, -330, -600, -360) + windowAt(440, 660, -600, -360);
-    w += plaque(310, -560) + lamp(-90, -520);
+    w += plaque(330, -640) + lamp(330, -500);
     w += ground();
     w += door(R.open);
     w += bush(P3(DOOR.x1 + 330, 0, 30), 230, 170, 0, 7);

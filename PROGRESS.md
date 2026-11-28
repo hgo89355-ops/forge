@@ -1,6 +1,12 @@
 # Progress
 
 ## Now
+- **Lock Short v16 (owner notes 2026-11-28, evening)**: camera low (near eye level) facing the house front, starting
+  between the bush and the door and moving in close; he rises from the bush, walks a few steps along the walkway,
+  stops, glances over his shoulder and at the camera, then puts the key in (at "lock", 1.42 s) and twists 5×.
+  Grown-up faces: smaller eyes, no gritted teeth / star eyes / bug eyes; door-open reaction = cool smirk + small fist
+  pump. Render: videos/lock-short/renders/lock-short-v16.mp4. Waiting for owner ✓ + new title. Owner says the
+  video will be adjusted again later.
 - **Lock Short v15 (owner notes 2026-11-28)**: camera raised and to his right so the yard, a wide sidewalk and the
   front step are clearly visible; he peeks over a bush, takes three big sneaky steps along the sidewalk, faces the
   door; taller/slimmer; clean V cheer with star eyes; bug eyes when the key pops; keyhole zoom lands on the slot.
